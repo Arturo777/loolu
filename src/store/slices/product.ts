@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import axios from 'utils/axios';
+import axios from 'axios';
 import { dispatch } from '../index';
 
 // types
@@ -76,10 +76,15 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getProducts() {
+export function getProducts(merchantId: string | number) {
     return async () => {
         try {
-            const response = await axios.get('/api/products/list');
+            const response = await axios.get('/styrk/api/product/search', {
+                baseURL: process.env.API_URL,
+                params: {
+                    idMerchant: merchantId
+                }
+            });
             dispatch(slice.actions.getProductsSuccess(response.data.products));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
