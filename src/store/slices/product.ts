@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'axios';
 import { dispatch } from '../index';
+import { STYRK_API, STYRK_TOKEN } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -86,19 +87,17 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-const token =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzMyMTAzMCwiZXhwIjoxNjY3MzI3MDMwfQ.lfJa5UV-v4UwaO5NnFdbrWdqQzvsxm9WHvjsG4EPQXJbH3hnTUX0q4laTdC73wA3RSP_sF6yKxZBb9in6-1Vng';
 export function getProducts() {
     return async () => {
         try {
-            const response = await axios.get(`http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/search`, {
-                // baseURL: process.env.API_URL,
+            const response = await axios.get(`styrk/api/product/search`, {
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: 1,
                     page: 1
                 },
                 headers: {
-                    authorization: `Bearer ${token}`
+                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getProductsSuccess(response.data.response));

@@ -26,6 +26,10 @@ export const AWS_API = {
     appClientId: '3eau2osduslvb7vks3vsh9t7b0'
 };
 
+export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
+export const STYRK_TOKEN =
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzMyMTAzMCwiZXhwIjoxNjY3MzI3MDMwfQ.lfJa5UV-v4UwaO5NnFdbrWdqQzvsxm9WHvjsG4EPQXJbH3hnTUX0q4laTdC73wA3RSP_sF6yKxZBb9in6-1Vng';
+
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
 export const BASE_PATH = '';
