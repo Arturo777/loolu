@@ -1,5 +1,8 @@
 // project imports
+import React from 'react';
 import { Theme } from '@mui/material/styles';
+import { LinkProps } from '@mui/material/Link';
+import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
 
 export default function componentStyleOverrides(theme: Theme, borderRadius: number, outlinedFilled: boolean) {
     const mode = theme.palette.mode;
@@ -8,6 +11,16 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
     const menuSelected = mode === 'dark' ? theme.palette.secondary.main : theme.palette.secondary.dark;
 
     return {
+        MuiLink: {
+            defaultProps: {
+                component: LinkBehavior
+            } as LinkProps
+        },
+        MuiButtonBase: {
+            defaultProps: {
+                LinkComponent: LinkBehavior
+            }
+        },
         MuiButton: {
             styleOverrides: {
                 root: {
@@ -305,3 +318,9 @@ export default function componentStyleOverrides(theme: Theme, borderRadius: numb
         }
     };
 }
+
+const LinkBehavior = React.forwardRef<HTMLAnchorElement, Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }>((props, ref) => {
+    const { href, ...other } = props;
+    // Map href (MUI) -> to (react-router)
+    return <RouterLink ref={ref} to={href} {...other} />;
+});

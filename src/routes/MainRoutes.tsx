@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
+import ProductList from 'views/Products';
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
@@ -25,6 +26,10 @@ const MainRoutes = {
         {
             path: '/sample-page',
             element: <SamplePage />
+        },
+        {
+            path: '/products',
+            element: <ProductList />
         }
     ]
 };
