@@ -87,8 +87,7 @@ export default slice.reducer;
 // ----------------------------------------------------------------------
 
 const token =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzI2NTIxOCwiZXhwIjoxNjY3MjcxMjE4fQ.m2QvnSP8RbCcsfwwUV7TI7wgz1wI4hEFnV491NI8qFjnVs-KD10N4OhFLPkwqnfgSfVCs4yCBQkRAUxiQlR4iw';
-
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzMyMTAzMCwiZXhwIjoxNjY3MzI3MDMwfQ.lfJa5UV-v4UwaO5NnFdbrWdqQzvsxm9WHvjsG4EPQXJbH3hnTUX0q4laTdC73wA3RSP_sF6yKxZBb9in6-1Vng';
 export function getProducts() {
     return async () => {
         try {
