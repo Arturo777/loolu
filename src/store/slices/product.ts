@@ -31,7 +31,17 @@ const slice = createSlice({
 
         // GET PRODUCTS
         getProductsSuccess(state, action) {
-            state.products = action.payload;
+            const products = action.payload.map((item: ProductItem) => ({
+                ...item,
+                date: item.releaseDate,
+                image: item.imageUrl,
+                name: item.productName || item.skuName || '',
+                offerPrice: 1000,
+                salePrice: 1300
+            }));
+
+            console.log(products);
+            state.products = products;
         },
 
         // FILTER PRODUCTS
@@ -76,16 +86,23 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getProducts(merchantId: string | number) {
+const token =
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzI2NTIxOCwiZXhwIjoxNjY3MjcxMjE4fQ.m2QvnSP8RbCcsfwwUV7TI7wgz1wI4hEFnV491NI8qFjnVs-KD10N4OhFLPkwqnfgSfVCs4yCBQkRAUxiQlR4iw';
+
+export function getProducts() {
     return async () => {
         try {
-            const response = await axios.get('/styrk/api/product/search', {
-                baseURL: process.env.API_URL,
+            const response = await axios.get(`http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/search`, {
+                // baseURL: process.env.API_URL,
                 params: {
-                    idMerchant: merchantId
+                    idMerchant: 1,
+                    page: 1
+                },
+                headers: {
+                    authorization: `Bearer ${token}`
                 }
             });
-            dispatch(slice.actions.getProductsSuccess(response.data.products));
+            dispatch(slice.actions.getProductsSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
@@ -167,4 +184,18 @@ export function editAddress(address: Address) {
             dispatch(slice.actions.hasError(error));
         }
     };
+}
+
+interface ProductItem {
+    imageUrl: string | null;
+    skus: productSku[];
+    releaseDate: string;
+    skuName: string;
+    brandId: number;
+    productID: number;
+    productName: string;
+}
+
+interface productSku {
+    name: string | null;
 }

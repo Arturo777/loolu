@@ -1,45 +1,30 @@
+/* eslint-disable global-require */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // material-ui
-import { Button, CardContent, CardMedia, Grid, Rating, Stack, Typography } from '@mui/material';
+import { Button, CardContent, Grid, Stack, Typography } from '@mui/material';
 
 // project import
 import MainCard from './MainCard';
 import SkeletonProductPlaceholder from 'ui-component/cards/Skeleton/ProductPlaceholder';
-import { useDispatch, useSelector } from 'store';
-import { addProduct } from 'store/slices/cart';
-import { openSnackbar } from 'store/slices/snackbar';
+
 import { ProductCardProps } from 'types/cart';
 
 // assets
-import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
+import EditIcon from '@mui/icons-material/Edit';
+import LinkIcon from '@mui/icons-material/Link';
+import placeholderImage from 'assets/images/placeholder.png';
+import { Box } from '@mui/system';
 
-const prodImage = require.context('assets/images/e-commerce', true);
+// const prodImage = require.context('assets/images/e-commerce', true);
 
 // ==============================|| PRODUCT CARD ||============================== //
 
-const ProductCard = ({ id, color, name, image, description, offerPrice, salePrice, rating }: ProductCardProps) => {
-    const dispatch = useDispatch();
-
-    const prodProfile = image && prodImage(`./${image}`).default;
-    const [productRating] = useState<number | undefined>(rating);
-    const cart = useSelector((state) => state.cart);
-
-    const addCart = () => {
-        dispatch(addProduct({ id, name, image, salePrice, offerPrice, color, size: 8, quantity: 1 }, cart.checkout.products));
-        dispatch(
-            openSnackbar({
-                open: true,
-                message: 'Add To Cart Success',
-                variant: 'alert',
-                alert: {
-                    color: 'success'
-                },
-                close: false
-            })
-        );
-    };
+const ProductCard = ({ productID, brandName, name, image, description, offerPrice, salePrice, brandId }: ProductCardProps) => {
+    // eslint-disable-next-line global-require
+    const prodProfile = image || placeholderImage;
+    // const [productRating] = useState<number | undefined>(rating);
 
     const [isLoading, setLoading] = useState(true);
     useEffect(() => {
@@ -61,19 +46,24 @@ const ProductCard = ({ id, color, name, image, description, offerPrice, salePric
                         }
                     }}
                 >
-                    <CardMedia
-                        sx={{ height: 220 }}
-                        image={prodProfile}
-                        title="Contemplative Reptile"
-                        component={Link}
-                        to={`/e-commerce/product-details/${id}`}
-                    />
+                    <Box component="img" src={prodProfile} sx={{ height: 220, width: `100%`, objectFit: `cover` }} alt={name} />
+
                     <CardContent sx={{ p: 2 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
+                                <Grid item xs={12}>
+                                    <Typography
+                                        component={Link}
+                                        to={`/brand/${brandId}`}
+                                        variant="subtitle2"
+                                        sx={{ textDecoration: 'none' }}
+                                    >
+                                        {brandName}
+                                    </Typography>
+                                </Grid>
                                 <Typography
                                     component={Link}
-                                    to={`/e-commerce/product-details/${id}`}
+                                    to={`/products/${productID}/edit`}
                                     variant="subtitle1"
                                     sx={{ textDecoration: 'none' }}
                                 >
@@ -93,12 +83,12 @@ const ProductCard = ({ id, color, name, image, description, offerPrice, salePric
                                     </Typography>
                                 </Grid>
                             )}
-                            <Grid item xs={12} sx={{ pt: '8px !important' }}>
+                            {/* <Grid item xs={12} sx={{ pt: '8px !important' }}>
                                 <Stack direction="row" alignItems="center" spacing={1}>
                                     <Rating precision={0.5} name="size-small" value={productRating} size="small" readOnly />
                                     <Typography variant="caption">({offerPrice}+)</Typography>
                                 </Stack>
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12}>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Grid container spacing={1}>
@@ -111,8 +101,17 @@ const ProductCard = ({ id, color, name, image, description, offerPrice, salePric
                                             </Typography>
                                         </Grid>
                                     </Grid>
-                                    <Button variant="contained" sx={{ minWidth: 0 }} onClick={addCart}>
-                                        <ShoppingCartTwoToneIcon fontSize="small" />
+                                    <Button
+                                        href="http://ec2-52-14-97-45.us-east-2.compute.amazonaws.com/catalogo/productos/editar-sku/1"
+                                        variant="contained"
+                                        sx={{ minWidth: 0, mr: 1 }}
+                                        target="_blanck"
+                                        component="a"
+                                    >
+                                        <LinkIcon fontSize="small" />
+                                    </Button>
+                                    <Button variant="contained" sx={{ minWidth: 0 }}>
+                                        <EditIcon fontSize="small" />
                                     </Button>
                                 </Stack>
                             </Grid>
