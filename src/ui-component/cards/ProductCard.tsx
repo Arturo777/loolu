@@ -54,7 +54,7 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                 <Grid item xs={12}>
                                     <Typography
                                         component={Link}
-                                        to={`/brand/${brandId}`}
+                                        to={`/brands/${brandId}`}
                                         variant="subtitle2"
                                         sx={{ textDecoration: 'none' }}
                                     >
@@ -105,7 +105,7 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                         href="http://ec2-52-14-97-45.us-east-2.compute.amazonaws.com/catalogo/productos/editar-sku/1"
                                         variant="contained"
                                         sx={{ minWidth: 0, mr: 1 }}
-                                        target="_blanck"
+                                        target="_blank"
                                         component="a"
                                     >
                                         <LinkIcon fontSize="small" />

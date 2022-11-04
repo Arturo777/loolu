@@ -9,6 +9,7 @@ import { STYRK_API, STYRK_TOKEN } from 'config';
 // types
 import { DefaultRootStateProps } from 'types';
 import { ProductsFilter, Address } from 'types/e-commerce';
+import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +33,7 @@ const slice = createSlice({
 
         // GET PRODUCTS
         getProductsSuccess(state, action) {
-            const products = action.payload.map((item: ProductItem) => ({
+            const products = action.payload.map((item: ProductCardProps) => ({
                 ...item,
                 date: item.releaseDate,
                 image: item.imageUrl,
@@ -41,7 +42,6 @@ const slice = createSlice({
                 salePrice: 1300
             }));
 
-            console.log(products);
             state.products = products;
         },
 
@@ -182,18 +182,4 @@ export function editAddress(address: Address) {
             dispatch(slice.actions.hasError(error));
         }
     };
-}
-
-interface ProductItem {
-    imageUrl: string | null;
-    skus: productSku[];
-    releaseDate: string;
-    skuName: string;
-    brandId: number;
-    productID: number;
-    productName: string;
-}
-
-interface productSku {
-    name: string | null;
 }

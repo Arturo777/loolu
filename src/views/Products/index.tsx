@@ -257,7 +257,7 @@ const ProductsList = () => {
                 <Grid container alignItems="center" justifyContent="space-between" spacing={matchDownMD ? 0.5 : 2}>
                     <Grid item>
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <Typography variant="h4">Shop</Typography>
+                            <Typography variant="h4">Productos</Typography>
                             <IconButton size="large">
                                 <ArrowForwardIosIcon sx={{ width: '0.875rem', height: '0.875rem', fontWeight: 500, color: 'grey.500' }} />
                             </IconButton>
@@ -265,37 +265,20 @@ const ProductsList = () => {
                     </Grid>
                     <Grid item>
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={matchDownSM ? 0.5 : spacingMD}>
-                            <TextField
-                                sx={{ width: { xs: 140, md: 'auto' } }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon fontSize="small" />
-                                        </InputAdornment>
-                                    )
-                                }}
-                                value={filter.search}
-                                placeholder="Search Product"
-                                size="small"
-                                onChange={handleSearch}
-                            />
-
-                            <Typography sx={{ pl: 1.5, fontSize: '1rem', color: 'grey.500', fontWeight: 400 }}>|</Typography>
-
                             <Button
                                 disableRipple
                                 onClick={handleDrawerOpen}
                                 color="secondary"
                                 startIcon={<FilterAltIcon sx={{ fontWeight: 500, color: 'secondary.200' }} />}
                             >
-                                Filter
+                                Filtrar
                             </Button>
 
                             <Typography sx={{ display: { xs: 'none', sm: 'flex' }, fontSize: '1rem', color: 'grey.500', fontWeight: 400 }}>
                                 |
                             </Typography>
                             <Stack direction="row" alignItems="center" justifyContent="center" sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                                <Typography variant="h5">Sort by: </Typography>
+                                <Typography variant="h5">Ordenar por: </Typography>
                                 <Button
                                     id="demo-positioned-button"
                                     aria-controls="demo-positioned-menu"
