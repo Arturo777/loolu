@@ -51,6 +51,17 @@ const slice = createSlice({
 
         // GET PRODUCT
         getProductSuccess(state, action) {
+            /* console.log(action); */
+            /* const productOneProd = action.payload.map((item: ProductItem) => ({
+                ...item,
+                date: item.releaseDate,
+                image: item.imageUrl,
+                name: item.productName || item.skuName || '',
+                offerPrice: 1000,
+                salePrice: 1300
+            }));
+
+            console.log(productOneProd); */
             state.product = action.payload;
         },
 
@@ -87,7 +98,7 @@ export default slice.reducer;
 // ----------------------------------------------------------------------
 
 const token =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzMyMTAzMCwiZXhwIjoxNjY3MzI3MDMwfQ.lfJa5UV-v4UwaO5NnFdbrWdqQzvsxm9WHvjsG4EPQXJbH3hnTUX0q4laTdC73wA3RSP_sF6yKxZBb9in6-1Vng';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzUxMTI1NiwiZXhwIjoxNjY3NTE3MjU2fQ.0MXolssAitkH4d8HipiPT-WZPQXn4mVtKj_3N7DBuAIm9OivLBuvoWnyOGLw7MqTtviqbmLZwDsIMReFqBQ7_g';
 export function getProducts() {
     return async () => {
         try {
@@ -122,8 +133,16 @@ export function filterProducts(filter: ProductsFilter) {
 export function getProduct(id: string | undefined) {
     return async () => {
         try {
-            const response = await axios.post('/api/product/details', { id });
-            dispatch(slice.actions.getProductSuccess(response.data));
+            const response = await axios.get('http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/product', {
+                params: {
+                    idMerchant: 1,
+                    idProd: id
+                },
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
+            dispatch(slice.actions.getProductSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

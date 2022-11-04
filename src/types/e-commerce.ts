@@ -1,5 +1,7 @@
 // product shop list
 export type Products = {
+    isActive: boolean;
+    productName: any;
     id: string | number | undefined;
     image: string;
     name: string;
