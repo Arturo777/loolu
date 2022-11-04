@@ -2,10 +2,11 @@ import { useState } from 'react';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, Card, Grid, InputAdornment, OutlinedInput, Popper } from '@mui/material';
+import { Avatar, Box, Card, Checkbox, FormControlLabel, Grid, InputAdornment, OutlinedInput, Popper, Zoom } from '@mui/material';
 
 // third-party
 import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
+// import { usePopupState, bindTrigger, bindPopper as bindPopperHook } from 'material-ui-popup-state/hooks';
 
 // project imports
 import Transitions from 'ui-component/extended/Transitions';
@@ -13,6 +14,7 @@ import Transitions from 'ui-component/extended/Transitions';
 // assets
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 import { shouldForwardProp } from '@mui/system';
+import { useNavigate, createSearchParams } from 'react-router-dom';
 
 // styles
 const PopperStyle = styled(Popper, { shouldForwardProp })(({ theme }) => ({
@@ -59,11 +61,13 @@ interface Props {
     value: string;
     setValue: (value: string) => void;
     popupState: any;
+    handleOptions: (val?: boolean) => void;
+    handleEnter: (e: any) => void;
 }
 
 // ==============================|| SEARCH INPUT - MOBILE||============================== //
 
-const MobileSearch = ({ value, setValue, popupState }: Props) => {
+const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter }: Props) => {
     const theme = useTheme();
 
     return (
@@ -72,6 +76,7 @@ const MobileSearch = ({ value, setValue, popupState }: Props) => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Search"
+            onKeyDown={handleEnter}
             startAdornment={
                 <InputAdornment position="start">
                     <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
@@ -79,10 +84,10 @@ const MobileSearch = ({ value, setValue, popupState }: Props) => {
             }
             endAdornment={
                 <InputAdornment position="end">
-                    <HeaderAvatarStyle variant="rounded">
+                    <HeaderAvatarStyle variant="rounded" onClick={() => handleOptions()}>
                         <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                     </HeaderAvatarStyle>
-                    <Box sx={{ ml: 2 }}>
+                    <Box sx={{ ml: 2 }} onClick={() => handleOptions(false)}>
                         <Avatar
                             variant="rounded"
                             sx={{
@@ -112,10 +117,41 @@ const MobileSearch = ({ value, setValue, popupState }: Props) => {
 
 const SearchSection = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const [value, setValue] = useState('');
+    const [fields, setFields] = useState<string[]>([]);
+    const [showOptions, setShowOptions] = useState<boolean>(false);
+
+    const handelFilter = (newValue: string) => {
+        const exist = fields.includes(newValue);
+
+        if (exist) {
+            const newFields = fields.filter((item) => item !== newValue);
+
+            setFields(newFields);
+        } else {
+            setFields([...fields, newValue]);
+        }
+    };
+
+    const handleEnter = (event: any): void => {
+        if (event.key === 'Enter') {
+            if (value.length >= 2) {
+                handleSearch();
+            }
+        }
+    };
+
+    const handleSearch = () => {
+        const params = { productName: value };
+        // CLOSE
+        setShowOptions(false);
+        // REDIRECT
+        navigate({ pathname: '/products', search: `?${createSearchParams(params)}` });
+    };
 
     return (
-        <>
+        <Box sx={{ position: 'relative' }}>
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
                 <PopupState variant="popper" popupId="demo-popup-popper">
                     {(popupState) => (
@@ -141,7 +177,19 @@ const SearchSection = () => {
                                                 <Box sx={{ p: 2 }}>
                                                     <Grid container alignItems="center" justifyContent="space-between">
                                                         <Grid item xs>
-                                                            <MobileSearch value={value} setValue={setValue} popupState={popupState} />
+                                                            <MobileSearch
+                                                                value={value}
+                                                                setValue={setValue}
+                                                                popupState={popupState}
+                                                                handleEnter={handleEnter}
+                                                                handleOptions={(val) => {
+                                                                    if (val !== undefined) {
+                                                                        setShowOptions(val);
+                                                                    } else {
+                                                                        setShowOptions((prevState) => !prevState);
+                                                                    }
+                                                                }}
+                                                            />
                                                         </Grid>
                                                     </Grid>
                                                 </Box>
@@ -159,14 +207,15 @@ const SearchSection = () => {
                     id="input-search-header"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
-                    placeholder="Search"
+                    placeholder="Buscar"
+                    onKeyDown={handleEnter}
                     startAdornment={
                         <InputAdornment position="start">
                             <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
                         </InputAdornment>
                     }
                     endAdornment={
-                        <InputAdornment position="end">
+                        <InputAdornment position="end" onClick={() => setShowOptions((prevState) => !prevState)}>
                             <HeaderAvatarStyle variant="rounded">
                                 <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                             </HeaderAvatarStyle>
@@ -176,7 +225,68 @@ const SearchSection = () => {
                     inputProps={{ 'aria-label': 'weight' }}
                 />
             </Box>
-        </>
+            {/* OPTIONS POP UP */}
+            <Zoom in={showOptions}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: { xs: '120%', md: `100%` },
+                        left: 0,
+                        width: { xs: '100%', md: '125%' },
+                        minWidth: 200,
+                        backgroundColor: 'white',
+                        p: 1,
+                        borderRadius: 2
+                    }}
+                >
+                    <FormControlLabel
+                        control={<Checkbox checked={fields.some((item) => item === 'productName')} color="secondary" />}
+                        onChange={() => handelFilter('productName')}
+                        label="Nombre"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={fields.some((item) => item === 'productId')}
+                                onChange={() => handelFilter('productId')}
+                                color="secondary"
+                            />
+                        }
+                        label="Id de producto"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={fields.some((item) => item === 'idSKU')}
+                                onChange={() => handelFilter('idSKU')}
+                                color="secondary"
+                            />
+                        }
+                        label="SKU"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={fields.some((item) => item === 'productRefID')}
+                                onChange={() => handelFilter('productRefID')}
+                                color="secondary"
+                            />
+                        }
+                        label="Código de referencia"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={fields.some((item) => item === 'ean')}
+                                onChange={() => handelFilter('ean')}
+                                color="secondary"
+                            />
+                        }
+                        label="EAN"
+                    />
+                </Box>
+            </Zoom>
+        </Box>
     );
 };
 

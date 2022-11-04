@@ -2,24 +2,11 @@ import { useEffect, useState, ReactElement } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import {
-    Box,
-    Button,
-    Divider,
-    Drawer,
-    Grid,
-    IconButton,
-    InputAdornment,
-    Menu,
-    MenuItem,
-    Stack,
-    TextField,
-    Typography,
-    useMediaQuery
-} from '@mui/material';
+import { Box, Button, Divider, Drawer, Grid, IconButton, Menu, MenuItem, Stack, Typography, useMediaQuery } from '@mui/material';
 
 // third party
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import { useLocation } from 'react-router-dom';
 
 // project imports
 import SortOptions from './SortOptions';
@@ -34,16 +21,18 @@ import { resetCart } from 'store/slices/cart';
 import { openDrawer } from 'store/slices/menu';
 import { useDispatch, useSelector } from 'store';
 import { appDrawerWidth, gridSpacing } from 'store/constant';
-import { getProducts, filterProducts } from 'store/slices/product';
+import { getProducts, filterProducts, SearchProductType } from 'store/slices/product';
 
 // assets
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import SearchIcon from '@mui/icons-material/Search';
+// import SearchIcon from '@mui/icons-material/Search';
 
 // types
 import { Products as ProductsTypo, ProductsFilter } from 'types/e-commerce';
+import Loader from 'ui-component/Loader';
+import { queryToObject } from 'utils/helpers';
 
 // product list container
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
@@ -78,6 +67,7 @@ const ProductsList = () => {
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
     const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
+    const location = useLocation();
 
     const [isLoading, setLoading] = useState(true);
     useEffect(() => {
@@ -100,8 +90,14 @@ const ProductsList = () => {
     }, [productState]);
 
     useEffect(() => {
-        dispatch(getProducts());
+        const queryObject: SearchProductType = queryToObject(location.search);
+        dispatch(getProducts(queryObject));
+        // console.log(queryObject);
+    }, [location.search, dispatch]);
 
+    // useEffect(() => {}, []);
+
+    useEffect(() => {
         // hide left drawer when email app opens
         dispatch(openDrawer(false));
 
@@ -125,11 +121,11 @@ const ProductsList = () => {
     };
     const [filter, setFilter] = useState(initialState);
 
-    // search filter
-    const handleSearch = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-        const newString = event?.target.value;
-        setFilter({ ...filter, search: newString! });
-    };
+    // // search filter
+    // const handleSearch = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
+    //     const newString = event?.target.value;
+    //     setFilter({ ...filter, search: newString! });
+    // };
 
     // sort options
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -250,6 +246,8 @@ const ProductsList = () => {
     }
 
     const spacingMD = matchDownMD ? 1 : 1.5;
+
+    if (productState.loadingProducts) return <Loader />;
 
     return (
         <Grid container spacing={2}>

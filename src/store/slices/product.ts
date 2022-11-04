@@ -19,7 +19,8 @@ const initialState: DefaultRootStateProps['product'] = {
     product: null,
     relatedProducts: [],
     reviews: [],
-    addresses: []
+    addresses: [],
+    loadingProducts: true
 };
 
 const slice = createSlice({
@@ -29,6 +30,10 @@ const slice = createSlice({
         // HAS ERROR
         hasError(state, action) {
             state.error = action.payload;
+        },
+
+        getProductsPending(state) {
+            state.loadingProducts = true;
         },
 
         // GET PRODUCTS
@@ -43,6 +48,7 @@ const slice = createSlice({
             }));
 
             state.products = products;
+            state.loadingProducts = false;
         },
 
         // FILTER PRODUCTS
@@ -85,16 +91,41 @@ const slice = createSlice({
 // Reducer
 export default slice.reducer;
 
+export interface SearchProductType {
+    idMerchant?: number;
+    page?: number;
+    productName?: string;
+    ean?: string;
+    idSKU?: number;
+    productRefID?: number;
+    idProd?: number;
+    idApprovalStatus?: number;
+}
+
 // ----------------------------------------------------------------------
 
-export function getProducts() {
+export function getProducts(searchParams: SearchProductType) {
     return async () => {
+        dispatch(slice.actions.getProductsPending());
+
+        const hasParams = Boolean(
+            searchParams.productName ||
+                searchParams.ean ||
+                searchParams.idSKU ||
+                searchParams.productRefID ||
+                searchParams.idProd ||
+                searchParams.idApprovalStatus
+        );
+
         try {
             const response = await axios.get(`styrk/api/product/search`, {
                 baseURL: STYRK_API,
                 params: {
-                    idMerchant: 1,
-                    page: 1
+                    idMerchant: searchParams.idMerchant || 1,
+                    page: searchParams.page || hasParams ? 0 : 1,
+                    productName: searchParams.productName || null,
+                    idSKU: searchParams.idSKU,
+                    idProd: searchParams.idProd
                 },
                 headers: {
                     authorization: `Bearer ${STYRK_TOKEN}`
