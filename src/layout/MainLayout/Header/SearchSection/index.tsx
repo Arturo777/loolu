@@ -1,8 +1,22 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, Card, Checkbox, FormControlLabel, Grid, InputAdornment, OutlinedInput, Popper, Zoom } from '@mui/material';
+import {
+    Avatar,
+    Box,
+    Card,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    Grid,
+    InputAdornment,
+    OutlinedInput,
+    Popper,
+    Radio,
+    RadioGroup,
+    Zoom
+} from '@mui/material';
 
 // third-party
 import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
@@ -15,6 +29,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 import { shouldForwardProp } from '@mui/system';
 import { useNavigate, createSearchParams } from 'react-router-dom';
+import { ChangeEventFunc } from 'types';
 
 // styles
 const PopperStyle = styled(Popper, { shouldForwardProp })(({ theme }) => ({
@@ -119,31 +134,35 @@ const SearchSection = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     const [value, setValue] = useState('');
-    const [fields, setFields] = useState<string[]>([]);
+    const [searchField, setSearchField] = useState<string>('productName');
     const [showOptions, setShowOptions] = useState<boolean>(false);
+    const [valueIsNumber, setValueIsNumber] = useState<boolean>(true);
 
-    const handelFilter = (newValue: string) => {
-        const exist = fields.includes(newValue);
+    useEffect(() => {
+        const isNum = !isNaN(Number(value));
+        setValueIsNumber(isNum);
 
-        if (exist) {
-            const newFields = fields.filter((item) => item !== newValue);
-
-            setFields(newFields);
-        } else {
-            setFields([...fields, newValue]);
+        if (!isNum && searchField !== 'productName') {
+            setSearchField('productName');
         }
+    }, [searchField, value]);
+
+    const handelFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchField((event.target as HTMLInputElement).value);
     };
 
     const handleEnter = (event: any): void => {
         if (event.key === 'Enter') {
-            if (value.length >= 2) {
+            if (value.length > 0) {
                 handleSearch();
+            } else {
+                navigate({ pathname: '/products' });
             }
         }
     };
 
     const handleSearch = () => {
-        const params = { productName: value };
+        const params = { [searchField]: value };
         // CLOSE
         setShowOptions(false);
         // REDIRECT
@@ -232,58 +251,34 @@ const SearchSection = () => {
                         position: 'absolute',
                         top: { xs: '120%', md: `100%` },
                         left: 0,
-                        width: { xs: '100%', md: '125%' },
+                        // width: { xs: '100%', md: '125%' },
                         minWidth: 200,
                         backgroundColor: 'white',
                         p: 1,
+                        paddingRight: 5,
                         borderRadius: 2
                     }}
                 >
-                    <FormControlLabel
-                        control={<Checkbox checked={fields.some((item) => item === 'productName')} color="secondary" />}
-                        onChange={() => handelFilter('productName')}
-                        label="Nombre"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={fields.some((item) => item === 'productId')}
-                                onChange={() => handelFilter('productId')}
-                                color="secondary"
+                    <FormControl>
+                        <RadioGroup
+                            aria-labelledby="radio-filter-type"
+                            defaultValue="productName"
+                            name="radio-filter-type-group"
+                            onChange={handelFilter}
+                            value={searchField}
+                        >
+                            <FormControlLabel value="productName" control={<Radio />} label="Nombre del producto" />
+                            <FormControlLabel disabled={!valueIsNumber} value="idProd" control={<Radio />} label="ID de producto" />
+                            <FormControlLabel disabled={!valueIsNumber} value="idSKU" control={<Radio />} label="SKU" />
+                            <FormControlLabel
+                                disabled={!valueIsNumber}
+                                value="productRefID"
+                                control={<Radio />}
+                                label="Código de referencia"
                             />
-                        }
-                        label="Id de producto"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={fields.some((item) => item === 'idSKU')}
-                                onChange={() => handelFilter('idSKU')}
-                                color="secondary"
-                            />
-                        }
-                        label="SKU"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={fields.some((item) => item === 'productRefID')}
-                                onChange={() => handelFilter('productRefID')}
-                                color="secondary"
-                            />
-                        }
-                        label="Código de referencia"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={fields.some((item) => item === 'ean')}
-                                onChange={() => handelFilter('ean')}
-                                color="secondary"
-                            />
-                        }
-                        label="EAN"
-                    />
+                            <FormControlLabel disabled={!valueIsNumber} value="ean" control={<Radio />} label="EAN" />
+                        </RadioGroup>
+                    </FormControl>
                 </Box>
             </Zoom>
         </Box>
