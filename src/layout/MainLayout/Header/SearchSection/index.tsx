@@ -13,8 +13,7 @@ import {
     OutlinedInput,
     Popper,
     Radio,
-    RadioGroup,
-    Zoom
+    RadioGroup
 } from '@mui/material';
 
 // third-party
@@ -74,13 +73,15 @@ interface Props {
     setValue: (value: string) => void;
     popupState: any;
     handleOptions: (val?: boolean) => void;
+    handleOptionsCick: (e: any) => void;
     handleEnter: (e: any) => void;
     cleanSearch: () => void;
+    searchProps: SearchPopProps;
 }
 
 // ==============================|| SEARCH INPUT - MOBILE||============================== //
 
-const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter, cleanSearch }: Props) => {
+const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter, cleanSearch, searchProps, handleOptionsCick }: Props) => {
     const theme = useTheme();
 
     return (
@@ -97,9 +98,10 @@ const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter,
             }
             endAdornment={
                 <InputAdornment position="end">
-                    <HeaderAvatarStyle variant="rounded" onClick={() => handleOptions()}>
+                    <HeaderAvatarStyle variant="rounded" onClick={handleOptionsCick}>
                         <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                     </HeaderAvatarStyle>
+                    <SearchPopOptions {...searchProps} />
                     <Box
                         sx={{ ml: 2 }}
                         onClick={() => {
@@ -142,10 +144,9 @@ const SearchSection = () => {
     const [searchField, setSearchField] = useState<string>('productName');
     const [showOptions, setShowOptions] = useState<boolean>(false);
     const [valueIsNumber, setValueIsNumber] = useState<boolean>(true);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     useEffect(() => {
-        console.log(location);
-
         const searchText = location.search.replace('?', '');
 
         if (searchText.length > 0) {
@@ -184,6 +185,7 @@ const SearchSection = () => {
         const params = { [searchField]: value };
         // CLOSE
         setShowOptions(false);
+        setAnchorEl(null);
         // REDIRECT
         navigate({ pathname: '/products', search: `?${createSearchParams(params)}` });
     };
@@ -192,6 +194,13 @@ const SearchSection = () => {
         navigate({ pathname: '/products', search: `` });
         setValue('');
     };
+
+    const handleButtonOptionsClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popper-a' : undefined;
 
     return (
         <Box sx={{ position: 'relative' }}>
@@ -233,6 +242,15 @@ const SearchSection = () => {
                                                                     }
                                                                 }}
                                                                 cleanSearch={handleCleanSearch}
+                                                                handleOptionsCick={handleButtonOptionsClick}
+                                                                searchProps={{
+                                                                    handelFilter,
+                                                                    valueIsNumber,
+                                                                    searchField,
+                                                                    show: open,
+                                                                    id,
+                                                                    anchorEl
+                                                                }}
                                                             />
                                                         </Grid>
                                                     </Grid>
@@ -260,7 +278,7 @@ const SearchSection = () => {
                     }
                     endAdornment={
                         <InputAdornment position="end">
-                            <HeaderAvatarStyle variant="rounded" onClick={() => setShowOptions((prevState) => !prevState)}>
+                            <HeaderAvatarStyle variant="rounded" onClick={handleButtonOptionsClick}>
                                 <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                             </HeaderAvatarStyle>
                             {value.length > 0 && (
@@ -283,6 +301,14 @@ const SearchSection = () => {
                                     </Avatar>
                                 </Box>
                             )}
+                            <SearchPopOptions
+                                handelFilter={handelFilter}
+                                valueIsNumber={valueIsNumber}
+                                searchField={searchField}
+                                show={open}
+                                id={id}
+                                anchorEl={anchorEl}
+                            />
                         </InputAdornment>
                     }
                     aria-describedby="search-helper-text"
@@ -290,44 +316,53 @@ const SearchSection = () => {
                 />
             </Box>
             {/* OPTIONS POP UP */}
-            <Zoom in={showOptions}>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: { xs: '120%', md: `100%` },
-                        left: 0,
-                        // width: { xs: '100%', md: '125%' },
-                        minWidth: 200,
-                        backgroundColor: 'white',
-                        p: 1,
-                        paddingRight: 5,
-                        borderRadius: 2
-                    }}
-                >
-                    <FormControl>
-                        <RadioGroup
-                            aria-labelledby="radio-filter-type"
-                            defaultValue="productName"
-                            name="radio-filter-type-group"
-                            onChange={handelFilter}
-                            value={searchField}
-                        >
-                            <FormControlLabel value="productName" control={<Radio />} label="Nombre del producto" />
-                            <FormControlLabel disabled={!valueIsNumber} value="idProd" control={<Radio />} label="ID de producto" />
-                            <FormControlLabel disabled={!valueIsNumber} value="idSKU" control={<Radio />} label="SKU" />
-                            <FormControlLabel
-                                disabled={!valueIsNumber}
-                                value="productRefID"
-                                control={<Radio />}
-                                label="Código de referencia"
-                            />
-                            <FormControlLabel disabled={!valueIsNumber} value="ean" control={<Radio />} label="EAN" />
-                        </RadioGroup>
-                    </FormControl>
-                </Box>
-            </Zoom>
         </Box>
     );
 };
+
+interface SearchPopProps {
+    valueIsNumber: boolean;
+    handelFilter: (e: any) => void;
+    searchField: string;
+    show: boolean;
+    anchorEl: null | HTMLElement;
+    id: string | undefined;
+}
+
+const SearchPopOptions = ({ valueIsNumber, handelFilter, searchField, show, anchorEl, id }: SearchPopProps) => (
+    <Popper open={show} anchorEl={anchorEl} id={id} placement="bottom-end">
+        <Box
+            sx={{
+                zIndex: 1000,
+                position: 'relative',
+                // top: { xs: '120%', md: `100%` },
+                // left: 0,
+                // width: { xs: '100%', md: '125%' },
+                minWidth: 200,
+                backgroundColor: 'white',
+                p: 1,
+                paddingRight: 2,
+                borderRadius: 2,
+                paddingTop: 3
+            }}
+        >
+            <FormControl>
+                <RadioGroup
+                    aria-labelledby="radio-filter-type"
+                    defaultValue="productName"
+                    name="radio-filter-type-group"
+                    onChange={handelFilter}
+                    value={searchField}
+                >
+                    <FormControlLabel value="productName" control={<Radio />} label="Nombre del producto" />
+                    <FormControlLabel disabled={!valueIsNumber} value="idProd" control={<Radio />} label="ID de producto" />
+                    <FormControlLabel disabled={!valueIsNumber} value="idSKU" control={<Radio />} label="SKU" />
+                    <FormControlLabel disabled={!valueIsNumber} value="productRefID" control={<Radio />} label="Código de referencia" />
+                    <FormControlLabel disabled={!valueIsNumber} value="ean" control={<Radio />} label="EAN" />
+                </RadioGroup>
+            </FormControl>
+        </Box>
+    </Popper>
+);
 
 export default SearchSection;
