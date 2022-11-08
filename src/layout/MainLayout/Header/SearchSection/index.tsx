@@ -6,7 +6,6 @@ import {
     Avatar,
     Box,
     Card,
-    Checkbox,
     FormControl,
     FormControlLabel,
     Grid,
@@ -28,9 +27,7 @@ import Transitions from 'ui-component/extended/Transitions';
 // assets
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 import { shouldForwardProp } from '@mui/system';
-import { useNavigate, createSearchParams } from 'react-router-dom';
-import { ChangeEventFunc } from 'types';
-
+import { useNavigate, createSearchParams, useLocation } from 'react-router-dom';
 // styles
 const PopperStyle = styled(Popper, { shouldForwardProp })(({ theme }) => ({
     zIndex: 1100,
@@ -78,11 +75,12 @@ interface Props {
     popupState: any;
     handleOptions: (val?: boolean) => void;
     handleEnter: (e: any) => void;
+    cleanSearch: () => void;
 }
 
 // ==============================|| SEARCH INPUT - MOBILE||============================== //
 
-const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter }: Props) => {
+const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter, cleanSearch }: Props) => {
     const theme = useTheme();
 
     return (
@@ -102,7 +100,13 @@ const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter 
                     <HeaderAvatarStyle variant="rounded" onClick={() => handleOptions()}>
                         <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                     </HeaderAvatarStyle>
-                    <Box sx={{ ml: 2 }} onClick={() => handleOptions(false)}>
+                    <Box
+                        sx={{ ml: 2 }}
+                        onClick={() => {
+                            handleOptions(false);
+                            cleanSearch();
+                        }}
+                    >
                         <Avatar
                             variant="rounded"
                             sx={{
@@ -133,10 +137,25 @@ const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter 
 const SearchSection = () => {
     const theme = useTheme();
     const navigate = useNavigate();
+    const location = useLocation();
     const [value, setValue] = useState('');
     const [searchField, setSearchField] = useState<string>('productName');
     const [showOptions, setShowOptions] = useState<boolean>(false);
     const [valueIsNumber, setValueIsNumber] = useState<boolean>(true);
+
+    useEffect(() => {
+        console.log(location);
+
+        const searchText = location.search.replace('?', '');
+
+        if (searchText.length > 0) {
+            const keyField = searchText.split('=')[0];
+            const newValue = searchText.split('=')[1];
+
+            setValue(newValue);
+            setSearchField(keyField);
+        }
+    }, [location]);
 
     useEffect(() => {
         const isNum = !isNaN(Number(value));
@@ -167,6 +186,11 @@ const SearchSection = () => {
         setShowOptions(false);
         // REDIRECT
         navigate({ pathname: '/products', search: `?${createSearchParams(params)}` });
+    };
+
+    const handleCleanSearch = () => {
+        navigate({ pathname: '/products', search: `` });
+        setValue('');
     };
 
     return (
@@ -208,6 +232,7 @@ const SearchSection = () => {
                                                                         setShowOptions((prevState) => !prevState);
                                                                     }
                                                                 }}
+                                                                cleanSearch={handleCleanSearch}
                                                             />
                                                         </Grid>
                                                     </Grid>
@@ -234,10 +259,30 @@ const SearchSection = () => {
                         </InputAdornment>
                     }
                     endAdornment={
-                        <InputAdornment position="end" onClick={() => setShowOptions((prevState) => !prevState)}>
-                            <HeaderAvatarStyle variant="rounded">
+                        <InputAdornment position="end">
+                            <HeaderAvatarStyle variant="rounded" onClick={() => setShowOptions((prevState) => !prevState)}>
                                 <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                             </HeaderAvatarStyle>
+                            {value.length > 0 && (
+                                <Box sx={{ ml: 2 }} onClick={handleCleanSearch}>
+                                    <Avatar
+                                        variant="rounded"
+                                        sx={{
+                                            ...theme.typography.commonAvatar,
+                                            ...theme.typography.mediumAvatar,
+                                            background:
+                                                theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.orange.light,
+                                            color: theme.palette.orange.dark,
+                                            '&:hover': {
+                                                background: theme.palette.orange.dark,
+                                                color: theme.palette.orange.light
+                                            }
+                                        }}
+                                    >
+                                        <IconX stroke={1.5} size="1.3rem" />
+                                    </Avatar>
+                                </Box>
+                            )}
                         </InputAdornment>
                     }
                     aria-describedby="search-helper-text"
