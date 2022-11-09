@@ -2,14 +2,15 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconBrandChrome, IconHelp, IconSitemap, IconPackage } from '@tabler/icons';
+import { IconBrandChrome, IconHelp, IconSitemap, IconPackage, IconUsers } from '@tabler/icons';
 
 // constant
 const icons = {
     IconBrandChrome,
     IconHelp,
     IconSitemap,
-    IconPackage
+    IconPackage,
+    IconUsers
 };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
@@ -41,6 +42,15 @@ const other = {
             type: 'item',
             url: '/products',
             icon: icons.IconPackage,
+            external: false,
+            breadcrumbs: false
+        },
+        {
+            id: 'users',
+            title: <FormattedMessage id="users" />,
+            type: 'item',
+            url: '/users',
+            icon: icons.IconUsers,
             external: false,
             breadcrumbs: false
         },

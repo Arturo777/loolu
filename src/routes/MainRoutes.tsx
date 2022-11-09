@@ -9,6 +9,7 @@ import ProductList from 'views/Products';
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const UsersList = Loadable(lazy(() => import('views/Users')));
+const UserProfile = Loadable(lazy(() => import('views/UserProfile')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -35,6 +36,10 @@ const MainRoutes = {
         {
             path: '/users',
             element: <UsersList />
+        },
+        {
+            path: '/users/:userId/edit',
+            element: <UserProfile />
         }
     ]
 };
