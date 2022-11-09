@@ -1,5 +1,5 @@
 import { GenericCardProps } from 'types';
-import { PostDataType, UserProfile, Profile } from 'types/user-profile';
+import { PostDataType, UserProfile, Profile, UserType } from 'types/user-profile';
 
 export interface FollowerCardProps {
     avatar: string;
@@ -40,6 +40,8 @@ export interface UserStateProps {
     simpleCards: UserSimpleCardProps[];
     profileCards: UserProfileCardProps[];
     error: object | string | null;
+    loading: boolean;
+    usersList: UserType[];
 }
 
 export type UserProfileStyle2 = {

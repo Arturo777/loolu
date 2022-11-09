@@ -42,6 +42,25 @@ export type Profile = {
     time: string;
 };
 
+export type UserType = {
+    id: number;
+    email: string;
+    name: string;
+    phoneNumber: string | number;
+    firstName: string;
+    lastName: string;
+    status: number;
+    user: string;
+    profile: ProfileType;
+    employeNumber: number;
+    avatar: string;
+};
+
+export type ProfileType = {
+    id: number;
+    type: string;
+};
+
 export type PostImage = {
     img: string;
     featured?: boolean;

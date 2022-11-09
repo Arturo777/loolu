@@ -1,35 +1,24 @@
-import { useState } from 'react';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Button, Card, Grid, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Card, Grid, Typography } from '@mui/material';
 
 // project imports
 import { gridSpacing } from 'store/constant';
+import { UserType } from 'types/user-profile';
 import Avatar from '../extended/Avatar';
-import { UserProfile } from 'types/user-profile';
 
 // assets
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import NotInterestedTwoToneIcon from '@mui/icons-material/NotInterestedTwoTone';
-import ChatBubbleTwoToneIcon from '@mui/icons-material/ChatBubbleTwoTone';
+import EditIcon from '@mui/icons-material/Edit';
+import { Link } from 'react-router-dom';
 
 const avatarImage = require.context('assets/images/profile', true);
 
 // ==============================|| USER DETAILS CARD ||============================== //
 
-const UserDetailsCard = ({ about, avatar, contact, email, location, name, role }: UserProfile) => {
+const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, phoneNumber, avatar }: UserType) => {
     const theme = useTheme();
+
     const avatarProfile = avatar && avatarImage(`./${avatar}`).default;
-
-    const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement> | undefined) => {
-        setAnchorEl(event?.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
 
     return (
         <Card
@@ -48,7 +37,7 @@ const UserDetailsCard = ({ about, avatar, contact, email, location, name, role }
                         <Grid item xs zeroMinWidth>
                             <Avatar alt={name} size="lg" src={avatarProfile} />
                         </Grid>
-                        <Grid item>
+                        {/* <Grid item>
                             <IconButton size="small" sx={{ mt: -0.75, mr: -0.75 }} onClick={handleClick}>
                                 <MoreHorizOutlinedIcon
                                     fontSize="small"
@@ -77,20 +66,20 @@ const UserDetailsCard = ({ about, avatar, contact, email, location, name, role }
                                 <MenuItem onClick={handleClose}>Edit</MenuItem>
                                 <MenuItem onClick={handleClose}>Delete</MenuItem>
                             </Menu>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h3" component="div">
                         {name}
                     </Typography>
-                    <Typography variant="caption">{role}</Typography>
+                    <Typography variant="caption">{profile.type}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Typography variant="subtitle2" sx={{ color: theme.palette.grey[700] }}>
                         {about}
                     </Typography>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                     <Typography variant="caption">Email</Typography>
                     <Typography variant="h6">{email}</Typography>
@@ -99,24 +88,24 @@ const UserDetailsCard = ({ about, avatar, contact, email, location, name, role }
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={6}>
                             <Typography variant="caption">Phone</Typography>
-                            <Typography variant="h6">{contact}</Typography>
+                            <Typography variant="h6">{phoneNumber}</Typography>
                         </Grid>
-                        <Grid item xs={6}>
+                        {/* <Grid item xs={6}>
                             <Typography variant="caption">Location</Typography>
                             <Typography variant="h6">{location}</Typography>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                    <Grid container spacing={1}>
-                        <Grid item xs={6}>
+                    <Grid container spacing={1} justifyContent="flex-end">
+                        {/* <Grid item xs={6}>
                             <Button variant="outlined" fullWidth startIcon={<ChatBubbleTwoToneIcon />}>
                                 Message
                             </Button>
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={6}>
-                            <Button variant="outlined" color="error" fullWidth startIcon={<NotInterestedTwoToneIcon />}>
-                                Block
+                            <Button component={Link} to={`/users/${id}/edit`} variant="outlined" fullWidth startIcon={<EditIcon />}>
+                                Editar
                             </Button>
                         </Grid>
                     </Grid>

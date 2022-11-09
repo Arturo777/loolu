@@ -8,6 +8,7 @@ import ProductList from 'views/Products';
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+const UsersList = Loadable(lazy(() => import('views/Users')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -30,6 +31,10 @@ const MainRoutes = {
         {
             path: '/products',
             element: <ProductList />
+        },
+        {
+            path: '/users',
+            element: <UsersList />
         }
     ]
 };

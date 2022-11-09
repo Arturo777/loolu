@@ -2,12 +2,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import axios from 'utils/axios';
+import axios from 'axios';
 import { dispatch } from '../index';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { Reply } from 'types/user-profile';
+import { Reply, UserType } from 'types/user-profile';
+import { STYRK_API, STYRK_TOKEN } from 'config';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +23,9 @@ const initialState: DefaultRootStateProps['user'] = {
     posts: [],
     detailCards: [],
     simpleCards: [],
-    profileCards: []
+    profileCards: [],
+    loading: true,
+    usersList: []
 };
 
 const slice = createSlice({
@@ -142,6 +145,20 @@ const slice = createSlice({
         // FILTER PROFILE CARDS
         filterProfileCardsSuccess(state, action) {
             state.profileCards = action.payload;
+        },
+
+        // USERS
+
+        getUsersListPending(state) {
+            state.loading = true;
+        },
+        getUsersListSuccess(state, action) {
+            state.usersList = action.payload.map((item: UserType) => ({
+                ...item,
+                name: `${item.firstName} ${item.lastName ?? ''}`.trim(),
+                avatart: 'default-profile.jpg'
+            }));
+            state.loading = false;
         }
     }
 });
@@ -150,6 +167,28 @@ const slice = createSlice({
 export default slice.reducer;
 
 // ----------------------------------------------------------------------
+
+export function getUsersList(idMerchant?: string) {
+    return async () => {
+        dispatch(slice.actions.getUsersListPending());
+        try {
+            const response = await axios.get(`styrk/api/user/searchall`, {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: idMerchant || 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+
+            // const response = await axios.get('/api/user-list/s1/list');
+            dispatch(slice.actions.getUsersListSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
 
 export function getUsersListStyle1() {
     return async () => {
