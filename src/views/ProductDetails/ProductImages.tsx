@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Key, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -7,7 +7,7 @@ import { Box, CardMedia, Grid, useMediaQuery } from '@mui/material';
 // project import
 import MainCard from 'ui-component/cards/MainCard';
 import Avatar from 'ui-component/extended/Avatar';
-import { Products } from 'types/e-commerce';
+import { Skus } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 
 // third-party
@@ -29,28 +29,20 @@ const prodImage = require.context('assets/images/e-commerce', true);
 
 // ==============================|| PRODUCT DETAILS - IMAGES ||============================== //
 
-const ProductImages = ({ product }: { product: Products }) => {
+const ProductImages = ({ skus }: { skus: any }) => {
+    const imgprod = skus;
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const products = [prod1, prod2, prod3, prod4, prod5, prod6, prod7, prod8];
 
     const matchDownLG = useMediaQuery(theme.breakpoints.up('lg'));
-    const initialImage = product.image ? prodImage(`./${product.image}`).default : '';
+    /* const initialImage = imgprod?.sku?.images[0]?.ImageURL; */
 
-    const [selected, setSelected] = useState(initialImage);
+    const [selected, setSelected] = useState(imgprod?.sku?.images[0]?.ImageURL);
 
     const [modal, setModal] = useState(false);
 
-    const images = [
-        { source: prod1 },
-        { source: prod2 },
-        { source: prod3 },
-        { source: prod4 },
-        { source: prod5 },
-        { source: prod6 },
-        { source: prod7 },
-        { source: prod8 }
-    ];
+    const images = imgprod?.sku?.images?.map((item: any) => ({ source: item?.ImageURL }));
 
     const lgNo = matchDownLG ? 4 : 3;
 
@@ -60,7 +52,8 @@ const ProductImages = ({ product }: { product: Products }) => {
         swipeToSlide: true,
         focusOnSelect: true,
         centerPadding: '0px',
-        slidesToShow: products.length > 3 ? lgNo : products.length
+        slidesToShow: products.length > 3 ? lgNo : products.length,
+        style: { display: 'flex', flexDirection: 'row' }
     };
 
     return (
@@ -78,13 +71,13 @@ const ProductImages = ({ product }: { product: Products }) => {
                 </Grid>
                 <Grid item xs={11} sm={7} md={9} lg={10} xl={8}>
                     <Slider {...settings}>
-                        {products.map((item, index) => (
-                            <Box key={index} onClick={() => setSelected(item)} sx={{ p: 1 }}>
+                        {imgprod?.sku?.images?.map((item: any, index: Key | null | undefined) => (
+                            <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
                                 <Avatar
                                     outline={selected === item}
                                     size={matchDownLG ? 'lg' : 'md'}
                                     color="primary"
-                                    src={item}
+                                    src={item?.ImageURL}
                                     variant="rounded"
                                     sx={{ m: '0 auto', cursor: 'pointer' }}
                                 />

@@ -1,5 +1,6 @@
 // product shop list
 export type Products = {
+    map(arg0: (item: any, index: any) => JSX.Element): import("react").ReactNode;
     isActive: boolean;
     productName: any;
     id: string | number | undefined;
@@ -11,6 +12,33 @@ export type Products = {
     salePrice?: number;
     offerPrice?: number;
     gender?: string;
+    categories?: string[];
+    colors?: string[];
+    popularity?: number;
+    date?: number;
+    created: Date;
+    isStock?: boolean;
+    new?: number;
+    brandName?: string;
+    brandId: number;
+    productID: string | number;
+    skus: any;
+};
+
+export type Skus = {
+    map(arg0: (item: any, index: any) => JSX.Element): import("react").ReactNode;
+    ean: string | number | undefined;
+    name: string;
+    skuID: string | number | undefined;
+    image: string;
+    measurementUnit?: string;
+    height?: number;
+    length?: number;
+    packagedHeight?: number;
+    packagedLength?: number;
+    packagedWeightKg?: number;
+    packagedWidth?: number;
+    prices?: any;
     categories?: string[];
     colors?: string[];
     popularity?: number;
@@ -92,6 +120,7 @@ export interface ProductStateProps {
     products: Products[];
     product: Products | null;
     relatedProducts: Products[];
+    skus: Skus[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;

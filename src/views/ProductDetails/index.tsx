@@ -16,7 +16,7 @@ import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct } from 'store/slices/product';
+import { getProduct, getSku } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -41,6 +41,7 @@ function a11yProps(index: number) {
 }
 
 const ProductDetails = () => {
+    const [valueSku, setValueSku] = useState('');
     const { id } = useParams();
 
     const dispatch = useDispatch();
@@ -52,7 +53,9 @@ const ProductDetails = () => {
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
+    useEffect(() => {
+        dispatch(getSku(valueSku));
+    }, [dispatch, valueSku]);
     useEffect(() => {
         // getProduct();
         dispatch(getProduct(id));
@@ -64,18 +67,18 @@ const ProductDetails = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { product } = useSelector((state) => state.product);
+    const { product, skus } = useSelector((state) => state.product);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
                 <MainCard>
-                    {product && product?.productID === id && (
+                    {product && product?.productID.toString() === id && (
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
-                                <ProductImages product={product} />
+                                <ProductImages skus={skus} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <ProductInfo product={product} />
+                                <ProductInfo product={product} setValueSku={setValueSku} />
                             </Grid>
                             <Grid item xs={12}>
                                 <Tabs

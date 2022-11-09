@@ -46,6 +46,7 @@ import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
+import { Key } from 'react';
 
 // product color select
 function getColor(color: string) {
@@ -114,8 +115,7 @@ const Increment = (props: string | FieldHookConfig<any>) => {
 
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfo = ({ product }: { product: Products }) => {
-    console.log(product);
+const ProductInfo = ({ product, setValueSku }: { product: Products; setValueSku: any }) => {
     const dispatch = useDispatch();
     const history = useNavigate();
 
@@ -175,6 +175,7 @@ const ProductInfo = ({ product }: { product: Products }) => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
+                <h2>Información del Producto</h2>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
@@ -235,6 +236,7 @@ const ProductInfo = ({ product }: { product: Products }) => {
             </Grid>
             <Grid item xs={12}>
                 <FormikProvider value={formik}>
+                    <h2>Información del Sku</h2>
                     <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} lg={10}>
@@ -243,47 +245,14 @@ const ProductInfo = ({ product }: { product: Products }) => {
                                         <TableRow>
                                             <TableCell>
                                                 <Typography variant="body2">
-                                                    Colors{' '}
+                                                    Variantes{' '}
                                                     <Typography color="error" component="span">
                                                         *
                                                     </Typography>
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="left">
-                                                <RadioGroup
-                                                    row
-                                                    value={values.color}
-                                                    onChange={handleChange}
-                                                    aria-label="colors"
-                                                    name="color"
-                                                    id="color"
-                                                    sx={{ ml: 1 }}
-                                                >
-                                                    {product.colors &&
-                                                        product.colors.map((item, index) => {
-                                                            const colorsData = getColor(item);
-                                                            return (
-                                                                <FormControlLabel
-                                                                    key={index}
-                                                                    value={item}
-                                                                    control={
-                                                                        <Radio
-                                                                            sx={{ p: 0.25 }}
-                                                                            disableRipple
-                                                                            checkedIcon={<Colors checked colorsData={colorsData} />}
-                                                                            icon={<Colors colorsData={colorsData} />}
-                                                                        />
-                                                                    }
-                                                                    label=""
-                                                                />
-                                                            );
-                                                        })}
-                                                </RadioGroup>
-                                                {errors.color && (
-                                                    <FormHelperText error id="standard-label-color">
-                                                        {errors.color}
-                                                    </FormHelperText>
-                                                )}
+                                                <Button onClick={() => setValueSku(product?.skus[0]?.skuID)}>Skus</Button>
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>

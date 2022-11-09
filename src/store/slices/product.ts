@@ -16,6 +16,7 @@ const initialState: DefaultRootStateProps['product'] = {
     products: [],
     product: null,
     relatedProducts: [],
+    skus: [],
     reviews: [],
     addresses: []
 };
@@ -40,7 +41,6 @@ const slice = createSlice({
                 salePrice: 1300
             }));
 
-            console.log(products);
             state.products = products;
         },
 
@@ -64,7 +64,10 @@ const slice = createSlice({
             console.log(productOneProd); */
             state.product = action.payload;
         },
-
+        // GET SKUS
+        getSkuSuccess(state, action) {
+            state.skus = action.payload;
+        },
         // GET RELATED PRODUCTS
         getRelatedProductsSuccess(state, action) {
             state.relatedProducts = action.payload;
@@ -98,7 +101,7 @@ export default slice.reducer;
 // ----------------------------------------------------------------------
 
 const token =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzUxMTI1NiwiZXhwIjoxNjY3NTE3MjU2fQ.0MXolssAitkH4d8HipiPT-WZPQXn4mVtKj_3N7DBuAIm9OivLBuvoWnyOGLw7MqTtviqbmLZwDsIMReFqBQ7_g';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2ODAxMTk2MSwiZXhwIjoxNjY4MDE3OTYxfQ.UM0YqU7sfSmaZurUC1DzmrkQIc4VHnDUmSGxObD7mteWulleamjzqbATGbgOfWWziXVrhAmyunBSdEHEDOOSuA';
 export function getProducts() {
     return async () => {
         try {
@@ -133,16 +136,36 @@ export function filterProducts(filter: ProductsFilter) {
 export function getProduct(id: string | undefined) {
     return async () => {
         try {
-            const response = await axios.get('http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/product', {
+            const response = await axios.get('http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/search', {
                 params: {
                     idMerchant: 1,
-                    idProd: id
+                    idProd: id,
+                    page: 0
                 },
                 headers: {
                     authorization: `Bearer ${token}`
                 }
             });
-            dispatch(slice.actions.getProductSuccess(response.data.response));
+            dispatch(slice.actions.getProductSuccess(response.data.response[0]));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function getSku(id: string | undefined) {
+    return async () => {
+        try {
+            const response = await axios.get('http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/sku', {
+                params: {
+                    idMerchant: 1,
+                    idSKU: id
+                },
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
+            dispatch(slice.actions.getSkuSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
