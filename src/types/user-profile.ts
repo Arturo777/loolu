@@ -54,11 +54,24 @@ export type UserType = {
     profile: ProfileType;
     employeNumber: number;
     avatar: string;
+    provider: ProviderType;
+    idApprovalProfile: number | string | null;
+    pass: string;
 };
 
 export type ProfileType = {
-    id: number;
+    id: number | string;
     type: string;
+};
+
+export type ProviderType = {
+    idProvider: number | string;
+    name: string;
+};
+
+export type ApprovalProfileType = {
+    profileName: string;
+    idProfile: number;
 };
 
 export type PostImage = {
