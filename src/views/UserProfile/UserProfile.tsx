@@ -7,18 +7,20 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import { FormEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'store';
 import { getApprovalProfiles, getProfiles, getProviders, getUserInfo, updateUserInfo } from 'store/slices/user';
 import Loader from 'ui-component/Loader';
 import { UserType } from 'types/user-profile';
 import { Box } from '@mui/system';
+import { openSnackbar } from 'store/slices/snackbar';
 
 const UserProfile = () => {
     const { userId } = useParams();
     const dispatch = useDispatch();
     const { currentUser, loading, loadingEditInfo, profiles, providers, approvalProfiles, fetching } = useSelector((state) => state.user);
     const [user, setUser] = useState<UserType | undefined>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setUser(currentUser);
@@ -52,7 +54,20 @@ const UserProfile = () => {
             provider: { idProvider: user?.provider?.idProvider ?? '' }
         };
 
-        dispatch(updateUserInfo(dataSend));
+        dispatch(updateUserInfo(dataSend)).then(() => {
+            dispatch(
+                openSnackbar({
+                    open: true,
+                    message: 'Usuario actualizado correctamente',
+                    variant: 'alert',
+                    alert: {
+                        color: 'success'
+                    },
+                    close: false
+                })
+            );
+            navigate('/users');
+        });
     };
 
     const handleSelectChange = (e: SelectChangeEvent) => {
