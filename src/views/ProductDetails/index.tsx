@@ -75,7 +75,7 @@ const ProductDetails = () => {
                     {product && product?.productID.toString() === id && (
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
-                                <ProductImages skus={skus} />
+                                <ProductImages skus={skus} product={product} />
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <ProductInfo product={product} setValueSku={setValueSku} />

@@ -101,7 +101,7 @@ export default slice.reducer;
 // ----------------------------------------------------------------------
 
 const token =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2ODAxMTk2MSwiZXhwIjoxNjY4MDE3OTYxfQ.UM0YqU7sfSmaZurUC1DzmrkQIc4VHnDUmSGxObD7mteWulleamjzqbATGbgOfWWziXVrhAmyunBSdEHEDOOSuA';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2ODEyMjkyMywiZXhwIjoxNjY4MTI4OTIzfQ.t-ytW2p4oNmcUwX6dUNikGSXDsiuCG3DX_sWk_bBstpJ8kasBhiJHsYdaRXI5T6rzE9kBKOoeFA2q5lY1qhACA';
 export function getProducts() {
     return async () => {
         try {
@@ -146,7 +146,30 @@ export function getProduct(id: string | undefined) {
                     authorization: `Bearer ${token}`
                 }
             });
-            dispatch(slice.actions.getProductSuccess(response.data.response[0]));
+            const responseSkus = await Promise.all(
+                response?.data?.response[0]?.skus.map(async (sku: any) => {
+                    try {
+                        const skuResp = await axios.get(
+                            'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/sku',
+                            {
+                                params: {
+                                    idMerchant: 1,
+                                    idSKU: sku?.skuID?.toString()
+                                },
+                                headers: {
+                                    authorization: `Bearer ${token}`
+                                }
+                            }
+                        );
+                        return skuResp?.data?.response;
+                    } catch (error) {
+                        console.error(error);
+                        return {};
+                    }
+                })
+            );
+            const resProdSkus = { ...response?.data?.response[0], skus: responseSkus };
+            dispatch(slice.actions.getProductSuccess(resProdSkus));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
@@ -165,6 +188,7 @@ export function getSku(id: string | undefined) {
                     authorization: `Bearer ${token}`
                 }
             });
+            console.log(response);
             dispatch(slice.actions.getSkuSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));

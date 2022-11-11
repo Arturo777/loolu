@@ -1,4 +1,4 @@
-import { Key, useState } from 'react';
+import { Key, useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -24,21 +24,27 @@ import prod6 from 'assets/images/e-commerce/prod-6.jpg';
 import prod7 from 'assets/images/e-commerce/prod-7.jpg';
 import prod8 from 'assets/images/e-commerce/prod-8.jpg';
 import useConfig from 'hooks/useConfig';
+import './style.css';
 
 const prodImage = require.context('assets/images/e-commerce', true);
 
 // ==============================|| PRODUCT DETAILS - IMAGES ||============================== //
 
-const ProductImages = ({ skus }: { skus: any }) => {
+const ProductImages = ({ skus, product }: { skus: any; product: any }) => {
     const imgprod = skus;
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const products = [prod1, prod2, prod3, prod4, prod5, prod6, prod7, prod8];
 
     const matchDownLG = useMediaQuery(theme.breakpoints.up('lg'));
-    /* const initialImage = imgprod?.sku?.images[0]?.ImageURL; */
-
-    const [selected, setSelected] = useState(imgprod?.sku?.images[0]?.ImageURL);
+    /* const initialImage = imgprod.sku.images[0].ImageURL || product?.skus[0]?.sku?.images[0].ImageURL; */
+    const [selected, setSelected] = useState(product?.skus[0]?.sku?.images[0]?.ImageURL);
+    useEffect(() => {
+        const actualizarImg = () => {
+            setSelected(imgprod?.sku?.images[0]?.ImageURL || product?.skus[0]?.sku?.images[0]?.ImageURL);
+        };
+        actualizarImg();
+    }, [imgprod]);
 
     const [modal, setModal] = useState(false);
 
@@ -52,7 +58,7 @@ const ProductImages = ({ skus }: { skus: any }) => {
         swipeToSlide: true,
         focusOnSelect: true,
         centerPadding: '0px',
-        slidesToShow: products.length > 3 ? lgNo : products.length,
+        slidesToShow: imgprod?.sku?.images.length || product?.skus[0]?.sku?.images?.length,
         style: { display: 'flex', flexDirection: 'row' }
     };
 
@@ -71,18 +77,31 @@ const ProductImages = ({ skus }: { skus: any }) => {
                 </Grid>
                 <Grid item xs={11} sm={7} md={9} lg={10} xl={8}>
                     <Slider {...settings}>
-                        {imgprod?.sku?.images?.map((item: any, index: Key | null | undefined) => (
-                            <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
-                                <Avatar
-                                    outline={selected === item}
-                                    size={matchDownLG ? 'lg' : 'md'}
-                                    color="primary"
-                                    src={item?.ImageURL}
-                                    variant="rounded"
-                                    sx={{ m: '0 auto', cursor: 'pointer' }}
-                                />
-                            </Box>
-                        ))}
+                        {(imgprod?.sku.length &&
+                            imgprod?.sku?.images?.map((item: any, index: Key | null | undefined) => (
+                                <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
+                                    <Avatar
+                                        outline={selected === item}
+                                        size={matchDownLG ? 'lg' : 'md'}
+                                        color="primary"
+                                        src={item?.ImageURL}
+                                        variant="rounded"
+                                        sx={{ m: '0 auto', cursor: 'pointer' }}
+                                    />
+                                </Box>
+                            ))) ||
+                            product?.skus[0]?.sku?.images?.map((item: any, index: Key | null | undefined) => (
+                                <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
+                                    <Avatar
+                                        outline={selected === item}
+                                        size={matchDownLG ? 'lg' : 'md'}
+                                        color="primary"
+                                        src={item?.ImageURL}
+                                        variant="rounded"
+                                        sx={{ m: '0 auto', cursor: 'pointer' }}
+                                    />
+                                </Box>
+                            ))}
                     </Slider>
                 </Grid>
             </Grid>
