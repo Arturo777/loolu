@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Button, Grid, InputAdornment, Menu, MenuItem, OutlinedInput, Pagination, Typography } from '@mui/material';
 
 // project imports
-import UserList from './UserList';
+import ProfilesList from './ProfilesList';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
+
+// third-party
+import { FormattedMessage, useIntl } from 'react-intl';
 
 // assets
 import { IconSearch } from '@tabler/icons';
@@ -16,8 +19,10 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
 const ListStylePage1 = () => {
+    const intl = useIntl();
     const theme = useTheme();
-    const [anchorEl, setAnchorEl] = React.useState<Element | ((element: Element) => Element) | null | undefined>(null);
+    const [filterText, setFilterText] = useState<string>('');
+    const [anchorEl, setAnchorEl] = useState<Element | ((element: Element) => Element) | null | undefined>(null);
     const handleClick = (event: React.MouseEvent) => {
         setAnchorEl(event.currentTarget);
     };
@@ -25,68 +30,42 @@ const ListStylePage1 = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleSearch = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
+        const newString = event?.target.value;
+        setFilterText(newString ?? '');
+    };
+
     return (
         <MainCard
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
-                        <Typography variant="h3">Perfiles</Typography>
+                        <Typography variant="h3">
+                            <FormattedMessage id="profiles" />
+                        </Typography>
                     </Grid>
                     <Grid item>
                         <OutlinedInput
                             id="input-search-list-style1"
-                            placeholder="Search"
+                            placeholder={intl.formatMessage({
+                                id: 'search'
+                            })}
                             startAdornment={
                                 <InputAdornment position="start">
                                     <IconSearch stroke={1.5} size="16px" />
                                 </InputAdornment>
                             }
                             size="small"
+                            value={filterText}
+                            onChange={handleSearch}
                         />
                     </Grid>
                 </Grid>
             }
             content={false}
         >
-            <UserList />
-            <Grid item xs={12} sx={{ p: 3 }}>
-                <Grid container justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
-                        <Pagination count={10} color="primary" />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            size="large"
-                            sx={{ color: theme.palette.grey[900] }}
-                            color="secondary"
-                            endIcon={<ExpandMoreRoundedIcon />}
-                            onClick={handleClick}
-                        >
-                            10 Rows
-                        </Button>
-                        <Menu
-                            id="menu-user-list-style1"
-                            anchorEl={anchorEl}
-                            keepMounted
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            variant="selectedMenu"
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right'
-                            }}
-                            transformOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right'
-                            }}
-                        >
-                            <MenuItem onClick={handleClose}> 10 Rows</MenuItem>
-                            <MenuItem onClick={handleClose}> 20 Rows</MenuItem>
-                            <MenuItem onClick={handleClose}> 30 Rows </MenuItem>
-                        </Menu>
-                    </Grid>
-                </Grid>
-            </Grid>
+            <ProfilesList filterText={filterText} />
         </MainCard>
     );
 };

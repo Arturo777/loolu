@@ -6,11 +6,10 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProductList from 'views/Products';
 
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 // users
 const UsersList = Loadable(lazy(() => import('views/Users')));
 const UserProfile = Loadable(lazy(() => import('views/UserProfile')));
+
 // profiles
 const ProfilesList = Loadable(lazy(() => import('views/Profiles')));
 
@@ -26,11 +25,7 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <SamplePage />
-        },
-        {
-            path: '/sample-page',
-            element: <SamplePage />
+            element: <ProductList />
         },
         {
             path: '/products',

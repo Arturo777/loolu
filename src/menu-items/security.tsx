@@ -2,16 +2,12 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconBrandChrome, IconHelp, IconSitemap, IconPackage, IconUsers, IconAffiliate } from '@tabler/icons';
+import { IconSitemap, IconUsers } from '@tabler/icons';
 
 // constant
 const icons = {
-    IconBrandChrome,
-    IconHelp,
     IconSitemap,
-    IconPackage,
-    IconUsers,
-    IconAffiliate
+    IconUsers
 };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
@@ -35,7 +31,7 @@ const security = {
             title: <FormattedMessage id="profiles" />,
             type: 'item',
             url: '/profiles',
-            icon: icons.IconAffiliate,
+            icon: icons.IconSitemap,
             external: false,
             breadcrumbs: false
         }

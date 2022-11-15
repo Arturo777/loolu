@@ -61,8 +61,9 @@ export type UserType = {
 
 export type ProfileType = {
     id: number | string;
+    description: string;
     type: string;
-    status?: boolean;
+    idStatus?: boolean;
     menuDetails: MenuDetailsType[];
 };
 
