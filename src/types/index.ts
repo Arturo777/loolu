@@ -17,7 +17,7 @@ import { ProductStateProps } from './e-commerce';
 import { ChatStateProps } from './chat';
 import { CalendarStateProps } from './calendar';
 import { MailStateProps } from './mail';
-import { AuthStateProps, UserStateProps } from './user';
+import { AuthStateProps, ProfileStateProps, UserStateProps } from './user';
 
 import { SnackbarProps } from './snackbar';
 
@@ -123,6 +123,7 @@ export interface DefaultRootStateProps {
     mail: MailStateProps;
     user: UserStateProps;
     auth: AuthStateProps;
+    profile: ProfileStateProps;
 }
 
 export interface ColorProps {

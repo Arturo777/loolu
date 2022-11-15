@@ -24,7 +24,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const FloatingCart = () => {
     const theme = useTheme();
-    const cart = useSelector((state: DefaultRootStateProps) => state.cart);
+    const cart = useSelector((state) => state.cart);
     const totalQuantity = sum(cart.checkout.products.map((item: CartProductStateProps) => item.quantity));
 
     return (

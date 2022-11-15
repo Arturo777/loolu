@@ -66,3 +66,10 @@ export type AuthStateProps = {
     userName?: string;
     error: object | string | null;
 };
+
+export type ProfileStateProps = {
+    error: object | string | null;
+    loading: boolean;
+    fetching: boolean;
+    profiles: ProfileType[];
+};
