@@ -27,10 +27,6 @@ const UserList = ({ filterText }: UserListProps) => {
     const [filteredProfiles, setFilteredProfiles] = useState<ProfileType[]>([]);
     const { profiles } = useSelector((state) => state.user);
 
-    // useEffect(() => {
-    //     setData(profiles);
-    // }, [profiles, filterText]);
-
     useEffect(() => {
         dispatch(getProfiles());
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +73,7 @@ const UserList = ({ filterText }: UserListProps) => {
                                         <Typography variant="h6">{item.type}</Typography>
                                     </Box>
                                     <Chip
-                                        label={item.idStatus ? 'Activo' : 'Inactivo'}
+                                        label={<FormattedMessage id={item.idStatus ? 'active' : 'inactive'} />}
                                         size="small"
                                         color={item.idStatus ? 'success' : 'error'}
                                     />

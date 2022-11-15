@@ -153,5 +153,7 @@
     "type": "Type",
     "description": "Descrption",
     "status": "Status",
-    "persmissions": "Persmissions"
+    "persmissions": "Persmissions",
+    "active": "Active",
+    "inactive": "Inactive"
 }

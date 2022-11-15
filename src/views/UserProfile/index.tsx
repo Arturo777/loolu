@@ -7,7 +7,7 @@ import MainCard from 'ui-component/cards/MainCard';
 
 // ==============================|| PROFILE 3 ||============================== //
 
-const Profile3 = () => (
+const UserProfile = () => (
     <MainCard title="Perfil de usuario">
         <div>
             <Profile />
@@ -15,4 +15,4 @@ const Profile3 = () => (
     </MainCard>
 );
 
-export default Profile3;
+export default UserProfile;

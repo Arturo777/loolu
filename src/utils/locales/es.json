@@ -154,5 +154,7 @@
     "type": "Tipo",
     "description": "Descripción",
     "status": "Estatus",
-    "persmissions": "Accesos"
+    "persmissions": "Accesos",
+    "active": "Activo",
+    "inactive": "Inactivo"
 }
