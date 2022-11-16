@@ -4,10 +4,12 @@ import { createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'axios';
 import { dispatch } from '../index';
+import { STYRK_API, STYRK_TOKEN } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
 import { ProductsFilter, Address } from 'types/e-commerce';
+import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +20,8 @@ const initialState: DefaultRootStateProps['product'] = {
     relatedProducts: [],
     skus: [],
     reviews: [],
-    addresses: []
+    addresses: [],
+    loadingProducts: true
 };
 
 const slice = createSlice({
@@ -30,9 +33,13 @@ const slice = createSlice({
             state.error = action.payload;
         },
 
+        getProductsPending(state) {
+            state.loadingProducts = true;
+        },
+
         // GET PRODUCTS
         getProductsSuccess(state, action) {
-            const products = action.payload.map((item: ProductItem) => ({
+            const products = action.payload.map((item: ProductCardProps) => ({
                 ...item,
                 date: item.releaseDate,
                 image: item.imageUrl,
@@ -42,6 +49,7 @@ const slice = createSlice({
             }));
 
             state.products = products;
+            state.loadingProducts = false;
         },
 
         // FILTER PRODUCTS
@@ -98,21 +106,47 @@ const slice = createSlice({
 // Reducer
 export default slice.reducer;
 
+export interface SearchProductType {
+    idMerchant?: number;
+    page?: number;
+    productName?: string;
+    ean?: string;
+    idSKU?: number;
+    productRefID?: number;
+    idProd?: number;
+    idApprovalStatus?: number;
+}
+
 // ----------------------------------------------------------------------
 
 const token =
     'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2ODAxMTk2MSwiZXhwIjoxNjY4MDE3OTYxfQ.UM0YqU7sfSmaZurUC1DzmrkQIc4VHnDUmSGxObD7mteWulleamjzqbATGbgOfWWziXVrhAmyunBSdEHEDOOSuA';
-export function getProducts() {
+
+export function getProducts(searchParams: SearchProductType) {
     return async () => {
+        dispatch(slice.actions.getProductsPending());
+
+        const hasParams = Boolean(
+            searchParams.productName ||
+                searchParams.ean ||
+                searchParams.idSKU ||
+                searchParams.productRefID ||
+                searchParams.idProd ||
+                searchParams.idApprovalStatus
+        );
+
         try {
-            const response = await axios.get(`http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/search`, {
-                // baseURL: process.env.API_URL,
+            const response = await axios.get(`styrk/api/product/search`, {
+                baseURL: STYRK_API,
                 params: {
-                    idMerchant: 1,
-                    page: 1
+                    idMerchant: searchParams.idMerchant || 1,
+                    page: searchParams.page || hasParams ? 0 : 1,
+                    productName: searchParams.productName || null,
+                    idSKU: searchParams.idSKU,
+                    idProd: searchParams.idProd
                 },
                 headers: {
-                    authorization: `Bearer ${token}`
+                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getProductsSuccess(response.data.response));
@@ -225,18 +259,4 @@ export function editAddress(address: Address) {
             dispatch(slice.actions.hasError(error));
         }
     };
-}
-
-interface ProductItem {
-    imageUrl: string | null;
-    skus: productSku[];
-    releaseDate: string;
-    skuName: string;
-    brandId: number;
-    productID: number;
-    productName: string;
-}
-
-interface productSku {
-    name: string | null;
 }

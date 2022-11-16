@@ -3,7 +3,7 @@ import React, { FunctionComponent, ReactElement } from 'react';
 // material-ui
 import { Theme } from '@mui/material/styles';
 import '@mui/styles';
-import { SvgIconTypeMap, SnackbarOrigin, ChipProps, TableCellProps } from '@mui/material';
+import { SvgIconTypeMap, ChipProps, TableCellProps } from '@mui/material';
 
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 
@@ -17,7 +17,7 @@ import { ProductStateProps } from './e-commerce';
 import { ChatStateProps } from './chat';
 import { CalendarStateProps } from './calendar';
 import { MailStateProps } from './mail';
-import { UserStateProps } from './user';
+import { AuthStateProps, UserStateProps } from './user';
 
 import { SnackbarProps } from './snackbar';
 
@@ -122,6 +122,7 @@ export interface DefaultRootStateProps {
     calendar: CalendarStateProps;
     mail: MailStateProps;
     user: UserStateProps;
+    auth: AuthStateProps;
 }
 
 export interface ColorProps {

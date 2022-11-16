@@ -42,6 +42,38 @@ export type Profile = {
     time: string;
 };
 
+export type UserType = {
+    id: number;
+    email: string;
+    name: string;
+    phoneNumber: string | number;
+    firstName: string;
+    lastName: string;
+    status: number;
+    user: string;
+    profile: ProfileType;
+    employeNumber: number;
+    avatar: string;
+    provider: ProviderType;
+    idApprovalProfile: number | string | null;
+    pass: string;
+};
+
+export type ProfileType = {
+    id: number | string;
+    type: string;
+};
+
+export type ProviderType = {
+    idProvider: number | string;
+    name: string;
+};
+
+export type ApprovalProfileType = {
+    profileName: string;
+    idProfile: number;
+};
+
 export type PostImage = {
     img: string;
     featured?: boolean;

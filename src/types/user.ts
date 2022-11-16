@@ -1,5 +1,5 @@
 import { GenericCardProps } from 'types';
-import { PostDataType, UserProfile, Profile } from 'types/user-profile';
+import { PostDataType, UserProfile, Profile, UserType, ProfileType, ProviderType, ApprovalProfileType } from 'types/user-profile';
 
 export interface FollowerCardProps {
     avatar: string;
@@ -40,6 +40,14 @@ export interface UserStateProps {
     simpleCards: UserSimpleCardProps[];
     profileCards: UserProfileCardProps[];
     error: object | string | null;
+    loading: boolean;
+    usersList: UserType[];
+    currentUser?: UserType;
+    loadingEditInfo: boolean;
+    profiles: ProfileType[];
+    providers: ProviderType[];
+    approvalProfiles: ApprovalProfileType[];
+    fetching: boolean;
 }
 
 export type UserProfileStyle2 = {
@@ -52,4 +60,9 @@ export type UserProfileStyle2 = {
     phone: string;
     location: string;
     progressValue: string;
+};
+
+export type AuthStateProps = {
+    userName?: string;
+    error: object | string | null;
 };
