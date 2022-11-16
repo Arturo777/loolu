@@ -251,9 +251,11 @@ const ProductInfo = ({ product, setValueSku }: { product: Products; setValueSku:
                                                     </Typography>
                                                 </Typography>
                                             </TableCell>
-                                            <TableCell align="left">
-                                                <Button onClick={() => setValueSku(product?.skus[0]?.skuID)}>Skus</Button>
-                                            </TableCell>
+                                            {product?.skus.map((sku: any, index: Key | null | undefined) => (
+                                                <TableCell align="left" key={index}>
+                                                    <Button onClick={() => setValueSku(sku?.sku?.skuID)}>{sku?.sku?.skuID}</Button>
+                                                </TableCell>
+                                            ))}
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>

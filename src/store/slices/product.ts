@@ -180,7 +180,30 @@ export function getProduct(id: string | undefined) {
                     authorization: `Bearer ${token}`
                 }
             });
-            dispatch(slice.actions.getProductSuccess(response.data.response[0]));
+            const responseSkus = await Promise.all(
+                response?.data?.response[0]?.skus.map(async (sku: any) => {
+                    try {
+                        const skuResp = await axios.get(
+                            'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/sku',
+                            {
+                                params: {
+                                    idMerchant: 1,
+                                    idSKU: sku?.skuID?.toString()
+                                },
+                                headers: {
+                                    authorization: `Bearer ${token}`
+                                }
+                            }
+                        );
+                        return skuResp?.data?.response;
+                    } catch (error) {
+                        console.error(error);
+                        return {};
+                    }
+                })
+            );
+            const resProdSkus = { ...response?.data?.response[0], skus: responseSkus };
+            dispatch(slice.actions.getProductSuccess(resProdSkus));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
@@ -199,6 +222,7 @@ export function getSku(id: string | undefined) {
                     authorization: `Bearer ${token}`
                 }
             });
+            console.log(response);
             dispatch(slice.actions.getSkuSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
