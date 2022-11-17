@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 
 // project imports
 import { gridSpacing } from 'store/constant';
-import { MenuDetailsType } from 'types/user-profile';
+import { MenuDetailsType, ProfileType } from 'types/user-profile';
 import { getMenuPermissions } from 'store/slices/user';
 import { useSelector } from 'store';
 import { NewProfileType } from 'types/user';
@@ -30,9 +30,10 @@ const newProfileDefault: NewProfieState = {
 type ProfileFormProps = {
     handleSaveClick: (data: NewProfileType) => void;
     fetching: boolean;
+    defaultData?: ProfileType;
 };
 
-export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormProps) {
+export default function ProfileForm({ handleSaveClick, fetching, defaultData }: ProfileFormProps) {
     const intl = useIntl();
     const dispatch = useDispatch();
     const { menuOptions } = useSelector((state) => state.user);
@@ -42,6 +43,19 @@ export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormPr
     useEffect(() => {
         dispatch(getMenuPermissions());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (defaultData) {
+            const newInfo = {
+                ...newData,
+                type: defaultData.type,
+                description: defaultData.description
+            };
+
+            setNewData(newInfo);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [defaultData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -98,6 +112,7 @@ export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormPr
             <Grid container spacing={gridSpacing}>
                 <Grid item xs={12} sm={6} md={3} lg={4} xl={2}>
                     <TextField
+                        value={newData.type}
                         fullWidth
                         label={intl.formatMessage({
                             id: 'type'
@@ -116,6 +131,7 @@ export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormPr
                         name="description"
                         onChange={handleChange}
                         required
+                        value={newData.description}
                     />
                 </Grid>
 
@@ -137,7 +153,11 @@ export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormPr
                         {menuOptions &&
                             menuOptions.map((item, i) => (
                                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={`checkgroup-${i}`}>
-                                    <CheckLabelGroup itemMenu={item} defaultSelected={[]} onChange={handleCheckbox} />
+                                    <CheckLabelGroup
+                                        itemMenu={item}
+                                        defaultSelected={defaultData?.menuDetails!}
+                                        onChange={handleCheckbox}
+                                    />
                                 </Grid>
                             ))}
                     </Grid>
@@ -161,7 +181,7 @@ export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormPr
 
 type CheckLabelGroupProps = {
     itemMenu: MenuDetailsType;
-    defaultSelected: any[];
+    defaultSelected: MenuDetailsType[];
     onChange: (checkedList: CheckListState[]) => void;
 };
 
@@ -171,18 +191,21 @@ type CheckListState = {
     checked: boolean;
 };
 
-const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange }: CheckLabelGroupProps) => {
+const CheckLabelGroup = ({ itemMenu, defaultSelected = [], onChange }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
 
     useEffect(() => {
+        const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
+        const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];
+
         const newCheckList = itemMenu?.children.map((item) => ({
             id: item.id,
             name: item.type,
-            checked: false
+            checked: defaultChildren.some((itemA) => itemA.id === item.id)
         }));
 
         setCheckedList(newCheckList);
-    }, [itemMenu]);
+    }, [itemMenu, defaultSelected]);
 
     const isChecked = (id: number) => checkedList.find((itemList) => itemList.id === id)?.checked;
 
