@@ -68,14 +68,14 @@ export type ProfileType = {
 };
 
 export type MenuDetailsType = {
-    id: string | number;
+    id: number;
     type: string;
     description: string;
     children: MenuDetailsChild[];
 };
 
 export type MenuDetailsChild = {
-    id: string | number;
+    id: number;
     type: string;
     url: string;
 };

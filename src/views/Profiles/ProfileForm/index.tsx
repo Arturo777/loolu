@@ -1,41 +1,247 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 
-// mui imports
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+// material-ui
+import { Grid, TextField, Divider, Button, FormControlLabel, Checkbox, Box, Typography, Collapse, Stack } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+
+// third imports
+import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
-import ProfileForm from './form';
-import { FormattedMessage } from 'react-intl';
+import { gridSpacing } from 'store/constant';
+import { MenuDetailsType } from 'types/user-profile';
+import { getMenuPermissions } from 'store/slices/user';
+import { useSelector } from 'store';
+import { NewProfileType } from 'types/user';
 
-const ProfileFormView = () => {
-    const [profileStatus, setProfileStatus] = useState<boolean>(true);
+type NewProfieState = {
+    type: string;
+    description: string;
+    menus: number[];
+};
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setProfileStatus(event.target.checked);
+const newProfileDefault: NewProfieState = {
+    type: '',
+    description: '',
+    menus: []
+};
+
+type ProfileFormProps = {
+    handleSaveClick: (data: NewProfileType) => void;
+    fetching: boolean;
+};
+
+export default function ProfileForm({ handleSaveClick, fetching }: ProfileFormProps) {
+    const intl = useIntl();
+    const dispatch = useDispatch();
+    const { menuOptions } = useSelector((state) => state.user);
+    const [newData, setNewData] = useState<NewProfieState>(newProfileDefault);
+    const [hasError, setHasError] = useState<string>('');
+
+    useEffect(() => {
+        dispatch(getMenuPermissions());
+    }, [dispatch]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        setNewData({ ...newData, [name]: value });
+    };
+
+    const handleCheckbox = (checkList: CheckListState[]) => {
+        let currentMenus = [...newData.menus];
+
+        checkList.forEach((item: CheckListState) => {
+            const exist = currentMenus.some((itemIdA) => itemIdA === item.id);
+
+            if (item.checked) {
+                // ADD
+                // EXIST
+                if (!exist) {
+                    currentMenus = [...currentMenus, item.id];
+                }
+            } else {
+                // DELETE
+                // eslint-disable-next-line no-lonely-if
+                if (exist) {
+                    currentMenus = currentMenus.filter((itemIdA) => itemIdA !== item.id);
+                }
+            }
+        });
+
+        setNewData({
+            ...newData,
+            menus: currentMenus
+        });
+    };
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setHasError('');
+
+        if (newData.type === '' || newData.description === '' || newData.menus.length === 0) {
+            setHasError('Selecciona una permiso para el perfil');
+            return;
+        }
+
+        const dataToSave = {
+            ...newData,
+            menus: newData.menus.map((item) => `${item}`)
+        };
+
+        handleSaveClick(dataToSave);
     };
 
     return (
-        <MainCard
-            title="Editar perfil"
-            secondary={
-                <FormGroup>
-                    <FormControlLabel
-                        checked={profileStatus}
-                        control={<Switch onChange={handleChange} />}
-                        labelPlacement="start"
-                        label={
-                            <b>
-                                <FormattedMessage id={profileStatus ? 'active' : 'inactive'} />
-                            </b>
-                        }
+        <form onSubmit={handleSubmit}>
+            <Grid container spacing={gridSpacing}>
+                <Grid item xs={12} sm={6} md={3} lg={4} xl={2}>
+                    <TextField
+                        fullWidth
+                        label={intl.formatMessage({
+                            id: 'type'
+                        })}
+                        name="type"
+                        onChange={handleChange}
+                        required
                     />
-                </FormGroup>
-            }
-        >
-            <ProfileForm />
-        </MainCard>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} lg={4} xl={2}>
+                    <TextField
+                        fullWidth
+                        label={intl.formatMessage({
+                            id: 'description'
+                        })}
+                        name="description"
+                        onChange={handleChange}
+                        required
+                    />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Stack sx={{ display: 'flex' }}>
+                        <Typography variant="subtitle2" mt={2}>
+                            Accesos
+                        </Typography>
+                        <Collapse in={Boolean(hasError)}>
+                            <Typography mt={1} color="error">
+                                {hasError}
+                            </Typography>
+                        </Collapse>
+                    </Stack>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Grid container>
+                        {menuOptions &&
+                            menuOptions.map((item, i) => (
+                                <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={`checkgroup-${i}`}>
+                                    <CheckLabelGroup itemMenu={item} defaultSelected={[]} onChange={handleCheckbox} />
+                                </Grid>
+                            ))}
+                    </Grid>
+                </Grid>
+
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Divider />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button disabled={fetching} variant="outlined" startIcon={<SaveIcon />} type="submit">
+                            Guardar
+                        </Button>
+                    </Box>
+                </Grid>
+            </Grid>
+        </form>
     );
+}
+
+type CheckLabelGroupProps = {
+    itemMenu: MenuDetailsType;
+    defaultSelected: any[];
+    onChange: (checkedList: CheckListState[]) => void;
 };
 
-export default ProfileFormView;
+type CheckListState = {
+    id: number;
+    name: string;
+    checked: boolean;
+};
+
+const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange }: CheckLabelGroupProps) => {
+    const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
+
+    useEffect(() => {
+        const newCheckList = itemMenu?.children.map((item) => ({
+            id: item.id,
+            name: item.type,
+            checked: false
+        }));
+
+        setCheckedList(newCheckList);
+    }, [itemMenu]);
+
+    const isChecked = (id: number) => checkedList.find((itemList) => itemList.id === id)?.checked;
+
+    const handleChangeChild = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = event.target;
+
+        const newCheckList = checkedList.map((item) => {
+            if (item.id === Number(name)) {
+                return { ...item, checked };
+            }
+            return item;
+        });
+
+        setCheckedList(newCheckList);
+    };
+
+    const handleChangeMain = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newVal = event.target.checked;
+
+        const newCheckList = checkedList.map((item) => ({ ...item, checked: newVal }));
+        setCheckedList(newCheckList);
+    };
+
+    const isAllSelect = () => checkedList.every((item) => item.checked);
+    const hasSelect = () => checkedList.some((item) => item.checked);
+
+    useEffect(() => {
+        const mainCheck: CheckListState = {
+            id: itemMenu.id,
+            name: itemMenu.type,
+            checked: hasSelect()
+        };
+
+        onChange([...checkedList, mainCheck]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [checkedList, itemMenu.id, itemMenu.type]);
+
+    return (
+        <Box>
+            <FormControlLabel
+                label={itemMenu.type}
+                sx={{
+                    '& .MuiFormControlLabel-label': {
+                        fontWeight: 700
+                    }
+                }}
+                control={<Checkbox checked={isAllSelect()} indeterminate={!isAllSelect() && hasSelect()} onChange={handleChangeMain} />}
+            />
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', pl: 2 }}>
+                {checkedList &&
+                    checkedList.map((itemChild) => (
+                        <FormControlLabel
+                            key={`item-check-${itemChild.name}`}
+                            label={itemChild.name}
+                            control={<Checkbox name={`${itemChild.id}`} checked={isChecked(itemChild.id)} onChange={handleChangeChild} />}
+                        />
+                    ))}
+            </Box>
+        </Box>
+    );
+};

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Button, Grid, InputAdornment, Menu, MenuItem, OutlinedInput, Pagination, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 // project imports
 import ProfilesList from './ProfilesList';
@@ -15,6 +16,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 // assets
 import { IconSearch } from '@tabler/icons';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import { Link } from 'react-router-dom';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
@@ -46,6 +48,12 @@ const ListStylePage1 = () => {
                         </Typography>
                     </Grid>
                     <Grid item>
+                        <Button component={Link} to="/profiles/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
+                            {intl.formatMessage({
+                                id: 'create_profile'
+                            })}
+                        </Button>
+
                         <OutlinedInput
                             id="input-search-list-style1"
                             placeholder={intl.formatMessage({

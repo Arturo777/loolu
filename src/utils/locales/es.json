@@ -156,5 +156,8 @@
     "status": "Estatus",
     "persmissions": "Accesos",
     "active": "Activo",
-    "inactive": "Inactivo"
+    "inactive": "Inactivo",
+
+    "create_profile": "Crear Perfil",
+    "edit_profile": "Editar Perfil"
 }

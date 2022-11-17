@@ -12,7 +12,8 @@ const UserProfile = Loadable(lazy(() => import('views/UserProfile')));
 
 // profiles
 const ProfilesList = Loadable(lazy(() => import('views/Profiles/List')));
-const ProfileFormView = Loadable(lazy(() => import('views/Profiles/ProfileForm')));
+const CreateProfile = Loadable(lazy(() => import('views/Profiles/CreateProfile')));
+const EditProfile = Loadable(lazy(() => import('views/Profiles/EditProfile')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -45,8 +46,12 @@ const MainRoutes = {
             element: <ProfilesList />
         },
         {
+            path: '/profiles/create',
+            element: <CreateProfile />
+        },
+        {
             path: '/profiles/:profileId/edit',
-            element: <ProfileFormView />
+            element: <EditProfile />
         }
     ]
 };

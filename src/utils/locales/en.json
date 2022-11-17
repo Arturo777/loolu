@@ -155,5 +155,8 @@
     "status": "Status",
     "persmissions": "Persmissions",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+
+    "create_profile": "Add Profile",
+    "edit_profile": "Edit Profile"
 }

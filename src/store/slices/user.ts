@@ -9,6 +9,7 @@ import { dispatch } from '../index';
 import { DefaultRootStateProps } from 'types';
 import { ProfileType, ProviderType, UserType } from 'types/user-profile';
 import { STYRK_API, STYRK_TOKEN } from 'config';
+import { NewProfileType } from 'types/user';
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +32,8 @@ const initialState: DefaultRootStateProps['user'] = {
     profiles: [],
     providers: [],
     approvalProfiles: [],
-    fetching: false
+    fetching: false,
+    menuOptions: []
 };
 
 const slice = createSlice({
@@ -42,7 +44,9 @@ const slice = createSlice({
         hasError(state, action) {
             state.error = action.payload;
         },
-
+        basicSuccess(state) {
+            state.loading = false;
+        },
         // USERS
 
         getUsersListPending(state) {
@@ -69,7 +73,6 @@ const slice = createSlice({
         },
         getProfilesSuccess(state, action) {
             const profiles: ProfileType[] = action.payload;
-            console.log(profiles);
             state.loadingEditInfo = false;
             state.profiles = profiles;
         },
@@ -83,11 +86,21 @@ const slice = createSlice({
             state.loadingEditInfo = false;
             state.approvalProfiles = action.payload;
         },
+        // profile => create
+        // createProfileServiceSuccess(state, action) {
+        //     state.
+        // },
+        // user info
         updateUserInfoPending(state) {
             state.fetching = true;
         },
         updateUserInfoSuccess(state) {
             state.fetching = false;
+        },
+        // menu => access
+        getMenuPermissionsSuccess(state, action) {
+            state.menuOptions = action.payload;
+            state.loading = false;
         }
     }
 });
@@ -247,7 +260,7 @@ export function updateUserInfo(data: any, idMerchant?: number) {
         dispatch(slice.actions.updateUserInfoPending());
 
         try {
-            const response = await axios.post(`${STYRK_API}/styrk/api/user/save`, data, {
+            await axios.post(`${STYRK_API}/styrk/api/user/save`, data, {
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -256,12 +269,47 @@ export function updateUserInfo(data: any, idMerchant?: number) {
                 }
             });
 
-            console.log(response.data);
-
             dispatch(slice.actions.updateUserInfoSuccess());
         } catch (error) {
-            console.log(error);
             dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function getMenuPermissions(idMerchant?: number) {
+    return async () => {
+        try {
+            const response = await axios.get(`styrk/api/menu/search`, {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: idMerchant || 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+
+            dispatch(slice.actions.getMenuPermissionsSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+
+export function createProfileService(data: NewProfileType, idMerchant?: number) {
+    return async () => {
+        try {
+            return await axios.post(`${STYRK_API}/styrk/api/profile/save`, data, {
+                params: {
+                    idMerchant: idMerchant || 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+            return error;
         }
     };
 }
