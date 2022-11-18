@@ -17,6 +17,7 @@ import kanbanReducer from './slices/kanban';
 import menuReducer from './slices/menu';
 import authReducer from './slices/auth';
 import profilesReducer from './slices/profiles';
+import catalogueReducer from './slices/catalogue';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -40,7 +41,8 @@ const reducer = combineReducers({
     mail: mailReducer,
     user: userReducer,
     menu: menuReducer,
-    profile: profilesReducer
+    profile: profilesReducer,
+    catalogue: catalogueReducer
 });
 
 export default reducer;

@@ -2,11 +2,12 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconPackage } from '@tabler/icons';
+import { IconPackage, IconLayout } from '@tabler/icons';
 
 // constant
 const icons = {
-    IconPackage
+    IconPackage,
+    IconLayout
 };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
@@ -22,6 +23,15 @@ const catalogue = {
             type: 'item',
             url: '/products',
             icon: icons.IconPackage,
+            external: false,
+            breadcrumbs: false
+        },
+        {
+            id: 'brands',
+            title: <FormattedMessage id="brands" />,
+            type: 'item',
+            url: '/brands',
+            icon: icons.IconLayout,
             external: false,
             breadcrumbs: false
         }

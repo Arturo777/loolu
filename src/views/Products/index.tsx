@@ -99,7 +99,7 @@ const ProductsList = () => {
 
     useEffect(() => {
         // hide left drawer when email app opens
-        dispatch(openDrawer(false));
+        // dispatch(openDrawer(false));
 
         // clear cart if complete order
         if (cart.checkout.step > 2) {

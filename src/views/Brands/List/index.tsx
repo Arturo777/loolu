@@ -5,7 +5,7 @@ import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/ma
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
-import ProfilesList from './ProfilesList';
+import BrandsList from './BrandsList';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 
@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
-const ListStylePage1 = () => {
+const BransListPage = () => {
     const intl = useIntl();
     const [filterText, setFilterText] = useState<string>('');
 
@@ -33,13 +33,13 @@ const ListStylePage1 = () => {
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
                         <Typography variant="h3">
-                            <FormattedMessage id="profiles" />
+                            <FormattedMessage id="brands" />
                         </Typography>
                     </Grid>
                     <Grid item>
                         <Button component={Link} to="/profiles/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
                             {intl.formatMessage({
-                                id: 'create_profile'
+                                id: 'create_brand'
                             })}
                         </Button>
 
@@ -62,9 +62,9 @@ const ListStylePage1 = () => {
             }
             content={false}
         >
-            <ProfilesList filterText={filterText} />
+            <BrandsList filterText={filterText} />
         </MainCard>
     );
 };
 
-export default ListStylePage1;
+export default BransListPage;

@@ -13,7 +13,7 @@ import ProfileForm from '../ProfileForm';
 
 import { NewProfileType } from 'types/user';
 
-import { getProfiles } from 'store/slices/user';
+import { getProfiles, updateProfileService } from 'store/slices/user';
 import { useSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import { ProfileType } from 'types/user-profile';
@@ -51,6 +51,10 @@ const ProfileFormView = () => {
 
     const handleSave = (data: NewProfileType) => {
         console.log(data);
+
+        if (profileId) {
+            dispatch(updateProfileService({ ...data, id: profileId }));
+        }
     };
 
     if (!profileData) return <Loader />;

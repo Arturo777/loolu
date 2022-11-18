@@ -158,5 +158,9 @@
     "inactive": "Inactive",
 
     "create_profile": "Add Profile",
-    "edit_profile": "Edit Profile"
+    "edit_profile": "Edit Profile",
+
+    "brands": "Brands",
+    "create_brand": "Create brand",
+    "edit_brand": "Edit brand"
 }
