@@ -78,7 +78,7 @@ const ProductDetails = () => {
                                 <ProductImages skus={skus} product={product} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <ProductInfo product={product} setValueSku={setValueSku} />
+                                <ProductInfo product={product} setValueSku={setValueSku} valueSku={valueSku} />
                             </Grid>
                             <Grid item xs={12}>
                                 <Tabs

@@ -119,9 +119,6 @@ export interface SearchProductType {
 
 // ----------------------------------------------------------------------
 
-const token =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2ODAxMTk2MSwiZXhwIjoxNjY4MDE3OTYxfQ.UM0YqU7sfSmaZurUC1DzmrkQIc4VHnDUmSGxObD7mteWulleamjzqbATGbgOfWWziXVrhAmyunBSdEHEDOOSuA';
-
 export function getProducts(searchParams: SearchProductType) {
     return async () => {
         dispatch(slice.actions.getProductsPending());
@@ -170,31 +167,30 @@ export function filterProducts(filter: ProductsFilter) {
 export function getProduct(id: string | undefined) {
     return async () => {
         try {
-            const response = await axios.get('http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/search', {
+            const response = await axios.get('styrk/api/product/search', {
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: 1,
                     idProd: id,
                     page: 0
                 },
                 headers: {
-                    authorization: `Bearer ${token}`
+                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             const responseSkus = await Promise.all(
                 response?.data?.response[0]?.skus.map(async (sku: any) => {
                     try {
-                        const skuResp = await axios.get(
-                            'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/sku',
-                            {
-                                params: {
-                                    idMerchant: 1,
-                                    idSKU: sku?.skuID?.toString()
-                                },
-                                headers: {
-                                    authorization: `Bearer ${token}`
-                                }
+                        const skuResp = await axios.get('styrk/api/product/detail/sku', {
+                            baseURL: STYRK_API,
+                            params: {
+                                idMerchant: 1,
+                                idSKU: sku?.skuID?.toString()
+                            },
+                            headers: {
+                                authorization: `Bearer ${STYRK_TOKEN}`
                             }
-                        );
+                        });
                         return skuResp?.data?.response;
                     } catch (error) {
                         console.error(error);
@@ -202,7 +198,7 @@ export function getProduct(id: string | undefined) {
                     }
                 })
             );
-            const resProdSkus = { ...response?.data?.response[0], skus: responseSkus };
+            const resProdSkus = { ...response?.data?.response[0], skusimg: responseSkus };
             dispatch(slice.actions.getProductSuccess(resProdSkus));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
@@ -213,16 +209,16 @@ export function getProduct(id: string | undefined) {
 export function getSku(id: string | undefined) {
     return async () => {
         try {
-            const response = await axios.get('http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093/styrk/api/product/detail/sku', {
+            const response = await axios.get('styrk/api/product/detail/sku', {
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: 1,
                     idSKU: id
                 },
                 headers: {
-                    authorization: `Bearer ${token}`
+                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
-            console.log(response);
             dispatch(slice.actions.getSkuSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));

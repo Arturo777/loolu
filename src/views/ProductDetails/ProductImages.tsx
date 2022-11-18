@@ -38,10 +38,10 @@ const ProductImages = ({ skus, product }: { skus: any; product: any }) => {
 
     const matchDownLG = useMediaQuery(theme.breakpoints.up('lg'));
     /* const initialImage = imgprod.sku.images[0].ImageURL || product?.skus[0]?.sku?.images[0].ImageURL; */
-    const [selected, setSelected] = useState(product?.skus[0]?.sku?.images[0]?.ImageURL);
+    const [selected, setSelected] = useState(product?.skusimg[0]?.sku?.images[0]?.ImageURL);
     useEffect(() => {
         const actualizarImg = () => {
-            setSelected(imgprod?.sku?.images[0]?.ImageURL || product?.skus[0]?.sku?.images[0]?.ImageURL);
+            setSelected(imgprod?.sku?.images[0]?.ImageURL || product?.skusimg[0]?.sku?.images[0]?.ImageURL);
         };
         actualizarImg();
     }, [imgprod]);
@@ -58,7 +58,7 @@ const ProductImages = ({ skus, product }: { skus: any; product: any }) => {
         swipeToSlide: true,
         focusOnSelect: true,
         centerPadding: '0px',
-        slidesToShow: imgprod?.sku?.images.length || product?.skus[0]?.sku?.images?.length,
+        slidesToShow: imgprod?.sku?.images.length || product?.skusimg[0]?.sku?.images?.length,
         style: { display: 'flex', flexDirection: 'row' }
     };
 
@@ -90,7 +90,7 @@ const ProductImages = ({ skus, product }: { skus: any; product: any }) => {
                                     />
                                 </Box>
                             ))) ||
-                            product?.skus[0]?.sku?.images?.map((item: any, index: Key | null | undefined) => (
+                            product?.skusimg[0]?.sku?.images?.map((item: any, index: Key | null | undefined) => (
                                 <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
                                     <Avatar
                                         outline={selected === item}

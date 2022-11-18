@@ -48,6 +48,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { Key } from 'react';
 
+import ProductDimensions from './ProductDimensions';
+
 // product color select
 function getColor(color: string) {
     return ColorOptions.filter((item) => item.value === color);
@@ -115,7 +117,7 @@ const Increment = (props: string | FieldHookConfig<any>) => {
 
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfo = ({ product, setValueSku }: { product: Products; setValueSku: any }) => {
+const ProductInfo = ({ product, setValueSku, valueSku }: { product: Products; setValueSku: any; valueSku: any }) => {
     const dispatch = useDispatch();
     const history = useNavigate();
 
@@ -154,7 +156,9 @@ const ProductInfo = ({ product, setValueSku }: { product: Products; setValueSku:
     });
 
     const { values, errors, handleSubmit, handleChange } = formik;
-
+    const handleRadioChange = (event: { target: { value: any } }) => {
+        setValueSku(event.target.value);
+    };
     const addCart = () => {
         values.color = values.color ? values.color : 'primaryDark';
         values.size = values.size ? values.size : '8';
@@ -251,11 +255,30 @@ const ProductInfo = ({ product, setValueSku }: { product: Products; setValueSku:
                                                     </Typography>
                                                 </Typography>
                                             </TableCell>
-                                            {product?.skus.map((sku: any, index: Key | null | undefined) => (
-                                                <TableCell align="left" key={index}>
-                                                    <Button onClick={() => setValueSku(sku?.sku?.skuID)}>{sku?.sku?.skuID}</Button>
-                                                </TableCell>
-                                            ))}
+                                            <TableCell align="left">
+                                                <RadioGroup
+                                                    row
+                                                    value={valueSku}
+                                                    onChange={handleRadioChange}
+                                                    name="sku"
+                                                    id="sku"
+                                                    sx={{ ml: 1 }}
+                                                >
+                                                    {product?.skus.map((sku: any, index: Key | null | undefined) => (
+                                                        <FormControlLabel
+                                                            key={index}
+                                                            value={sku?.skuID}
+                                                            control={<Radio />}
+                                                            label={sku?.skuID}
+                                                        />
+                                                    ))}
+                                                </RadioGroup>
+                                                {errors.color && (
+                                                    <FormHelperText error id="standard-label-color">
+                                                        {errors.color}
+                                                    </FormHelperText>
+                                                )}
+                                            </TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>
@@ -298,6 +321,15 @@ const ProductInfo = ({ product, setValueSku }: { product: Products; setValueSku:
                                                 )}
                                             </TableCell>
                                         </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="body2">Dimensions</Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <ProductDimensions valueSku={valueSku} product={product} />
+                                            </TableCell>
+                                        </TableRow>
+                                        <br />
                                         <TableRow>
                                             <TableCell>
                                                 <Typography variant="body2">Quantity</Typography>
