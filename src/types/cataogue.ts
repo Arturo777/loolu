@@ -1,4 +1,5 @@
 export type CatalogueStateProps = {
+    error: object | string | null;
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
