@@ -31,9 +31,10 @@ type ProfileFormProps = {
     handleSaveClick: (data: NewProfileType) => void;
     fetching: boolean;
     defaultData?: ProfileType;
+    mode: 'create' | 'edit';
 };
 
-export default function ProfileForm({ handleSaveClick, fetching, defaultData }: ProfileFormProps) {
+export default function ProfileForm({ handleSaveClick, fetching, defaultData, mode }: ProfileFormProps) {
     const intl = useIntl();
     const dispatch = useDispatch();
     const { menuOptions } = useSelector((state) => state.user);
@@ -155,7 +156,7 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
                                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={`checkgroup-${i}`}>
                                     <CheckLabelGroup
                                         itemMenu={item}
-                                        defaultSelected={defaultData?.menuDetails!}
+                                        defaultSelected={mode === 'create' ? null : defaultData?.menuDetails!}
                                         onChange={handleCheckbox}
                                     />
                                 </Grid>
@@ -181,7 +182,7 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
 
 type CheckLabelGroupProps = {
     itemMenu: MenuDetailsType;
-    defaultSelected: MenuDetailsType[];
+    defaultSelected: MenuDetailsType[] | null;
     onChange: (checkedList: CheckListState[]) => void;
 };
 
@@ -191,20 +192,30 @@ type CheckListState = {
     checked: boolean;
 };
 
-const CheckLabelGroup = ({ itemMenu, defaultSelected = [], onChange }: CheckLabelGroupProps) => {
+const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
 
     useEffect(() => {
-        const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
-        const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];
+        if (defaultSelected) {
+            const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
+            const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];
 
-        const newCheckList = itemMenu?.children.map((item) => ({
-            id: item.id,
-            name: item.type,
-            checked: defaultChildren.some((itemA) => itemA.id === item.id)
-        }));
+            const newCheckList = itemMenu?.children.map((item) => ({
+                id: item.id,
+                name: item.type,
+                checked: defaultChildren.some((itemA) => itemA.id === item.id)
+            }));
 
-        setCheckedList(newCheckList);
+            setCheckedList(newCheckList);
+        } else {
+            const newCheckList = itemMenu?.children.map((item) => ({
+                id: item.id,
+                name: item.type,
+                checked: false
+            }));
+
+            setCheckedList(newCheckList);
+        }
     }, [itemMenu, defaultSelected]);
 
     const isChecked = (id: number) => checkedList.find((itemList) => itemList.id === id)?.checked;

@@ -64,7 +64,7 @@ const ProfileFormView = () => {
                 id: 'edit_profile'
             })}
         >
-            <ProfileForm handleSaveClick={handleSave} fetching={isLoading} />
+            <ProfileForm handleSaveClick={handleSave} fetching={isLoading} mode="create" />
         </MainCard>
     );
 };

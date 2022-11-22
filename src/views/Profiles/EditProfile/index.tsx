@@ -79,7 +79,7 @@ const ProfileFormView = () => {
                 </FormGroup>
             }
         >
-            <ProfileForm handleSaveClick={handleSave} fetching={false} defaultData={profileData} />
+            <ProfileForm handleSaveClick={handleSave} fetching={false} defaultData={profileData} mode="edit" />
         </MainCard>
     );
 };
