@@ -5,7 +5,6 @@ import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/ma
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
-import BrandsList from './BrandsList';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 
@@ -15,6 +14,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 // assets
 import { IconSearch } from '@tabler/icons';
 import { Link } from 'react-router-dom';
+import BransList from './BrandsList';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
@@ -62,7 +62,7 @@ const BransListPage = () => {
             }
             content={false}
         >
-            <BrandsList filterText={filterText} />
+            <BransList filterText={filterText} />
         </MainCard>
     );
 };

@@ -142,7 +142,6 @@ const SearchSection = () => {
     const location = useLocation();
     const [value, setValue] = useState('');
     const [searchField, setSearchField] = useState<string>('productName');
-    const [showOptions, setShowOptions] = useState<boolean>(false);
     const [valueIsNumber, setValueIsNumber] = useState<boolean>(true);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -184,7 +183,6 @@ const SearchSection = () => {
     const handleSearch = () => {
         const params = { [searchField]: value };
         // CLOSE
-        setShowOptions(false);
         setAnchorEl(null);
         // REDIRECT
         navigate({ pathname: '/products', search: `?${createSearchParams(params)}` });
@@ -234,13 +232,7 @@ const SearchSection = () => {
                                                                 setValue={setValue}
                                                                 popupState={popupState}
                                                                 handleEnter={handleEnter}
-                                                                handleOptions={(val) => {
-                                                                    if (val !== undefined) {
-                                                                        setShowOptions(val);
-                                                                    } else {
-                                                                        setShowOptions((prevState) => !prevState);
-                                                                    }
-                                                                }}
+                                                                handleOptions={() => {}}
                                                                 cleanSearch={handleCleanSearch}
                                                                 handleOptionsCick={handleButtonOptionsClick}
                                                                 searchProps={{

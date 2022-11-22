@@ -20,7 +20,7 @@ type BransListProps = {
     filterText: string;
 };
 
-const BransList = ({ filterText }: BransListProps) => {
+const BrandsList = ({ filterText }: BransListProps) => {
     const intl = useIntl();
     const [pageSize, setPageSize] = useState<number>(10);
     const dispatch = useDispatch();
@@ -113,4 +113,4 @@ const BransList = ({ filterText }: BransListProps) => {
     );
 };
 
-export default BransList;
+export default BrandsList;
