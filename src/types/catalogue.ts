@@ -14,3 +14,12 @@ export type BrandType = {
     metaTagDescription: string | null;
     idMerchant: number;
 };
+
+export type NewBrandType = {
+    idBrand?: number;
+    name: string;
+    title: string;
+    metaTagDescription: string;
+    imageUrl: string;
+    isActive?: boolean;
+};

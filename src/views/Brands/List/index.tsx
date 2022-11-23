@@ -18,7 +18,7 @@ import BransList from './BrandsList';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
-const BransListPage = () => {
+const BrandsListPage = () => {
     const intl = useIntl();
     const [filterText, setFilterText] = useState<string>('');
 
@@ -37,7 +37,7 @@ const BransListPage = () => {
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <Button component={Link} to="/profiles/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
+                        <Button component={Link} to="/brands/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
                             {intl.formatMessage({
                                 id: 'create_brand'
                             })}
@@ -67,4 +67,4 @@ const BransListPage = () => {
     );
 };
 
-export default BransListPage;
+export default BrandsListPage;

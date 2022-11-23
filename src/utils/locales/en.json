@@ -166,5 +166,8 @@
 
     "name": "Name",
     "image": "Image",
-    "actions": "Actions"
+    "actions": "Actions",
+    "image_url": "Image URL",
+    "metatag_description": "Metatag description"
+    
 }

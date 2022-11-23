@@ -16,7 +16,9 @@ const CreateProfile = Loadable(lazy(() => import('views/Profiles/CreateProfile')
 const EditProfile = Loadable(lazy(() => import('views/Profiles/EditProfile')));
 
 // brands
-const BransListPage = Loadable(lazy(() => import('views/Brands/List')));
+const BrandsListPage = Loadable(lazy(() => import('views/Brands/List')));
+const EditBrandPage = Loadable(lazy(() => import('views/Brands/Edit')));
+const CreateBrandPage = Loadable(lazy(() => import('views/Brands/Create')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -58,7 +60,15 @@ const MainRoutes = {
         },
         {
             path: '/brands',
-            element: <BransListPage />
+            element: <BrandsListPage />
+        },
+        {
+            path: '/brands/:brandId/edit',
+            element: <EditBrandPage />
+        },
+        {
+            path: '/brands/create',
+            element: <CreateBrandPage />
         }
     ]
 };

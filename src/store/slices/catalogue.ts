@@ -7,7 +7,7 @@ import { STYRK_API, STYRK_TOKEN } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType } from 'types/cataogue';
+import { BrandType, NewBrandType } from 'types/catalogue';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
@@ -36,6 +36,13 @@ const slice = createSlice({
                 state.loading = false;
                 state.brands = action.payload.response.map((item: BrandType) => ({ ...item, id: item.idBrand }));
             });
+        builder
+            .addCase(createBrand.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createBrand.fulfilled, (state) => {
+                state.loading = false;
+            });
     }
 });
 
@@ -55,5 +62,43 @@ export const getBrands = createAsyncThunk(`${slice.name}/getBrands`, async (idMe
             }
         }
     );
+    return response.data;
+});
+
+type editBrandParams = {
+    dataBrand: BrandType;
+    idMerchant: number;
+};
+
+export const editBrand = createAsyncThunk(`${slice.name}/editBrand`, async (params: editBrandParams) => {
+    const { dataBrand, idMerchant } = params;
+    const response = await axios.post(`styrk/api/brand/create`, dataBrand, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+type createBrandParams = {
+    dataBrand: NewBrandType;
+    idMerchant?: number;
+};
+
+export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (params: createBrandParams) => {
+    const { dataBrand, idMerchant } = params;
+    const response = await axios.post(`styrk/api/brand/create`, dataBrand, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
     return response.data;
 });

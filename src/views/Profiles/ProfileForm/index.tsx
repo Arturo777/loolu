@@ -4,7 +4,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { Grid, TextField, Divider, Button, FormControlLabel, Checkbox, Box, Typography, Collapse, Stack } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 
-// third imports
+// third-party imports
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 

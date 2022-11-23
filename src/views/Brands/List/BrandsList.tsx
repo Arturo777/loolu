@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 // project imports
-import { BrandType } from 'types/cataogue';
+import { BrandType } from 'types/catalogue';
 import { useDispatch, useSelector } from 'store';
 
 // assets
@@ -76,20 +76,14 @@ const BrandsList = ({ filterText }: BransListProps) => {
             headerName: intl.formatMessage({
                 id: 'image'
             }),
-            width: 150
+            width: 220
         },
         {
             field: 'idBrand',
             headerName: '',
             renderCell: (params) => (
                 <Box>
-                    <Button
-                        component={Link}
-                        to={`brands/${params.row.idBrand}/edit`}
-                        size="small"
-                        startIcon={<EditIcon />}
-                        variant="outlined"
-                    >
+                    <Button component={Link} to={`${params.row.idBrand}/edit`} size="small" startIcon={<EditIcon />} variant="outlined">
                         EDITAR
                     </Button>
                 </Box>
@@ -108,6 +102,7 @@ const BrandsList = ({ filterText }: BransListProps) => {
                 rowsPerPageOptions={[10, 20, 50, 100]}
                 onPageSizeChange={setPageSize}
                 autoHeight
+                disableSelectionOnClick
             />
         </Box>
     );
