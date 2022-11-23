@@ -67,7 +67,7 @@ export const getBrands = createAsyncThunk(`${slice.name}/getBrands`, async (idMe
 
 type editBrandParams = {
     dataBrand: BrandType;
-    idMerchant: number;
+    idMerchant?: number;
 };
 
 export const editBrand = createAsyncThunk(`${slice.name}/editBrand`, async (params: editBrandParams) => {

@@ -17,7 +17,7 @@ import Loader from 'ui-component/Loader';
 import BrandForm from '../BrandForm';
 
 // services
-import { getBrands } from 'store/slices/catalogue';
+import { editBrand, getBrands } from 'store/slices/catalogue';
 
 // types
 import { BrandType, NewBrandType } from 'types/catalogue';
@@ -52,8 +52,16 @@ const EditBrandPage = () => {
         setBrandStatus(event.target.checked);
     };
 
-    const handleSave = (data: NewBrandType) => {
-        console.log(data);
+    const handleSave = async (data: NewBrandType) => {
+        const newData: BrandType = {
+            idBrand: Number(brandId ?? ''),
+            idMerchant: 1,
+            ...data,
+            isActive: brandStatus
+        };
+        await dispatch(editBrand({ dataBrand: newData }));
+
+        navigate('/brands');
     };
 
     if (!brandData) return <Loader />;
@@ -79,7 +87,6 @@ const EditBrandPage = () => {
             }
         >
             <BrandForm initialData={brandData} handleSave={handleSave} />
-            {/* <ProfileForm handleSaveClick={handleSave} fetching={false} defaultData={profileData} mode="edit" /> */}
         </MainCard>
     );
 };

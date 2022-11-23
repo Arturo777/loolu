@@ -4,7 +4,7 @@ import React from 'react';
 
 // third imports
 import { useNavigate } from 'react-router-dom';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -18,7 +18,6 @@ import BrandForm from '../BrandForm';
 // types
 import { NewBrandType } from 'types/catalogue';
 import { createBrand } from 'store/slices/catalogue';
-import { useSelector } from 'store';
 
 const CreateBrandPage = () => {
     const intl = useIntl();
