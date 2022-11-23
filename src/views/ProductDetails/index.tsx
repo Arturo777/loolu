@@ -42,6 +42,8 @@ function a11yProps(index: number) {
 
 const ProductDetails = () => {
     const [valueSku, setValueSku] = useState('');
+    const [active, setActive] = useState(false);
+    const [productInfo, setProductInfo] = useState({});
     const { id } = useParams();
 
     const dispatch = useDispatch();
@@ -75,10 +77,18 @@ const ProductDetails = () => {
                     {product && product?.productID.toString() === id && (
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
-                                <ProductImages skus={skus} product={product} />
+                                <ProductImages skus={skus} product={product} setActive={setActive} active={active} />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <ProductInfo product={product} setValueSku={setValueSku} valueSku={valueSku} />
+                                <ProductInfo
+                                    product={product}
+                                    setValueSku={setValueSku}
+                                    valueSku={valueSku}
+                                    setActive={setActive}
+                                    active={active}
+                                    setProductInfo={setProductInfo}
+                                    productInfo={productInfo}
+                                />
                             </Grid>
                             <Grid item xs={12}>
                                 <Tabs

@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import {
     Button,
     ButtonBase,
+    Box,
     ButtonGroup,
     Divider,
     FormControl,
@@ -22,7 +23,8 @@ import {
     TableCell,
     TableRow,
     Tooltip,
-    Typography
+    Typography,
+    TextField
 } from '@mui/material';
 
 // third-party
@@ -45,7 +47,7 @@ import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
 import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
+import EditIcon from '@mui/icons-material/Edit';
 import { Key } from 'react';
 
 import ProductDimensions from './ProductDimensions';
@@ -117,7 +119,23 @@ const Increment = (props: string | FieldHookConfig<any>) => {
 
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfo = ({ product, setValueSku, valueSku }: { product: Products; setValueSku: any; valueSku: any }) => {
+const ProductInfo = ({
+    product,
+    setValueSku,
+    valueSku,
+    setActive,
+    active,
+    productInfo,
+    setProductInfo
+}: {
+    product: Products;
+    setValueSku: any;
+    valueSku: any;
+    setActive: any;
+    active: boolean;
+    productInfo: any;
+    setProductInfo: any;
+}) => {
     const dispatch = useDispatch();
     const history = useNavigate();
 
@@ -159,6 +177,10 @@ const ProductInfo = ({ product, setValueSku, valueSku }: { product: Products; se
     const handleRadioChange = (event: { target: { value: any } }) => {
         setValueSku(event.target.value);
     };
+    const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+    };
+    console.log(productInfo);
     const addCart = () => {
         values.color = values.color ? values.color : 'primaryDark';
         values.size = values.size ? values.size : '8';
@@ -178,66 +200,129 @@ const ProductInfo = ({ product, setValueSku, valueSku }: { product: Products; se
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <h2>Información del Producto</h2>
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Grid container spacing={1}>
-                        <Grid item xs={12}>
-                            <Chip
-                                size="small"
-                                label={product.isActive ? 'In Stock' : 'Out of Stock'}
-                                chipcolor={product.isActive ? 'success' : 'error'}
-                                sx={{ borderRadius: '4px', textTransform: 'capitalize' }}
+            <form style={{ width: '100%' }}>
+                <Grid item xs={12}>
+                    <h2>Información del Producto</h2>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Grid container spacing={1}>
+                            <Grid item xs={12}>
+                                <Chip
+                                    size="small"
+                                    label={product.isActive ? 'In Stock' : 'Out of Stock'}
+                                    chipcolor={product.isActive ? 'success' : 'error'}
+                                    sx={{ borderRadius: '4px', textTransform: 'capitalize' }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Stack direction="row" alignItems="center" spacing={1}>
+                                    {active ? (
+                                        <Box
+                                            sx={{
+                                                '& .MuiTextField-root': { mt: 2 }
+                                            }}
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label="Nombre del Producto"
+                                                variant="outlined"
+                                                name="productName"
+                                                defaultValue={product.productName}
+                                                value={productInfo.productName}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </Box>
+                                    ) : (
+                                        <Typography variant="h3">{product.productName}</Typography>
+                                    )}
+                                    <Chip size="small" label="New" chipcolor="primary" variant="outlined" />
+                                </Stack>
+                            </Grid>
+                        </Grid>
+                        {/* <Avatar variant="rounded" sx={{ bgcolor: 'grey.200', color: 'grey.800' }}>
+                            <FavoriteBorderIcon />
+                        </Avatar> */}
+                    </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                    {active ? (
+                        <Box
+                            sx={{
+                                '& .MuiTextField-root': { mt: 2 }
+                            }}
+                        >
+                            <TextField
+                                fullWidth
+                                multiline
+                                id="outlined-basic"
+                                label="Descripción"
+                                variant="outlined"
+                                name="description"
+                                defaultValue={product.description}
+                                value={productInfo.description}
+                                onChange={handleChangeProd}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Stack direction="row" alignItems="center" spacing={1}>
-                                <Typography variant="h3">{product.productName}</Typography>
-                                <Chip size="small" label="New" chipcolor="primary" variant="outlined" />
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                    <Avatar variant="rounded" sx={{ bgcolor: 'grey.200', color: 'grey.800' }}>
-                        <FavoriteBorderIcon />
-                    </Avatar>
-                </Stack>
-            </Grid>
-            <Grid item xs={12}>
-                <Typography variant="body2">{product.description}</Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <Typography variant="body1">ID: {product.productID}</Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <Typography variant="h4">{product.brandName}</Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <Rating
-                        name="simple-controlled"
-                        value={product.rating}
-                        icon={<StarTwoToneIcon fontSize="inherit" />}
-                        emptyIcon={<StarBorderTwoToneIcon fontSize="inherit" />}
-                        precision={0.1}
-                        readOnly
-                    />
-                    <Typography variant="caption">({product.salePrice}+)</Typography>
-                </Stack>
-            </Grid>
-            <Grid item xs={12}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="h2" color="primary">
-                        ${product.offerPrice}
+                        </Box>
+                    ) : (
+                        <Typography variant="body2">{product.description}</Typography>
+                    )}
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="body1" sx={{ ml: 2 }}>
+                        ID: {product.productID}
                     </Typography>
-                    <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
-                        ${product.salePrice}
-                    </Typography>
-                    <Typography variant="caption">(Inclusive of all taxes)</Typography>
-                </Stack>
-            </Grid>
-            <Grid item xs={12}>
-                <Divider />
-            </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    {active ? (
+                        <Box
+                            sx={{
+                                '& .MuiTextField-root': { mt: 2 }
+                            }}
+                        >
+                            <TextField
+                                fullWidth
+                                multiline
+                                id="outlined-basic"
+                                label="Marca"
+                                variant="outlined"
+                                name="brandName"
+                                defaultValue={product.brandName}
+                                value={productInfo.brandName}
+                                onChange={handleChangeProd}
+                            />
+                        </Box>
+                    ) : (
+                        <Typography variant="h4">{product.brandName}</Typography>
+                    )}
+                </Grid>
+                <Grid item xs={12}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <Rating
+                            name="simple-controlled"
+                            value={product.rating}
+                            icon={<StarTwoToneIcon fontSize="inherit" />}
+                            emptyIcon={<StarBorderTwoToneIcon fontSize="inherit" />}
+                            precision={0.1}
+                            readOnly
+                        />
+                        <Typography variant="caption">({product.salePrice}+)</Typography>
+                    </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <Typography variant="h2" color="primary">
+                            ${product.offerPrice}
+                        </Typography>
+                        <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                            ${product.salePrice}
+                        </Typography>
+                        <Typography variant="caption">(Inclusive of all taxes)</Typography>
+                    </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                    <Divider />
+                </Grid>
+            </form>
             <Grid item xs={12}>
                 <FormikProvider value={formik}>
                     <h2>Información del Sku</h2>
@@ -263,6 +348,7 @@ const ProductInfo = ({ product, setValueSku, valueSku }: { product: Products; se
                                                     name="sku"
                                                     id="sku"
                                                     sx={{ ml: 1 }}
+                                                    defaultValue={product.skus[0].skuID}
                                                 >
                                                     {product?.skus.map((sku: any, index: Key | null | undefined) => (
                                                         <FormControlLabel
@@ -352,10 +438,10 @@ const ProductInfo = ({ product, setValueSku, valueSku }: { product: Products; se
                                             color="primary"
                                             variant="contained"
                                             size="large"
-                                            startIcon={<ShoppingCartTwoToneIcon />}
-                                            onClick={addCart}
+                                            startIcon={<EditIcon />}
+                                            onClick={() => setActive(true)}
                                         >
-                                            Add to Cart
+                                            Edit Product
                                         </Button>
                                     </Grid>
                                     <Grid item xs={6}>

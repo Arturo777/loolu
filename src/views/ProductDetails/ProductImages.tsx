@@ -30,7 +30,7 @@ const prodImage = require.context('assets/images/e-commerce', true);
 
 // ==============================|| PRODUCT DETAILS - IMAGES ||============================== //
 
-const ProductImages = ({ skus, product }: { skus: any; product: any }) => {
+const ProductImages = ({ skus, product, setActive, active }: { skus: any; product: any; setActive: any; active: boolean }) => {
     const imgprod = skus;
     const theme = useTheme();
     const { borderRadius } = useConfig();
