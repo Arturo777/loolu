@@ -43,6 +43,7 @@ function a11yProps(index: number) {
 const ProductDetails = () => {
     const [valueSku, setValueSku] = useState('');
     const [active, setActive] = useState(false);
+    const [productInfo, setProductInfo] = useState({});
     const { id } = useParams();
 
     const dispatch = useDispatch();
@@ -68,8 +69,6 @@ const ProductDetails = () => {
     }, []);
 
     const { product, skus } = useSelector((state) => state.product);
-
-    const [productInfo, setProductInfo] = useState(product);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
