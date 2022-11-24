@@ -43,7 +43,6 @@ function a11yProps(index: number) {
 const ProductDetails = () => {
     const [valueSku, setValueSku] = useState('');
     const [active, setActive] = useState(false);
-    const [productInfo, setProductInfo] = useState({});
     const { id } = useParams();
 
     const dispatch = useDispatch();
@@ -61,7 +60,6 @@ const ProductDetails = () => {
     useEffect(() => {
         // getProduct();
         dispatch(getProduct(id));
-
         // clear cart if complete order
         if (cart.checkout.step > 2) {
             dispatch(resetCart());
@@ -70,6 +68,8 @@ const ProductDetails = () => {
     }, []);
 
     const { product, skus } = useSelector((state) => state.product);
+
+    const [productInfo, setProductInfo] = useState(product);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
@@ -118,7 +118,12 @@ const ProductDetails = () => {
                                     />
                                 </Tabs>
                                 <TabPanel value={value} index={0}>
-                                    <ProductDescription />
+                                    <ProductDescription
+                                        product={product}
+                                        active={active}
+                                        setProductInfo={setProductInfo}
+                                        productInfo={productInfo}
+                                    />
                                 </TabPanel>
                                 <TabPanel value={value} index={1}>
                                     <ProductReview product={product} />

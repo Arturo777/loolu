@@ -208,7 +208,7 @@ const ProductInfo = ({
                             <Grid item xs={12}>
                                 <Chip
                                     size="small"
-                                    label={product.isActive ? 'In Stock' : 'Out of Stock'}
+                                    label={product.isActive ? 'Activo' : 'Inactive'}
                                     chipcolor={product.isActive ? 'success' : 'error'}
                                     sx={{ borderRadius: '4px', textTransform: 'capitalize' }}
                                 />
@@ -235,7 +235,12 @@ const ProductInfo = ({
                                     ) : (
                                         <Typography variant="h3">{product.productName}</Typography>
                                     )}
-                                    <Chip size="small" label="New" chipcolor="primary" variant="outlined" />
+                                    <Chip
+                                        size="small"
+                                        label={product.isVisible ? 'Visible' : 'No visible'}
+                                        chipcolor="primary"
+                                        variant="outlined"
+                                    />
                                 </Stack>
                             </Grid>
                         </Grid>

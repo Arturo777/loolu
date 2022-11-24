@@ -8,8 +8,18 @@ import ProductList from 'views/Products';
 import ProductDetails from 'views/ProductDetails';
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+
+// users
 const UsersList = Loadable(lazy(() => import('views/Users')));
 const UserProfile = Loadable(lazy(() => import('views/UserProfile')));
+
+// profiles
+const ProfilesList = Loadable(lazy(() => import('views/Profiles/List')));
+const CreateProfile = Loadable(lazy(() => import('views/Profiles/CreateProfile')));
+const EditProfile = Loadable(lazy(() => import('views/Profiles/EditProfile')));
+
+// brands
+const BransListPage = Loadable(lazy(() => import('views/Brands/List')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -23,11 +33,7 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <SamplePage />
-        },
-        {
-            path: '/sample-page',
-            element: <SamplePage />
+            element: <ProductList />
         },
         {
             path: '/products',
@@ -44,6 +50,22 @@ const MainRoutes = {
         {
             path: '/users/:userId/edit',
             element: <UserProfile />
+        },
+        {
+            path: '/profiles',
+            element: <ProfilesList />
+        },
+        {
+            path: '/profiles/create',
+            element: <CreateProfile />
+        },
+        {
+            path: '/profiles/:profileId/edit',
+            element: <EditProfile />
+        },
+        {
+            path: '/brands',
+            element: <BransListPage />
         }
     ]
 };

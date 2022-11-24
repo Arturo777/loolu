@@ -8,7 +8,7 @@ import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getDetailCards, getUsersList } from 'store/slices/user';
+import { getUsersList } from 'store/slices/user';
 
 // assets
 import { IconSearch } from '@tabler/icons';
@@ -24,18 +24,9 @@ const UsersList = () => {
     const [users, setUsers] = React.useState<UserType[]>([]);
     const { usersList, loading } = useSelector((state) => state.user);
 
-    // useEffect(() => {
-    //     setUsers(usersList);
-    // }, [usersList]);
-
     useEffect(() => {
         dispatch(getUsersList());
     }, [dispatch]);
-
-    useEffect(() => {
-        dispatch(getDetailCards());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     const [search, setSearch] = React.useState<string | undefined>('');
 

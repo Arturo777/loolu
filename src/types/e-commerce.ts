@@ -1,5 +1,6 @@
 // product shop list
 export type Products = {
+    isVisible: any;
     map(arg0: (item: any, index: any) => JSX.Element): import("react").ReactNode;
     isActive: boolean;
     productName: any;

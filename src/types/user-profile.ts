@@ -61,7 +61,23 @@ export type UserType = {
 
 export type ProfileType = {
     id: number | string;
+    description: string;
     type: string;
+    idStatus?: boolean;
+    menuDetails: MenuDetailsType[];
+};
+
+export type MenuDetailsType = {
+    id: number;
+    type: string;
+    description: string;
+    children: MenuDetailsChild[];
+};
+
+export type MenuDetailsChild = {
+    id: number;
+    type: string;
+    url: string;
 };
 
 export type ProviderType = {

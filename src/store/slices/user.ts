@@ -7,8 +7,9 @@ import { dispatch } from '../index';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { ProfileType, ProviderType, Reply, UserType } from 'types/user-profile';
+import { ProfileType, ProviderType, UserType } from 'types/user-profile';
 import { STYRK_API, STYRK_TOKEN } from 'config';
+import { NewProfileType } from 'types/user';
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +32,8 @@ const initialState: DefaultRootStateProps['user'] = {
     profiles: [],
     providers: [],
     approvalProfiles: [],
-    fetching: false
+    fetching: false,
+    menuOptions: []
 };
 
 const slice = createSlice({
@@ -42,117 +44,9 @@ const slice = createSlice({
         hasError(state, action) {
             state.error = action.payload;
         },
-
-        // GET USERS STYLE 1
-        getUsersListStyle1Success(state, action) {
-            state.usersS1 = action.payload;
+        basicSuccess(state) {
+            state.loading = false;
         },
-
-        // GET USERS STYLE 2
-        getUsersListStyle2Success(state, action) {
-            state.usersS2 = action.payload;
-        },
-
-        // GET FOLLOWERS
-        getFollowersSuccess(state, action) {
-            state.followers = action.payload;
-        },
-
-        // FILTER FOLLOWERS
-        filterFollowersSuccess(state, action) {
-            state.followers = action.payload;
-        },
-
-        // GET FRIEND REQUESTS
-        getFriendRequestsSuccess(state, action) {
-            state.friendRequests = action.payload;
-        },
-
-        // FILTER FRIEND REQUESTS
-        filterFriendRequestsSuccess(state, action) {
-            state.friendRequests = action.payload;
-        },
-
-        // GET FRIENDS
-        getFriendsSuccess(state, action) {
-            state.friends = action.payload;
-        },
-
-        // FILTER FRIENDS
-        filterFriendsSuccess(state, action) {
-            state.friends = action.payload;
-        },
-
-        // GET GALLERY
-        getGallerySuccess(state, action) {
-            state.gallery = action.payload;
-        },
-
-        // GET POSTS
-        getPostsSuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // EDIT COMMENT
-        editCommentSuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // ADD COMMENT
-        addCommentSuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // ADD REPLY
-        addReplySuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // LIKE POST
-        likePostSuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // LIKE COMMENT
-        likeCommentSuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // LIKE REPLY
-        likeReplySuccess(state, action) {
-            state.posts = action.payload;
-        },
-
-        // GET DETAIL CARDS
-        getDetailCardsSuccess(state, action) {
-            state.detailCards = action.payload;
-        },
-
-        // FILTER DETAIL CARDS
-        filterDetailCardsSuccess(state, action) {
-            state.detailCards = action.payload;
-        },
-
-        // GET SIMPLE CARDS
-        getSimpleCardsSuccess(state, action) {
-            state.simpleCards = action.payload;
-        },
-
-        // FILTER SIMPLE CARDS
-        filterSimpleCardsSuccess(state, action) {
-            state.simpleCards = action.payload;
-        },
-
-        // GET PROFILE CARDS
-        getProfileCardsSuccess(state, action) {
-            state.profileCards = action.payload;
-        },
-
-        // FILTER PROFILE CARDS
-        filterProfileCardsSuccess(state, action) {
-            state.profileCards = action.payload;
-        },
-
         // USERS
 
         getUsersListPending(state) {
@@ -192,11 +86,21 @@ const slice = createSlice({
             state.loadingEditInfo = false;
             state.approvalProfiles = action.payload;
         },
+        // profile => create
+        // createProfileServiceSuccess(state, action) {
+        //     state.
+        // },
+        // user info
         updateUserInfoPending(state) {
             state.fetching = true;
         },
         updateUserInfoSuccess(state) {
             state.fetching = false;
+        },
+        // menu => access
+        getMenuPermissionsSuccess(state, action) {
+            state.menuOptions = action.payload;
+            state.loading = false;
         }
     }
 });
@@ -356,7 +260,7 @@ export function updateUserInfo(data: any, idMerchant?: number) {
         dispatch(slice.actions.updateUserInfoPending());
 
         try {
-            const response = await axios.post(`${STYRK_API}/styrk/api/user/save`, data, {
+            await axios.post(`${STYRK_API}/styrk/api/user/save`, data, {
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -365,254 +269,65 @@ export function updateUserInfo(data: any, idMerchant?: number) {
                 }
             });
 
-            console.log(response.data);
-
             dispatch(slice.actions.updateUserInfoSuccess());
         } catch (error) {
-            console.log(error);
             dispatch(slice.actions.hasError(error));
         }
     };
 }
 
-export function getUsersListStyle1() {
+export function getMenuPermissions(idMerchant?: number) {
     return async () => {
         try {
-            const response = await axios.get('/api/user-list/s1/list');
-            dispatch(slice.actions.getUsersListStyle1Success(response.data.users_s1));
+            const response = await axios.get(`styrk/api/menu/search`, {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: idMerchant || 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+
+            dispatch(slice.actions.getMenuPermissionsSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
     };
 }
 
-export function getUsersListStyle2() {
+export function createProfileService(data: NewProfileType, idMerchant?: number) {
     return async () => {
         try {
-            const response = await axios.get('/api/user-list/s2/list');
-            dispatch(slice.actions.getUsersListStyle2Success(response.data.users_s2));
+            return await axios.post(`${STYRK_API}/styrk/api/profile/save`, data, {
+                params: {
+                    idMerchant: idMerchant || 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
         } catch (error) {
             dispatch(slice.actions.hasError(error));
+            return error;
         }
     };
 }
 
-export function getFollowers() {
+export function updateProfileService(data: any, idMerchant?: number) {
     return async () => {
         try {
-            const response = await axios.get('/api/followers/list');
-            dispatch(slice.actions.getFollowersSuccess(response.data.followers));
+            return await axios.post(`${STYRK_API}/styrk/api/profile/save`, data, {
+                params: {
+                    idMerchant: idMerchant || 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
         } catch (error) {
             dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function filterFollowers(key: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/followers/filter', { key });
-            dispatch(slice.actions.filterFollowersSuccess(response.data.results));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getFriendRequests() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/friend-request/list');
-            dispatch(slice.actions.getFriendRequestsSuccess(response.data.friends));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function filterFriendRequests(key: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/friend-request/filter', { key });
-            dispatch(slice.actions.filterFriendRequestsSuccess(response.data.results));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getFriends() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/friends/list');
-            dispatch(slice.actions.getFriendsSuccess(response.data.friends));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function filterFriends(key: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/friends/filter', { key });
-            dispatch(slice.actions.filterFriendsSuccess(response.data.results));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getGallery() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/gallery/list');
-            dispatch(slice.actions.getGallerySuccess(response.data.gallery));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getPosts() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/posts/list');
-            dispatch(slice.actions.getPostsSuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function editComment(key: string, id: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/posts/editComment', { key, id });
-            dispatch(slice.actions.editCommentSuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function addComment(postId: string, comment: Reply) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/comments/add', { postId, comment });
-            dispatch(slice.actions.addCommentSuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function addReply(postId: string, commentId: string, reply: Reply) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/replies/add', { postId, commentId, reply });
-            dispatch(slice.actions.addReplySuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function likePost(postId: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/posts/list/like', { postId });
-            dispatch(slice.actions.likePostSuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function likeComment(postId: string, commentId: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/comments/list/like', { postId, commentId });
-            dispatch(slice.actions.likeCommentSuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function likeReply(postId: string, commentId: string, replayId: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/replies/list/like', { postId, commentId, replayId });
-            dispatch(slice.actions.likeReplySuccess(response.data.posts));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getDetailCards() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/details-card/list');
-            dispatch(slice.actions.getDetailCardsSuccess(response.data.users));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function filterDetailCards(key: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/details-card/filter', { key });
-            dispatch(slice.actions.filterDetailCardsSuccess(response.data.results));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getSimpleCards() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/simple-card/list');
-            dispatch(slice.actions.getSimpleCardsSuccess(response.data.users));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function filterSimpleCards(key: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/simple-card/filter', { key });
-            dispatch(slice.actions.filterSimpleCardsSuccess(response.data.results));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function getProfileCards() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/profile-card/list');
-            dispatch(slice.actions.getProfileCardsSuccess(response.data.users));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function filterProfileCards(key: string) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/profile-card/filter', { key });
-            dispatch(slice.actions.filterProfileCardsSuccess(response.data.results));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
+            return error;
         }
     };
 }
