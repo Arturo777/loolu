@@ -19,6 +19,7 @@ const initialState: DefaultRootStateProps['product'] = {
     product: null,
     relatedProducts: [],
     skus: [],
+    categories: [],
     reviews: [],
     addresses: [],
     loadingProducts: true
@@ -75,6 +76,9 @@ const slice = createSlice({
         // GET SKUS
         getSkuSuccess(state, action) {
             state.skus = action.payload;
+        },
+        getCategoriesSuccess(state, action) {
+            state.categories = action.payload;
         },
         // GET RELATED PRODUCTS
         getRelatedProductsSuccess(state, action) {
@@ -225,7 +229,24 @@ export function getSku(id: string | undefined) {
         }
     };
 }
-
+export function getCategories() {
+    return async () => {
+        try {
+            const response = await axios.get('styrk/api/category/search', {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+            dispatch(slice.actions.getSkuSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
 export function getRelatedProducts(id: string | undefined) {
     return async () => {
         try {

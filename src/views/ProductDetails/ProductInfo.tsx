@@ -231,6 +231,26 @@ const ProductInfo = ({
                                                 value={productInfo.productName}
                                                 onChange={handleChangeProd}
                                             />
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label="Título"
+                                                variant="outlined"
+                                                name="title"
+                                                defaultValue={product.title}
+                                                value={productInfo.title}
+                                                onChange={handleChangeProd}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label="URL del Producto"
+                                                variant="outlined"
+                                                name="linkId"
+                                                defaultValue={product.linkId}
+                                                value={productInfo.linkId}
+                                                onChange={handleChangeProd}
+                                            />
                                         </Box>
                                     ) : (
                                         <Typography variant="h3">{product.productName}</Typography>
@@ -274,7 +294,27 @@ const ProductInfo = ({
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="body1" sx={{ ml: 2 }}>
-                        ID: {product.productID}
+                        ID: {product.productID}{' '}
+                        {active ? (
+                            <Box
+                                sx={{
+                                    '& .MuiTextField-root': { mt: 2 }
+                                }}
+                            >
+                                <TextField
+                                    multiline
+                                    id="outlined-basic"
+                                    label="Código de Referencia"
+                                    variant="outlined"
+                                    name="productRefID"
+                                    defaultValue={product.productRefID}
+                                    value={productInfo.productRefID}
+                                    onChange={handleChangeProd}
+                                />
+                            </Box>
+                        ) : (
+                            <Typography variant="body2">{product.productRefID}</Typography>
+                        )}
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>

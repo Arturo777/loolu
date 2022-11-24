@@ -1,7 +1,10 @@
 // product shop list
 export type Products = {
+    linkId: string;
+    title: string;
+    productRefID: string;
     isVisible: any;
-    map(arg0: (item: any, index: any) => JSX.Element): import("react").ReactNode;
+    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     isActive: boolean;
     productName: any;
     id: string | number | undefined;
@@ -27,7 +30,7 @@ export type Products = {
 };
 
 export type Skus = {
-    map(arg0: (item: any, index: any) => JSX.Element): import("react").ReactNode;
+    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     ean: string | number | undefined;
     name: string;
     skuID: string | number | undefined;
@@ -51,7 +54,16 @@ export type Skus = {
     brandId: number;
     productID: string | number;
 };
-
+export type Categories = {
+    id: string | number;
+    isActive: boolean;
+    description: string;
+    title: string;
+    fatherCategoryId: number;
+    score: string;
+    name: string;
+    children: Categories[];
+};
 // checkout-cart billing address
 export type Address = {
     id?: string | number | undefined;
@@ -122,6 +134,7 @@ export interface ProductStateProps {
     product: Products | null;
     relatedProducts: Products[];
     skus: Skus[];
+    categories: Categories[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;
