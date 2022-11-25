@@ -50,10 +50,9 @@ const ProfileFormView = () => {
     };
 
     const handleSave = (data: NewProfileType) => {
-        console.log(data);
-
         if (profileId) {
-            dispatch(updateProfileService({ ...data, id: profileId }));
+            console.log({ ...data, idPerfil: profileId });
+            // dispatch(updateProfileService({ ...data, idPerfil: profileId }));
         }
     };
 

@@ -148,7 +148,7 @@ const SearchSection = () => {
     useEffect(() => {
         const searchText = location.search.replace('?', '');
 
-        if (searchText.length > 0) {
+        if (location.pathname === '/products' && searchText.length > 0) {
             const keyField = searchText.split('=')[0];
             const newValue = searchText.split('=')[1];
 

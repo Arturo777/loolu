@@ -34,6 +34,15 @@ const catalogue = {
             icon: icons.IconLayout,
             external: false,
             breadcrumbs: false
+        },
+        {
+            id: 'supplier',
+            title: <FormattedMessage id="suppliers" />,
+            type: 'item',
+            url: '/suppliers',
+            icon: icons.IconLayout,
+            external: false,
+            breadcrumbs: false
         }
     ]
 };

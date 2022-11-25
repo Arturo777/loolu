@@ -23,3 +23,9 @@ export type NewBrandType = {
     imageUrl: string;
     isActive?: boolean;
 };
+
+export type ProviderType = {
+    idProvider: number;
+    countryId: string;
+    name: string;
+};

@@ -317,14 +317,18 @@ export function createProfileService(data: NewProfileType, idMerchant?: number) 
 export function updateProfileService(data: any, idMerchant?: number) {
     return async () => {
         try {
-            return await axios.post(`${STYRK_API}/styrk/api/profile/save`, data, {
-                params: {
-                    idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
+            return await axios.post(
+                `${STYRK_API}/styrk/api/profile/save`,
+                { ...data, idMerchant: idMerchant || 1 },
+                {
+                    params: {
+                        idMerchant: idMerchant || 1
+                    },
+                    headers: {
+                        authorization: `Bearer ${STYRK_TOKEN}`
+                    }
                 }
-            });
+            );
         } catch (error) {
             dispatch(slice.actions.hasError(error));
             return error;

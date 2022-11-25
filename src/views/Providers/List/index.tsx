@@ -5,7 +5,6 @@ import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/ma
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
-import ProfilesList from './ProfilesList';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 
@@ -15,10 +14,12 @@ import { FormattedMessage, useIntl } from 'react-intl';
 // assets
 import { IconSearch } from '@tabler/icons';
 import { Link, useSearchParams } from 'react-router-dom';
+import ProvidersList from './ProvidersList';
+// import { Link } from 'react-router-dom';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
-const ListStylePage1 = () => {
+const ProvidersListPage = () => {
     const intl = useIntl();
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
@@ -41,13 +42,13 @@ const ListStylePage1 = () => {
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
                         <Typography variant="h3">
-                            <FormattedMessage id="profiles" />
+                            <FormattedMessage id="suppliers" />
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <Button component={Link} to="/profiles/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
+                        <Button component={Link} to="/suppliers/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
                             {intl.formatMessage({
-                                id: 'create_profile'
+                                id: 'create_supplier'
                             })}
                         </Button>
 
@@ -70,9 +71,9 @@ const ListStylePage1 = () => {
             }
             content={false}
         >
-            <ProfilesList filterText={filterText} />
+            <ProvidersList />
         </MainCard>
     );
 };
 
-export default ListStylePage1;
+export default ProvidersListPage;

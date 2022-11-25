@@ -168,6 +168,9 @@
     "image": "Image",
     "actions": "Actions",
     "image_url": "Image URL",
-    "metatag_description": "Metatag description"
-    
+    "metatag_description": "Metatag description",
+
+    "suppliers": "Suppliers",
+    "edit_supplier": "Edit supplier",
+    "create_supplier": "Create supplier"
 }

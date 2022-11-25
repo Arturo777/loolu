@@ -45,12 +45,24 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData, mo
         dispatch(getMenuPermissions());
     }, [dispatch]);
 
+    // useEffect(() => {
+    //     if (mode === 'edit') {
+    //         console.log(mode, newData.menus);
+    //     }
+    // }, [mode, newData.menus]);
+
     useEffect(() => {
         if (defaultData) {
-            const newInfo = {
+            const newMenu = defaultData.menuDetails.map((item) => {
+                const submenus = item.children.map((itemA) => itemA.id);
+                return [...submenus, item.id];
+            });
+
+            const newInfo: NewProfieState = {
                 ...newData,
                 type: defaultData.type,
-                description: defaultData.description
+                description: defaultData.description,
+                menus: newMenu.flat()
             };
 
             setNewData(newInfo);
@@ -84,6 +96,8 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData, mo
                 }
             }
         });
+
+        // console.log(currentMenus);
 
         setNewData({
             ...newData,
@@ -156,8 +170,10 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData, mo
                                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={`checkgroup-${i}`}>
                                     <CheckLabelGroup
                                         itemMenu={item}
+                                        mode={mode}
                                         defaultSelected={mode === 'create' ? null : defaultData?.menuDetails!}
                                         onChange={handleCheckbox}
+                                        fatherId={item.id}
                                     />
                                 </Grid>
                             ))}
@@ -184,6 +200,8 @@ type CheckLabelGroupProps = {
     itemMenu: MenuDetailsType;
     defaultSelected: MenuDetailsType[] | null;
     onChange: (checkedList: CheckListState[]) => void;
+    mode: 'create' | 'edit';
+    fatherId: number;
 };
 
 type CheckListState = {
@@ -192,10 +210,13 @@ type CheckListState = {
     checked: boolean;
 };
 
-const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange }: CheckLabelGroupProps) => {
+const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
+    const [fatherIsSelect, setFatherIsSelect] = useState<boolean>(false);
 
     useEffect(() => {
+        console.log(fatherId, defaultSelected);
+
         if (defaultSelected) {
             const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
             const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];
@@ -222,6 +243,10 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange }: CheckLabelGrou
 
     const handleChangeChild = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = event.target;
+
+        if (checked) {
+            console.log(mode, name);
+        }
 
         const newCheckList = checkedList.map((item) => {
             if (item.id === Number(name)) {
@@ -272,7 +297,14 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange }: CheckLabelGrou
                         <FormControlLabel
                             key={`item-check-${itemChild.name}`}
                             label={itemChild.name}
-                            control={<Checkbox name={`${itemChild.id}`} checked={isChecked(itemChild.id)} onChange={handleChangeChild} />}
+                            control={
+                                <Checkbox
+                                    disabled={fatherIsSelect}
+                                    name={`${itemChild.id}`}
+                                    checked={isChecked(itemChild.id)}
+                                    onChange={handleChangeChild}
+                                />
+                            }
                         />
                     ))}
             </Box>
