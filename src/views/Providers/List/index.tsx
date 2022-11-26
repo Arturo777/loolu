@@ -71,7 +71,7 @@ const ProvidersListPage = () => {
             }
             content={false}
         >
-            <ProvidersList />
+            <ProvidersList filterText={filterText} />
         </MainCard>
     );
 };

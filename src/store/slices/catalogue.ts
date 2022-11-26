@@ -13,7 +13,8 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
     updating: false,
     error: null,
-    brands: []
+    brands: [],
+    suppliers: []
 };
 
 const slice = createSlice({
@@ -35,13 +36,21 @@ const slice = createSlice({
                 // console.log(action.payload);
                 state.loading = false;
                 state.brands = action.payload.response.map((item: BrandType) => ({ ...item, id: item.idBrand }));
-            });
-        builder
+            })
             .addCase(createBrand.pending, (state) => {
                 state.loading = true;
             })
             .addCase(createBrand.fulfilled, (state) => {
                 state.loading = false;
+            });
+        // SUPPLIERS
+        builder
+            .addCase(getSuppliers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getSuppliers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.suppliers = action.payload.response;
             });
     }
 });
@@ -92,6 +101,19 @@ type createBrandParams = {
 export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (params: createBrandParams) => {
     const { dataBrand, idMerchant } = params;
     const response = await axios.post(`styrk/api/brand/create`, dataBrand, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
+    const response = await axios.get(`styrk/api/supplier/search`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1

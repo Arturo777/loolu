@@ -212,7 +212,7 @@ type CheckListState = {
 
 const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
-    const [fatherIsSelect, setFatherIsSelect] = useState<boolean>(false);
+    // const [fatherIsSelect, setFatherIsSelect] = useState<boolean>(false);
 
     useEffect(() => {
         console.log(fatherId, defaultSelected);
@@ -237,6 +237,8 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }
 
             setCheckedList(newCheckList);
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemMenu, defaultSelected]);
 
     const isChecked = (id: number) => checkedList.find((itemList) => itemList.id === id)?.checked;

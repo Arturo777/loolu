@@ -22,6 +22,8 @@ const CreateBrandPage = Loadable(lazy(() => import('views/Brands/Create')));
 
 // providers
 const ProvidersListPage = Loadable(lazy(() => import('views/Providers/List')));
+const CreateSupplierPage = Loadable(lazy(() => import('views/Providers/Create')));
+const EditSupplierPage = Loadable(lazy(() => import('views/Providers/Edit')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -41,6 +43,7 @@ const MainRoutes = {
             path: '/products',
             element: <ProductList />
         },
+        // users
         {
             path: '/users',
             element: <UsersList />
@@ -49,6 +52,7 @@ const MainRoutes = {
             path: '/users/:userId/edit',
             element: <UserProfile />
         },
+        // profiles
         {
             path: '/profiles',
             element: <ProfilesList />
@@ -61,6 +65,7 @@ const MainRoutes = {
             path: '/profiles/:profileId/edit',
             element: <EditProfile />
         },
+        // brands
         {
             path: '/brands',
             element: <BrandsListPage />
@@ -73,9 +78,18 @@ const MainRoutes = {
             path: '/brands/create',
             element: <CreateBrandPage />
         },
+        // providers - suppliers
         {
             path: '/suppliers',
             element: <ProvidersListPage />
+        },
+        {
+            path: '/suppliers/create',
+            element: <CreateSupplierPage />
+        },
+        {
+            path: '/suppliers/:supplierId/edit',
+            element: <EditSupplierPage />
         }
     ]
 };

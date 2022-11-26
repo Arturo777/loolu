@@ -75,7 +75,18 @@ const UserList = ({ filterText }: UserListProps) => {
                                     <Chip
                                         label={<FormattedMessage id={item.idStatus ? 'active' : 'inactive'} />}
                                         size="small"
-                                        color={item.idStatus ? 'success' : 'error'}
+                                        // color={item.idStatus ? 'success' : 'error'}
+                                        sx={
+                                            item.idStatus
+                                                ? {
+                                                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : 'success.light',
+                                                      color: 'success.dark'
+                                                  }
+                                                : {
+                                                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : 'error.light',
+                                                      color: 'error.dark'
+                                                  }
+                                        }
                                     />
                                 </Stack>
 

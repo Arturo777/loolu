@@ -3,6 +3,7 @@ export type CatalogueStateProps = {
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
+    suppliers: SupplierType[];
 };
 
 export type BrandType = {
@@ -24,7 +25,7 @@ export type NewBrandType = {
     isActive?: boolean;
 };
 
-export type ProviderType = {
+export type SupplierType = {
     idProvider: number;
     countryId: string;
     name: string;
