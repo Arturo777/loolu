@@ -48,7 +48,7 @@ import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditIcon from '@mui/icons-material/Edit';
-import { Key } from 'react';
+import { Key, useEffect } from 'react';
 
 import ProductDimensions from './ProductDimensions';
 
@@ -126,7 +126,8 @@ const ProductInfo = ({
     setActive,
     active,
     productInfo,
-    setProductInfo
+    setProductInfo,
+    categories
 }: {
     product: Products;
     setValueSku: any;
@@ -135,12 +136,16 @@ const ProductInfo = ({
     active: boolean;
     productInfo: any;
     setProductInfo: any;
+    categories: any;
 }) => {
     const dispatch = useDispatch();
     const history = useNavigate();
 
     const cart = useSelector((state) => state.cart);
-
+    const flatCategories = categories.map((cat: any) =>
+        cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
+    );
+    console.log(flatCategories);
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -231,6 +236,26 @@ const ProductInfo = ({
                                                 value={productInfo.productName}
                                                 onChange={handleChangeProd}
                                             />
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label="Título"
+                                                variant="outlined"
+                                                name="title"
+                                                defaultValue={product.title}
+                                                value={productInfo.title}
+                                                onChange={handleChangeProd}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label="URL del Producto"
+                                                variant="outlined"
+                                                name="linkId"
+                                                defaultValue={product.linkId}
+                                                value={productInfo.linkId}
+                                                onChange={handleChangeProd}
+                                            />
                                         </Box>
                                     ) : (
                                         <Typography variant="h3">{product.productName}</Typography>
@@ -274,7 +299,27 @@ const ProductInfo = ({
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="body1" sx={{ ml: 2 }}>
-                        ID: {product.productID}
+                        ID: {product.productID}{' '}
+                        {active ? (
+                            <Box
+                                sx={{
+                                    '& .MuiTextField-root': { mt: 2 }
+                                }}
+                            >
+                                <TextField
+                                    multiline
+                                    id="outlined-basic"
+                                    label="Código de Referencia"
+                                    variant="outlined"
+                                    name="productRefID"
+                                    defaultValue={product.productRefID}
+                                    value={productInfo.productRefID}
+                                    onChange={handleChangeProd}
+                                />
+                            </Box>
+                        ) : (
+                            <Typography variant="body2">{product.productRefID}</Typography>
+                        )}
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
