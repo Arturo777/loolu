@@ -173,5 +173,7 @@
 
     "suppliers": "Proveedores",
     "edit_supplier": "Edit proveedor",
-    "create_supplier": "Crear proveedor"
+    "create_supplier": "Crear proveedor",
+    "supplier_name": "Nombre de proveedor",
+    "country": "País"
 }

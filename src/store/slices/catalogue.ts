@@ -51,6 +51,18 @@ const slice = createSlice({
             .addCase(getSuppliers.fulfilled, (state, action) => {
                 state.loading = false;
                 state.suppliers = action.payload.response;
+            })
+            .addCase(createSupplier.pending, (state) => {
+                state.updating = true;
+            })
+            .addCase(createSupplier.fulfilled, (state) => {
+                state.updating = false;
+            })
+            .addCase(editSupplier.pending, (state) => {
+                state.updating = true;
+            })
+            .addCase(editSupplier.fulfilled, (state) => {
+                state.updating = false;
             });
     }
 });
@@ -114,6 +126,49 @@ export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (pa
 
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
     const response = await axios.get(`styrk/api/supplier/search`, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+type createSupplierProps = {
+    idMerchant?: number;
+    data: {
+        name: string;
+        country: string;
+    };
+};
+
+export const createSupplier = createAsyncThunk(`${slice.name}/createSupplier`, async ({ idMerchant, data }: createSupplierProps) => {
+    const response = await axios.post(`styrk/api/supplier/create`, data, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+type editSupplierProps = {
+    idMerchant?: number;
+    data: {
+        name: string;
+        country: string;
+        idProvider?: number;
+    };
+};
+
+export const editSupplier = createAsyncThunk(`${slice.name}/editSupplier`, async ({ idMerchant, data }: editSupplierProps) => {
+    const response = await axios.post(`styrk/api/supplier/create`, data, {
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1

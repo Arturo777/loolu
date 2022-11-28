@@ -15,20 +15,21 @@ import { useDispatch } from 'react-redux';
 // services
 
 // types
-import { NewBrandType } from 'types/catalogue';
-import { createBrand } from 'store/slices/catalogue';
+import { SupplierType } from 'types/catalogue';
+import { createSupplier } from 'store/slices/catalogue';
+import SupplierForm from '../SupplierForm';
 
-const EditSupplierPage = () => {
+const CreateSupplierPage = () => {
     const intl = useIntl();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleSave = async (data: NewBrandType) => {
-        const dataBrand: NewBrandType = {
-            ...data,
-            isActive: true
+    const handleSave = async (data: SupplierType) => {
+        const supplierData = {
+            country: data.countryId,
+            name: data.name
         };
-        await dispatch(createBrand({ dataBrand }));
+        await dispatch(createSupplier({ data: supplierData }));
 
         navigate('/suppliers');
     };
@@ -36,12 +37,12 @@ const EditSupplierPage = () => {
     return (
         <MainCard
             title={intl.formatMessage({
-                id: 'edit_supplier'
+                id: 'create_supplier'
             })}
         >
-            <p>FORM EDIT</p>
+            <SupplierForm handleSave={handleSave} />
         </MainCard>
     );
 };
 
-export default EditSupplierPage;
+export default CreateSupplierPage;

@@ -17,8 +17,8 @@ import { getSuppliers } from 'store/slices/catalogue';
 
 import { SupplierType } from 'types/catalogue';
 // assets
-// flags
 
+// flags
 import flagMX from '../../../assets/images/countries/mx.png';
 import flagUS from '../../../assets/images/countries/us.png';
 
@@ -35,7 +35,6 @@ const ProvidersList = ({ filterText }: ProvidersListProps) => {
 
     useEffect(() => {
         dispatch(getSuppliers());
-        // dispatch(getProfiles());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

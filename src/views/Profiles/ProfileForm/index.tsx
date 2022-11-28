@@ -45,12 +45,6 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData, mo
         dispatch(getMenuPermissions());
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     if (mode === 'edit') {
-    //         console.log(mode, newData.menus);
-    //     }
-    // }, [mode, newData.menus]);
-
     useEffect(() => {
         if (defaultData) {
             const newMenu = defaultData.menuDetails.map((item) => {
@@ -212,11 +206,9 @@ type CheckListState = {
 
 const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
-    // const [fatherIsSelect, setFatherIsSelect] = useState<boolean>(false);
+    const [fatherIsSelect, setFatherIsSelect] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log(fatherId, defaultSelected);
-
         if (defaultSelected) {
             const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
             const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];

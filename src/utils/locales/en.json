@@ -172,5 +172,7 @@
 
     "suppliers": "Suppliers",
     "edit_supplier": "Edit supplier",
-    "create_supplier": "Create supplier"
+    "create_supplier": "Create supplier",
+    "supplier_name": "Supplier name",
+    "country": "Country"
 }

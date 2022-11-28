@@ -21,9 +21,9 @@ const EditBrandPage = Loadable(lazy(() => import('views/Brands/Edit')));
 const CreateBrandPage = Loadable(lazy(() => import('views/Brands/Create')));
 
 // providers
-const ProvidersListPage = Loadable(lazy(() => import('views/Providers/List')));
-const CreateSupplierPage = Loadable(lazy(() => import('views/Providers/Create')));
-const EditSupplierPage = Loadable(lazy(() => import('views/Providers/Edit')));
+const ProvidersListPage = Loadable(lazy(() => import('views/Suppliers/List')));
+const CreateSupplierPage = Loadable(lazy(() => import('views/Suppliers/Create')));
+const EditSupplierPage = Loadable(lazy(() => import('views/Suppliers/Edit')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
