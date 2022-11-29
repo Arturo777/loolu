@@ -86,6 +86,19 @@ const slice = createSlice({
             state.loadingEditInfo = false;
             state.approvalProfiles = action.payload;
         },
+        // profile => edit
+        updateProfilePending(state) {
+            state.fetching = true;
+        },
+        updateProfileSuccess(state) {
+            state.fetching = false;
+        },
+        deleteMenusServicePending(state) {
+            state.fetching = true;
+        },
+        deleteMenusServiceSuccess(state) {
+            state.fetching = false;
+        },
         // profile => create
         // createProfileServiceSuccess(state, action) {
         //     state.
@@ -314,10 +327,22 @@ export function createProfileService(data: NewProfileType, idMerchant?: number) 
     };
 }
 
-export function updateProfileService(data: any, idMerchant?: number) {
+type updateProfileServiceProps = {
+    data: {
+        idPerfil: number;
+        idStatus: boolean;
+        description: string;
+        menus: number[];
+        type: string;
+    };
+    idMerchant?: number;
+};
+
+export function updateProfileService({ data, idMerchant }: updateProfileServiceProps) {
     return async () => {
+        dispatch(slice.actions.updateProfilePending());
         try {
-            return await axios.post(
+            await axios.post(
                 `${STYRK_API}/styrk/api/profile/save`,
                 { ...data, idMerchant: idMerchant || 1 },
                 {
@@ -329,6 +354,42 @@ export function updateProfileService(data: any, idMerchant?: number) {
                     }
                 }
             );
+            return dispatch(slice.actions.updateProfileSuccess());
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+            return error;
+        }
+    };
+}
+
+type deleteMenusServiceProps = {
+    menus: number[];
+    idPerfil: number;
+    idMerchant?: number;
+};
+
+export function deleteMenusService({ menus, idPerfil, idMerchant }: deleteMenusServiceProps) {
+    dispatch(slice.actions.deleteMenusServicePending());
+
+    const promises = menus.map((item: number) =>
+        axios.delete(`${STYRK_API}/styrk/api/profile/delete`, {
+            params: {
+                idMerchant: idMerchant || 1,
+                idMenu: `${item}`,
+                idPerfil
+            },
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        })
+    );
+
+    return async () => {
+        try {
+            await axios.all(promises).then((values) => {
+                console.log(values);
+            });
+            return dispatch(slice.actions.deleteMenusServiceSuccess());
         } catch (error) {
             dispatch(slice.actions.hasError(error));
             return error;

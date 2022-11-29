@@ -29,15 +29,14 @@ const newProfileDefault: NewProfieState = {
 
 type ProfileFormProps = {
     handleSaveClick: (data: NewProfileType) => void;
-    fetching: boolean;
     defaultData?: ProfileType;
     mode: 'create' | 'edit';
 };
 
-export default function ProfileForm({ handleSaveClick, fetching, defaultData, mode }: ProfileFormProps) {
+export default function ProfileForm({ handleSaveClick, defaultData, mode }: ProfileFormProps) {
     const intl = useIntl();
     const dispatch = useDispatch();
-    const { menuOptions } = useSelector((state) => state.user);
+    const { menuOptions, fetching, loading } = useSelector((state) => state.user);
     const [newData, setNewData] = useState<NewProfieState>(newProfileDefault);
     const [hasError, setHasError] = useState<string>('');
 
@@ -180,7 +179,7 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData, mo
 
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button disabled={fetching} variant="outlined" startIcon={<SaveIcon />} type="submit">
+                        <Button disabled={fetching || loading} variant="outlined" startIcon={<SaveIcon />} type="submit">
                             Guardar
                         </Button>
                     </Box>
@@ -206,7 +205,6 @@ type CheckListState = {
 
 const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
-    const [fatherIsSelect, setFatherIsSelect] = useState<boolean>(false);
 
     useEffect(() => {
         if (defaultSelected) {
@@ -276,7 +274,7 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }
     return (
         <Box>
             <FormControlLabel
-                label={itemMenu.type}
+                label={`${itemMenu.type} ${itemMenu.id}`}
                 sx={{
                     '& .MuiFormControlLabel-label': {
                         fontWeight: 700
@@ -290,15 +288,8 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }
                     checkedList.map((itemChild) => (
                         <FormControlLabel
                             key={`item-check-${itemChild.name}`}
-                            label={itemChild.name}
-                            control={
-                                <Checkbox
-                                    disabled={fatherIsSelect}
-                                    name={`${itemChild.id}`}
-                                    checked={isChecked(itemChild.id)}
-                                    onChange={handleChangeChild}
-                                />
-                            }
+                            label={`${itemChild.name} ${itemChild.id}`}
+                            control={<Checkbox name={`${itemChild.id}`} checked={isChecked(itemChild.id)} onChange={handleChangeChild} />}
                         />
                     ))}
             </Box>

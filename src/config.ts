@@ -28,7 +28,7 @@ export const AWS_API = {
 
 export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
 export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2OTYwODcwNywiZXhwIjoxNjY5NjE0NzA3fQ.NmpOhVMsqzLX_gVr7bBZmweElin7vGIk77NmUDkml4jGVB1S2P3_1EaC0vo6QPW-XXmOfchENygGNaiwbt_FwQ';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2OTY3OTQ2NSwiZXhwIjoxNjY5Njg1NDY1fQ.jC4z4c4y9nvcMV2hYcfIWYC2QAQIQFM-9njjV0Ze_3crKWzoHirdXBD4c-znsL8F5VzbwtGG5-uRLekUDatqkA';
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
@@ -40,7 +40,7 @@ const config: ConfigProps = {
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 8,
     outlinedFilled: true,
-    navType: 'light', // light, dark
+    navType: 'dark', // light, dark
     presetColor: 'default', // default, theme1, theme2, theme3, theme4, theme5, theme6
     locale: 'en', // 'en' - English, 'fr' - French, 'ro' - Romanian, 'zh' - Chinese
     rtlLayout: false,
