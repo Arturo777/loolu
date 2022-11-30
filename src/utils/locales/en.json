@@ -174,5 +174,8 @@
     "edit_supplier": "Edit supplier",
     "create_supplier": "Create supplier",
     "supplier_name": "Supplier name",
-    "country": "Country"
+    "country": "Country",
+
+    "create_facet": "Create facet",
+    "edit_facet": "Edit facet"
 }

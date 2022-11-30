@@ -3,7 +3,7 @@ import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import { STYRK_API, STYRK_TOKEN } from 'config';
+import { STYRK_API, STYRK_TOKEN, STYRK_API_ALTERNATIVE } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -14,7 +14,11 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     updating: false,
     error: null,
     brands: [],
-    suppliers: []
+    suppliers: [],
+    facetsInfo: {
+        facets: [],
+        maxPage: 1
+    }
 };
 
 const slice = createSlice({
@@ -33,7 +37,6 @@ const slice = createSlice({
                 state.loading = true;
             })
             .addCase(getBrands.fulfilled, (state, action) => {
-                // console.log(action.payload);
                 state.loading = false;
                 state.brands = action.payload.response.map((item: BrandType) => ({ ...item, id: item.idBrand }));
             })
@@ -64,10 +67,25 @@ const slice = createSlice({
             .addCase(editSupplier.fulfilled, (state) => {
                 state.updating = false;
             });
+        // FACETS
+        builder
+            .addCase(getFacetsService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getFacetsService.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.loading = false;
+                state.facetsInfo = {
+                    facets: action.payload.response,
+                    maxPage: action.payload.totalPages
+                };
+            });
     }
 });
 
 export default slice.reducer;
+
+/* ---- BRANDS ---- */
 
 export const getBrands = createAsyncThunk(`${slice.name}/getBrands`, async (idMerchant?: number) => {
     const response = await axios.post(
@@ -124,6 +142,8 @@ export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (pa
     return response.data;
 });
 
+/* ---- SUPPLIERS ---- */
+
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
     const response = await axios.get(`styrk/api/supplier/search`, {
         baseURL: STYRK_API,
@@ -172,6 +192,27 @@ export const editSupplier = createAsyncThunk(`${slice.name}/editSupplier`, async
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+/* ---- SUPPLIERS ---- */
+
+type getFacetsServiceProps = {
+    idMerchant: number;
+    page: number;
+    term: string;
+};
+
+export const getFacetsService = createAsyncThunk(`${slice.name}/getFacets`, async ({ idMerchant, term, page }: getFacetsServiceProps) => {
+    const response = await axios.get(`facets/raw/merchant/${idMerchant}/search/${term}`, {
+        baseURL: STYRK_API_ALTERNATIVE,
+        params: {
+            pageNum: page
         },
         headers: {
             authorization: `Bearer ${STYRK_TOKEN}`
