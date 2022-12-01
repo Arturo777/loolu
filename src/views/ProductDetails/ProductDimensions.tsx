@@ -17,6 +17,10 @@ const ProductDimensions = ({ valueSku, product }: { valueSku: any; product: any 
                 </div>
             </div>
             <div className="content-pack">
+                <p>Peso (kg): {resultDim[0]?.sku?.weightKg}</p>
+                <p>Peso Paquete (Kg): {resultDim[0]?.sku?.packagedWeightKg}</p>
+            </div>
+            <div className="content-pack">
                 <p className="dim dim-height">{resultDim[0]?.sku?.packagedHeight}</p>
                 <img src={packageitem} alt="package" className="img-itemPack" />
                 <p className="dim dim-length">{resultDim[0]?.sku?.packagedLength}</p>

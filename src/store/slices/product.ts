@@ -169,6 +169,7 @@ export function filterProducts(filter: ProductsFilter) {
 }
 
 export function getProduct(id: string | undefined) {
+    let responseSkus: any = [];
     return async () => {
         try {
             const response = await axios.get('styrk/api/product/search', {
@@ -182,7 +183,7 @@ export function getProduct(id: string | undefined) {
                     authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
-            const responseSkus = await Promise.all(
+            await Promise.all(
                 response?.data?.response[0]?.skus.map(async (sku: any) => {
                     try {
                         const skuResp = await axios.get('styrk/api/product/detail/sku', {
@@ -201,7 +202,9 @@ export function getProduct(id: string | undefined) {
                         return {};
                     }
                 })
-            );
+            ).then((values) => {
+                responseSkus = values;
+            });
             const resProdSkus = { ...response?.data?.response[0], skusimg: responseSkus };
             dispatch(slice.actions.getProductSuccess(resProdSkus));
         } catch (error) {

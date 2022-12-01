@@ -13,7 +13,7 @@ import ProfileForm from '../ProfileForm';
 
 import { NewProfileType } from 'types/user';
 
-import { getProfiles, updateProfileService } from 'store/slices/user';
+import { deleteMenusService, getProfiles, updateProfileService } from 'store/slices/user';
 import { useSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import { ProfileType } from 'types/user-profile';
@@ -49,16 +49,44 @@ const ProfileFormView = () => {
         setProfileStatus(event.target.checked);
     };
 
-    const handleSave = (data: NewProfileType) => {
-        console.log(data);
-
+    const handleSave = async (data: NewProfileType) => {
         if (profileId) {
-            dispatch(updateProfileService({ ...data, id: profileId }));
+            const newData = {
+                description: data.description,
+                idPerfil: Number(profileId),
+                idStatus: data.idStatus ?? false,
+                menus: data.menus.map((menuId) => Number(menuId)),
+                type: data.type
+            };
+
+            console.log(profileData);
+
+            const currentMenus = profileData?.menuDetails
+                .map((item) => {
+                    const children = item.children.map((itemA) => itemA.id);
+
+                    return [item.id, ...children];
+                })
+                .flat();
+
+            const toDelete = currentMenus?.filter((itemA) => newData.menus.indexOf(itemA) === -1) ?? [];
+
+            await dispatch(updateProfileService({ data: newData, idMerchant: 1 }));
+
+            await dispatch(
+                deleteMenusService({
+                    menus: toDelete,
+                    idPerfil: Number(profileId),
+                    idMerchant: 1
+                })
+            );
+
+            navigate('/profiles');
         }
     };
 
     if (!profileData) return <Loader />;
-
+    //
     return (
         <MainCard
             title={intl.formatMessage({
@@ -79,7 +107,7 @@ const ProfileFormView = () => {
                 </FormGroup>
             }
         >
-            <ProfileForm handleSaveClick={handleSave} fetching={false} defaultData={profileData} />
+            <ProfileForm handleSaveClick={handleSave} defaultData={profileData} mode="edit" />
         </MainCard>
     );
 };

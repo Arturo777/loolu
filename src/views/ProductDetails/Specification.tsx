@@ -1,5 +1,6 @@
 // material-ui
-import { Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Button } from '@mui/material';
 
 function createData(key: string, value: string) {
     return { key, value };
@@ -27,31 +28,52 @@ const rowsGeneral = [
 
 // ==============================|| PRODUCT DETAILS - SPECIFICATION ||============================== //
 
-const Specification = () => (
-    <Grid container spacing={2}>
-        <Grid item xs={12} lg={6}>
-            <Typography variant="h4" sx={{ pb: 1.5 }}>
-                General
-            </Typography>
-            <TableContainer>
-                <Table sx={{ maxWidth: 380 }} size="small" aria-label="simple table">
-                    <TableBody>
-                        {rowsGeneral.map((row) => (
-                            <TableRow key={row.key} sx={{ '& td, & th': { border: 0 } }}>
+const Specification = () => {
+    [spect, setSpect] = useState([]);
+
+    /* const handleClick */
+    return (
+        <Grid container spacing={2}>
+            <Grid item xs={12} lg={6}>
+                <Typography variant="h4" sx={{ pb: 1.5 }}>
+                    General
+                </Typography>
+                <TableContainer>
+                    <Table sx={{ maxWidth: 380 }} size="small" aria-label="simple table">
+                        <TableBody>
+                            {rowsGeneral.map((row) => (
+                                <TableRow key={row.key} sx={{ '& td, & th': { border: 0 } }}>
+                                    <TableCell component="th" scope="row">
+                                        <Typography variant="caption" sx={{ fontWeight: 500 }}>
+                                            {row.key}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>{row.value}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TableContainer>
+                    <Table sx={{ maxWidth: 380 }} size="small" aria-label="simple table">
+                        <TableBody>
+                            <TableRow sx={{ '& td, & th': { border: 0 } }}>
                                 <TableCell component="th" scope="row">
                                     <Typography variant="caption" sx={{ fontWeight: 500 }}>
-                                        {row.key}
+                                        Name
                                     </Typography>
                                 </TableCell>
-                                <TableCell>{row.value}</TableCell>
+                                <TableCell>Value</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Grid>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Button variant="contained" color="success" sx={{ mt: 3 }} onClick="">
+                    Add Specifications
+                </Button>
+            </Grid>
 
-        <Grid item xs={12} lg={6}>
+            {/* <Grid item xs={12} lg={6}>
             <Typography variant="h4" sx={{ pb: 1.5 }}>
                 In The Box
             </Typography>
@@ -71,8 +93,9 @@ const Specification = () => (
                     </TableBody>
                 </Table>
             </TableContainer>
+        </Grid> */}
         </Grid>
-    </Grid>
-);
+    );
+};
 
 export default Specification;

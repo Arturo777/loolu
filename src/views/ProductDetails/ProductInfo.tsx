@@ -142,10 +142,10 @@ const ProductInfo = ({
     const history = useNavigate();
 
     const cart = useSelector((state) => state.cart);
-    const flatCategories = categories.map((cat: any) =>
+    /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
     );
-    console.log(flatCategories);
+    console.log(flatCategories); */
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -185,7 +185,6 @@ const ProductInfo = ({
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
-    console.log(productInfo);
     const addCart = () => {
         values.color = values.color ? values.color : 'primaryDark';
         values.size = values.size ? values.size : '8';
@@ -496,7 +495,7 @@ const ProductInfo = ({
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
-                                            Buy Now
+                                            Save Product
                                         </Button>
                                     </Grid>
                                 </Grid>

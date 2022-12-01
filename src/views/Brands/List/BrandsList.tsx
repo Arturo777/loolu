@@ -1,38 +1,32 @@
 import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Card, Grid, Box, Stack, Typography, Chip, Button } from '@mui/material';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { Box, Button } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 
 // third imports
 import { Link } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 // project imports
-import { BrandType } from 'types/cataogue';
+import { BrandType } from 'types/catalogue';
 import { useDispatch, useSelector } from 'store';
 
 // assets
-import { gridSpacing } from 'store/constant';
 import { getBrands } from 'store/slices/catalogue';
-import Loader from 'ui-component/Loader';
 
 type BransListProps = {
     filterText: string;
 };
 
-const BransList = ({ filterText }: BransListProps) => {
-    const theme = useTheme();
+const BrandsList = ({ filterText }: BransListProps) => {
+    const intl = useIntl();
+    const [pageSize, setPageSize] = useState<number>(10);
     const dispatch = useDispatch();
 
     const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
     const { brands, loading } = useSelector((state) => state.catalogue);
-
-    useEffect(() => {
-        console.log(filteredBrands);
-    }, [filteredBrands]);
 
     useEffect(() => {
         dispatch(getBrands());
@@ -54,39 +48,64 @@ const BransList = ({ filterText }: BransListProps) => {
         }
     }, [filterText, brands]);
 
-    // if (!loading) return <Loader />;
+    const columns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 80 },
+        {
+            field: 'name',
+            headerName: intl.formatMessage({
+                id: 'name'
+            }),
+            width: 150
+        },
+        {
+            field: 'title',
+            headerName: intl.formatMessage({
+                id: 'title'
+            }),
+            width: 150
+        },
+        {
+            field: 'metaTagDescription',
+            headerName: intl.formatMessage({
+                id: 'description'
+            }),
+            width: 150
+        },
+        {
+            field: 'imageUrl',
+            headerName: intl.formatMessage({
+                id: 'image'
+            }),
+            width: 220
+        },
+        {
+            field: 'idBrand',
+            headerName: '',
+            renderCell: (params) => (
+                <Box>
+                    <Button component={Link} to={`${params.row.idBrand}/edit`} size="small" startIcon={<EditIcon />} variant="outlined">
+                        EDITAR
+                    </Button>
+                </Box>
+            ),
+            width: 120
+        }
+    ];
 
     return (
-        <Box sx={{ height: 600, width: '100%' }}>
-            {/* <div > */}
-            <DataGrid loading={loading} rows={filteredBrands} columns={columns} pageSize={20} rowsPerPageOptions={[10, 20, 50, 100]} />
-            {/* </div> */}
+        <Box sx={{ width: '100%' }}>
+            <DataGrid
+                loading={loading}
+                rows={filteredBrands}
+                columns={columns}
+                pageSize={pageSize}
+                rowsPerPageOptions={[10, 20, 50, 100]}
+                onPageSizeChange={setPageSize}
+                autoHeight
+                disableSelectionOnClick
+            />
         </Box>
     );
 };
 
-export default BransList;
-
-const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID' },
-    {
-        field: 'name',
-        headerName: 'Nombre',
-        width: 90
-    },
-    {
-        field: 'title',
-        headerName: 'Título',
-        width: 90
-    },
-    {
-        field: 'metaTagDescription',
-        headerName: 'Descripción',
-        width: 90
-    },
-    {
-        field: 'imageUrl',
-        headerName: 'Imagen',
-        width: 90
-    }
-];
+export default BrandsList;

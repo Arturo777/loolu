@@ -19,7 +19,14 @@ const CreateProfile = Loadable(lazy(() => import('views/Profiles/CreateProfile')
 const EditProfile = Loadable(lazy(() => import('views/Profiles/EditProfile')));
 
 // brands
-const BransListPage = Loadable(lazy(() => import('views/Brands/List')));
+const BrandsListPage = Loadable(lazy(() => import('views/Brands/List')));
+const EditBrandPage = Loadable(lazy(() => import('views/Brands/Edit')));
+const CreateBrandPage = Loadable(lazy(() => import('views/Brands/Create')));
+
+// providers
+const ProvidersListPage = Loadable(lazy(() => import('views/Suppliers/List')));
+const CreateSupplierPage = Loadable(lazy(() => import('views/Suppliers/Create')));
+const EditSupplierPage = Loadable(lazy(() => import('views/Suppliers/Edit')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -39,6 +46,7 @@ const MainRoutes = {
             path: '/products',
             element: <ProductList />
         },
+        // users
         {
             path: '/products/detail-product/:id',
             element: <ProductDetails />
@@ -51,6 +59,7 @@ const MainRoutes = {
             path: '/users/:userId/edit',
             element: <UserProfile />
         },
+        // profiles
         {
             path: '/profiles',
             element: <ProfilesList />
@@ -63,9 +72,31 @@ const MainRoutes = {
             path: '/profiles/:profileId/edit',
             element: <EditProfile />
         },
+        // brands
         {
             path: '/brands',
-            element: <BransListPage />
+            element: <BrandsListPage />
+        },
+        {
+            path: '/brands/:brandId/edit',
+            element: <EditBrandPage />
+        },
+        {
+            path: '/brands/create',
+            element: <CreateBrandPage />
+        },
+        // providers - suppliers
+        {
+            path: '/suppliers',
+            element: <ProvidersListPage />
+        },
+        {
+            path: '/suppliers/create',
+            element: <CreateSupplierPage />
+        },
+        {
+            path: '/suppliers/:supplierId/edit',
+            element: <EditSupplierPage />
         }
     ]
 };
