@@ -8,6 +8,7 @@ export type CatalogueStateProps = {
         facets: FacetType[];
         maxPage: number;
     };
+    categories: CategoryType[];
 };
 
 export type BrandType = {
@@ -39,4 +40,15 @@ export type FacetType = {
     id: number;
     name: string;
     nameSap: string;
+};
+
+export type CategoryType = {
+    id: number;
+    isActive: true;
+    numberChildren: number;
+    name: string;
+    title: string;
+    activeStoreFrontLink: boolean;
+    hasChildren: boolean;
+    children: CategoryType[];
 };

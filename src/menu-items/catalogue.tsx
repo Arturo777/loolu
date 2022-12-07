@@ -2,14 +2,15 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconPackage, IconLayout, IconTruckDelivery, IconBoxPadding } from '@tabler/icons';
+import { IconPackage, IconLayout, IconTruckDelivery, IconBoxPadding, IconTag } from '@tabler/icons';
 
 // constant
 const icons = {
     IconPackage,
     IconLayout,
     IconTruckDelivery,
-    IconBoxPadding
+    IconBoxPadding,
+    IconTag
 };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
@@ -52,6 +53,15 @@ const catalogue = {
             type: 'item',
             url: '/facets',
             icon: icons.IconBoxPadding,
+            external: false,
+            breadcrumbs: false
+        },
+        {
+            id: 'categories',
+            title: <FormattedMessage id="categories" />,
+            type: 'item',
+            url: '/categories',
+            icon: icons.IconTag,
             external: false,
             breadcrumbs: false
         }

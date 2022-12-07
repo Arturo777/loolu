@@ -177,5 +177,10 @@
     "country": "Country",
 
     "create_facet": "Create facet",
-    "edit_facet": "Edit facet"
+    "edit_facet": "Edit facet",
+
+    "category": "Category",
+    "categories": "Categories",
+    "create_category": "Create category",
+    "edit_category": "Edit category"
 }

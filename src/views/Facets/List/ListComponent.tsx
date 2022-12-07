@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 // mui imports
 import { useTheme } from '@mui/material/styles';
@@ -52,7 +52,7 @@ export default function FacetsListComponent() {
 
                                     <Box sx={{ mb: 2 }}>
                                         <Typography variant="caption">
-                                            <FormattedMessage id="name" /> sap
+                                            <FormattedMessage id="name" /> SAP
                                         </Typography>
                                         <Typography variant="h6">{item.nameSap}</Typography>
                                     </Box>

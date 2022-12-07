@@ -18,7 +18,8 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     facetsInfo: {
         facets: [],
         maxPage: 1
-    }
+    },
+    categories: []
 };
 
 const slice = createSlice({
@@ -79,6 +80,15 @@ const slice = createSlice({
                     facets: action.payload.response,
                     maxPage: action.payload.totalPages
                 };
+            });
+        // CATEGORIES
+        builder
+            .addCase(getCategoriesService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getCategoriesService.fulfilled, (state, action) => {
+                state.loading = true;
+                state.categories = action.payload.response;
             });
     }
 });
@@ -213,6 +223,45 @@ export const getFacetsService = createAsyncThunk(`${slice.name}/getFacets`, asyn
         baseURL: STYRK_API_ALTERNATIVE,
         params: {
             pageNum: page
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+type createFacetServiceProps = {
+    idMerchant: number;
+    data: {
+        name: string;
+        nameSap: string;
+    };
+};
+
+export const createFacetService = createAsyncThunk(`${slice.name}/createFacet`, async ({ idMerchant, data }: createFacetServiceProps) => {
+    const response = await axios.post(`facets/fv/merchant/${idMerchant}`, data, {
+        baseURL: STYRK_API_ALTERNATIVE,
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
+// `${process.env.BASE_API_URL}/category/search?idMerchant=${merchantId}`
+
+/* ---- CATEGORIES ---- */
+
+type getCategoriesServiceProps = {
+    idMerchant: 1;
+};
+
+export const getCategoriesService = createAsyncThunk(`${slice.name}/getCategories`, async ({ idMerchant }: getCategoriesServiceProps) => {
+    const response = await axios.get(`styrk/api/category/search`, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant
         },
         headers: {
             authorization: `Bearer ${STYRK_TOKEN}`
