@@ -16,7 +16,7 @@ import { useDispatch } from 'react-redux';
 
 // types
 import { FacetType } from 'types/catalogue';
-import { createFacetService, createSupplier } from 'store/slices/catalogue';
+import { createFacetService } from 'store/slices/catalogue';
 import FacetFormComponent from '../FacetForm';
 
 const CreateFacetPage = () => {

@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -15,10 +14,6 @@ type CategoriesListProps = {
 };
 
 export default function CategoriesListComponent({ categories }: CategoriesListProps) {
-    useEffect(() => {
-        console.log(categories);
-    }, [categories]);
-
     const renderColumns = useMemo(() => {
         const left: any[] = [];
         const right: any[] = [];
@@ -26,9 +21,9 @@ export default function CategoriesListComponent({ categories }: CategoriesListPr
         if (categories) {
             categories.forEach((category, index) => {
                 if (index % 2) {
-                    right.push(<MainCategoryComponent category={category} />);
+                    right.push(<MainCategoryComponent key={`main-category-${category.id}`} category={category} />);
                 } else {
-                    left.push(<MainCategoryComponent category={category} />);
+                    left.push(<MainCategoryComponent key={`main-category-${category.id}`} category={category} />);
                 }
             });
         }
@@ -76,7 +71,7 @@ const MainCategoryComponent = ({ category }: MainCategoryProps) => {
             {category.hasChildren && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     {category.children.map((itemA) => (
-                        <Box sx={{ ml: 4 }}>
+                        <Box key={`category-child-${itemA.id}`} sx={{ ml: 4 }}>
                             <MainCategoryComponent category={itemA} />
                         </Box>
                     ))}

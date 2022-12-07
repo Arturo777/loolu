@@ -87,8 +87,14 @@ const slice = createSlice({
                 state.loading = true;
             })
             .addCase(getCategoriesService.fulfilled, (state, action) => {
-                state.loading = true;
+                state.loading = false;
                 state.categories = action.payload.response;
+            })
+            .addCase(createCategoryService.pending, (state) => {
+                state.updating = true;
+            })
+            .addCase(createCategoryService.fulfilled, (state) => {
+                state.updating = false;
             });
     }
 });
@@ -267,5 +273,24 @@ export const getCategoriesService = createAsyncThunk(`${slice.name}/getCategorie
             authorization: `Bearer ${STYRK_TOKEN}`
         }
     });
+    return response.data;
+});
+
+type createCategoryProps = {
+    idMerchant: number;
+    data: { name: string; fatherCategoryId: number };
+};
+
+export const createCategoryService = createAsyncThunk(`${slice.name}/createCategory`, async ({ idMerchant, data }: createCategoryProps) => {
+    const response = await axios.post(
+        `styrk/api/category/create?idMerchant=${idMerchant}`,
+        { ...data, isActive: true },
+        {
+            baseURL: STYRK_API,
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        }
+    );
     return response.data;
 });

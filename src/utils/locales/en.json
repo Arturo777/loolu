@@ -182,5 +182,7 @@
     "category": "Category",
     "categories": "Categories",
     "create_category": "Create category",
-    "edit_category": "Edit category"
+    "edit_category": "Edit category",
+    "category_name": "Category name",
+    "existing_categories": "Existing categories"
 }

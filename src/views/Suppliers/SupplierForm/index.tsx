@@ -132,7 +132,6 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
                                 />
                                 <Typography ml={1}>Estados Unidos</Typography>
                             </MenuItem>
-                            z
                         </Select>
                     </FormControl>
                 </Grid>
