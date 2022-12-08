@@ -29,7 +29,6 @@ const CategoriesListPage = () => {
     // variables
     const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>();
     const { categories } = useSelector((state) => state.catalogue);
-    const [currentPage, setCurrentPage] = useState<number>(1);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
 
@@ -43,15 +42,11 @@ const CategoriesListPage = () => {
     }, [categories]);
 
     useEffect(() => {
-        let newSearchParam = `?page=${currentPage}`;
-
-        if (filterText) {
-            newSearchParam += `&search=${filterText}`;
-        }
-
+        const newSearchParam = `&search=${filterText}`;
         setSearchParams(newSearchParam);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filterText, currentPage]);
+    }, [filterText]);
 
     useEffect(() => {
         const search = searchParams.get('search');
@@ -62,8 +57,18 @@ const CategoriesListPage = () => {
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
         const newString = event?.target.value;
         setFilterText(newString ?? '');
-        setCurrentPage(1);
     };
+
+    useEffect(() => {
+        const filtered = categories.filter(
+            (item) =>
+                JSON.stringify(item)
+                    .toLowerCase()
+                    .indexOf(filterText?.toLowerCase() ?? '') > -1
+        );
+
+        setFilteredCategories(filtered);
+    }, [filterText, categories]);
 
     return (
         <MainCard
