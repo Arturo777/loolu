@@ -55,9 +55,9 @@ const ProductDetails = () => {
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    useEffect(() => {
-        dispatch(getSku(valueSku));
-    }, [dispatch, valueSku]);
+    /*  useEffect(() => {
+         dispatch(getSku(valueSku));
+     }, [dispatch, valueSku]); */
     useEffect(() => {
         // getProduct();
         dispatch(getProduct(id));
@@ -70,6 +70,7 @@ const ProductDetails = () => {
     }, []);
 
     const { product, skus, categories } = useSelector((state) => state.product);
+
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
@@ -77,7 +78,7 @@ const ProductDetails = () => {
                     {product && product?.productID.toString() === id && (
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
-                                <ProductImages skus={skus} product={product} setActive={setActive} active={active} />
+                                <ProductImages skus={skus} valueSku={valueSku} product={product} setActive={setActive} active={active} />
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <ProductInfo

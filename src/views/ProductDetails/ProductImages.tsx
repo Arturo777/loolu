@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Key, useState, useEffect } from 'react';
 
 // material-ui
@@ -30,25 +31,31 @@ const prodImage = require.context('assets/images/e-commerce', true);
 
 // ==============================|| PRODUCT DETAILS - IMAGES ||============================== //
 
-const ProductImages = ({ skus, product, setActive, active }: { skus: any; product: any; setActive: any; active: boolean }) => {
-    const imgprod = skus;
+const ProductImages = ({
+    skus,
+    valueSku,
+    product,
+    setActive,
+    active
+}: {
+    skus: any;
+    valueSku: string | number;
+    product: any;
+    setActive: any;
+    active: boolean;
+}) => {
+    const [selected, setSelected] = useState(product?.skus[0]?.images[0]?.ImageURL);
+    const imgprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
+    console.log('setImg', imgprod[0]);
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const products = [prod1, prod2, prod3, prod4, prod5, prod6, prod7, prod8];
 
     const matchDownLG = useMediaQuery(theme.breakpoints.up('lg'));
     /* const initialImage = imgprod.sku.images[0].ImageURL || product?.skus[0]?.sku?.images[0].ImageURL; */
-    const [selected, setSelected] = useState(product?.skusimg[0]?.sku?.images[0]?.ImageURL);
-    useEffect(() => {
-        const actualizarImg = () => {
-            setSelected(imgprod?.sku?.images[0]?.ImageURL || product?.skusimg[0]?.sku?.images[0]?.ImageURL);
-        };
-        actualizarImg();
-    }, [imgprod]);
-
     const [modal, setModal] = useState(false);
 
-    const images = imgprod?.sku?.images?.map((item: any) => ({ source: item?.ImageURL }));
+    const images = imgprod?.images?.map((item: any) => ({ source: item?.ImageURL }));
 
     const lgNo = matchDownLG ? 4 : 3;
 
@@ -58,7 +65,7 @@ const ProductImages = ({ skus, product, setActive, active }: { skus: any; produc
         swipeToSlide: true,
         focusOnSelect: true,
         centerPadding: '0px',
-        slidesToShow: imgprod?.sku?.images.length || product?.skusimg[0]?.sku?.images?.length,
+        slidesToShow: imgprod?.images?.length || product?.skus[0]?.images?.length,
         style: { display: 'flex', flexDirection: 'row' }
     };
 
@@ -77,8 +84,8 @@ const ProductImages = ({ skus, product, setActive, active }: { skus: any; produc
                 </Grid>
                 <Grid item xs={11} sm={7} md={9} lg={10} xl={8}>
                     <Slider {...settings}>
-                        {(imgprod?.sku.length &&
-                            imgprod?.sku?.images?.map((item: any, index: Key | null | undefined) => (
+                        {imgprod.length > 0
+                            ? imgprod[0]?.images?.map((item: any, index: Key | null | undefined) => (
                                 <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
                                     <Avatar
                                         outline={selected === item}
@@ -89,8 +96,8 @@ const ProductImages = ({ skus, product, setActive, active }: { skus: any; produc
                                         sx={{ m: '0 auto', cursor: 'pointer' }}
                                     />
                                 </Box>
-                            ))) ||
-                            product?.skusimg[0]?.sku?.images?.map((item: any, index: Key | null | undefined) => (
+                            ))
+                            : product?.skus[0]?.images?.map((item: any, index: Key | null | undefined) => (
                                 <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
                                     <Avatar
                                         outline={selected === item}
