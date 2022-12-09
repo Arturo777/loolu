@@ -175,5 +175,15 @@
     "edit_supplier": "Edit proveedor",
     "create_supplier": "Crear proveedor",
     "supplier_name": "Nombre de proveedor",
-    "country": "País"
+    "country": "País",
+
+    "create_facet": "Crear facet",
+    "edit_facet": "Editar facet",
+
+    "category": "Categoria",
+    "categories": "Categorias",
+    "create_category": "Crear categoria",
+    "edit_category": "Editar categoria",
+    "category_name": "Nombre de categoria",
+    "existing_categories": "Categorías existentes"
 }

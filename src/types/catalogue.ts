@@ -4,6 +4,11 @@ export type CatalogueStateProps = {
     updating: boolean;
     brands: BrandType[];
     suppliers: SupplierType[];
+    facetsInfo: {
+        facets: FacetType[];
+        maxPage: number;
+    };
+    categories: CategoryType[];
 };
 
 export type BrandType = {
@@ -29,4 +34,21 @@ export type SupplierType = {
     idProvider: number;
     countryId: string;
     name: string;
+};
+
+export type FacetType = {
+    id: number;
+    name: string;
+    nameSap: string;
+};
+
+export type CategoryType = {
+    id: number;
+    isActive: true;
+    numberChildren: number;
+    name: string;
+    title: string;
+    activeStoreFrontLink: boolean;
+    hasChildren: boolean;
+    children: CategoryType[];
 };

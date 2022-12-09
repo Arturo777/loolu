@@ -46,7 +46,6 @@ const ProductImages = ({
 }) => {
     const [selected, setSelected] = useState(product?.skus[0]?.images[0]?.ImageURL);
     const imgprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
-    console.log('setImg', imgprod[0]);
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const products = [prod1, prod2, prod3, prod4, prod5, prod6, prod7, prod8];

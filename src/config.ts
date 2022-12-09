@@ -27,6 +27,8 @@ export const AWS_API = {
 };
 
 export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
+export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
+
 export const STYRK_TOKEN =
     'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MDYwMzk1MywiZXhwIjoxNjcwNjA5OTUzfQ.04ggAuvVJIVE7bJveo5W6IpgR_Gy05wxLMBOeMtxAb-YWvwHFc0FasLz89R9aEQZq-wF-X4Dveda_9HmDdhdYw';
 

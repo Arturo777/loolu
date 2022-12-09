@@ -140,12 +140,13 @@ const ProductInfo = ({
 }) => {
     const dispatch = useDispatch();
     const history = useNavigate();
-
+    const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
     const cart = useSelector((state) => state.cart);
     /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
     );
     console.log(flatCategories); */
+    console.log(product);
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -415,6 +416,7 @@ const ProductInfo = ({
                                                 )}
                                             </TableCell>
                                         </TableRow>
+                                        {skuprod?.length > 0 && <Typography variant="h4">{skuprod[0]?.name}</Typography>}
                                         <TableRow>
                                             <TableCell>
                                                 <Stack>
