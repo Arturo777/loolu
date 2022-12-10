@@ -9,6 +9,7 @@ export type CatalogueStateProps = {
         maxPage: number;
     };
     categories: CategoryType[];
+    flatCategories: FlatCategoryType[];
 };
 
 export type BrandType = {
@@ -44,11 +45,25 @@ export type FacetType = {
 
 export type CategoryType = {
     id: number;
-    isActive: true;
     numberChildren: number;
     name: string;
     title: string;
     activeStoreFrontLink: boolean;
-    hasChildren: boolean;
     children: CategoryType[];
+    hasChildren: boolean;
+    isActive: boolean;
+    showBrandFilter: boolean;
+    showInStoreFront: boolean;
+    fatherCategoryId: number;
+    score: number;
+    description: string;
+};
+
+export type FlatCategoryType = {
+    id: number;
+    name: string;
+    title: string;
+    description: string;
+    hasChildren: boolean;
+    level: number;
 };

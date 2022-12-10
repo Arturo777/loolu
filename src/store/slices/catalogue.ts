@@ -4,6 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
 import { STYRK_API, STYRK_TOKEN, STYRK_API_ALTERNATIVE } from 'config';
+import { getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -19,7 +20,8 @@ const initialState: DefaultRootStateProps['catalogue'] = {
         facets: [],
         maxPage: 1
     },
-    categories: []
+    categories: [],
+    flatCategories: []
 };
 
 const slice = createSlice({
@@ -89,6 +91,8 @@ const slice = createSlice({
             .addCase(getCategoriesService.fulfilled, (state, action) => {
                 state.loading = false;
                 state.categories = action.payload.response;
+
+                state.flatCategories = getCategoriesFlat(action.payload.response);
             })
             .addCase(createCategoryService.pending, (state) => {
                 state.updating = true;
@@ -294,3 +298,63 @@ export const createCategoryService = createAsyncThunk(`${slice.name}/createCateg
     );
     return response.data;
 });
+
+type getCategoryInfoServiceProps = {
+    idMerchant: number;
+    categoryId: number;
+};
+
+export const getCategoryInfoService = createAsyncThunk(
+    `${slice.name}/getCategory`,
+    async ({ idMerchant, categoryId }: getCategoryInfoServiceProps) => {
+        const response = await axios.get(`styrk/api/category/get`, {
+            baseURL: STYRK_API,
+            params: {
+                idMerchant: idMerchant || 1,
+                categoryId
+            },
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    }
+);
+
+// export const getCategoryInfoService = createAsyncThunk(
+//     `${slice.name}/getCategory`,
+//     async ({ idMerchant, categoryId }: getCategoryInfoServiceProps) => {
+//         const response = await axios.post(`styrk/api/category/get`, {
+//             baseURL: STYRK_API,
+//             params: {
+//                 merchantId: idMerchant,
+//                 categoryId
+//             },
+//             headers: {
+//                 authorization: `Bearer ${STYRK_TOKEN}`
+//             }
+//         });
+//         return response.data;
+//     }
+// );
+
+/* 
+
+export const getCategoryInfoService = createAsyncThunk(
+    `${slice.name}/getCategory`,
+    async ({ idMerchant, categoryId }: getCategoryInfoServiceProps) => {
+        const response = await axios.post(`styrk/api/category/get`, {
+            baseURL: STYRK_API,
+            params: {
+                merchantId: idMerchant,
+                categoryId
+            },
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    }
+);
+
+*/

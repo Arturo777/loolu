@@ -32,7 +32,6 @@ const CreateFacetPage = Loadable(lazy(() => import('views/Facets/Create')));
 
 // ========= CATEGORIES =========
 const CategoriesListPage = Loadable(lazy(() => import('views/Categories/List')));
-const CreateCategoryPage = Loadable(lazy(() => import('views/Categories/Create')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -117,10 +116,6 @@ const MainRoutes = {
         {
             path: '/categories',
             element: <CategoriesListPage />
-        },
-        {
-            path: '/categories/create',
-            element: <CreateCategoryPage />
         }
     ]
 };

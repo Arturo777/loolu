@@ -1,78 +1,104 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { CategoryType } from 'types/catalogue';
-import { Link } from 'react-router-dom';
 import { gridSpacing } from 'store/constant';
+import { useDispatch, useSelector } from 'store';
+import { getCategoriesService } from 'store/slices/catalogue';
 
 type CategoriesListProps = {
-    categories?: CategoryType[];
+    filterText: string;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
 };
 
-export default function CategoriesListComponent({ categories }: CategoriesListProps) {
-    const renderColumns = useMemo(() => {
-        const left: any[] = [];
-        const right: any[] = [];
+export default function CategoriesListComponent({ filterText, openCreate, handleShowInfo }: CategoriesListProps) {
+    // hooks
+    const dispatch = useDispatch();
+    // store
+    const { categories } = useSelector((state) => state.catalogue);
+    // vars
+    const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>();
 
-        if (categories) {
-            categories.forEach((category, index) => {
-                if (index % 2) {
-                    right.push(<MainCategoryComponent key={`main-category-${category.id}`} category={category} />);
-                } else {
-                    left.push(<MainCategoryComponent key={`main-category-${category.id}`} category={category} />);
-                }
-            });
-        }
+    useEffect(() => {
+        dispatch(getCategoriesService({ idMerchant: 1 }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-        return (
-            <>
-                <Grid item xs={6}>
-                    {left}
-                </Grid>
-                <Grid item xs={6}>
-                    {right}
-                </Grid>
-            </>
-        );
+    useEffect(() => {
+        setFilteredCategories(categories);
     }, [categories]);
+
+    useEffect(() => {
+        const filtered =
+            filterText.length >= 2
+                ? categories.filter(
+                      (item) =>
+                          JSON.stringify(item)
+                              .toLowerCase()
+                              .indexOf(filterText?.toLowerCase() ?? '') > -1
+                  )
+                : categories;
+
+        setFilteredCategories(filtered);
+    }, [filterText, categories]);
 
     return (
         <Grid container spacing={gridSpacing}>
-            {renderColumns}
+            {filteredCategories?.map((category) => (
+                <Grid item xs={12} key={`main-category-${category.id}`}>
+                    <MainCategoryComponent category={category} openCreate={openCreate} handleShowInfo={handleShowInfo} />
+                </Grid>
+            ))}
         </Grid>
     );
 }
 
 type MainCategoryProps = {
     category: CategoryType;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
 };
 
-const MainCategoryComponent = ({ category }: MainCategoryProps) => {
+const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCategoryProps) => {
     const [open, setOpen] = React.useState(false);
 
-    const handleClick = () => {
+    const handleOpen = () => {
         setOpen(!open);
     };
     return (
         <>
-            <ListItemButton>
-                <ListItemIcon onClick={handleClick}>{category.hasChildren ? <AddBoxIcon /> : null}</ListItemIcon>
-                <ListItemText primary={category.name} secondary={category.title} />
-                <IconButton component={Link} to={`${category.id}/edit`}>
+            <ListItemButton sx={{ paddingY: 0 }}>
+                <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
+                    {category.hasChildren ? <ExpandCircleDownIcon /> : null}
+                </ListItemIcon>
+                <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
+                {/* EDIT */}
+                <IconButton
+                    onClick={() => {
+                        handleShowInfo(category.id);
+                    }}
+                >
                     <EditIcon />
                 </IconButton>
-                {category.hasChildren ? <IconButton onClick={handleClick}>{open ? <ExpandLess /> : <ExpandMore />}</IconButton> : null}
+                {/* CREATE */}
+                <IconButton
+                    onClick={() => {
+                        openCreate(category.id);
+                    }}
+                >
+                    <AddBoxIcon />
+                </IconButton>
             </ListItemButton>
 
             {category.hasChildren && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     {category.children.map((itemA) => (
                         <Box key={`category-child-${itemA.id}`} sx={{ ml: 4 }}>
-                            <MainCategoryComponent category={itemA} />
+                            <MainCategoryComponent category={itemA} openCreate={openCreate} handleShowInfo={handleShowInfo} />
                         </Box>
                     ))}
                 </Collapse>
