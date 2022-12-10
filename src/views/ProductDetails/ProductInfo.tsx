@@ -379,6 +379,29 @@ const ProductInfo = ({
                     <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} lg={10}>
+                                <Grid item xs={12}>
+                                    {active ? (
+                                        <Box
+                                            sx={{
+                                                '& .MuiTextField-root': { mt: 2 }
+                                            }}
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                id="outlined-basic"
+                                                label="Nombre Sku"
+                                                variant="outlined"
+                                                name="skuName"
+                                                defaultValue={skuprod[0]?.name}
+                                                value={productInfo?.skuName}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </Box>
+                                    ) : (
+                                        skuprod?.length > 0 && <Typography variant="h4">{skuprod[0]?.name}</Typography>
+                                    )}
+                                </Grid>
                                 <Table>
                                     <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                         <TableRow>
@@ -416,7 +439,6 @@ const ProductInfo = ({
                                                 )}
                                             </TableCell>
                                         </TableRow>
-                                        {skuprod?.length > 0 && <Typography variant="h4">{skuprod[0]?.name}</Typography>}
                                         <TableRow>
                                             <TableCell>
                                                 <Stack>
