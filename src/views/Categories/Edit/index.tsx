@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, useEffect, useCallback } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 
 // mui imports
 import {
@@ -10,14 +10,17 @@ import {
     Card,
     CircularProgress,
     Fade,
-    LinearProgress,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
     Typography,
-    SelectChangeEvent
+    SelectChangeEvent,
+    FormGroup,
+    FormControlLabel,
+    Switch
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 
 // third-party imports
@@ -30,11 +33,13 @@ import { gridSpacing } from 'store/constant';
 import { getCategoryInfoService } from 'store/slices/catalogue';
 
 // types
-import { CategoryType, FlatCategoryType } from 'types/catalogue';
+import { CategoryType } from 'types/catalogue';
+import SelectCategoryComponent from '../components/SelectCategory';
 
 type EditCategoryProps = {
     selectedCategory?: number;
     show: boolean;
+    onCancel: () => void;
 };
 
 type NewCategoryType = Omit<CategoryType, 'id' | 'numberChildren' | 'hasChildren' | 'children'>;
@@ -48,31 +53,31 @@ const initialData: NewCategoryType = {
     showInStoreFront: true,
     activeStoreFrontLink: true,
     fatherCategoryId: 0,
-    score: 0
+    score: 0,
+    stockKeepingUnitSelectionMode: ''
 };
 
-export default function EditCategoryComponent({ selectedCategory, show }: EditCategoryProps) {
+export default function EditCategoryComponent({ selectedCategory, show, onCancel }: EditCategoryProps) {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
 
     // store
-    const { updating, loading, flatCategories } = useSelector((state) => state.catalogue);
+    const { updating } = useSelector((state) => state.catalogue);
 
     // vars
     const [newData, setNewData] = useState<NewCategoryType>(initialData);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        console.log(newData);
-    }, [newData]);
-
-    useEffect(() => {
         if (selectedCategory) {
             setIsLoading(true);
             dispatch(getCategoryInfoService({ idMerchant: 1, categoryId: selectedCategory }))
                 .then(({ payload }) => {
-                    setNewData(payload.response);
+                    setNewData({
+                        ...payload.response,
+                        fatherCategoryId: payload.response.fatherCategoryId === 0 ? '' : payload.response.fatherCategoryId
+                    });
                 })
                 .catch(() => {
                     dispatch(
@@ -104,28 +109,8 @@ export default function EditCategoryComponent({ selectedCategory, show }: EditCa
         setNewData({ ...newData, [name]: value });
     };
 
-    const renderSelected = useCallback(
-        (selected) => {
-            const selectedItem: FlatCategoryType | undefined = flatCategories.find((item) => Number(item.id) === Number(selected));
-
-            if (!selectedItem) return <Box />;
-
-            return (
-                <Box sx={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-                    <Typography>{selectedItem.name}</Typography>
-                    {Boolean(selectedItem.description) && (
-                        <Typography ml={1} variant="caption">
-                            {selectedItem.description}
-                        </Typography>
-                    )}
-                </Box>
-            );
-        },
-        [flatCategories]
-    );
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setNewData({ ...newData, fatherCategoryId: Number(event.target.value) ?? 1 });
+    const handleChangeSelect = (event: SelectChangeEvent) => {
+        setNewData({ ...newData, [event.target.name]: Number(event.target.value) ?? 1 });
     };
 
     const renderContent = () => (
@@ -143,6 +128,7 @@ export default function EditCategoryComponent({ selectedCategory, show }: EditCa
                         required
                     />
                 </Grid>
+                {/* TITLE */}
                 <Grid item xs={12} sm={6} md={6} xl={4}>
                     <TextField
                         value={newData.title}
@@ -155,72 +141,109 @@ export default function EditCategoryComponent({ selectedCategory, show }: EditCa
                         required
                     />
                 </Grid>
-
+                {/* SCORE */}
+                <Grid item xs={12} sm={6} md={6} xl={4}>
+                    <TextField value={newData.score} fullWidth label="Score" name="score" onChange={onchangeText} required />
+                </Grid>
+                {/* DESCRIPTION */}
                 <Grid item xs={12} sm={6} md={6} xl={4}>
                     <TextField
-                        value={newData.score}
+                        value={newData.description}
                         fullWidth
                         label={intl.formatMessage({
-                            id: 'score'
+                            id: 'description'
                         })}
-                        name="score"
+                        name="description"
                         onChange={onchangeText}
                         required
                     />
                 </Grid>
-
+                {/* FATHER CATEGORY box */}
                 <Grid item xs={12} sm={6} md={6} xl={4}>
-                    {loading && (
-                        <Box sx={{ mt: 3 }}>
-                            <LinearProgress />
-                        </Box>
-                    )}
-
-                    {!loading && (
-                        <FormControl fullWidth>
-                            <InputLabel id="select-country-label">
-                                {intl.formatMessage({
-                                    id: 'existing_categories'
-                                })}
-                            </InputLabel>
-                            <Select
-                                labelId="select-category-label"
-                                id="select-category"
-                                value={`${newData.fatherCategoryId}`}
-                                label={intl.formatMessage({
-                                    id: 'existing_categories'
-                                })}
-                                onChange={handleChange}
-                                renderValue={renderSelected}
-                                required
-                            >
-                                {flatCategories.map((item) => (
-                                    <MenuItem
-                                        key={`selected-item-${item.id}`}
-                                        value={item.id}
-                                        sx={{ background: item.level === 1 ? 'rgba(100, 100, 100, 0.2)' : '' }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                ml: (item.level ?? 1) * 2,
-                                                fontWeight: item.level === 1 || item.level === 2 ? 'bold' : ''
-                                            }}
-                                        >
-                                            {item.name}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
+                    <SelectCategoryComponent fatherCategoryId={newData.fatherCategoryId} onChange={handleChangeSelect} />
+                </Grid>
+                {/* Mode */}
+                <Grid item xs={12} sm={6} md={6} xl={4}>
+                    <FormControl fullWidth>
+                        <InputLabel id="select-country-label">
+                            {intl.formatMessage({
+                                id: 'existing_categories'
+                            })}
+                        </InputLabel>
+                        <Select
+                            labelId="select-category-label"
+                            id="select-category"
+                            value={newData.stockKeepingUnitSelectionMode}
+                            label={intl.formatMessage({
+                                id: 'existing_categories'
+                            })}
+                            onChange={handleChangeSelect}
+                            name="stockKeepingUnitSelectionMode"
+                            required
+                        >
+                            {categoryModes.map((item, index) => (
+                                <MenuItem key={`selected-item-${index}`} value={item.value}>
+                                    <Typography>{item.label}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                {/* STATUS */}
+                <Grid item xs={12} sm={6} md={3} xl={2} sx={switchContainerStyles}>
+                    <FormGroup>
+                        <FormControlLabel
+                            labelPlacement="start"
+                            control={<Switch checked={newData.isActive} />}
+                            label={intl.formatMessage({
+                                id: newData.isActive ? 'active' : 'inactive'
+                            })}
+                        />
+                    </FormGroup>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} xl={2} sx={switchContainerStyles}>
+                    <FormGroup>
+                        <FormControlLabel
+                            labelPlacement="start"
+                            control={<Switch checked={newData.activeStoreFrontLink} />}
+                            label={intl.formatMessage({
+                                id: 'active_link'
+                            })}
+                        />
+                    </FormGroup>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} xl={2} sx={switchContainerStyles}>
+                    <FormGroup>
+                        <FormControlLabel
+                            labelPlacement="start"
+                            control={<Switch checked={newData.showBrandFilter} />}
+                            label={intl.formatMessage({
+                                id: 'show_brand_filter'
+                            })}
+                        />
+                    </FormGroup>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3} xl={2} sx={switchContainerStyles}>
+                    <FormGroup>
+                        <FormControlLabel
+                            labelPlacement="start"
+                            control={<Switch checked={newData.showInStoreFront} />}
+                            label={intl.formatMessage({
+                                id: 'show_in_store'
+                            })}
+                        />
+                    </FormGroup>
                 </Grid>
 
                 <Grid item xs={12} pt={4} pl={3}>
                     <Divider />
                 </Grid>
-
+                {/* SAVE AND CANCEL BUTTOn */}
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button onClick={onCancel} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
+                            Cancelar
+                        </Button>
                         <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
                             Guardar
                         </Button>
@@ -248,3 +271,12 @@ export default function EditCategoryComponent({ selectedCategory, show }: EditCa
         </Fade>
     );
 }
+
+const categoryModes: { value: string; label: string }[] = [
+    { value: 'COMBO', label: 'Combo' },
+    { value: 'LIST', label: 'Lista de SKU' },
+    { value: 'RADIO', label: 'Radio selección' },
+    { value: 'SPECIFICATION', label: 'Especificacion de SKU' }
+];
+
+const switchContainerStyles = { display: 'flex', justifyContent: 'flex-start' };

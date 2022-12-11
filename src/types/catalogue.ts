@@ -57,6 +57,7 @@ export type CategoryType = {
     fatherCategoryId: number;
     score: number;
     description: string;
+    stockKeepingUnitSelectionMode: '' | 'COMBO' | 'LIST' | 'RADIO' | 'SPECIFICATION';
 };
 
 export type FlatCategoryType = {

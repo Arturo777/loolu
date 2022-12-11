@@ -184,5 +184,10 @@
     "create_category": "Create category",
     "edit_category": "Edit category",
     "category_name": "Category name",
-    "existing_categories": "Existing categories"
+    "existing_categories": "Existing categories",
+    "father_category": "Father category",
+    "show_mode": "Mode to show",
+    "active_link": "Active link",
+    "show_brand_filter": "Show brand filters",
+    "show_in_store": "Show in store"
 }

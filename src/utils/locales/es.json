@@ -185,5 +185,10 @@
     "create_category": "Crear categoria",
     "edit_category": "Editar categoria",
     "category_name": "Nombre de categoria",
-    "existing_categories": "Categorías existentes"
+    "existing_categories": "Categorias existentes",
+    "father_category": "Categoria padre",
+    "show_mode": "Modo en el que se mostrará el producto",
+    "active_link": "Activar link",
+    "show_brand_filter": "Mostrar filtro de marca",
+    "show_in_store": "Mostrar en tienda"
 }

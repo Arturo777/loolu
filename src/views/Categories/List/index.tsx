@@ -72,6 +72,11 @@ const CategoriesListPage = () => {
         }
     };
 
+    const handleCancelEdit = () => {
+        setSelectedCategory(undefined);
+        setShowInfo(false);
+    };
+
     return (
         <MainCard
             title={
@@ -94,7 +99,7 @@ const CategoriesListPage = () => {
                 </Grid>
                 <Grid item xs={12} sm={8}>
                     {/* INFO  */}
-                    <EditCategoryComponent selectedCategory={selectedCategory} show={showInfo} />
+                    <EditCategoryComponent selectedCategory={selectedCategory} show={showInfo} onCancel={handleCancelEdit} />
                 </Grid>
             </Grid>
         </MainCard>
