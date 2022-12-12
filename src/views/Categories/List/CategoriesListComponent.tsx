@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton } from '@mui/material';
+// mui imports
+import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card, useTheme, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
+
+// project imports
+import { getCategoriesService } from 'store/slices/catalogue';
+import { useDispatch, useSelector } from 'store';
+
+// types
 import { CategoryType } from 'types/catalogue';
 import { gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
-import { getCategoriesService } from 'store/slices/catalogue';
 
 type CategoriesListProps = {
     filterText: string;
@@ -47,13 +52,15 @@ export default function CategoriesListComponent({ filterText, openCreate, handle
     }, [filterText, categories]);
 
     return (
-        <Grid container spacing={gridSpacing}>
-            {filteredCategories?.map((category) => (
-                <Grid item xs={12} key={`main-category-${category.id}`}>
-                    <MainCategoryComponent category={category} openCreate={openCreate} handleShowInfo={handleShowInfo} />
-                </Grid>
-            ))}
-        </Grid>
+        <Card sx={{ boxShadow: 2 }}>
+            <Grid container spacing={gridSpacing}>
+                {filteredCategories?.map((category) => (
+                    <Grid item xs={12} key={`main-category-${category.id}`}>
+                        <MainCategoryComponent category={category} openCreate={openCreate} handleShowInfo={handleShowInfo} />
+                    </Grid>
+                ))}
+            </Grid>{' '}
+        </Card>
     );
 }
 
@@ -97,7 +104,7 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCat
             {category.hasChildren && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     {category.children.map((itemA) => (
-                        <Box key={`category-child-${itemA.id}`} sx={{ ml: 4 }}>
+                        <Box key={`category-child-${itemA.id}`} sx={{ ml: 2 }}>
                             <MainCategoryComponent category={itemA} openCreate={openCreate} handleShowInfo={handleShowInfo} />
                         </Box>
                     ))}

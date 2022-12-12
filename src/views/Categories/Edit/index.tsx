@@ -18,7 +18,10 @@ import {
     SelectChangeEvent,
     FormGroup,
     FormControlLabel,
-    Switch
+    Switch,
+    useMediaQuery,
+    useTheme,
+    Modal
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
@@ -61,6 +64,8 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
+    const theme = useTheme();
+    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     // store
     const { updating } = useSelector((state) => state.catalogue);
@@ -116,6 +121,17 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
     const renderContent = () => (
         <>
             <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing} p={3}>
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Typography variant="h4">
+                        {intl.formatMessage({
+                            id: 'edit_category'
+                        })}
+                    </Typography>
+                </Grid>
+
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Divider />
+                </Grid>
                 <Grid item xs={12} sm={6} md={6} xl={4}>
                     <TextField
                         value={newData.name}
@@ -253,9 +269,35 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
         </>
     );
 
+    if (onlyMediumScreen) {
+        return (
+            <Modal open={show} onClose={onCancel} aria-labelledby="modal-edit-category" aria-describedby="modal-render-form-edit-category">
+                <Box sx={modalStyle}>
+                    {isLoading && (
+                        <Fade in={isLoading}>
+                            <Box component={Card} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingY: 10 }}>
+                                <CircularProgress />
+                            </Box>
+                        </Fade>
+                    )}
+                    {!isLoading && renderContent()}
+                </Box>
+            </Modal>
+        );
+    }
+
     return (
         <Fade in={show}>
-            <Card sx={{ boxShadow: 2 }}>
+            <Card
+                sx={{
+                    boxShadow: 2,
+                    background: 'white',
+                    position: 'sticky',
+                    top: 100,
+                    bottom: 20,
+                    zIndex: 5
+                }}
+            >
                 {isLoading && (
                     <Fade in={isLoading}>
                         <Box
@@ -280,3 +322,17 @@ const categoryModes: { value: string; label: string }[] = [
 ];
 
 const switchContainerStyles = { display: 'flex', justifyContent: 'flex-start' };
+
+const modalStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+    borderRadius: 2
+};

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // material-ui
-import { Button, Card, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
@@ -21,6 +21,8 @@ import EditCategoryComponent from '../Edit';
 // ==============================|| FACETS LIST ||============================== //
 
 const CategoriesListPage = () => {
+    // hooks
+
     // vars
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
@@ -57,6 +59,7 @@ const CategoriesListPage = () => {
         setOpenCreate(true);
     };
 
+    // close edit
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
         const newString = event?.target.value;
         setFilterText(newString ?? '');
@@ -80,6 +83,7 @@ const CategoriesListPage = () => {
     return (
         <MainCard
             title={
+                // TOP - Create form and header
                 <CustomPageHeader
                     handleSearch={handleSearch}
                     filterText={filterText}
@@ -89,16 +93,15 @@ const CategoriesListPage = () => {
                 />
             }
             content={false}
+            sx={{ overflow: 'initial' }}
         >
             <Grid container spacing={gridSpacing} p={2}>
-                <Grid item xs={12} sm={4}>
-                    {/* LIST  */}
-                    <Card sx={{ boxShadow: 2 }}>
-                        <CategoriesListComponent filterText={filterText} openCreate={openCreateFormById} handleShowInfo={handleShowInfo} />
-                    </Card>
+                {/* LIST  */}
+                <Grid item xs={12} sm={8} md={4}>
+                    <CategoriesListComponent filterText={filterText} openCreate={openCreateFormById} handleShowInfo={handleShowInfo} />
                 </Grid>
-                <Grid item xs={12} sm={8}>
-                    {/* INFO  */}
+                {/* INFO  */}
+                <Grid item xs={12} sm={4} md={8}>
                     <EditCategoryComponent selectedCategory={selectedCategory} show={showInfo} onCancel={handleCancelEdit} />
                 </Grid>
             </Grid>
@@ -115,6 +118,8 @@ type CustomPageHeaderProps = {
     openCreate: boolean;
     selectedCatId?: number;
 };
+
+// Create form and header
 
 const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, selectedCatId }: CustomPageHeaderProps) => {
     // hooks
