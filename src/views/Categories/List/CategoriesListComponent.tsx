@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card, useTheme, useMediaQuery } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -80,7 +80,7 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCat
         <>
             <ListItemButton sx={{ paddingY: 0 }}>
                 <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
-                    {category.hasChildren ? <ExpandCircleDownIcon /> : null}
+                    {category.children?.length ? <ExpandCircleDownIcon /> : null}
                 </ListItemIcon>
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
                 {/* EDIT */}
@@ -101,7 +101,7 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCat
                 </IconButton>
             </ListItemButton>
 
-            {category.hasChildren && (
+            {Boolean(category.children?.length) && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     {category.children.map((itemA) => (
                         <Box key={`category-child-${itemA.id}`} sx={{ ml: 2 }}>
