@@ -142,10 +142,10 @@ const ProductInfo = ({
     const history = useNavigate();
 
     const cart = useSelector((state) => state.cart);
-    const flatCategories = categories.map((cat: any) =>
+    /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
-    );
-    console.log(flatCategories);
+    ); */
+    /* console.log(flatCategories); */
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {

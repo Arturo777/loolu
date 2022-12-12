@@ -4,7 +4,6 @@ import packageitem from '../../assets/images/package.png';
 import './style.css';
 
 const ProductDimensions = ({ valueSku, product }: { valueSku: any; product: any }) => {
-    console.log(valueSku);
     const resultDim = product.skusimg.filter((itemSku: any) => itemSku?.sku?.skuID === valueSku);
     return (
         <div className="item-package">

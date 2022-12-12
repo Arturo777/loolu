@@ -30,21 +30,34 @@ const prodImage = require.context('assets/images/e-commerce', true);
 
 // ==============================|| PRODUCT DETAILS - IMAGES ||============================== //
 
-const ProductImages = ({ skus, product, setActive, active }: { skus: any; product: any; setActive: any; active: boolean }) => {
-    const imgprod = skus;
+const ProductImages = ({
+    setValueSku,
+    valueSku,
+    product,
+    setActive,
+    active
+}: {
+    setValueSku: any;
+    valueSku: number;
+    product: any;
+    setActive: any;
+    active: boolean;
+}) => {
+    const imgprod = product?.skusimg?.filter(({ sku }: { sku: any }) => sku.skuID === (valueSku !== 0 ? valueSku : product?.skus[0].skuID));
+    console.log('cae', product?.skus[0].skuID);
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const products = [prod1, prod2, prod3, prod4, prod5, prod6, prod7, prod8];
 
     const matchDownLG = useMediaQuery(theme.breakpoints.up('lg'));
     /* const initialImage = imgprod.sku.images[0].ImageURL || product?.skus[0]?.sku?.images[0].ImageURL; */
-    const [selected, setSelected] = useState(product?.skusimg[0]?.sku?.images[0]?.ImageURL);
+    const [selected, setSelected] = useState(imgprod?.images[0]?.ImageURL);
     useEffect(() => {
         const actualizarImg = () => {
             setSelected(imgprod?.sku?.images[0]?.ImageURL || product?.skusimg[0]?.sku?.images[0]?.ImageURL);
         };
         actualizarImg();
-    }, [imgprod]);
+    }, []);
 
     const [modal, setModal] = useState(false);
 
@@ -77,7 +90,7 @@ const ProductImages = ({ skus, product, setActive, active }: { skus: any; produc
                 </Grid>
                 <Grid item xs={11} sm={7} md={9} lg={10} xl={8}>
                     <Slider {...settings}>
-                        {(imgprod?.sku.length &&
+                        {(imgprod?.sku?.length &&
                             imgprod?.sku?.images?.map((item: any, index: Key | null | undefined) => (
                                 <Box key={index} onClick={() => setSelected(item?.ImageURL)} sx={{ p: 1 }}>
                                     <Avatar

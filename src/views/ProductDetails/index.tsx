@@ -41,12 +41,13 @@ function a11yProps(index: number) {
 }
 
 const ProductDetails = () => {
-    const [valueSku, setValueSku] = useState('');
+    const [valueSku, setValueSku] = useState(0);
     const [active, setActive] = useState(false);
     const [productInfo, setProductInfo] = useState({});
     const { id } = useParams();
 
     const dispatch = useDispatch();
+    const { product, categories } = useSelector((state) => state.product);
     const cart = useSelector((state: DefaultRootStateProps) => state.cart);
 
     // product description tabs
@@ -55,21 +56,21 @@ const ProductDetails = () => {
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    useEffect(() => {
-        dispatch(getSku(valueSku));
-    }, [dispatch, valueSku]);
+    /* useEffect(() => {
+        if (valueSku) dispatch(getSku(valueSku));
+    }, [dispatch, valueSku]); */
+
     useEffect(() => {
         // getProduct();
         dispatch(getProduct(id));
         dispatch(getCategories());
         // clear cart if complete order
+        /*  if (valueSku === 0) setValueSku(product?.skus[0]?.sku?.skuID); */
         if (cart.checkout.step > 2) {
             dispatch(resetCart());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { product, skus, categories } = useSelector((state) => state.product);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
@@ -77,7 +78,13 @@ const ProductDetails = () => {
                     {product && product?.productID.toString() === id && (
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
-                                <ProductImages skus={skus} product={product} setActive={setActive} active={active} />
+                                <ProductImages
+                                    setValueSku={setValueSku}
+                                    valueSku={valueSku}
+                                    product={product}
+                                    setActive={setActive}
+                                    active={active}
+                                />
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <ProductInfo

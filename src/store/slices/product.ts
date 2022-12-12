@@ -202,6 +202,29 @@ export function getProduct(id: string | undefined) {
                     }
                 })
             );
+            console.log(
+                await Promise.all(
+                    response?.data?.response[0]?.skus.map(async (sku: any) => {
+                        try {
+                            const skuResp = await axios.get('styrk/api/product/detail/sku', {
+                                baseURL: STYRK_API,
+                                params: {
+                                    idMerchant: 1,
+                                    idSKU: sku?.skuID?.toString()
+                                },
+                                headers: {
+                                    authorization: `Bearer ${STYRK_TOKEN}`
+                                }
+                            });
+                            return skuResp?.data?.response;
+                        } catch (error) {
+                            console.error(error);
+                            return {};
+                        }
+                    })
+                )
+            );
+
             const resProdSkus = { ...response?.data?.response[0], skusimg: responseSkus };
             dispatch(slice.actions.getProductSuccess(resProdSkus));
         } catch (error) {
