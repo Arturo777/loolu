@@ -321,33 +321,33 @@ export const getCategoryInfoService = createAsyncThunk(
     }
 );
 
-// export const getCategoryInfoService = createAsyncThunk(
-//     `${slice.name}/getCategory`,
-//     async ({ idMerchant, categoryId }: getCategoryInfoServiceProps) => {
-//         const response = await axios.post(`styrk/api/category/get`, {
-//             baseURL: STYRK_API,
-//             params: {
-//                 merchantId: idMerchant,
-//                 categoryId
-//             },
-//             headers: {
-//                 authorization: `Bearer ${STYRK_TOKEN}`
-//             }
-//         });
-//         return response.data;
-//     }
-// );
+type editCategoryServiceProps = {
+    idMerchant: number;
+    category: {
+        activeStoreFrontLink: boolean;
+        adWordsRemarketingCode: boolean | null;
+        description: string;
+        fatherCategoryId: number | null;
+        hasChildren: boolean;
+        id: number;
+        isActive: boolean;
+        name: string;
+        numberChildren: number | string;
+        score: number | string;
+        showBrandFilter: boolean;
+        showInStoreFront: boolean;
+        stockKeepingUnitSelectionMode: string;
+        title: string;
+    };
+};
 
-/* 
-
-export const getCategoryInfoService = createAsyncThunk(
+export const editCategoryService = createAsyncThunk(
     `${slice.name}/getCategory`,
-    async ({ idMerchant, categoryId }: getCategoryInfoServiceProps) => {
-        const response = await axios.post(`styrk/api/category/get`, {
+    async ({ idMerchant, category }: editCategoryServiceProps) => {
+        const response = await axios.post(`styrk/api/category/update`, category, {
             baseURL: STYRK_API,
             params: {
-                merchantId: idMerchant,
-                categoryId
+                idMerchant: idMerchant || 1
             },
             headers: {
                 authorization: `Bearer ${STYRK_TOKEN}`
@@ -356,5 +356,3 @@ export const getCategoryInfoService = createAsyncThunk(
         return response.data;
     }
 );
-
-*/

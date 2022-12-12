@@ -15,9 +15,10 @@ import { FlatCategoryType } from 'types/catalogue';
 type SelectCategoryComponentProps = {
     fatherCategoryId: number | string;
     onChange: (event: SelectChangeEvent) => void;
+    required?: boolean;
 };
 
-export default function SelectCategoryComponent({ fatherCategoryId, onChange }: SelectCategoryComponentProps) {
+export default function SelectCategoryComponent({ fatherCategoryId, onChange, required = true }: SelectCategoryComponentProps) {
     // hooks
     const intl = useIntl();
 
@@ -68,7 +69,7 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange }: 
                         name="fatherCategoryId"
                         onChange={onChange}
                         renderValue={renderSelected}
-                        required
+                        required={required}
                     >
                         {flatCategories.map((item) => (
                             <MenuItem

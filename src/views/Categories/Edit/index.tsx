@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 import React, { useState, FormEvent, useEffect } from 'react';
 
 // mui imports
@@ -35,7 +36,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/slices/snackbar';
 import { gridSpacing } from 'store/constant';
-import { getCategoryInfoService } from 'store/slices/catalogue';
+import { editCategoryService, getCategoriesService, getCategoryInfoService } from 'store/slices/catalogue';
 
 // types
 import { CategoryType } from 'types/catalogue';
@@ -73,6 +74,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
     const { updating } = useSelector((state) => state.catalogue);
 
     // vars
+    const [originalData, setOriginalData] = useState<CategoryType>();
     const [newData, setNewData] = useState<NewCategoryType>(initialData);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -85,6 +87,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                         ...payload.response,
                         fatherCategoryId: payload.response.fatherCategoryId === 0 ? '' : payload.response.fatherCategoryId
                     });
+                    setOriginalData(payload.response);
                 })
                 .catch(() => {
                     dispatch(
@@ -108,6 +111,62 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (selectedCategory && originalData) {
+            const categoryData = {
+                activeStoreFrontLink: newData.activeStoreFrontLink,
+                adWordsRemarketingCode: null,
+                description: newData.description,
+                fatherCategoryId: newData.fatherCategoryId ? newData.fatherCategoryId : null,
+                isActive: newData.isActive,
+                name: newData.name,
+                score: newData.score,
+                showBrandFilter: newData.showBrandFilter,
+                showInStoreFront: newData.showInStoreFront,
+                stockKeepingUnitSelectionMode: newData.stockKeepingUnitSelectionMode,
+                title: newData.title,
+                id: selectedCategory,
+                numberChildren: originalData.numberChildren,
+                hasChildren: originalData.hasChildren
+            };
+
+            dispatch(
+                editCategoryService({
+                    idMerchant: 1,
+                    category: categoryData
+                })
+            )
+                .then(({ payload }) => {
+                    dispatch(
+                        openSnackbar({
+                            open: true,
+                            message: `Categoria: ${payload.response.name} actualizada correctamente`,
+                            variant: 'alert',
+                            alert: {
+                                color: 'success'
+                            },
+                            close: false
+                        })
+                    );
+                    dispatch(getCategoriesService({ idMerchant: 1 }));
+                })
+                .catch(() => {
+                    dispatch(
+                        openSnackbar({
+                            open: true,
+                            message: 'Error al editar la categoria',
+                            variant: 'alert',
+                            alert: {
+                                color: 'error'
+                            },
+                            close: false
+                        })
+                    );
+                })
+                .finally(() => {
+                    onCancel();
+                });
+        }
     };
 
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +177,10 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
 
     const handleChangeSelect = (event: SelectChangeEvent) => {
         setNewData({ ...newData, [event.target.name]: Number(event.target.value) ?? 1 });
+    };
+
+    const handleChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewData({ ...newData, [event.target.name]: event.target.checked });
     };
 
     const renderContent = () => (
@@ -185,14 +248,14 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                 </Grid>
                 {/* FATHER CATEGORY box */}
                 <Grid item xs={12} sm={6} md={6} xl={4}>
-                    <SelectCategoryComponent fatherCategoryId={newData.fatherCategoryId} onChange={handleChangeSelect} />
+                    <SelectCategoryComponent required={false} fatherCategoryId={newData.fatherCategoryId} onChange={handleChangeSelect} />
                 </Grid>
                 {/* Mode */}
                 <Grid item xs={12} sm={6} md={6} xl={4}>
                     <FormControl fullWidth>
                         <InputLabel id="select-country-label">
                             {intl.formatMessage({
-                                id: 'existing_categories'
+                                id: 'show_mode'
                             })}
                         </InputLabel>
                         <Select
@@ -200,7 +263,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                             id="select-category"
                             value={newData.stockKeepingUnitSelectionMode}
                             label={intl.formatMessage({
-                                id: 'existing_categories'
+                                id: 'show_mode'
                             })}
                             onChange={handleChangeSelect}
                             name="stockKeepingUnitSelectionMode"
@@ -219,9 +282,9 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                     <FormGroup>
                         <FormControlLabel
                             labelPlacement="start"
-                            control={<Switch checked={newData.isActive} />}
+                            control={<Switch onChange={handleChangeSwitch} checked={newData.isActive} name="isActive" />}
                             label={intl.formatMessage({
-                                id: newData.isActive ? 'active' : 'inactive'
+                                id: 'active'
                             })}
                         />
                     </FormGroup>
@@ -230,7 +293,9 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                     <FormGroup>
                         <FormControlLabel
                             labelPlacement="start"
-                            control={<Switch checked={newData.activeStoreFrontLink} />}
+                            control={
+                                <Switch onChange={handleChangeSwitch} checked={newData.activeStoreFrontLink} name="activeStoreFrontLink" />
+                            }
                             label={intl.formatMessage({
                                 id: 'active_link'
                             })}
@@ -241,7 +306,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                     <FormGroup>
                         <FormControlLabel
                             labelPlacement="start"
-                            control={<Switch checked={newData.showBrandFilter} />}
+                            control={<Switch onChange={handleChangeSwitch} checked={newData.showBrandFilter} name="showBrandFilter" />}
                             label={intl.formatMessage({
                                 id: 'show_brand_filter'
                             })}
@@ -252,7 +317,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                     <FormGroup>
                         <FormControlLabel
                             labelPlacement="start"
-                            control={<Switch checked={newData.showInStoreFront} />}
+                            control={<Switch onChange={handleChangeSwitch} checked={newData.showInStoreFront} name="showInStoreFront" />}
                             label={intl.formatMessage({
                                 id: 'show_in_store'
                             })}
