@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // material-ui
-import { Button, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography, useMediaQuery, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
@@ -22,10 +22,13 @@ import EditCategoryComponent from '../Edit';
 
 const CategoriesListPage = () => {
     // hooks
+    const theme = useTheme();
+    const upMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
     // vars
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
+    const mainCardRef = useRef<null | HTMLDivElement>(null);
 
     // create
     const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
@@ -54,6 +57,9 @@ const CategoriesListPage = () => {
     };
 
     const openCreateFormById = (catId?: number) => {
+        if (upMediumScreen && mainCardRef && mainCardRef.current) {
+            mainCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         // open form from categories list
         setSelectedCatId(catId);
         setOpenCreate(true);
@@ -68,6 +74,9 @@ const CategoriesListPage = () => {
     const handleShowInfo = (cat?: number) => {
         setShowInfo(false);
         if (cat) {
+            if (upMediumScreen) {
+                console.log('UP');
+            }
             setTimeout(() => {
                 setSelectedCategory(cat);
                 setShowInfo(true);
@@ -82,6 +91,7 @@ const CategoriesListPage = () => {
 
     return (
         <MainCard
+            ref={mainCardRef}
             title={
                 // TOP - Create form and header
                 <CustomPageHeader

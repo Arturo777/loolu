@@ -21,7 +21,9 @@ import {
     Switch,
     useMediaQuery,
     useTheme,
-    Modal
+    Modal,
+    IconButton,
+    Stack
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
@@ -122,16 +124,23 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
         <>
             <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing} p={3}>
                 <Grid item xs={12} pt={4} pl={3}>
-                    <Typography variant="h4">
-                        {intl.formatMessage({
-                            id: 'edit_category'
-                        })}
-                    </Typography>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography variant="h4">
+                            {intl.formatMessage({
+                                id: 'edit_category'
+                            })}
+                        </Typography>
+
+                        <IconButton onClick={onCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
+                            <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
+                        </IconButton>
+                    </Stack>
                 </Grid>
 
                 <Grid item xs={12} pt={4} pl={3}>
                     <Divider />
                 </Grid>
+
                 <Grid item xs={12} sm={6} md={6} xl={4}>
                     <TextField
                         value={newData.name}

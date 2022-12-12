@@ -1,26 +1,11 @@
-import React, { FormEvent, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { FormEvent, useState, useEffect } from 'react';
 
 // mui imports
-import {
-    Box,
-    Button,
-    Divider,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-    Typography,
-    Card,
-    LinearProgress
-} from '@mui/material';
+import { Box, Button, Divider, Grid, SelectChangeEvent, TextField, Card, Typography, Stack, IconButton } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 
 // third imports
-import { useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 // project imports
@@ -28,7 +13,7 @@ import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { createCategoryService, getCategoriesService } from 'store/slices/catalogue';
 import { openSnackbar } from 'store/slices/snackbar';
-import { initial } from 'lodash';
+import SelectCategoryComponent from '../components/SelectCategory';
 
 // services
 
@@ -49,20 +34,13 @@ type CreateCategoryPageProps = {
     selectedCatId?: number;
 };
 
-type OptionItemmType = {
-    id: number | string;
-    name: string;
-    description?: string;
-    level?: number;
-};
-
 const CreateCategoryPage = ({ handleClose, selectedCatId }: CreateCategoryPageProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
 
     // store
-    const { updating, loading, flatCategories } = useSelector((state) => state.catalogue);
+    const { updating } = useSelector((state) => state.catalogue);
 
     // vars
     const [newCategory, setNewCategory] = useState<newCategoryType>(initialData);
@@ -139,73 +117,29 @@ const CreateCategoryPage = ({ handleClose, selectedCatId }: CreateCategoryPagePr
         }
     };
 
-    const renderSelected = useCallback(
-        (selected) => {
-            const selectedItem: OptionItemmType | undefined = flatCategories.find((item) => Number(item.id) === Number(selected));
-
-            if (!selectedItem) return <Box />;
-
-            return (
-                <Box sx={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-                    <Typography>{selectedItem.name}</Typography>
-                    {Boolean(selectedItem.description) && (
-                        <Typography ml={1} variant="caption">
-                            {selectedItem.description}
-                        </Typography>
-                    )}
-                </Box>
-            );
-        },
-        [flatCategories]
-    );
-
     return (
         <Card sx={{ boxShadow: 1, p: 3 }}>
             <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing}>
-                <Grid item xs={12} sm={6} md={3} lg={3}>
-                    {loading && (
-                        <Box sx={{ mt: 3 }}>
-                            <LinearProgress />
-                        </Box>
-                    )}
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography variant="h4">
+                            {intl.formatMessage({
+                                id: 'create_category'
+                            })}
+                        </Typography>
 
-                    {!loading && (
-                        <FormControl fullWidth>
-                            <InputLabel id="select-country-label">
-                                {intl.formatMessage({
-                                    id: 'existing_categories'
-                                })}
-                            </InputLabel>
-                            <Select
-                                labelId="select-category-label"
-                                id="select-category"
-                                value={newCategory.catId}
-                                label={intl.formatMessage({
-                                    id: 'existing_categories'
-                                })}
-                                onChange={handleChange}
-                                renderValue={renderSelected}
-                                required
-                            >
-                                {flatCategories.map((item) => (
-                                    <MenuItem
-                                        key={`selected-item-${item.id}`}
-                                        value={item.id}
-                                        sx={{ background: item.level === 1 ? 'rgba(100, 100, 100, 0.2)' : '' }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                ml: (item.level ?? 1) * 2,
-                                                fontWeight: item.level === 1 || item.level === 2 ? 'bold' : ''
-                                            }}
-                                        >
-                                            {item.name}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
+                        <IconButton onClick={handleCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
+                            <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
+                        </IconButton>
+                    </Stack>
+                </Grid>
+
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Divider />
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3} lg={3}>
+                    <SelectCategoryComponent fatherCategoryId={newCategory.catId ?? ''} onChange={handleChange} />
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={3} lg={3}>
