@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 
 // project imports
+import { useSearchParams } from 'react-router-dom';
 import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
@@ -21,18 +22,24 @@ import Loader from 'ui-component/Loader';
 
 const UsersList = () => {
     const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [users, setUsers] = React.useState<UserType[]>([]);
+    const [search, setSearch] = React.useState<string | undefined>('');
     const { usersList, loading } = useSelector((state) => state.user);
+
+    useEffect(() => {
+        const searchText = searchParams.get('search');
+        setSearch(searchText ?? '');
+    }, [searchParams]);
 
     useEffect(() => {
         dispatch(getUsersList());
     }, [dispatch]);
 
-    const [search, setSearch] = React.useState<string | undefined>('');
-
     const handleSearch = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
         const newString = event?.target.value;
         setSearch(newString);
+        setSearchParams(`?search=${newString}`);
     };
 
     useEffect(() => {

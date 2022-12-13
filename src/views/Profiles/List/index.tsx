@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
 import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
@@ -14,17 +14,25 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 // assets
 import { IconSearch } from '@tabler/icons';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
 const ListStylePage1 = () => {
     const intl = useIntl();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
+
+    useEffect(() => {
+        const search = searchParams.get('search');
+        setFilterText(search ?? '');
+    }, [searchParams]);
 
     const handleSearch = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
         const newString = event?.target.value;
+
         setFilterText(newString ?? '');
+        setSearchParams(`?search=${newString}`);
     };
 
     return (

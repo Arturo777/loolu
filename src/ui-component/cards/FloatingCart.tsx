@@ -8,7 +8,6 @@ import { Fab, Badge, IconButton } from '@mui/material';
 
 // assets
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
-import { DefaultRootStateProps } from 'types';
 import { CartProductStateProps } from 'types/cart';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({

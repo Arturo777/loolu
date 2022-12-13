@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import {
     Button,
     ButtonBase,
@@ -26,7 +26,7 @@ import {
     Typography,
     TextField
 } from '@mui/material';
-
+import Switch, { SwitchProps } from '@mui/material/Switch';
 // third-party
 import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
 import * as yup from 'yup';
@@ -116,7 +116,38 @@ const Increment = (props: string | FieldHookConfig<any>) => {
         </ButtonGroup>
     );
 };
-
+const Android12Switch = styled(Switch)(({ theme }) => ({
+    padding: 8,
+    '& .MuiSwitch-track': {
+        borderRadius: 22 / 2,
+        '&:before, &:after': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 16,
+            height: 16
+        },
+        '&:before': {
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+                theme.palette.getContrastText(theme.palette.primary.main)
+            )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+            left: 12
+        },
+        '&:after': {
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+                theme.palette.getContrastText(theme.palette.primary.main)
+            )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+            right: 12
+        }
+    },
+    '& .MuiSwitch-thumb': {
+        boxShadow: 'none',
+        width: 16,
+        height: 16,
+        margin: 2
+    }
+}));
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
 const ProductInfo = ({
@@ -140,12 +171,13 @@ const ProductInfo = ({
 }) => {
     const dispatch = useDispatch();
     const history = useNavigate();
-
+    const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
     const cart = useSelector((state) => state.cart);
     /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
-    ); */
-    /* console.log(flatCategories); */
+    );
+    console.log(flatCategories); */
+    console.log(product);
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -185,7 +217,6 @@ const ProductInfo = ({
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
-    console.log(productInfo);
     const addCart = () => {
         values.color = values.color ? values.color : 'primaryDark';
         values.size = values.size ? values.size : '8';
@@ -211,14 +242,52 @@ const ProductInfo = ({
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
-                                <Chip
-                                    size="small"
-                                    label={product.isActive ? 'Activo' : 'Inactive'}
-                                    chipcolor={product.isActive ? 'success' : 'error'}
-                                    sx={{ borderRadius: '4px', textTransform: 'capitalize' }}
-                                />
+                                {active ? (
+                                    <FormControlLabel
+                                        sx={{ ml: 2 }}
+                                        control={<Android12Switch defaultChecked={product.isActive} />}
+                                        label="Activo"
+                                    />
+                                ) : (
+                                    <Chip
+                                        size="small"
+                                        label={product.isActive ? 'Activo' : 'Inactive'}
+                                        chipcolor={product.isActive ? 'success' : 'error'}
+                                        sx={{ ml: 1, borderRadius: '4px', textTransform: 'capitalize' }}
+                                    />
+                                )}
+                                {active ? (
+                                    <FormControlLabel
+                                        sx={{ ml: 2 }}
+                                        control={<Android12Switch defaultChecked={product.isVisible} />}
+                                        label="Visible"
+                                    />
+                                ) : (
+                                    <Chip
+                                        sx={{ ml: 2 }}
+                                        size="small"
+                                        label={product.isVisible ? 'Visible' : 'No visible'}
+                                        chipcolor="primary"
+                                        variant="outlined"
+                                    />
+                                )}
+                                {active ? (
+                                    <FormControlLabel
+                                        sx={{ ml: 2 }}
+                                        control={<Android12Switch defaultChecked={product.isEcommerce} />}
+                                        label="Ecommerce"
+                                    />
+                                ) : (
+                                    <Chip
+                                        sx={{ ml: 2 }}
+                                        size="small"
+                                        label={product.isEcommerce ? 'Ecommerce' : 'No Ecommerce'}
+                                        chipcolor="primary"
+                                        variant="outlined"
+                                    />
+                                )}
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sx={{ ml: 1 }}>
                                 <Stack direction="row" alignItems="center" spacing={1}>
                                     {active ? (
                                         <Box
@@ -260,12 +329,6 @@ const ProductInfo = ({
                                     ) : (
                                         <Typography variant="h3">{product.productName}</Typography>
                                     )}
-                                    <Chip
-                                        size="small"
-                                        label={product.isVisible ? 'Visible' : 'No visible'}
-                                        chipcolor="primary"
-                                        variant="outlined"
-                                    />
                                 </Stack>
                             </Grid>
                         </Grid>
@@ -274,7 +337,7 @@ const ProductInfo = ({
                         </Avatar> */}
                     </Stack>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sx={{ ml: 1 }}>
                     {active ? (
                         <Box
                             sx={{
@@ -318,11 +381,11 @@ const ProductInfo = ({
                                 />
                             </Box>
                         ) : (
-                            <Typography variant="body2">{product.productRefID}</Typography>
+                            <Typography variant="body2">RefID: {product.productRefID}</Typography>
                         )}
                     </Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sx={{ ml: 1 }}>
                     {active ? (
                         <Box
                             sx={{
@@ -343,6 +406,29 @@ const ProductInfo = ({
                         </Box>
                     ) : (
                         <Typography variant="h4">{product.brandName}</Typography>
+                    )}
+                </Grid>
+                <Grid item xs={12} sx={{ ml: 1 }}>
+                    {active ? (
+                        <Box
+                            sx={{
+                                '& .MuiTextField-root': { mt: 2 }
+                            }}
+                        >
+                            <TextField
+                                fullWidth
+                                multiline
+                                id="outlined-basic"
+                                label="Categoria"
+                                variant="outlined"
+                                name="categoryName"
+                                defaultValue={product.categoryName}
+                                value={productInfo.categoryName}
+                                onChange={handleChangeProd}
+                            />
+                        </Box>
+                    ) : (
+                        <Typography variant="h4">{product?.categoryName}</Typography>
                     )}
                 </Grid>
                 <Grid item xs={12}>
@@ -379,6 +465,29 @@ const ProductInfo = ({
                     <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} lg={10}>
+                                <Grid item xs={12}>
+                                    {active ? (
+                                        <Box
+                                            sx={{
+                                                '& .MuiTextField-root': { mt: 2 }
+                                            }}
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                id="outlined-basic"
+                                                label="Nombre Sku"
+                                                variant="outlined"
+                                                name="skuName"
+                                                defaultValue={skuprod[0]?.name}
+                                                value={productInfo?.skuName}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </Box>
+                                    ) : (
+                                        skuprod?.length > 0 && <Typography variant="h4">{skuprod[0]?.name}</Typography>
+                                    )}
+                                </Grid>
                                 <Table>
                                     <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                         <TableRow>
@@ -406,6 +515,7 @@ const ProductInfo = ({
                                                             value={sku?.skuID}
                                                             control={<Radio />}
                                                             label={sku?.skuID}
+                                                            disabled={active}
                                                         />
                                                     ))}
                                                 </RadioGroup>
@@ -496,7 +606,7 @@ const ProductInfo = ({
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
-                                            Buy Now
+                                            Save Product
                                         </Button>
                                     </Grid>
                                 </Grid>

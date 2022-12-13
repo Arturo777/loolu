@@ -47,7 +47,6 @@ const ProductDetails = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
-    const { product, categories } = useSelector((state) => state.product);
     const cart = useSelector((state: DefaultRootStateProps) => state.cart);
 
     // product description tabs
@@ -56,10 +55,9 @@ const ProductDetails = () => {
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    /* useEffect(() => {
-        if (valueSku) dispatch(getSku(valueSku));
-    }, [dispatch, valueSku]); */
-
+    /*  useEffect(() => {
+         dispatch(getSku(valueSku));
+     }, [dispatch, valueSku]); */
     useEffect(() => {
         // getProduct();
         dispatch(getProduct(id));
@@ -71,6 +69,8 @@ const ProductDetails = () => {
         }
     }, []);
 
+    const { product, skus, categories } = useSelector((state) => state.product);
+
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
@@ -78,13 +78,7 @@ const ProductDetails = () => {
                     {product && product?.productID.toString() === id && (
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12} md={6}>
-                                <ProductImages
-                                    setValueSku={setValueSku}
-                                    valueSku={valueSku}
-                                    product={product}
-                                    setActive={setActive}
-                                    active={active}
-                                />
+                                <ProductImages skus={skus} valueSku={valueSku} product={product} setActive={setActive} active={active} />
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <ProductInfo

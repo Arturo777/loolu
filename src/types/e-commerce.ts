@@ -1,5 +1,7 @@
 // product shop list
 export type Products = {
+    isEcommerce: boolean;
+    categoryName: string;
     linkId: string;
     title: string;
     productRefID: string;

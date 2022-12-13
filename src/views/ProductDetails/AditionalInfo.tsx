@@ -14,7 +14,6 @@ const Aditionalinfo = ({
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
-    console.log(productInfo);
     return (
         <Grid container>
             <Grid item xs={12}>

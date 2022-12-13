@@ -18,7 +18,6 @@ import FloatingCart from 'ui-component/cards/FloatingCart';
 import SkeletonProductPlaceholder from 'ui-component/cards/Skeleton/ProductPlaceholder';
 import useConfig from 'hooks/useConfig';
 import { resetCart } from 'store/slices/cart';
-import { openDrawer } from 'store/slices/menu';
 import { useDispatch, useSelector } from 'store';
 import { appDrawerWidth, gridSpacing } from 'store/constant';
 import { getProducts, filterProducts, SearchProductType } from 'store/slices/product';

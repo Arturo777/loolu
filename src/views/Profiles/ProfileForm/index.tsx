@@ -4,7 +4,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { Grid, TextField, Divider, Button, FormControlLabel, Checkbox, Box, Typography, Collapse, Stack } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 
-// third imports
+// third-party imports
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -29,14 +29,14 @@ const newProfileDefault: NewProfieState = {
 
 type ProfileFormProps = {
     handleSaveClick: (data: NewProfileType) => void;
-    fetching: boolean;
     defaultData?: ProfileType;
+    mode: 'create' | 'edit';
 };
 
-export default function ProfileForm({ handleSaveClick, fetching, defaultData }: ProfileFormProps) {
+export default function ProfileForm({ handleSaveClick, defaultData, mode }: ProfileFormProps) {
     const intl = useIntl();
     const dispatch = useDispatch();
-    const { menuOptions } = useSelector((state) => state.user);
+    const { menuOptions, fetching, loading } = useSelector((state) => state.user);
     const [newData, setNewData] = useState<NewProfieState>(newProfileDefault);
     const [hasError, setHasError] = useState<string>('');
 
@@ -46,10 +46,16 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
 
     useEffect(() => {
         if (defaultData) {
-            const newInfo = {
+            const newMenu = defaultData.menuDetails.map((item) => {
+                const submenus = item.children.map((itemA) => itemA.id);
+                return [...submenus, item.id];
+            });
+
+            const newInfo: NewProfieState = {
                 ...newData,
                 type: defaultData.type,
-                description: defaultData.description
+                description: defaultData.description,
+                menus: newMenu.flat()
             };
 
             setNewData(newInfo);
@@ -83,6 +89,8 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
                 }
             }
         });
+
+        // console.log(currentMenus);
 
         setNewData({
             ...newData,
@@ -155,8 +163,10 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
                                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={`checkgroup-${i}`}>
                                     <CheckLabelGroup
                                         itemMenu={item}
-                                        defaultSelected={defaultData?.menuDetails!}
+                                        mode={mode}
+                                        defaultSelected={mode === 'create' ? null : defaultData?.menuDetails!}
                                         onChange={handleCheckbox}
+                                        fatherId={item.id}
                                     />
                                 </Grid>
                             ))}
@@ -169,7 +179,7 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
 
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button disabled={fetching} variant="outlined" startIcon={<SaveIcon />} type="submit">
+                        <Button disabled={fetching || loading} variant="outlined" startIcon={<SaveIcon />} type="submit">
                             Guardar
                         </Button>
                     </Box>
@@ -181,8 +191,10 @@ export default function ProfileForm({ handleSaveClick, fetching, defaultData }: 
 
 type CheckLabelGroupProps = {
     itemMenu: MenuDetailsType;
-    defaultSelected: MenuDetailsType[];
+    defaultSelected: MenuDetailsType[] | null;
     onChange: (checkedList: CheckListState[]) => void;
+    mode: 'create' | 'edit';
+    fatherId: number;
 };
 
 type CheckListState = {
@@ -191,26 +203,42 @@ type CheckListState = {
     checked: boolean;
 };
 
-const CheckLabelGroup = ({ itemMenu, defaultSelected = [], onChange }: CheckLabelGroupProps) => {
+const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }: CheckLabelGroupProps) => {
     const [checkedList, setCheckedList] = useState<CheckListState[]>([]);
 
     useEffect(() => {
-        const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
-        const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];
+        if (defaultSelected) {
+            const filteredMenu: { [key: string]: any } = defaultSelected.find((item) => item.id === itemMenu.id) ?? {};
+            const defaultChildren: { id: number }[] = filteredMenu?.children ?? [];
 
-        const newCheckList = itemMenu?.children.map((item) => ({
-            id: item.id,
-            name: item.type,
-            checked: defaultChildren.some((itemA) => itemA.id === item.id)
-        }));
+            const newCheckList = itemMenu?.children.map((item) => ({
+                id: item.id,
+                name: item.type,
+                checked: defaultChildren.some((itemA) => itemA.id === item.id)
+            }));
 
-        setCheckedList(newCheckList);
+            setCheckedList(newCheckList);
+        } else {
+            const newCheckList = itemMenu?.children.map((item) => ({
+                id: item.id,
+                name: item.type,
+                checked: false
+            }));
+
+            setCheckedList(newCheckList);
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [itemMenu, defaultSelected]);
 
     const isChecked = (id: number) => checkedList.find((itemList) => itemList.id === id)?.checked;
 
     const handleChangeChild = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = event.target;
+
+        if (checked) {
+            console.log(mode, name);
+        }
 
         const newCheckList = checkedList.map((item) => {
             if (item.id === Number(name)) {
@@ -246,7 +274,7 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected = [], onChange }: CheckLabe
     return (
         <Box>
             <FormControlLabel
-                label={itemMenu.type}
+                label={`${itemMenu.type} ${itemMenu.id}`}
                 sx={{
                     '& .MuiFormControlLabel-label': {
                         fontWeight: 700
@@ -260,7 +288,7 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected = [], onChange }: CheckLabe
                     checkedList.map((itemChild) => (
                         <FormControlLabel
                             key={`item-check-${itemChild.name}`}
-                            label={itemChild.name}
+                            label={`${itemChild.name} ${itemChild.id}`}
                             control={<Checkbox name={`${itemChild.id}`} checked={isChecked(itemChild.id)} onChange={handleChangeChild} />}
                         />
                     ))}
