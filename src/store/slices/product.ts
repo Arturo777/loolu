@@ -9,6 +9,7 @@ import { STYRK_API, STYRK_TOKEN } from 'config';
 // types
 import { DefaultRootStateProps } from 'types';
 import { ProductsFilter, Address } from 'types/e-commerce';
+import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +19,8 @@ const initialState: DefaultRootStateProps['product'] = {
     product: null,
     relatedProducts: [],
     reviews: [],
-    addresses: []
+    addresses: [],
+    loadingProducts: true
 };
 
 const slice = createSlice({
@@ -30,9 +32,13 @@ const slice = createSlice({
             state.error = action.payload;
         },
 
+        getProductsPending(state) {
+            state.loadingProducts = true;
+        },
+
         // GET PRODUCTS
         getProductsSuccess(state, action) {
-            const products = action.payload.map((item: ProductItem) => ({
+            const products = action.payload.map((item: ProductCardProps) => ({
                 ...item,
                 date: item.releaseDate,
                 image: item.imageUrl,
@@ -41,8 +47,8 @@ const slice = createSlice({
                 salePrice: 1300
             }));
 
-            console.log(products);
             state.products = products;
+            state.loadingProducts = false;
         },
 
         // FILTER PRODUCTS
@@ -85,16 +91,41 @@ const slice = createSlice({
 // Reducer
 export default slice.reducer;
 
+export interface SearchProductType {
+    idMerchant?: number;
+    page?: number;
+    productName?: string;
+    ean?: string;
+    idSKU?: number;
+    productRefID?: number;
+    idProd?: number;
+    idApprovalStatus?: number;
+}
+
 // ----------------------------------------------------------------------
 
-export function getProducts() {
+export function getProducts(searchParams: SearchProductType) {
     return async () => {
+        dispatch(slice.actions.getProductsPending());
+
+        const hasParams = Boolean(
+            searchParams.productName ||
+                searchParams.ean ||
+                searchParams.idSKU ||
+                searchParams.productRefID ||
+                searchParams.idProd ||
+                searchParams.idApprovalStatus
+        );
+
         try {
             const response = await axios.get(`styrk/api/product/search`, {
                 baseURL: STYRK_API,
                 params: {
-                    idMerchant: 1,
-                    page: 1
+                    idMerchant: searchParams.idMerchant || 1,
+                    page: searchParams.page || hasParams ? 0 : 1,
+                    productName: searchParams.productName || null,
+                    idSKU: searchParams.idSKU,
+                    idProd: searchParams.idProd
                 },
                 headers: {
                     authorization: `Bearer ${STYRK_TOKEN}`
@@ -182,18 +213,4 @@ export function editAddress(address: Address) {
             dispatch(slice.actions.hasError(error));
         }
     };
-}
-
-interface ProductItem {
-    imageUrl: string | null;
-    skus: productSku[];
-    releaseDate: string;
-    skuName: string;
-    brandId: number;
-    productID: number;
-    productName: string;
-}
-
-interface productSku {
-    name: string | null;
 }

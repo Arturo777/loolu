@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'store';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
+import { setAuthData } from 'store/slices/auth';
 
 interface MainStyleProps {
     theme: Theme;
@@ -76,6 +77,11 @@ const MainLayout = () => {
     const dispatch = useDispatch();
     const { drawerOpen } = useSelector((state) => state.menu);
     const { container } = useConfig();
+
+    React.useEffect(() => {
+        // handle login
+        dispatch(setAuthData('ohuitron'));
+    }, [dispatch]);
 
     React.useEffect(() => {
         dispatch(openDrawer(!matchDownMd));

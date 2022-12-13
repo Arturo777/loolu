@@ -2,24 +2,11 @@ import { useEffect, useState, ReactElement } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import {
-    Box,
-    Button,
-    Divider,
-    Drawer,
-    Grid,
-    IconButton,
-    InputAdornment,
-    Menu,
-    MenuItem,
-    Stack,
-    TextField,
-    Typography,
-    useMediaQuery
-} from '@mui/material';
+import { Box, Button, Divider, Drawer, Grid, IconButton, Menu, MenuItem, Stack, Typography, useMediaQuery } from '@mui/material';
 
 // third party
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import { useLocation } from 'react-router-dom';
 
 // project imports
 import SortOptions from './SortOptions';
@@ -31,19 +18,20 @@ import FloatingCart from 'ui-component/cards/FloatingCart';
 import SkeletonProductPlaceholder from 'ui-component/cards/Skeleton/ProductPlaceholder';
 import useConfig from 'hooks/useConfig';
 import { resetCart } from 'store/slices/cart';
-import { openDrawer } from 'store/slices/menu';
 import { useDispatch, useSelector } from 'store';
 import { appDrawerWidth, gridSpacing } from 'store/constant';
-import { getProducts, filterProducts } from 'store/slices/product';
+import { getProducts, filterProducts, SearchProductType } from 'store/slices/product';
 
 // assets
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import SearchIcon from '@mui/icons-material/Search';
+// import SearchIcon from '@mui/icons-material/Search';
 
 // types
 import { Products as ProductsTypo, ProductsFilter } from 'types/e-commerce';
+import Loader from 'ui-component/Loader';
+import { queryToObject } from 'utils/helpers';
 
 // product list container
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
@@ -78,6 +66,7 @@ const ProductsList = () => {
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
     const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
+    const location = useLocation();
 
     const [isLoading, setLoading] = useState(true);
     useEffect(() => {
@@ -100,10 +89,16 @@ const ProductsList = () => {
     }, [productState]);
 
     useEffect(() => {
-        dispatch(getProducts());
+        const queryObject: SearchProductType = queryToObject(location.search);
+        dispatch(getProducts(queryObject));
+        // console.log(queryObject);
+    }, [location.search, dispatch]);
 
+    // useEffect(() => {}, []);
+
+    useEffect(() => {
         // hide left drawer when email app opens
-        dispatch(openDrawer(false));
+        // dispatch(openDrawer(false));
 
         // clear cart if complete order
         if (cart.checkout.step > 2) {
@@ -125,11 +120,11 @@ const ProductsList = () => {
     };
     const [filter, setFilter] = useState(initialState);
 
-    // search filter
-    const handleSearch = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-        const newString = event?.target.value;
-        setFilter({ ...filter, search: newString! });
-    };
+    // // search filter
+    // const handleSearch = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
+    //     const newString = event?.target.value;
+    //     setFilter({ ...filter, search: newString! });
+    // };
 
     // sort options
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -251,13 +246,15 @@ const ProductsList = () => {
 
     const spacingMD = matchDownMD ? 1 : 1.5;
 
+    if (productState.loadingProducts) return <Loader />;
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
                 <Grid container alignItems="center" justifyContent="space-between" spacing={matchDownMD ? 0.5 : 2}>
                     <Grid item>
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <Typography variant="h4">Shop</Typography>
+                            <Typography variant="h4">Productos</Typography>
                             <IconButton size="large">
                                 <ArrowForwardIosIcon sx={{ width: '0.875rem', height: '0.875rem', fontWeight: 500, color: 'grey.500' }} />
                             </IconButton>
@@ -265,37 +262,20 @@ const ProductsList = () => {
                     </Grid>
                     <Grid item>
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={matchDownSM ? 0.5 : spacingMD}>
-                            <TextField
-                                sx={{ width: { xs: 140, md: 'auto' } }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon fontSize="small" />
-                                        </InputAdornment>
-                                    )
-                                }}
-                                value={filter.search}
-                                placeholder="Search Product"
-                                size="small"
-                                onChange={handleSearch}
-                            />
-
-                            <Typography sx={{ pl: 1.5, fontSize: '1rem', color: 'grey.500', fontWeight: 400 }}>|</Typography>
-
                             <Button
                                 disableRipple
                                 onClick={handleDrawerOpen}
                                 color="secondary"
                                 startIcon={<FilterAltIcon sx={{ fontWeight: 500, color: 'secondary.200' }} />}
                             >
-                                Filter
+                                Filtrar
                             </Button>
 
                             <Typography sx={{ display: { xs: 'none', sm: 'flex' }, fontSize: '1rem', color: 'grey.500', fontWeight: 400 }}>
                                 |
                             </Typography>
                             <Stack direction="row" alignItems="center" justifyContent="center" sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                                <Typography variant="h5">Sort by: </Typography>
+                                <Typography variant="h5">Ordenar por: </Typography>
                                 <Button
                                     id="demo-positioned-button"
                                     aria-controls="demo-positioned-menu"

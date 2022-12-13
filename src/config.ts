@@ -27,20 +27,22 @@ export const AWS_API = {
 };
 
 export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
+export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
+
 export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY2NzMyMTAzMCwiZXhwIjoxNjY3MzI3MDMwfQ.lfJa5UV-v4UwaO5NnFdbrWdqQzvsxm9WHvjsG4EPQXJbH3hnTUX0q4laTdC73wA3RSP_sF6yKxZBb9in6-1Vng';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MDgwNjcwNSwiZXhwIjoxNjcwODEyNzA1fQ.K-ayAmb26b6C6o0xSsIyEf-YlPIK57MNm65a6pge3Tsxt-m6qIxUp8agUFlXXsvkmyxdzTP98P5QasiqU_oVug';
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
 export const BASE_PATH = '';
 
-export const DASHBOARD_PATH = '/sample-page';
+export const DASHBOARD_PATH = '/products';
 
 const config: ConfigProps = {
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 8,
     outlinedFilled: true,
-    navType: 'light', // light, dark
+    navType: 'dark', // light, dark
     presetColor: 'default', // default, theme1, theme2, theme3, theme4, theme5, theme6
     locale: 'en', // 'en' - English, 'fr' - French, 'ro' - Romanian, 'zh' - Chinese
     rtlLayout: false,

@@ -93,4 +93,5 @@ export interface ProductStateProps {
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;
+    loadingProducts?: boolean;
 }

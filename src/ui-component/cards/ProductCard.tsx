@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 // material-ui
 import { Button, CardContent, Grid, Stack, Typography } from '@mui/material';
 
+// third-party
+import CurrencyFormat from 'react-currency-format';
+
 // project import
 import MainCard from './MainCard';
 import SkeletonProductPlaceholder from 'ui-component/cards/Skeleton/ProductPlaceholder';
@@ -54,7 +57,7 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                 <Grid item xs={12}>
                                     <Typography
                                         component={Link}
-                                        to={`/brand/${brandId}`}
+                                        to={`/brands/${brandId}`}
                                         variant="subtitle2"
                                         sx={{ textDecoration: 'none' }}
                                     >
@@ -93,11 +96,13 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Grid container spacing={1}>
                                         <Grid item>
-                                            <Typography variant="h4">${offerPrice}</Typography>
+                                            <Typography variant="h4">
+                                                <CurrencyFormat value={offerPrice} displayType="text" thousandSeparator prefix="$" />
+                                            </Typography>
                                         </Grid>
                                         <Grid item>
                                             <Typography variant="h6" sx={{ color: 'grey.500', textDecoration: 'line-through' }}>
-                                                ${salePrice}
+                                                <CurrencyFormat value={salePrice} displayType="text" thousandSeparator prefix="$" />
                                             </Typography>
                                         </Grid>
                                     </Grid>
@@ -105,7 +110,7 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                         href="http://ec2-52-14-97-45.us-east-2.compute.amazonaws.com/catalogo/productos/editar-sku/1"
                                         variant="contained"
                                         sx={{ minWidth: 0, mr: 1 }}
-                                        target="_blanck"
+                                        target="_blank"
                                         component="a"
                                     >
                                         <LinkIcon fontSize="small" />

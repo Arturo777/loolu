@@ -8,7 +8,6 @@ import { Fab, Badge, IconButton } from '@mui/material';
 
 // assets
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
-import { DefaultRootStateProps } from 'types';
 import { CartProductStateProps } from 'types/cart';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -24,7 +23,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const FloatingCart = () => {
     const theme = useTheme();
-    const cart = useSelector((state: DefaultRootStateProps) => state.cart);
+    const cart = useSelector((state) => state.cart);
     const totalQuantity = sum(cart.checkout.products.map((item: CartProductStateProps) => item.quantity));
 
     return (
