@@ -30,7 +30,7 @@ export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8
 export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
 
 export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MDk0OTMyOCwiZXhwIjoxNjcwOTU1MzI4fQ.R3U-rlR0V_vRc4Mlw9InJ7CmKyLTi09xf7hdBE9LpDbL9x4y40p3AYqWRMhwLwpkggJtgGGwRq7eLcBvL_WSKQ';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MDk2ODY4MiwiZXhwIjoxNjcwOTc0NjgyfQ.qDRuf7NDqGSUPFTVBt1tfI6z-hyPChvqtQlg1x2fVofe2Bi1HRVP2EBJGU5dANfrTzUMFKRL3tUUs-_-nYkoTQ';
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'

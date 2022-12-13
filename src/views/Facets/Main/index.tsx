@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // material-ui
-import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
@@ -16,6 +16,8 @@ import { IconSearch } from '@tabler/icons';
 
 // import FacetsListComponent from '.';
 import FacetsListComponent from '../List';
+import CreateFacetComponent from '../Create';
+import EditFacetComponent from '../Edit';
 
 // ==============================|| FACETS LIST ||============================== //
 
@@ -24,7 +26,8 @@ const FacetsMainPage = () => {
     const intl = useIntl();
 
     // variables
-    const [rightSide, setRightSide] = useState<'CREATE' | 'EDIT'>();
+    const [rightSide, setRightSide] = useState<'CREATE' | 'EDIT' | null>(null);
+    const [selectedFacetId, setSelectedFacetId] = useState<number | null>(null);
 
     // pagination and search
     const [filterText, setFilterText] = useState<string>('');
@@ -37,30 +40,45 @@ const FacetsMainPage = () => {
     };
 
     const handleClickEdit = (id: number) => {
-        console.log('Id');
-        setRightSide('EDIT');
+        setSelectedFacetId(id);
+        handleToggle('EDIT');
+    };
+
+    const handleToggle = (newVal: 'CREATE' | 'EDIT') => {
+        setRightSide(null);
+
+        if (newVal) {
+            setTimeout(() => {
+                setRightSide(newVal);
+            }, 100);
+        }
     };
 
     return (
         <MainCard
+            sx={{
+                overflow: 'initial'
+            }}
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
                         <Typography variant="h3">FACETS</Typography>
                     </Grid>
                     <Grid item>
-                        <Button
-                            onClick={() => {
-                                setRightSide('CREATE');
-                            }}
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            sx={{ mr: 3 }}
-                        >
-                            {intl.formatMessage({
-                                id: 'create_facet'
-                            })}
-                        </Button>
+                        <Fade in={rightSide !== 'CREATE'}>
+                            <Button
+                                onClick={() => {
+                                    handleToggle('CREATE');
+                                }}
+                                variant="contained"
+                                startIcon={<AddIcon />}
+                                sx={{ mr: 3 }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'create_facet'
+                                })}
+                            </Button>
+                        </Fade>
 
                         <OutlinedInput
                             id="input-search-list-style1"
@@ -93,8 +111,23 @@ const FacetsMainPage = () => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={4} md={8}>
-                    {rightSide === 'EDIT' && <Typography>EDITAR</Typography>}
-                    {rightSide === 'CREATE' && <Typography>CREATE</Typography>}
+                    {rightSide === 'EDIT' && (
+                        <EditFacetComponent
+                            show={rightSide === 'EDIT'}
+                            handleCancel={() => {
+                                setRightSide(null);
+                            }}
+                            facetId={selectedFacetId}
+                        />
+                    )}
+                    {rightSide === 'CREATE' && (
+                        <CreateFacetComponent
+                            show={rightSide === 'CREATE'}
+                            handleCancel={() => {
+                                setRightSide(null);
+                            }}
+                        />
+                    )}
                 </Grid>
             </Grid>
         </MainCard>

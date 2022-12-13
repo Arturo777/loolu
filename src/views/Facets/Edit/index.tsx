@@ -1,64 +1,164 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
+import { Card, Fade, Stack, Typography, Divider, Box, CircularProgress, useTheme, useMediaQuery, Modal } from '@mui/material';
 
 // third imports
-import { useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
-// import ProfileForm from '../ProfileForm';
-
-import { useDispatch, useSelector } from 'store';
+import { useDispatch } from 'store';
+import FacetFormComponent from '../FacetForm';
 
 // services
+import { editFacetService, getFacetService } from 'store/slices/catalogue';
 
 // types
 import { FacetType, SupplierType } from 'types/catalogue';
-import { getFacetsService } from 'store/slices/catalogue';
-import FacetFormComponent from '../FacetForm';
+import { openSnackbar } from 'store/slices/snackbar';
 
-const EditFacetPage = () => {
+type EditFacetComponentProps = {
+    show: boolean;
+    handleCancel: () => void;
+    facetId: number | null;
+};
+
+const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentProps) => {
+    // hooks
     const intl = useIntl();
-    const { facetId } = useParams();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const theme = useTheme();
+    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+    // info
     const [facetData, setFacetData] = useState<FacetType>();
-
-    const {
-        facetsInfo: { facets }
-    } = useSelector((state) => state.catalogue);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        dispatch(getFacetsService({ idMerchant: 1, page: 0, term: facetId ?? '' }));
+        if (facetId) {
+            // get facet info
+            setIsLoading(true);
+            dispatch(getFacetService({ merchantId: 1, facetId }))
+                .then(({ payload }) => {
+                    // console.log(payload);
+                    setFacetData(payload);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [facetId]);
 
-    useEffect(() => {
-        if (facets && facets.length) {
-            const newData = facets.find((item) => item.id === Number(facetId));
-            if (!newData) {
-                navigate('/facets');
-            }
-            setFacetData(newData!);
-        }
-    }, [navigate, facetId, facets]);
+    // save new info
+    const handleSave = async (data: FacetType) => {
+        console.log('DAT', data);
 
-    const handleSave = async (data: SupplierType) => {
-        console.log('DAT');
+        dispatch(
+            editFacetService({
+                merchantId: 1,
+                data: [
+                    {
+                        ...data,
+                        id: facetId ?? 1
+                    }
+                ]
+            })
+        )
+            .then(({ payload }) => {
+                if (payload.status === 500) throw new Error();
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: `Facet actualizado correctamente`,
+                        variant: 'alert',
+                        alert: {
+                            color: 'success'
+                        },
+                        close: false
+                    })
+                );
+            })
+            .catch(() => {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: `Error al actualizar el facet`,
+                        variant: 'alert',
+                        alert: {
+                            color: 'error'
+                        },
+                        close: false
+                    })
+                );
+            })
+            .finally(() => {
+                handleCancel();
+            });
     };
 
+    const renderContent = () => (
+        <>
+            <Stack sx={{ mb: 3 }}>
+                <Typography variant="h4">
+                    {intl.formatMessage({
+                        id: 'edit_facet'
+                    })}
+                </Typography>
+            </Stack>
+            <Divider sx={{ mb: 3 }} />
+            {isLoading && (
+                <Fade in={isLoading}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingY: 10 }}>
+                        <CircularProgress />
+                    </Box>
+                </Fade>
+            )}
+            {!isLoading && <FacetFormComponent editingData={facetData} handleSave={handleSave} handleCancel={handleCancel} />}
+        </>
+    );
+
+    if (onlyMediumScreen) {
+        return (
+            <Modal
+                open={show}
+                onClose={handleCancel}
+                aria-labelledby="modal-edit-category"
+                aria-describedby="modal-render-form-edit-category"
+            >
+                <Box sx={modalStyle}>
+                    {isLoading && (
+                        <Fade in={isLoading}>
+                            <Box component={Card} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingY: 10 }}>
+                                <CircularProgress />
+                            </Box>
+                        </Fade>
+                    )}
+                    {!isLoading && renderContent()}
+                </Box>
+            </Modal>
+        );
+    }
+
     return (
-        <MainCard
-            title={intl.formatMessage({
-                id: 'edit_supplier'
-            })}
-        >
-            {facetData && <FacetFormComponent handleSave={handleSave} />}
-        </MainCard>
+        <Fade in={show}>
+            <Card sx={{ boxShadow: 2, p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>{renderContent()}</Card>
+        </Fade>
     );
 };
 
-export default EditFacetPage;
+export default EditFacetComponent;
+
+const modalStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    pt: 2,
+    px: 3,
+    pb: 3,
+    borderRadius: 2
+};

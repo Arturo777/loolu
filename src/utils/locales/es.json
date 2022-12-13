@@ -179,6 +179,8 @@
 
     "create_facet": "Crear facet",
     "edit_facet": "Editar facet",
+    "facet_name": "Nombre del facet",
+    "facet_sap_name": "Nombre SAP del facet",
 
     "category": "Categoria",
     "categories": "Categorias",
