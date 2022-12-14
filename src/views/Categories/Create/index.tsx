@@ -1,30 +1,19 @@
-import React, { FormEvent, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { FormEvent, useState, useEffect } from 'react';
 
 // mui imports
-import {
-    Box,
-    Button,
-    Divider,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, Divider, Grid, SelectChangeEvent, TextField, Card, Typography, Stack, IconButton } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
 
 // third imports
-import { useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { createCategoryService, getCategoriesService } from 'store/slices/catalogue';
+import { openSnackbar } from 'store/slices/snackbar';
+import SelectCategoryComponent from '../components/SelectCategory';
 
 // services
 
@@ -40,29 +29,37 @@ const initialData: newCategoryType = {
     name: ''
 };
 
-const CreateCategoryPage = () => {
+type CreateCategoryPageProps = {
+    handleClose: (e?: any) => void;
+    selectedCatId?: number;
+};
+
+const CreateCategoryPage = ({ handleClose, selectedCatId }: CreateCategoryPageProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     // store
-    const { updating, categories } = useSelector((state) => state.catalogue);
+    const { updating } = useSelector((state) => state.catalogue);
 
     // vars
     const [newCategory, setNewCategory] = useState<newCategoryType>(initialData);
 
     useEffect(() => {
-        dispatch(getCategoriesService({ idMerchant: 1 }));
+        if (selectedCatId) {
+            setNewCategory({ ...newCategory, catId: `${selectedCatId}` });
+        } else {
+            setNewCategory({ ...newCategory, catId: '' });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [selectedCatId]);
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!newCategory.catId) return;
 
-        await dispatch(
+        dispatch(
             createCategoryService({
                 idMerchant: 1,
                 data: {
@@ -70,8 +67,37 @@ const CreateCategoryPage = () => {
                     fatherCategoryId: Number(newCategory.catId) ?? 1
                 }
             })
-        );
-        navigate('/categories');
+        )
+            .then(({ payload }) => {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: `Categoria: ${payload.response.name} creada correctamente`,
+                        variant: 'alert',
+                        alert: {
+                            color: 'success'
+                        },
+                        close: false
+                    })
+                );
+                dispatch(getCategoriesService({ idMerchant: 1 }));
+            })
+            .catch(() => {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: 'Error al crear la categoria',
+                        variant: 'alert',
+                        alert: {
+                            color: 'error'
+                        },
+                        close: false
+                    })
+                );
+            })
+            .finally(() => {
+                handleCancel();
+            });
     };
 
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,86 +110,38 @@ const CreateCategoryPage = () => {
         setNewCategory({ ...newCategory, catId: event.target.value as string });
     };
 
-    const flatCategories = useMemo(() => {
-        try {
-            const flat = [];
-            for (const cat of categories) {
-                flat.push({ id: cat.id, name: cat.name, level: 1 });
-
-                if (cat.children) {
-                    for (const fam of cat.children) {
-                        flat.push({ id: fam.id, name: fam.name, level: 2 });
-                        for (const line of fam.children) {
-                            flat.push({ id: line.id, name: line.name, level: 3 });
-                        }
-                    }
-                }
-            }
-            return flat;
-        } catch (error) {
-            console.log(error);
-            return [];
+    const handleCancel = () => {
+        setNewCategory(initialData);
+        if (handleClose) {
+            handleClose();
         }
-    }, [categories]);
-
-    const renderSelected = useCallback(
-        (selected) => {
-            const selectedItem = flatCategories.find((item) => Number(item.id) === selected);
-
-            if (!selectedItem) return <Box />;
-
-            return (
-                <Box>
-                    <Typography>{selectedItem.name}</Typography>
-                </Box>
-            );
-        },
-        [flatCategories]
-    );
+    };
 
     return (
-        <MainCard
-            title={intl.formatMessage({
-                id: 'create_category'
-            })}
-        >
+        <Card sx={{ boxShadow: 1, p: 3 }}>
             <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing}>
-                {Boolean(categories) && Boolean(categories.length) && (
-                    <Grid item xs={12} sm={6} md={3} lg={3}>
-                        <FormControl fullWidth>
-                            <InputLabel id="select-country-label">
-                                {intl.formatMessage({
-                                    id: 'existing_categories'
-                                })}
-                            </InputLabel>
-                            <Select
-                                labelId="select-category-label"
-                                id="select-category"
-                                value={newCategory.catId}
-                                label={intl.formatMessage({
-                                    id: 'existing_categories'
-                                })}
-                                onChange={handleChange}
-                                renderValue={renderSelected}
-                                required
-                            >
-                                {flatCategories.map((item) => (
-                                    <MenuItem
-                                        key={`selected-item-${item.id}`}
-                                        value={item.id}
-                                        sx={{ background: item.level === 1 ? 'rgba(100, 100, 100, 0.2)' : '' }}
-                                    >
-                                        <Typography
-                                            sx={{ ml: item.level * 2, fontWeight: item.level === 1 || item.level === 2 ? 'bold' : '' }}
-                                        >
-                                            {item.name}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                )}
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography variant="h4">
+                            {intl.formatMessage({
+                                id: 'create_category'
+                            })}
+                        </Typography>
+
+                        <IconButton onClick={handleCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
+                            <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
+                        </IconButton>
+                    </Stack>
+                </Grid>
+
+                <Grid item xs={12} pt={4} pl={3}>
+                    <Divider />
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3} lg={3}>
+                    <SelectCategoryComponent fatherCategoryId={newCategory.catId ?? ''} onChange={handleChange} />
+                </Grid>
+
                 <Grid item xs={12} sm={6} md={3} lg={3}>
                     <TextField
                         value={newCategory.name}
@@ -183,13 +161,16 @@ const CreateCategoryPage = () => {
 
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button onClick={handleCancel} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
+                            Cancelar
+                        </Button>
                         <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
                             Guardar
                         </Button>
                     </Box>
                 </Grid>
             </Grid>
-        </MainCard>
+        </Card>
     );
 };
 

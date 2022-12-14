@@ -1,111 +1,179 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // material-ui
-import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography, useMediaQuery, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import { useSelector, useDispatch } from 'store';
 
 // third-party
 import { useIntl } from 'react-intl';
 
 // assets
 import { IconSearch } from '@tabler/icons';
-import { Link, useSearchParams } from 'react-router-dom';
-import { getCategoriesService } from 'store/slices/catalogue';
+import { useSearchParams } from 'react-router-dom';
 import CategoriesListComponent from './CategoriesListComponent';
-import { CategoryType } from 'types/catalogue';
+import CreateCategoryPage from '../Create';
+import EditCategoryComponent from '../Edit';
 
 // ==============================|| FACETS LIST ||============================== //
 
 const CategoriesListPage = () => {
     // hooks
-    const intl = useIntl();
-    const dispatch = useDispatch();
+    const theme = useTheme();
+    const upMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-    // variables
-    const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>();
-    const { categories } = useSelector((state) => state.catalogue);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    // vars
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
+    const mainCardRef = useRef<null | HTMLDivElement>(null);
 
+    // create
+    const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
+    const [selectedCatId, setSelectedCatId] = useState<number>(); // short cut to select in create form
+
+    // show info -- edit
+    const [selectedCategory, setSelectedCategory] = useState<number>(); // id to show info (right side)
+    const [showInfo, setShowInfo] = useState<boolean>(false); // show or hide info (right side)
+
+    // set route params
     useEffect(() => {
-        dispatch(getCategoriesService({ idMerchant: 1 }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        setFilteredCategories(categories);
-    }, [categories]);
-
-    useEffect(() => {
-        let newSearchParam = `?page=${currentPage}`;
-
-        if (filterText) {
-            newSearchParam += `&search=${filterText}`;
-        }
-
+        const newSearchParam = `&search=${filterText}`;
         setSearchParams(newSearchParam);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filterText, currentPage]);
+    }, [filterText]);
 
+    // get route params
     useEffect(() => {
         const search = searchParams.get('search');
         setFilterText(search ?? '');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const handleCreateForm = () => {
+        setOpenCreate((prev) => !prev);
+    };
+
+    const openCreateFormById = (catId?: number) => {
+        if (upMediumScreen && mainCardRef && mainCardRef.current) {
+            mainCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // open form from categories list
+        setSelectedCatId(catId);
+        setOpenCreate(true);
+    };
+
+    // close edit
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
         const newString = event?.target.value;
         setFilterText(newString ?? '');
-        setCurrentPage(1);
+    };
+
+    const handleShowInfo = (cat?: number) => {
+        setShowInfo(false);
+        if (cat) {
+            if (upMediumScreen) {
+                console.log('UP');
+            }
+            setTimeout(() => {
+                setSelectedCategory(cat);
+                setShowInfo(true);
+            }, 100);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setSelectedCategory(undefined);
+        setShowInfo(false);
     };
 
     return (
         <MainCard
+            ref={mainCardRef}
             title={
-                <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
-                        <Typography variant="h3">
-                            {' '}
-                            {intl.formatMessage({
-                                id: 'categories'
-                            })}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Button component={Link} to="create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
-                            {intl.formatMessage({
-                                id: 'create_category'
-                            })}
-                        </Button>
-
-                        <OutlinedInput
-                            id="input-search-list-style1"
-                            placeholder={intl.formatMessage({
-                                id: 'search'
-                            })}
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    <IconSearch stroke={1.5} size="16px" />
-                                </InputAdornment>
-                            }
-                            size="small"
-                            value={filterText}
-                            onChange={handleSearch}
-                        />
-                    </Grid>
-                </Grid>
+                // TOP - Create form and header
+                <CustomPageHeader
+                    handleSearch={handleSearch}
+                    filterText={filterText}
+                    openCreate={openCreate}
+                    toggleForm={handleCreateForm}
+                    selectedCatId={selectedCatId}
+                />
             }
             content={false}
+            sx={{ overflow: 'initial' }}
         >
-            <CategoriesListComponent categories={filteredCategories} />
+            <Grid container spacing={gridSpacing} p={2}>
+                {/* LIST  */}
+                <Grid item xs={12} sm={8} md={4}>
+                    <CategoriesListComponent filterText={filterText} openCreate={openCreateFormById} handleShowInfo={handleShowInfo} />
+                </Grid>
+                {/* INFO  */}
+                <Grid item xs={12} sm={4} md={8}>
+                    <EditCategoryComponent selectedCategory={selectedCategory} show={showInfo} onCancel={handleCancelEdit} />
+                </Grid>
+            </Grid>
         </MainCard>
     );
 };
 
 export default CategoriesListPage;
+
+type CustomPageHeaderProps = {
+    handleSearch: (e: any) => void;
+    filterText: string;
+    toggleForm: () => void;
+    openCreate: boolean;
+    selectedCatId?: number;
+};
+
+// Create form and header
+
+const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, selectedCatId }: CustomPageHeaderProps) => {
+    // hooks
+    const intl = useIntl();
+
+    return (
+        <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item>
+                <Typography variant="h3">
+                    {intl.formatMessage({
+                        id: 'categories'
+                    })}
+                </Typography>
+            </Grid>
+            <Grid item>
+                <Fade in={!openCreate}>
+                    <Button onClick={toggleForm} variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
+                        {intl.formatMessage({
+                            id: 'create_category'
+                        })}
+                    </Button>
+                </Fade>
+
+                <OutlinedInput
+                    id="input-search-list-style1"
+                    placeholder={intl.formatMessage({
+                        id: 'search'
+                    })}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <IconSearch stroke={1.5} size="16px" />
+                        </InputAdornment>
+                    }
+                    size="small"
+                    value={filterText}
+                    onChange={handleSearch}
+                />
+            </Grid>
+
+            <Grid item xs={12} sx={{ p: 0, mt: 3 }}>
+                <Collapse in={openCreate} collapsedSize={0}>
+                    <CreateCategoryPage handleClose={toggleForm} selectedCatId={selectedCatId} />
+                </Collapse>
+            </Grid>
+        </Grid>
+    );
+};

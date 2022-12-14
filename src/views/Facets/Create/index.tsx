@@ -1,31 +1,35 @@
 import React from 'react';
 
 // mui imports
+import { Card, Fade, Typography, Stack, Divider, Box, useTheme, useMediaQuery, Modal } from '@mui/material';
 
 // third imports
-import { useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
-// import ProfileForm from '../ProfileForm';
-
-import { useDispatch } from 'react-redux';
+import FacetFormComponent from '../FacetForm';
+import { useDispatch } from 'store';
 
 // services
+import { createFacetService } from 'store/slices/catalogue';
 
 // types
 import { FacetType } from 'types/catalogue';
-import { createFacetService } from 'store/slices/catalogue';
-import FacetFormComponent from '../FacetForm';
+import { openSnackbar } from 'store/slices/snackbar';
 
-const CreateFacetPage = () => {
+type CreateFacetComponentProps = {
+    show: boolean;
+    handleCancel: () => void;
+};
+
+const CreateFacetComponent = ({ show, handleCancel }: CreateFacetComponentProps) => {
     const intl = useIntl();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const theme = useTheme();
+    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-    const handleSave = async (data: FacetType) => {
-        await dispatch(
+    const handleSave = (data: FacetType) => {
+        dispatch(
             createFacetService({
                 idMerchant: 1,
                 data: {
@@ -33,20 +37,85 @@ const CreateFacetPage = () => {
                     nameSap: data.nameSap
                 }
             })
-        );
-
-        navigate('/suppliers');
+        )
+            .then(({ payload }) => {
+                if (payload.status === 500) throw new Error();
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: `Facet creado correctamente`,
+                        variant: 'alert',
+                        alert: {
+                            color: 'success'
+                        },
+                        close: false
+                    })
+                );
+            })
+            .catch(() => {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: `Error al crear el facet`,
+                        variant: 'alert',
+                        alert: {
+                            color: 'error'
+                        },
+                        close: false
+                    })
+                );
+            })
+            .finally(() => {
+                handleCancel();
+            });
     };
 
+    const content = () => (
+        <>
+            <Stack sx={{ mb: 3 }}>
+                <Typography variant="h4">
+                    {intl.formatMessage({
+                        id: 'create_facet'
+                    })}
+                </Typography>
+            </Stack>
+            <Divider sx={{ mb: 3 }} />
+            <FacetFormComponent handleSave={handleSave} handleCancel={handleCancel} />
+        </>
+    );
+
+    if (onlyMediumScreen) {
+        return (
+            <Modal
+                open={show}
+                onClose={handleCancel}
+                aria-labelledby="modal-edit-category"
+                aria-describedby="modal-render-form-edit-category"
+            >
+                <Box sx={modalStyle}>{content()}</Box>
+            </Modal>
+        );
+    }
+
     return (
-        <MainCard
-            title={intl.formatMessage({
-                id: 'create_supplier'
-            })}
-        >
-            <FacetFormComponent handleSave={handleSave} />
-        </MainCard>
+        <Fade in={show}>
+            <Card sx={{ boxShadow: 2, p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>{content()}</Card>
+        </Fade>
     );
 };
 
-export default CreateFacetPage;
+export default CreateFacetComponent;
+
+const modalStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    pt: 2,
+    px: 3,
+    pb: 3,
+    borderRadius: 2
+};

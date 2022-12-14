@@ -1,8 +1,9 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 
 // mui imports
 import { Grid, TextField, Divider, Button, Box } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
 
 // third-party imports
 import { useIntl } from 'react-intl';
@@ -10,6 +11,9 @@ import { useIntl } from 'react-intl';
 // project imports
 import { gridSpacing } from 'store/constant';
 import { useSelector } from 'store';
+
+// types
+import { FacetType } from 'types/catalogue';
 
 type newFacetType = {
     name: string;
@@ -23,9 +27,11 @@ const defaultData: newFacetType = {
 
 type FacetFormProps = {
     handleSave: (data: any) => void;
+    handleCancel: () => void;
+    editingData?: FacetType;
 };
 
-export default function FacetFormComponent({ handleSave }: FacetFormProps) {
+export default function FacetFormComponent({ handleSave, handleCancel, editingData }: FacetFormProps) {
     // hooks
     const intl = useIntl();
 
@@ -34,6 +40,15 @@ export default function FacetFormComponent({ handleSave }: FacetFormProps) {
 
     // vars
     const [newData, setNewData] = useState<newFacetType>(defaultData);
+
+    useEffect(() => {
+        if (editingData) {
+            setNewData({
+                name: editingData.name,
+                nameSap: editingData.nameSap ?? ''
+            });
+        }
+    }, [editingData]);
 
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -49,12 +64,12 @@ export default function FacetFormComponent({ handleSave }: FacetFormProps) {
 
     return (
         <Grid container component="form" spacing={gridSpacing} onSubmit={handleSubmit}>
-            <Grid item xs={12} sm={6} md={3} lg={3}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
                 <TextField
                     value={newData.name}
                     fullWidth
                     label={intl.formatMessage({
-                        id: 'supplier_name'
+                        id: 'facet_name'
                     })}
                     name="name"
                     onChange={onchangeText}
@@ -62,13 +77,13 @@ export default function FacetFormComponent({ handleSave }: FacetFormProps) {
                 />
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} lg={3}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
                 <TextField
                     value={newData.nameSap}
                     fullWidth
-                    label={`${intl.formatMessage({
-                        id: 'supplier_name'
-                    })} SAP`}
+                    label={intl.formatMessage({
+                        id: 'facet_sap_name'
+                    })}
                     name="nameSap"
                     onChange={onchangeText}
                 />
@@ -79,6 +94,16 @@ export default function FacetFormComponent({ handleSave }: FacetFormProps) {
 
             <Grid item xs={12}>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                        onClick={handleCancel}
+                        disabled={updating}
+                        variant="outlined"
+                        color="error"
+                        sx={{ mr: 2 }}
+                        startIcon={<CloseIcon />}
+                    >
+                        Cancelar
+                    </Button>
                     <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
                         Guardar
                     </Button>

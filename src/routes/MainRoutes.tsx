@@ -27,13 +27,10 @@ const CreateSupplierPage = Loadable(lazy(() => import('views/Suppliers/Create'))
 const EditSupplierPage = Loadable(lazy(() => import('views/Suppliers/Edit')));
 
 // ========= FACETS =========
-const FacetsListPage = Loadable(lazy(() => import('views/Facets/List')));
-const EditFacetPage = Loadable(lazy(() => import('views/Facets/Edit')));
-const CreateFacetPage = Loadable(lazy(() => import('views/Facets/Create')));
+const FacetsMainPage = Loadable(lazy(() => import('views/Facets/Main')));
 
 // ========= CATEGORIES =========
-const CategoriesListPage = Loadable(lazy(() => import('views/Categories/List')));
-const CreateCategoryPage = Loadable(lazy(() => import('views/Categories/Create')));
+const CategoriesMainPage = Loadable(lazy(() => import('views/Categories/List')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -108,24 +105,12 @@ const MainRoutes = {
         // ========= FACETS =========
         {
             path: '/facets',
-            element: <FacetsListPage />
-        },
-        {
-            path: '/facets/create',
-            element: <CreateFacetPage />
-        },
-        {
-            path: '/facets/:facetId/edit',
-            element: <EditFacetPage />
+            element: <FacetsMainPage />
         },
         // ========= CATEGORIES =========
         {
             path: '/categories',
-            element: <CategoriesListPage />
-        },
-        {
-            path: '/categories/create',
-            element: <CreateCategoryPage />
+            element: <CategoriesMainPage />
         }
     ]
 };

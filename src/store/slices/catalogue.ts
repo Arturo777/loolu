@@ -4,6 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
 import { STYRK_API, STYRK_TOKEN, STYRK_API_ALTERNATIVE } from 'config';
+import { getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -19,7 +20,8 @@ const initialState: DefaultRootStateProps['catalogue'] = {
         facets: [],
         maxPage: 1
     },
-    categories: []
+    categories: [],
+    flatCategories: []
 };
 
 const slice = createSlice({
@@ -74,7 +76,6 @@ const slice = createSlice({
                 state.loading = true;
             })
             .addCase(getFacetsService.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.loading = false;
                 state.facetsInfo = {
                     facets: action.payload.response,
@@ -89,6 +90,8 @@ const slice = createSlice({
             .addCase(getCategoriesService.fulfilled, (state, action) => {
                 state.loading = false;
                 state.categories = action.payload.response;
+
+                state.flatCategories = getCategoriesFlat(action.payload.response);
             })
             .addCase(createCategoryService.pending, (state) => {
                 state.updating = true;
@@ -237,6 +240,27 @@ export const getFacetsService = createAsyncThunk(`${slice.name}/getFacets`, asyn
     return response.data;
 });
 
+// styrk/api/facets/raw/{id}?merchantId=1
+
+type getFacetServiceProps = {
+    merchantId: number;
+    facetId: number;
+};
+
+export const getFacetService = createAsyncThunk(`${slice.name}/getFacet`, async ({ merchantId, facetId }: getFacetServiceProps) => {
+    const response = await axios.get(`styrk/api/facets/raw/${facetId}`, {
+        baseURL: STYRK_API,
+        params: {
+            merchantId: merchantId ?? 1,
+            id: facetId
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
 type createFacetServiceProps = {
     idMerchant: number;
     data: {
@@ -246,13 +270,40 @@ type createFacetServiceProps = {
 };
 
 export const createFacetService = createAsyncThunk(`${slice.name}/createFacet`, async ({ idMerchant, data }: createFacetServiceProps) => {
-    const response = await axios.post(`facets/fv/merchant/${idMerchant}`, data, {
-        baseURL: STYRK_API_ALTERNATIVE,
-        headers: {
-            authorization: `Bearer ${STYRK_TOKEN}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await axios.post(`facets/fv/merchant/${idMerchant}`, data, {
+            baseURL: STYRK_API_ALTERNATIVE,
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
+});
+
+type editFacetServiceProps = {
+    merchantId: number;
+    data: {
+        name: string;
+        nameSap: string;
+        id: number;
+    }[];
+};
+
+export const editFacetService = createAsyncThunk(`${slice.name}/editFacet`, async ({ merchantId, data }: editFacetServiceProps) => {
+    try {
+        const response = await axios.put(`/facets/raw/merchant/${merchantId}`, data, {
+            baseURL: STYRK_API_ALTERNATIVE,
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
 });
 
 // `${process.env.BASE_API_URL}/category/search?idMerchant=${merchantId}`
@@ -294,3 +345,61 @@ export const createCategoryService = createAsyncThunk(`${slice.name}/createCateg
     );
     return response.data;
 });
+
+type getCategoryInfoServiceProps = {
+    idMerchant: number;
+    categoryId: number;
+};
+
+export const getCategoryInfoService = createAsyncThunk(
+    `${slice.name}/getCategory`,
+    async ({ idMerchant, categoryId }: getCategoryInfoServiceProps) => {
+        const response = await axios.get(`styrk/api/category/get`, {
+            baseURL: STYRK_API,
+            params: {
+                idMerchant: idMerchant || 1,
+                categoryId
+            },
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    }
+);
+
+type editCategoryServiceProps = {
+    idMerchant: number;
+    category: {
+        activeStoreFrontLink: boolean;
+        adWordsRemarketingCode: boolean | null;
+        description: string;
+        fatherCategoryId: number | null;
+        hasChildren: boolean;
+        id: number;
+        isActive: boolean;
+        name: string;
+        numberChildren: number | string;
+        score: number | string;
+        showBrandFilter: boolean;
+        showInStoreFront: boolean;
+        stockKeepingUnitSelectionMode: string;
+        title: string;
+    };
+};
+
+export const editCategoryService = createAsyncThunk(
+    `${slice.name}/getCategory`,
+    async ({ idMerchant, category }: editCategoryServiceProps) => {
+        const response = await axios.post(`styrk/api/category/update`, category, {
+            baseURL: STYRK_API,
+            params: {
+                idMerchant: idMerchant || 1
+            },
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    }
+);
