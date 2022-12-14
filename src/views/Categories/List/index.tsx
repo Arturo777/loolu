@@ -1,179 +1,130 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 
-// material-ui
-import { Button, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography, useMediaQuery, useTheme } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+// mui imports
+import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card, Tooltip } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import StyleIcon from '@mui/icons-material/Style';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
+import { getCategoriesService } from 'store/slices/catalogue';
+import { useDispatch, useSelector } from 'store';
+
+// types
+import { CategoryType } from 'types/catalogue';
 import { gridSpacing } from 'store/constant';
 
-// third-party
-import { useIntl } from 'react-intl';
+type CategoriesListProps = {
+    filterText: string;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
+};
 
-// assets
-import { IconSearch } from '@tabler/icons';
-import { useSearchParams } from 'react-router-dom';
-import CategoriesListComponent from './CategoriesListComponent';
-import CreateCategoryPage from '../Create';
-import EditCategoryComponent from '../Edit';
-
-// ==============================|| FACETS LIST ||============================== //
-
-const CategoriesListPage = () => {
+export default function CategoriesListComponent({ filterText, openCreate, handleShowInfo }: CategoriesListProps) {
     // hooks
-    const theme = useTheme();
-    const upMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
-
+    const dispatch = useDispatch();
+    // store
+    const { categories } = useSelector((state) => state.catalogue);
     // vars
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [filterText, setFilterText] = useState<string>('');
-    const mainCardRef = useRef<null | HTMLDivElement>(null);
+    const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>();
 
-    // create
-    const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
-    const [selectedCatId, setSelectedCatId] = useState<number>(); // short cut to select in create form
-
-    // show info -- edit
-    const [selectedCategory, setSelectedCategory] = useState<number>(); // id to show info (right side)
-    const [showInfo, setShowInfo] = useState<boolean>(false); // show or hide info (right side)
-
-    // set route params
     useEffect(() => {
-        const newSearchParam = `&search=${filterText}`;
-        setSearchParams(newSearchParam);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filterText]);
-
-    // get route params
-    useEffect(() => {
-        const search = searchParams.get('search');
-        setFilterText(search ?? '');
+        dispatch(getCategoriesService({ idMerchant: 1 }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleCreateForm = () => {
-        setOpenCreate((prev) => !prev);
-    };
+    useEffect(() => {
+        setFilteredCategories(categories);
+    }, [categories]);
 
-    const openCreateFormById = (catId?: number) => {
-        if (upMediumScreen && mainCardRef && mainCardRef.current) {
-            mainCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        // open form from categories list
-        setSelectedCatId(catId);
-        setOpenCreate(true);
-    };
+    useEffect(() => {
+        const filtered =
+            filterText.length >= 2
+                ? categories.filter(
+                      (item) =>
+                          JSON.stringify(item)
+                              .toLowerCase()
+                              .indexOf(filterText?.toLowerCase() ?? '') > -1
+                  )
+                : categories;
 
-    // close edit
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
-        const newString = event?.target.value;
-        setFilterText(newString ?? '');
-    };
-
-    const handleShowInfo = (cat?: number) => {
-        setShowInfo(false);
-        if (cat) {
-            if (upMediumScreen) {
-                console.log('UP');
-            }
-            setTimeout(() => {
-                setSelectedCategory(cat);
-                setShowInfo(true);
-            }, 100);
-        }
-    };
-
-    const handleCancelEdit = () => {
-        setSelectedCategory(undefined);
-        setShowInfo(false);
-    };
+        setFilteredCategories(filtered);
+    }, [filterText, categories]);
 
     return (
-        <MainCard
-            ref={mainCardRef}
-            title={
-                // TOP - Create form and header
-                <CustomPageHeader
-                    handleSearch={handleSearch}
-                    filterText={filterText}
-                    openCreate={openCreate}
-                    toggleForm={handleCreateForm}
-                    selectedCatId={selectedCatId}
-                />
-            }
-            content={false}
-            sx={{ overflow: 'initial' }}
-        >
-            <Grid container spacing={gridSpacing} p={2}>
-                {/* LIST  */}
-                <Grid item xs={12} sm={8} md={4}>
-                    <CategoriesListComponent filterText={filterText} openCreate={openCreateFormById} handleShowInfo={handleShowInfo} />
-                </Grid>
-                {/* INFO  */}
-                <Grid item xs={12} sm={4} md={8}>
-                    <EditCategoryComponent selectedCategory={selectedCategory} show={showInfo} onCancel={handleCancelEdit} />
-                </Grid>
-            </Grid>
-        </MainCard>
+        <Card sx={{ boxShadow: 2 }}>
+            <Grid container spacing={gridSpacing}>
+                {filteredCategories?.map((category) => (
+                    <Grid item xs={12} key={`main-category-${category.id}`}>
+                        <MainCategoryComponent category={category} openCreate={openCreate} handleShowInfo={handleShowInfo} />
+                    </Grid>
+                ))}
+            </Grid>{' '}
+        </Card>
     );
+}
+
+type MainCategoryProps = {
+    category: CategoryType;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
 };
 
-export default CategoriesListPage;
+const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCategoryProps) => {
+    const [open, setOpen] = React.useState(false);
 
-type CustomPageHeaderProps = {
-    handleSearch: (e: any) => void;
-    filterText: string;
-    toggleForm: () => void;
-    openCreate: boolean;
-    selectedCatId?: number;
-};
-
-// Create form and header
-
-const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, selectedCatId }: CustomPageHeaderProps) => {
-    // hooks
-    const intl = useIntl();
-
+    const handleOpen = () => {
+        setOpen(!open);
+    };
     return (
-        <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item>
-                <Typography variant="h3">
-                    {intl.formatMessage({
-                        id: 'categories'
-                    })}
-                </Typography>
-            </Grid>
-            <Grid item>
-                <Fade in={!openCreate}>
-                    <Button onClick={toggleForm} variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
-                        {intl.formatMessage({
-                            id: 'create_category'
-                        })}
-                    </Button>
-                </Fade>
+        <>
+            <ListItemButton sx={{ paddingY: 0 }}>
+                <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
+                    {category.children?.length ? <ExpandCircleDownIcon /> : null}
+                </ListItemIcon>
+                <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
+                {/* FACET - CATEGORY */}
+                <Tooltip title="Asociar Facet-Categoria">
+                    <IconButton
+                        onClick={() => {
+                            handleShowInfo(category.id);
+                        }}
+                    >
+                        <StyleIcon />
+                    </IconButton>
+                </Tooltip>
+                {/* EDIT */}
+                <Tooltip title="Editar">
+                    <IconButton
+                        onClick={() => {
+                            handleShowInfo(category.id);
+                        }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
+                {/* CREATE */}
+                <Tooltip title="Crear subcategoria">
+                    <IconButton
+                        onClick={() => {
+                            openCreate(category.id);
+                        }}
+                    >
+                        <AddBoxIcon />
+                    </IconButton>
+                </Tooltip>
+            </ListItemButton>
 
-                <OutlinedInput
-                    id="input-search-list-style1"
-                    placeholder={intl.formatMessage({
-                        id: 'search'
-                    })}
-                    startAdornment={
-                        <InputAdornment position="start">
-                            <IconSearch stroke={1.5} size="16px" />
-                        </InputAdornment>
-                    }
-                    size="small"
-                    value={filterText}
-                    onChange={handleSearch}
-                />
-            </Grid>
-
-            <Grid item xs={12} sx={{ p: 0, mt: 3 }}>
-                <Collapse in={openCreate} collapsedSize={0}>
-                    <CreateCategoryPage handleClose={toggleForm} selectedCatId={selectedCatId} />
+            {Boolean(category.children?.length) && (
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    {category.children.map((itemA) => (
+                        <Box key={`category-child-${itemA.id}`} sx={{ ml: 2 }}>
+                            <MainCategoryComponent category={itemA} openCreate={openCreate} handleShowInfo={handleShowInfo} />
+                        </Box>
+                    ))}
                 </Collapse>
-            </Grid>
-        </Grid>
+            )}
+        </>
     );
 };

@@ -30,7 +30,7 @@ export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8
 export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
 
 export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MDk2ODY4MiwiZXhwIjoxNjcwOTc0NjgyfQ.qDRuf7NDqGSUPFTVBt1tfI6z-hyPChvqtQlg1x2fVofe2Bi1HRVP2EBJGU5dANfrTzUMFKRL3tUUs-_-nYkoTQ';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MTA0ODEzMCwiZXhwIjoxNjcxMDU0MTMwfQ.jDl88E7h4OZc50QyfNf4K9xG68LWRZBFaFJ62wk26J6LZ4_j64lWp8Z_hJti8OFgFuFpctdiNlLftQwb5yLUMA';
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
@@ -42,7 +42,7 @@ const config: ConfigProps = {
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 8,
     outlinedFilled: true,
-    navType: 'dark', // light, dark
+    navType: 'light', // light, dark
     presetColor: 'default', // default, theme1, theme2, theme3, theme4, theme5, theme6
     locale: 'en', // 'en' - English, 'fr' - French, 'ro' - Romanian, 'zh' - Chinese
     rtlLayout: false,

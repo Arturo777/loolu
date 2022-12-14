@@ -151,6 +151,10 @@
     "search": "Buscar",
     "filter": "Filtrar",
 
+    "hi_welcome": "¡Hola! Bienvenido",
+    "enter_credentials": "Ingresa tus datos para continuar",
+    "password": "Contraseña",
+
     "type": "Tipo",
     "description": "Descripción",
     "status": "Estatus",

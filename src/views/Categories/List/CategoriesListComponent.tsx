@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import StyleIcon from '@mui/icons-material/Style';
 
 // project imports
 import { getCategoriesService } from 'store/slices/catalogue';
@@ -83,22 +84,36 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCat
                     {category.children?.length ? <ExpandCircleDownIcon /> : null}
                 </ListItemIcon>
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
+                {/* FACET - CATEGORY */}
+                <Tooltip title="Asociar Facet-Categoria">
+                    <IconButton
+                        onClick={() => {
+                            handleShowInfo(category.id);
+                        }}
+                    >
+                        <StyleIcon />
+                    </IconButton>
+                </Tooltip>
                 {/* EDIT */}
-                <IconButton
-                    onClick={() => {
-                        handleShowInfo(category.id);
-                    }}
-                >
-                    <EditIcon />
-                </IconButton>
+                <Tooltip title="Editar">
+                    <IconButton
+                        onClick={() => {
+                            handleShowInfo(category.id);
+                        }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
                 {/* CREATE */}
-                <IconButton
-                    onClick={() => {
-                        openCreate(category.id);
-                    }}
-                >
-                    <AddBoxIcon />
-                </IconButton>
+                <Tooltip title="Crear subcategoria">
+                    <IconButton
+                        onClick={() => {
+                            openCreate(category.id);
+                        }}
+                    >
+                        <AddBoxIcon />
+                    </IconButton>
+                </Tooltip>
             </ListItemButton>
 
             {Boolean(category.children?.length) && (

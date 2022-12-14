@@ -139,11 +139,13 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
         }
     };
 
+    const resetPassword = () => {};
+
     if (state.isInitialized !== undefined && !state.isInitialized) {
         return <Loader />;
     }
 
-    return <AWSCognitoContext.Provider value={{ ...state, login, logout, register }}>{children}</AWSCognitoContext.Provider>;
+    return <AWSCognitoContext.Provider value={{ ...state, login, logout, register, resetPassword }}>{children}</AWSCognitoContext.Provider>;
 };
 
 export default AWSCognitoContext;

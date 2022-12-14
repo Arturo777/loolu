@@ -29,7 +29,7 @@ const EditSupplierPage = Loadable(lazy(() => import('views/Suppliers/Edit')));
 const FacetsMainPage = Loadable(lazy(() => import('views/Facets/Main')));
 
 // ========= CATEGORIES =========
-const CategoriesMainPage = Loadable(lazy(() => import('views/Categories/List')));
+const CategoriesMainPage = Loadable(lazy(() => import('views/Categories/Main')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
