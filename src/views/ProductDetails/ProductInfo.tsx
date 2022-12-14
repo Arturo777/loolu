@@ -1,10 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import {
     Button,
-    ButtonBase,
     Box,
     ButtonGroup,
     Divider,
@@ -22,41 +21,30 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    Tooltip,
     Typography,
     TextField
 } from '@mui/material';
-import Switch, { SwitchProps } from '@mui/material/Switch';
+import Switch from '@mui/material/Switch';
 // third-party
 import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
 import * as yup from 'yup';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import Avatar from 'ui-component/extended/Avatar';
-import ColorOptions from '../ColorOptions';
-import { ColorsOptionsProps, Products } from 'types/e-commerce';
+import { Products } from 'types/e-commerce';
 import { openSnackbar } from 'store/slices/snackbar';
 import { useDispatch, useSelector } from 'store';
 import { addProduct } from 'store/slices/cart';
 
 // assets
-import CircleIcon from '@mui/icons-material/Circle';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
 import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditIcon from '@mui/icons-material/Edit';
-import { Key, useEffect } from 'react';
+import { Key } from 'react';
 
 import ProductDimensions from './ProductDimensions';
-
-// product color select
-function getColor(color: string) {
-    return ColorOptions.filter((item) => item.value === color);
-}
-
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -64,33 +52,6 @@ const validationSchema = yup.object({
     color: yup.string().required('Color selection is required'),
     size: yup.number().required('Size selection is required.')
 });
-
-// ==============================|| COLORS OPTION ||============================== //
-
-const Colors = ({ checked, colorsData }: { checked?: boolean; colorsData: ColorsOptionsProps[] }) => {
-    const theme = useTheme();
-    return (
-        <Grid item>
-            <Tooltip title={colorsData[0].label}>
-                <ButtonBase sx={{ borderRadius: '50%' }}>
-                    <Avatar
-                        color="inherit"
-                        size="badge"
-                        sx={{
-                            bgcolor: colorsData[0].bg,
-                            color: theme.palette.mode === 'light' ? 'grey.50' : 'grey.800'
-                        }}
-                    >
-                        {checked && (
-                            <CircleIcon sx={{ color: theme.palette.mode === 'light' ? 'grey.50' : 'grey.800', fontSize: '0.75rem' }} />
-                        )}
-                        {!checked && <CircleIcon sx={{ color: colorsData[0].bg, fontSize: '0.75rem' }} />}
-                    </Avatar>
-                </ButtonBase>
-            </Tooltip>
-        </Grid>
-    );
-};
 
 const Increment = (props: string | FieldHookConfig<any>) => {
     const [field, , helpers] = useField(props);
@@ -216,22 +177,6 @@ const ProductInfo = ({
     };
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
-    };
-    const addCart = () => {
-        values.color = values.color ? values.color : 'primaryDark';
-        values.size = values.size ? values.size : '8';
-        dispatch(addProduct(values, cart.checkout.products));
-        dispatch(
-            openSnackbar({
-                open: true,
-                message: 'Add To Cart Success',
-                variant: 'alert',
-                alert: {
-                    color: 'success'
-                },
-                close: false
-            })
-        );
     };
 
     return (
@@ -572,7 +517,7 @@ const ProductInfo = ({
                                                 <Typography variant="body2">Dimensions</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <ProductDimensions valueSku={valueSku} product={product} />
+                                                <ProductDimensions valueSku={valueSku} product={product} active={active} />
                                             </TableCell>
                                         </TableRow>
                                         <br />
@@ -600,6 +545,7 @@ const ProductInfo = ({
                                             size="large"
                                             startIcon={<EditIcon />}
                                             onClick={() => setActive(true)}
+                                            disabled={valueSku === ''}
                                         >
                                             Edit Product
                                         </Button>

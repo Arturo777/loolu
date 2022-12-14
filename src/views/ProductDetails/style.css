@@ -14,6 +14,9 @@
 .content-pack {
     position: relative;
 }
+.content-pack-inputs {
+    margin-left: 20px;
+}
 .content-pack .dim {
     position: absolute;
 }

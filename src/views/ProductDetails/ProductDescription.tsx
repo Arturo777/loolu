@@ -26,7 +26,7 @@ const ProductDescription = ({
         {
             id: 'basic2',
             title: 'Specifications',
-            content: <Specification />
+            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={active} />
         },
         {
             id: 'basic3',

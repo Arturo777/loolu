@@ -6,8 +6,6 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProductList from 'views/Products';
 import ProductDetails from 'views/ProductDetails';
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 //  ========= users =========
 const UsersList = Loadable(lazy(() => import('views/Users')));

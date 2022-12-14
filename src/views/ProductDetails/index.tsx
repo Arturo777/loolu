@@ -16,7 +16,7 @@ import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct, getSku, getCategories } from 'store/slices/product';
+import { getProduct, getCategories } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -41,7 +41,7 @@ function a11yProps(index: number) {
 }
 
 const ProductDetails = () => {
-    const [valueSku, setValueSku] = useState(0);
+    const [valueSku, setValueSku] = useState('');
     const [active, setActive] = useState(false);
     const [productInfo, setProductInfo] = useState({});
     const { id } = useParams();
@@ -67,10 +67,10 @@ const ProductDetails = () => {
         if (cart.checkout.step > 2) {
             dispatch(resetCart());
         }
-    }, []);
+    }, [cart.checkout.step, dispatch, id]);
 
     const { product, skus, categories } = useSelector((state) => state.product);
-
+    console.log('sku', valueSku);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
