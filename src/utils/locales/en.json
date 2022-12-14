@@ -178,6 +178,8 @@
 
     "create_facet": "Create facet",
     "edit_facet": "Edit facet",
+    "facet_name": "Facet name",
+    "facet_sap_name": "Facet SAP name",
 
     "category": "Category",
     "categories": "Categories",

@@ -1,7 +1,6 @@
 /* eslint-disable global-require */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
 // material-ui
 import { Button, CardContent, Grid, Stack, Typography } from '@mui/material';
 
@@ -115,9 +114,16 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                     >
                                         <LinkIcon fontSize="small" />
                                     </Button>
-                                    <Button variant="contained" sx={{ minWidth: 0 }}>
-                                        <EditIcon fontSize="small" />
-                                    </Button>
+                                    <Typography
+                                        component={Link}
+                                        to={`/products/detail-product/${productID}`}
+                                        variant="subtitle2"
+                                        sx={{ textDecoration: 'none' }}
+                                    >
+                                        <Button variant="contained" sx={{ minWidth: 0 }}>
+                                            <EditIcon fontSize="small" />
+                                        </Button>
+                                    </Typography>
                                 </Stack>
                             </Grid>
                         </Grid>

@@ -76,7 +76,6 @@ const slice = createSlice({
                 state.loading = true;
             })
             .addCase(getFacetsService.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.loading = false;
                 state.facetsInfo = {
                     facets: action.payload.response,
@@ -241,6 +240,27 @@ export const getFacetsService = createAsyncThunk(`${slice.name}/getFacets`, asyn
     return response.data;
 });
 
+// styrk/api/facets/raw/{id}?merchantId=1
+
+type getFacetServiceProps = {
+    merchantId: number;
+    facetId: number;
+};
+
+export const getFacetService = createAsyncThunk(`${slice.name}/getFacet`, async ({ merchantId, facetId }: getFacetServiceProps) => {
+    const response = await axios.get(`styrk/api/facets/raw/${facetId}`, {
+        baseURL: STYRK_API,
+        params: {
+            merchantId: merchantId ?? 1,
+            id: facetId
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    return response.data;
+});
+
 type createFacetServiceProps = {
     idMerchant: number;
     data: {
@@ -250,13 +270,40 @@ type createFacetServiceProps = {
 };
 
 export const createFacetService = createAsyncThunk(`${slice.name}/createFacet`, async ({ idMerchant, data }: createFacetServiceProps) => {
-    const response = await axios.post(`facets/fv/merchant/${idMerchant}`, data, {
-        baseURL: STYRK_API_ALTERNATIVE,
-        headers: {
-            authorization: `Bearer ${STYRK_TOKEN}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await axios.post(`facets/fv/merchant/${idMerchant}`, data, {
+            baseURL: STYRK_API_ALTERNATIVE,
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
+});
+
+type editFacetServiceProps = {
+    merchantId: number;
+    data: {
+        name: string;
+        nameSap: string;
+        id: number;
+    }[];
+};
+
+export const editFacetService = createAsyncThunk(`${slice.name}/editFacet`, async ({ merchantId, data }: editFacetServiceProps) => {
+    try {
+        const response = await axios.put(`/facets/raw/merchant/${merchantId}`, data, {
+            baseURL: STYRK_API_ALTERNATIVE,
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
 });
 
 // `${process.env.BASE_API_URL}/category/search?idMerchant=${merchantId}`

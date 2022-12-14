@@ -5,6 +5,7 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProductList from 'views/Products';
+import ProductDetails from 'views/ProductDetails';
 
 //  ========= users =========
 const UsersList = Loadable(lazy(() => import('views/Users')));
@@ -26,12 +27,10 @@ const CreateSupplierPage = Loadable(lazy(() => import('views/Suppliers/Create'))
 const EditSupplierPage = Loadable(lazy(() => import('views/Suppliers/Edit')));
 
 // ========= FACETS =========
-const FacetsListPage = Loadable(lazy(() => import('views/Facets/List')));
-const EditFacetPage = Loadable(lazy(() => import('views/Facets/Edit')));
-const CreateFacetPage = Loadable(lazy(() => import('views/Facets/Create')));
+const FacetsMainPage = Loadable(lazy(() => import('views/Facets/Main')));
 
 // ========= CATEGORIES =========
-const CategoriesListPage = Loadable(lazy(() => import('views/Categories/List')));
+const CategoriesMainPage = Loadable(lazy(() => import('views/Categories/List')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -52,6 +51,10 @@ const MainRoutes = {
             element: <ProductList />
         },
         // ========= users =========
+        {
+            path: '/products/detail-product/:id',
+            element: <ProductDetails />
+        },
         {
             path: '/users',
             element: <UsersList />
@@ -102,20 +105,12 @@ const MainRoutes = {
         // ========= FACETS =========
         {
             path: '/facets',
-            element: <FacetsListPage />
-        },
-        {
-            path: '/facets/create',
-            element: <CreateFacetPage />
-        },
-        {
-            path: '/facets/:facetId/edit',
-            element: <EditFacetPage />
+            element: <FacetsMainPage />
         },
         // ========= CATEGORIES =========
         {
             path: '/categories',
-            element: <CategoriesListPage />
+            element: <CategoriesMainPage />
         }
     ]
 };

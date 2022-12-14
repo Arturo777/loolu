@@ -1,5 +1,14 @@
 // product shop list
 export type Products = {
+    isEcommerce: boolean;
+    categoryName: string;
+    linkId: string;
+    title: string;
+    productRefID: string;
+    isVisible: any;
+    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
+    isActive: boolean;
+    productName: any;
     id: string | number | undefined;
     image: string;
     name: string;
@@ -19,8 +28,44 @@ export type Products = {
     brandName?: string;
     brandId: number;
     productID: string | number;
+    skus: any;
 };
 
+export type Skus = {
+    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
+    ean: string | number | undefined;
+    name: string;
+    skuID: string | number | undefined;
+    image: string;
+    measurementUnit?: string;
+    height?: number;
+    length?: number;
+    packagedHeight?: number;
+    packagedLength?: number;
+    packagedWeightKg?: number;
+    packagedWidth?: number;
+    prices?: any;
+    categories?: string[];
+    colors?: string[];
+    popularity?: number;
+    date?: number;
+    created: Date;
+    isStock?: boolean;
+    new?: number;
+    brandName?: string;
+    brandId: number;
+    productID: string | number;
+};
+export type Categories = {
+    id: string | number;
+    isActive: boolean;
+    description: string;
+    title: string;
+    fatherCategoryId: number;
+    score: string;
+    name: string;
+    children: Categories[];
+};
 // checkout-cart billing address
 export type Address = {
     id?: string | number | undefined;
@@ -90,6 +135,8 @@ export interface ProductStateProps {
     products: Products[];
     product: Products | null;
     relatedProducts: Products[];
+    skus: Skus[];
+    categories: Categories[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;
