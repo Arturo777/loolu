@@ -104,7 +104,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-/* ---- BRANDS ---- */
+/* ============ BRANDS ============ */
 
 export const getBrands = createAsyncThunk(`${slice.name}/getBrands`, async (idMerchant?: number) => {
     const response = await axios.post(
@@ -161,7 +161,7 @@ export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (pa
     return response.data;
 });
 
-/* ---- SUPPLIERS ---- */
+/* ============ SUPPLIERS ============ */
 
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
     const response = await axios.get(`styrk/api/supplier/search`, {
@@ -219,7 +219,7 @@ export const editSupplier = createAsyncThunk(`${slice.name}/editSupplier`, async
     return response.data;
 });
 
-/* ---- SUPPLIERS ---- */
+/* ============ SUPPLIERS ============ */
 
 type getFacetsServiceProps = {
     idMerchant: number;
@@ -306,9 +306,7 @@ export const editFacetService = createAsyncThunk(`${slice.name}/editFacet`, asyn
     }
 });
 
-// `${process.env.BASE_API_URL}/category/search?idMerchant=${merchantId}`
-
-/* ---- CATEGORIES ---- */
+/* ============ CATEGORIES ============ */
 
 type getCategoriesServiceProps = {
     idMerchant: 1;
@@ -403,3 +401,26 @@ export const editCategoryService = createAsyncThunk(
         return response.data;
     }
 );
+
+/* ============ FACET VARIANT ============ */
+
+// facets/fv/merchant/${merchId}/category/${catId}
+
+type getFacetVariantProps = {
+    catId: number;
+    idMerchant: number;
+};
+
+export const getFacetVariant = createAsyncThunk(`${slice.name}/getFacetVariant`, async ({ idMerchant, catId }: getFacetVariantProps) => {
+    try {
+        const response = await axios.get(`facets/fv/merchant/${idMerchant}/category/${catId}`, {
+            baseURL: STYRK_API_ALTERNATIVE,
+            headers: {
+                authorization: `Bearer ${STYRK_TOKEN}`
+            }
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
+});

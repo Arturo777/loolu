@@ -23,6 +23,7 @@
     "create-invoice": "Create Invoice",
     "order-details": "Order Details",
     "product": "Product",
+    "sku": "SKU",
     "product-review": "Product Review",
     "chat": "Chat",
     "mail": "Mail",

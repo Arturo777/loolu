@@ -17,6 +17,8 @@ import { useSearchParams } from 'react-router-dom';
 import CategoriesListComponent from '../List';
 import CreateCategoryPage from '../Create';
 import EditCategoryComponent from '../Edit';
+import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
+import { CategoryType } from 'types/catalogue';
 
 // ==============================|| FACETS LIST ||============================== //
 
@@ -25,10 +27,13 @@ const CategoriesListPage = () => {
     const theme = useTheme();
     const upMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
-    // vars
+    // ===== vars
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
     const mainCardRef = useRef<null | HTMLDivElement>(null);
+    // associate
+    const [openAssociateDrawer, setOpenAssociateDrawer] = useState<boolean>(false);
+    const [categoryAssociate, setCategoryAssociate] = useState<CategoryType | null>(null);
 
     // create
     const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
@@ -89,6 +94,15 @@ const CategoriesListPage = () => {
         setShowInfo(false);
     };
 
+    const handleToggleAssociateDrawer = (category: CategoryType | undefined) => {
+        if (category) {
+            setOpenAssociateDrawer(true);
+            setCategoryAssociate(category);
+        } else {
+            setCategoryAssociate(null);
+        }
+    };
+
     return (
         <MainCard
             ref={mainCardRef}
@@ -108,13 +122,31 @@ const CategoriesListPage = () => {
             <Grid container spacing={gridSpacing} p={2}>
                 {/* LIST  */}
                 <Grid item xs={12} sm={8} md={4}>
-                    <CategoriesListComponent filterText={filterText} openCreate={openCreateFormById} handleShowInfo={handleShowInfo} />
+                    <CategoriesListComponent
+                        openAssociate={handleToggleAssociateDrawer}
+                        filterText={filterText}
+                        openCreate={openCreateFormById}
+                        handleShowInfo={handleShowInfo}
+                    />
                 </Grid>
                 {/* INFO  */}
                 <Grid item xs={12} sm={4} md={8}>
-                    <EditCategoryComponent selectedCategory={selectedCategory} show={showInfo} onCancel={handleCancelEdit} />
+                    <EditCategoryComponent
+                        openAssociate={handleToggleAssociateDrawer}
+                        selectedCategory={selectedCategory}
+                        show={showInfo}
+                        onCancel={handleCancelEdit}
+                    />
                 </Grid>
             </Grid>
+            <AsociateFacetCategoryComponent
+                open={openAssociateDrawer}
+                toggleDrawer={() => {
+                    setOpenAssociateDrawer((prev) => !prev);
+                    setCategoryAssociate(null);
+                }}
+                category={categoryAssociate}
+            />
         </MainCard>
     );
 };

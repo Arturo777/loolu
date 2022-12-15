@@ -5,7 +5,7 @@ import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconBu
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import StyleIcon from '@mui/icons-material/Style';
+import MergeTypeIcon from '@mui/icons-material/MergeType';
 
 // project imports
 import { getCategoriesService } from 'store/slices/catalogue';
@@ -19,9 +19,10 @@ type CategoriesListProps = {
     filterText: string;
     openCreate: (catId: number) => void;
     handleShowInfo: (cat?: number) => void;
+    openAssociate: (cat: CategoryType | undefined) => void;
 };
 
-export default function CategoriesListComponent({ filterText, openCreate, handleShowInfo }: CategoriesListProps) {
+export default function CategoriesListComponent({ filterText, openCreate, handleShowInfo, openAssociate }: CategoriesListProps) {
     // hooks
     const dispatch = useDispatch();
     // store
@@ -57,7 +58,12 @@ export default function CategoriesListComponent({ filterText, openCreate, handle
             <Grid container spacing={gridSpacing}>
                 {filteredCategories?.map((category) => (
                     <Grid item xs={12} key={`main-category-${category.id}`}>
-                        <MainCategoryComponent category={category} openCreate={openCreate} handleShowInfo={handleShowInfo} />
+                        <MainCategoryComponent
+                            category={category}
+                            openCreate={openCreate}
+                            handleShowInfo={handleShowInfo}
+                            openAssociate={() => openAssociate(category)}
+                        />
                     </Grid>
                 ))}
             </Grid>{' '}
@@ -69,9 +75,10 @@ type MainCategoryProps = {
     category: CategoryType;
     openCreate: (catId: number) => void;
     handleShowInfo: (cat?: number) => void;
+    openAssociate: () => void;
 };
 
-const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCategoryProps) => {
+const MainCategoryComponent = ({ category, openCreate, handleShowInfo, openAssociate }: MainCategoryProps) => {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -86,12 +93,8 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCat
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
                 {/* FACET - CATEGORY */}
                 <Tooltip title="Asociar Facet-Categoria">
-                    <IconButton
-                        onClick={() => {
-                            handleShowInfo(category.id);
-                        }}
-                    >
-                        <StyleIcon />
+                    <IconButton onClick={openAssociate}>
+                        <MergeTypeIcon />
                     </IconButton>
                 </Tooltip>
                 {/* EDIT */}
@@ -120,7 +123,12 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo }: MainCat
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     {category.children.map((itemA) => (
                         <Box key={`category-child-${itemA.id}`} sx={{ ml: 2 }}>
-                            <MainCategoryComponent category={itemA} openCreate={openCreate} handleShowInfo={handleShowInfo} />
+                            <MainCategoryComponent
+                                category={itemA}
+                                openCreate={openCreate}
+                                handleShowInfo={handleShowInfo}
+                                openAssociate={openAssociate}
+                            />
                         </Box>
                     ))}
                 </Collapse>

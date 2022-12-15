@@ -14,7 +14,7 @@ import FacetFormComponent from '../FacetForm';
 import { editFacetService, getFacetService } from 'store/slices/catalogue';
 
 // types
-import { FacetType, SupplierType } from 'types/catalogue';
+import { FacetType } from 'types/catalogue';
 import { openSnackbar } from 'store/slices/snackbar';
 
 type EditFacetComponentProps = {

@@ -68,3 +68,40 @@ export type FlatCategoryType = {
     hasChildren: boolean;
     level: number;
 };
+
+export type SpecificationGroupType = {
+    groupId: number;
+    name: string;
+    prodSpecs: SpecificationsType[];
+    skuSpecs: SpecificationsType[];
+};
+
+export type SpecificationsType = {
+    categoryId: number;
+    description: string;
+    fieldTypeId: number;
+    fieldTypeName: string;
+    groupId: number;
+    groupName: string;
+    isActive: boolean;
+    isFilter: boolean;
+    isOnProductDetails: boolean;
+    isRequired: boolean;
+    isSideMenuLinkActive: boolean;
+    isStockKeepingUnit: boolean;
+    isTopMenuLinkActive: boolean;
+    isVtexSync: boolean;
+    name: string;
+    position: number;
+    rawSpecId: number;
+    specificationId: number;
+    vtexFieldId: number;
+    specificationValues: {
+        isActive: boolean;
+        isVtexSync: boolean;
+        name: string;
+        position: number;
+        specificationValueId: number;
+        vtexValueId: number;
+    }[];
+};

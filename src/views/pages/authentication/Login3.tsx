@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Divider, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Grid, Stack, Typography, useMediaQuery } from '@mui/material';
 
 // project imports
 import AuthWrapper1 from '../AuthWrapper1';
@@ -10,7 +10,6 @@ import AuthCardWrapper from '../AuthCardWrapper';
 import AuthLogin from './auth-forms/AuthLogin';
 import Logo from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-import useAuth from 'hooks/useAuth';
 import { useIntl } from 'react-intl';
 
 // assets
@@ -20,7 +19,6 @@ import { useIntl } from 'react-intl';
 const Login = () => {
     // hooks
     const theme = useTheme();
-    const { isLoggedIn } = useAuth();
     const intl = useIntl();
 
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));

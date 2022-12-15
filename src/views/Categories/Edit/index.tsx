@@ -24,10 +24,12 @@ import {
     useTheme,
     Modal,
     IconButton,
-    Stack
+    Stack,
+    Tooltip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
+import MergeTypeIcon from '@mui/icons-material/MergeType';
 
 // third-party imports
 import { useIntl } from 'react-intl';
@@ -46,6 +48,7 @@ type EditCategoryProps = {
     selectedCategory?: number;
     show: boolean;
     onCancel: () => void;
+    openAssociate: (cat: CategoryType | undefined) => void;
 };
 
 type NewCategoryType = Omit<CategoryType, 'id' | 'numberChildren' | 'hasChildren' | 'children'>;
@@ -63,7 +66,7 @@ const initialData: NewCategoryType = {
     stockKeepingUnitSelectionMode: ''
 };
 
-export default function EditCategoryComponent({ selectedCategory, show, onCancel }: EditCategoryProps) {
+export default function EditCategoryComponent({ selectedCategory, show, onCancel, openAssociate }: EditCategoryProps) {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -113,22 +116,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
         e.preventDefault();
 
         if (selectedCategory && originalData) {
-            const categoryData = {
-                activeStoreFrontLink: newData.activeStoreFrontLink,
-                adWordsRemarketingCode: null,
-                description: newData.description,
-                fatherCategoryId: newData.fatherCategoryId ? newData.fatherCategoryId : null,
-                isActive: newData.isActive,
-                name: newData.name,
-                score: newData.score,
-                showBrandFilter: newData.showBrandFilter,
-                showInStoreFront: newData.showInStoreFront,
-                stockKeepingUnitSelectionMode: newData.stockKeepingUnitSelectionMode,
-                title: newData.title,
-                id: selectedCategory,
-                numberChildren: originalData.numberChildren,
-                hasChildren: originalData.hasChildren
-            };
+            const categoryData = createNewCategoryData(newData, originalData, selectedCategory);
 
             dispatch(
                 editCategoryService({
@@ -193,10 +181,21 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                                 id: 'edit_category'
                             })}
                         </Typography>
+                        <Stack direction="row" alignItems="center">
+                            <Tooltip title="Asociar Facet-Categoria">
+                                <Button
+                                    onClick={() => openAssociate(originalData)}
+                                    startIcon={<MergeTypeIcon sx={{ p: 0 }} />}
+                                    sx={{ mr: 2 }}
+                                >
+                                    Asociar Facet-Categoria
+                                </Button>
+                            </Tooltip>
 
-                        <IconButton onClick={onCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
-                            <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
-                        </IconButton>
+                            <IconButton onClick={onCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
+                                <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
+                            </IconButton>
+                        </Stack>
                     </Stack>
                 </Grid>
 
@@ -405,8 +404,25 @@ const modalStyle = {
     width: '70%',
     bgcolor: 'background.paper',
     boxShadow: 24,
-    pt: 2,
-    px: 4,
+    pt: { xs: 1, lg: 4 },
+    px: { xs: 1, lg: 4 },
     pb: 3,
     borderRadius: 2
 };
+
+const createNewCategoryData = (newData: NewCategoryType, originalData: CategoryType, selectedCategory: number) => ({
+    activeStoreFrontLink: newData.activeStoreFrontLink,
+    adWordsRemarketingCode: null,
+    description: newData.description,
+    fatherCategoryId: newData.fatherCategoryId ? newData.fatherCategoryId : null,
+    isActive: newData.isActive,
+    name: newData.name,
+    score: newData.score,
+    showBrandFilter: newData.showBrandFilter,
+    showInStoreFront: newData.showInStoreFront,
+    stockKeepingUnitSelectionMode: newData.stockKeepingUnitSelectionMode,
+    title: newData.title,
+    id: selectedCategory,
+    numberChildren: originalData.numberChildren,
+    hasChildren: originalData.hasChildren
+});
