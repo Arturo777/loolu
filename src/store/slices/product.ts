@@ -174,9 +174,6 @@ export function getProduct(id: string | undefined) {
                     idMerchant: 1,
                     idProd: id,
                     page: 0
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getProductSuccess(response.data.response));
@@ -194,9 +191,6 @@ export function getSku(id: string | undefined) {
                 params: {
                     idMerchant: 1,
                     idSKU: id
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getSkuSuccess(response.data.response));
@@ -212,9 +206,6 @@ export function getCategories() {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getCategoriesSuccess(response.data.response));

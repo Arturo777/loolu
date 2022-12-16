@@ -12,8 +12,7 @@ import {
     ListItemIcon,
     ListItemText,
     Collapse,
-    Button,
-    Fade
+    Button
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
@@ -26,6 +25,7 @@ import { getFacetVariant } from 'store/slices/catalogue';
 import { CategoryType, SpecificationGroupType, SpecificationsType } from 'types/catalogue';
 import { FormattedMessage } from 'react-intl';
 import SpecificationForm from './SpecificationForm';
+import SearchFacetsComponent from './SearchFacetsComponent';
 
 type AsociateFacetCategoryComponentProps = {
     open: boolean;
@@ -46,6 +46,14 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     const [editingSpec, setEditingSpec] = useState<SpecificationsType | null>(null);
 
     useEffect(() => {
+        // reset
+        if (!open) {
+            setOpenGroup(null);
+            setEditingSpec(null);
+        }
+    }, [open]);
+
+    useEffect(() => {
         if (category) {
             setIsLoading(true);
             dispatch(getFacetVariant({ idMerchant: 1, catId: category.id }))
@@ -63,13 +71,13 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     const handleEditSpec = (spec: SpecificationsType | null) => {
         if (spec !== null) {
             setEditingSpec(spec);
-            setOpenGroup(null);
         }
     };
 
     const content = () => (
         <>
             {/* SEARCH */}
+            <SearchFacetsComponent />
             {/* SPECS */}
             <Collapse in={!editingSpec} collapsedSize={0} sx={{ p: 0 }}>
                 <Box>
@@ -109,7 +117,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                             </React.Fragment>
                         ))}
                 </Box>
-            </Collapse>{' '}
+            </Collapse>
             {/* FORM */}
             <SpecificationForm specificationToEdit={editingSpec} handleCancel={() => setEditingSpec(null)} />
             {/* SAVE BUTTON */}
@@ -130,7 +138,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
 
     return (
         <Drawer anchor="right" open={open} onClose={toggleDrawer}>
-            <Box sx={{ width: 480, height: 1, position: 'relative' }}>
+            <Box sx={{ width: dynamicWidth, height: '100vh', position: 'relative', overflowY: 'scroll' }}>
                 <Stack sx={{ padding: 2 }}>
                     <Typography mb={1} variant="h4">
                         Asociar Facet-Categoria: {category.name}
@@ -171,13 +179,17 @@ const RenderSpecifications = ({ specifications, titleType, onEditClick }: Render
     </>
 );
 
+const dynamicWidth = {
+    xs: 1,
+    md: 0.9,
+    lg: 480
+};
+
 const saveButtonContainer = {
-    position: 'sticky',
-    width: 1,
-    top: 0,
+    width: dynamicWidth,
+    position: 'fixed',
     bottom: 0,
     right: 0,
-    left: 0,
     p: 1,
     borderTop: 1,
     borderTopColor: 'rgba(100,100,100,0.3)',

@@ -53,7 +53,7 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
     }
 
     return (
-        <Box sx={{ pl: 2, pr: 2, pb: 5 }}>
+        <Box sx={{ pl: 2, pr: 2, pb: 8, width: 1 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="h4">{specificationToEdit.name}</Typography>
                 <IconButton size="small" onClick={handleCancel}>
@@ -165,7 +165,7 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
                     />
                 </Grid>
             </Grid>
-            <RenderValues specification={specificationToEdit} />
+            {specificationToEdit?.fieldTypeId !== 1 && <RenderValues specification={specificationToEdit} />}
         </Box>
     );
 }
