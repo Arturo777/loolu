@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { FormControlLabel, FormGroup, Switch, Typography, Grid, Box, Stack, Divider, IconButton, TextField } from '@mui/material';
+import { FormControlLabel, FormGroup, Switch, Typography, Grid, Box, Stack, Divider, IconButton, TextField, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 // third-party imports
 import { useIntl } from 'react-intl';
@@ -52,7 +53,7 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
     }
 
     return (
-        <Box sx={{ pl: 2, pr: 2 }} component="form">
+        <Box sx={{ pl: 2, pr: 2, pb: 5 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="h4">{specificationToEdit.name}</Typography>
                 <IconButton size="small" onClick={handleCancel}>
@@ -164,6 +165,27 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
                     />
                 </Grid>
             </Grid>
+            <RenderValues specification={specificationToEdit} />
+        </Box>
+    );
+}
+type RenderValuesProps = {
+    specification: SpecificationsType;
+};
+
+const RenderValues = ({ specification }: RenderValuesProps) => {
+    const [newValue, setNewValue] = useState<string>();
+
+    const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewValue(e.target.value);
+    };
+
+    const saveNewVal = () => {
+        console.log(`Save, ${newValue}`);
+    };
+
+    return (
+        <Box>
             <Box sx={{ mt: 2, mb: 2 }}>
                 <Divider />
             </Box>
@@ -173,6 +195,18 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
             <Typography variant="body2" mb={2}>
                 Agrega valores para la especificación
             </Typography>
+            <Stack mb={3} direction="row" onClick={saveNewVal}>
+                <TextField size="small" name="newVal" value={newValue} label="Nuevo valor" onChange={onchangeText} fullWidth />
+                <IconButton>
+                    <AddBoxIcon />
+                </IconButton>
+            </Stack>
+            {specification.specificationValues.map((specValue) => (
+                <Stack direction="row" mb={2}>
+                    <Checkbox defaultChecked />
+                    <TextField size="small" name={`${specValue.specificationValueId}`} value={specValue.name} fullWidth />
+                </Stack>
+            ))}
         </Box>
     );
-}
+};

@@ -11,10 +11,14 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Collapse
+    Collapse,
+    Button,
+    Fade
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
 
 // type
 import { useDispatch } from 'store';
@@ -108,6 +112,17 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
             </Collapse>{' '}
             {/* FORM */}
             <SpecificationForm specificationToEdit={editingSpec} handleCancel={() => setEditingSpec(null)} />
+            {/* SAVE BUTTON */}
+            {Boolean(editingSpec) && (
+                <Stack sx={saveButtonContainer} direction="row">
+                    <Button onClick={() => setEditingSpec(null)} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
+                        Cancelar
+                    </Button>
+                    <Button startIcon={<SaveIcon />} variant="outlined" type="submit">
+                        Guardar
+                    </Button>
+                </Stack>
+            )}
         </>
     );
 
@@ -115,7 +130,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
 
     return (
         <Drawer anchor="right" open={open} onClose={toggleDrawer}>
-            <Box sx={{ width: 400 }}>
+            <Box sx={{ width: 480, height: 1, position: 'relative' }}>
                 <Stack sx={{ padding: 2 }}>
                     <Typography mb={1} variant="h4">
                         Asociar Facet-Categoria: {category.name}
@@ -155,3 +170,18 @@ const RenderSpecifications = ({ specifications, titleType, onEditClick }: Render
         ))}
     </>
 );
+
+const saveButtonContainer = {
+    position: 'sticky',
+    width: 1,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    p: 1,
+    borderTop: 1,
+    borderTopColor: 'rgba(100,100,100,0.3)',
+    justifyContent: 'flex-end',
+    background: 'white',
+    zIndex: 5
+};
