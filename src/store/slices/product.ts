@@ -12,7 +12,7 @@ import { ProductsFilter, Address } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
-const baseURL = process.env.STYRK_API_URL;
+const baseURL = process.env.REACT_APP_STYRK_API;
 
 const initialState: DefaultRootStateProps['product'] = {
     error: null,

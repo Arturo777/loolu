@@ -71,7 +71,7 @@ const ProductDetails = () => {
     }, [cart.checkout.step, dispatch, id]);
 
     const { product, skus, categories, tradePolicies } = useSelector((state) => state.product);
-    console.log('trade', tradePolicies);
+    console.log('url', process.env.REACT_APP_STYRK_API);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>

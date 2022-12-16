@@ -396,19 +396,29 @@ const ProductInfo = ({
                         <Typography variant="h4">{product?.categoryName}</Typography>
                     )}
                 </Grid>
-                {/* <Grid item xs={12}>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <Rating
-                            name="simple-controlled"
-                            value={product.rating}
-                            icon={<StarTwoToneIcon fontSize="inherit" />}
-                            emptyIcon={<StarBorderTwoToneIcon fontSize="inherit" />}
-                            precision={0.1}
-                            readOnly
-                        />
-                        <Typography variant="caption">({product.salePrice}+)</Typography>
-                    </Stack>
-                </Grid> */}
+                <Grid item xs={12}>
+                    {active ? (
+                        <Box
+                            sx={{
+                                '& .MuiTextField-root': { mt: 2 }
+                            }}
+                        >
+                            <TextField
+                                fullWidth
+                                multiline
+                                id="outlined-basic"
+                                label="Politica Comercial"
+                                variant="outlined"
+                                name="tradePolicy"
+                                defaultValue={product.categoryName}
+                                value={productInfo.categoryName}
+                                onChange={handleChangeProd}
+                            />
+                        </Box>
+                    ) : (
+                        <Typography variant="h4">{product?.categoryName}</Typography>
+                    )}
+                </Grid>
                 <Grid item xs={12}>
                     <Divider sx={{ mt: 2 }} />
                 </Grid>
