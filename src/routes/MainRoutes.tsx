@@ -5,6 +5,7 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProductList from 'views/Products';
+import ProductDetails from 'views/ProductDetails';
 
 //  ========= users =========
 const UsersList = Loadable(lazy(() => import('views/Users')));
@@ -50,6 +51,10 @@ const MainRoutes = {
             element: <ProductList />
         },
         // ========= users =========
+        {
+            path: '/products/detail-product/:id',
+            element: <ProductDetails />
+        },
         {
             path: '/users',
             element: <UsersList />

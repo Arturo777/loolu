@@ -1,0 +1,34 @@
+.slick-track {
+    display: flex !important;
+    justify-content: center;
+}
+
+.item-package {
+    display: flex;
+    justify-content: space-between;
+}
+.img-itemPack {
+    width: 85px;
+    height: 85px;
+}
+.content-pack {
+    position: relative;
+}
+.content-pack-inputs {
+    margin-left: 20px;
+}
+.content-pack .dim {
+    position: absolute;
+}
+.content-pack .dim.dim-height {
+    left: -20px;
+    top: 20px;
+}
+.content-pack .dim.dim-length {
+    bottom: -28px;
+    left: 20px;
+}
+.content-pack .dim.dim-width {
+    bottom: -20px;
+    right: 5px;
+}

@@ -26,6 +26,7 @@ export interface CartProductStateProps {
     color: string;
     size: string | number;
     quantity: number;
+    brandId: number;
 }
 
 export type Address = {

@@ -18,6 +18,8 @@ const initialState: DefaultRootStateProps['product'] = {
     products: [],
     product: null,
     relatedProducts: [],
+    skus: [],
+    categories: [],
     reviews: [],
     addresses: [],
     loadingProducts: true
@@ -58,9 +60,26 @@ const slice = createSlice({
 
         // GET PRODUCT
         getProductSuccess(state, action) {
+            /* console.log(action); */
+            /* const productOneProd = action.payload.map((item: ProductItem) => ({
+                ...item,
+                date: item.releaseDate,
+                image: item.imageUrl,
+                name: item.productName || item.skuName || '',
+                offerPrice: 1000,
+                salePrice: 1300
+            }));
+
+            console.log(productOneProd); */
             state.product = action.payload;
         },
-
+        // GET SKUS
+        getSkuSuccess(state, action) {
+            state.skus = action.payload;
+        },
+        getCategoriesSuccess(state, action) {
+            state.categories = action.payload;
+        },
         // GET RELATED PRODUCTS
         getRelatedProductsSuccess(state, action) {
             state.relatedProducts = action.payload;
@@ -149,14 +168,61 @@ export function filterProducts(filter: ProductsFilter) {
 export function getProduct(id: string | undefined) {
     return async () => {
         try {
-            const response = await axios.post('/api/product/details', { id });
-            dispatch(slice.actions.getProductSuccess(response.data));
+            const response = await axios.get('styrk/api/product/detail/productSkus', {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: 1,
+                    idProd: id,
+                    page: 0
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+            dispatch(slice.actions.getProductSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
     };
 }
 
+export function getSku(id: string | undefined) {
+    return async () => {
+        try {
+            const response = await axios.get('styrk/api/product/detail/sku', {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: 1,
+                    idSKU: id
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+            dispatch(slice.actions.getSkuSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+export function getCategories() {
+    return async () => {
+        try {
+            const response = await axios.get('styrk/api/category/search', {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+            dispatch(slice.actions.getCategoriesSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
 export function getRelatedProducts(id: string | undefined) {
     return async () => {
         try {
