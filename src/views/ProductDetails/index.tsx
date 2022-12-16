@@ -16,7 +16,7 @@ import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct, getCategories } from 'store/slices/product';
+import { getProduct, getCategories, getTradePolicies } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -62,6 +62,7 @@ const ProductDetails = () => {
         // getProduct();
         dispatch(getProduct(id));
         dispatch(getCategories());
+        dispatch(getTradePolicies());
         // clear cart if complete order
         /*  if (valueSku === 0) setValueSku(product?.skus[0]?.sku?.skuID); */
         if (cart.checkout.step > 2) {
@@ -69,8 +70,8 @@ const ProductDetails = () => {
         }
     }, [cart.checkout.step, dispatch, id]);
 
-    const { product, skus, categories } = useSelector((state) => state.product);
-    console.log('sku', valueSku);
+    const { product, skus, categories, tradePolicies } = useSelector((state) => state.product);
+    console.log('trade', tradePolicies);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
@@ -90,6 +91,7 @@ const ProductDetails = () => {
                                     setProductInfo={setProductInfo}
                                     productInfo={productInfo}
                                     categories={categories}
+                                    tradePolicies={tradePolicies}
                                 />
                             </Grid>
                             <Grid item xs={12}>

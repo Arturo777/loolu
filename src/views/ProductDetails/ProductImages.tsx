@@ -43,15 +43,14 @@ const ProductImages = ({
     /* const initialImage = imgprod.sku.images[0].ImageURL || product?.skus[0]?.sku?.images[0].ImageURL; */
     const [modal, setModal] = useState(false);
     const images = imgprod?.images?.map((item: any) => ({ source: item?.ImageURL }));
-
+    const lgNo = matchDownLG ? 4 : 3;
     const settings = {
         dots: false,
         centerMode: true,
         swipeToSlide: true,
         focusOnSelect: true,
         centerPadding: '0px',
-        slidesToShow: imgprod?.images?.length || product?.skus[0]?.images?.length,
-        style: { display: 'flex', flexDirection: 'row' }
+        slidesToShow: imgprod[0]?.images?.length || product?.skus[0]?.images?.length,
     };
 
     return (

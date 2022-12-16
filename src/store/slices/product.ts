@@ -12,6 +12,7 @@ import { ProductsFilter, Address } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
+const baseURL = process.env.STYRK_API_URL;
 
 const initialState: DefaultRootStateProps['product'] = {
     error: null,
@@ -20,6 +21,7 @@ const initialState: DefaultRootStateProps['product'] = {
     relatedProducts: [],
     skus: [],
     categories: [],
+    tradePolicies: [],
     reviews: [],
     addresses: [],
     loadingProducts: true
@@ -79,6 +81,9 @@ const slice = createSlice({
         },
         getCategoriesSuccess(state, action) {
             state.categories = action.payload;
+        },
+        getTradePoliciesSucces(state, action) {
+            state.tradePolicies = action.payload;
         },
         // GET RELATED PRODUCTS
         getRelatedProductsSuccess(state, action) {
@@ -172,7 +177,7 @@ export function getProduct(id: string | undefined) {
     return async () => {
         try {
             const response = await axios.get('styrk/api/product/detail/productSkus', {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: 1,
                     idProd: id,
@@ -221,6 +226,24 @@ export function getCategories() {
                 }
             });
             dispatch(slice.actions.getCategoriesSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+export function getTradePolicies() {
+    return async () => {
+        try {
+            const response = await axios.get('styrk/api/tradepolicies', {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+            dispatch(slice.actions.getTradePoliciesSucces(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

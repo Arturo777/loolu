@@ -14,7 +14,7 @@ import {
     MenuItem,
     Radio,
     RadioGroup,
-    Rating,
+    /* Rating, */
     Select,
     Stack,
     Table,
@@ -31,14 +31,14 @@ import * as yup from 'yup';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { Products } from 'types/e-commerce';
+import { Products, TradePolicies } from 'types/e-commerce';
 import { openSnackbar } from 'store/slices/snackbar';
 import { useDispatch, useSelector } from 'store';
 import { addProduct } from 'store/slices/cart';
 
 // assets
-import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
-import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
+/* import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
+import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone'; */
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditIcon from '@mui/icons-material/Edit';
@@ -119,7 +119,8 @@ const ProductInfo = ({
     active,
     productInfo,
     setProductInfo,
-    categories
+    categories,
+    tradePolicies
 }: {
     product: Products;
     setValueSku: any;
@@ -129,6 +130,7 @@ const ProductInfo = ({
     productInfo: any;
     setProductInfo: any;
     categories: any;
+    tradePolicies: any;
 }) => {
     const dispatch = useDispatch();
     const history = useNavigate();
@@ -178,7 +180,15 @@ const ProductInfo = ({
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
-
+    const filterTradePolicy = (trade: number) => {
+        const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
+        console.log('nametrade', resultTrade[0]?.name);
+        return resultTrade[0]?.name;
+    };
+    const formatterDolar = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    });
     return (
         <Grid container spacing={2}>
             <form style={{ width: '100%' }}>
@@ -188,48 +198,58 @@ const ProductInfo = ({
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
                                 {active ? (
-                                    <FormControlLabel
-                                        sx={{ ml: 2 }}
-                                        control={<Android12Switch defaultChecked={product.isActive} />}
-                                        label="Activo"
-                                    />
+                                    <>
+                                        <FormControlLabel
+                                            sx={{ ml: 2 }}
+                                            control={<Android12Switch defaultChecked={product.isActive} />}
+                                            label="Activo"
+                                        />
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            control={<Android12Switch defaultChecked={product.isVisible} />}
+                                            label="Visible"
+                                        />
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            control={<Android12Switch defaultChecked={product.isEcommerce} />}
+                                            label="Ecommerce"
+                                        />
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            control={<Android12Switch defaultChecked={product.inventoried} />}
+                                            label="Sin Inventario"
+                                        />
+                                    </>
                                 ) : (
-                                    <Chip
-                                        size="small"
-                                        label={product.isActive ? 'Activo' : 'Inactive'}
-                                        chipcolor={product.isActive ? 'success' : 'error'}
-                                        sx={{ ml: 1, borderRadius: '4px', textTransform: 'capitalize' }}
-                                    />
-                                )}
-                                {active ? (
-                                    <FormControlLabel
-                                        sx={{ ml: 2 }}
-                                        control={<Android12Switch defaultChecked={product.isVisible} />}
-                                        label="Visible"
-                                    />
-                                ) : (
-                                    <Chip
-                                        sx={{ ml: 2 }}
-                                        size="small"
-                                        label={product.isVisible ? 'Visible' : 'No visible'}
-                                        chipcolor="primary"
-                                        variant="outlined"
-                                    />
-                                )}
-                                {active ? (
-                                    <FormControlLabel
-                                        sx={{ ml: 2 }}
-                                        control={<Android12Switch defaultChecked={product.isEcommerce} />}
-                                        label="Ecommerce"
-                                    />
-                                ) : (
-                                    <Chip
-                                        sx={{ ml: 2 }}
-                                        size="small"
-                                        label={product.isEcommerce ? 'Ecommerce' : 'No Ecommerce'}
-                                        chipcolor="primary"
-                                        variant="outlined"
-                                    />
+                                    <>
+                                        <Chip
+                                            size="small"
+                                            label={product.isActive ? 'Activo' : 'Inactive'}
+                                            chipcolor={product.isActive ? 'success' : 'error'}
+                                            sx={{ ml: 1, borderRadius: '4px', textTransform: 'capitalize' }}
+                                        />
+                                        <Chip
+                                            sx={{ ml: 2 }}
+                                            size="small"
+                                            label={product.isVisible ? 'Visible' : 'No visible'}
+                                            chipcolor="primary"
+                                            variant="outlined"
+                                        />
+                                        <Chip
+                                            sx={{ ml: 2 }}
+                                            size="small"
+                                            label={product.isEcommerce ? 'Ecommerce' : 'No Ecommerce'}
+                                            chipcolor="primary"
+                                            variant="outlined"
+                                        />
+                                        <Chip
+                                            sx={{ ml: 2 }}
+                                            size="small"
+                                            label={product.inventoried ? 'Sin Inventario' : 'Con Inventario'}
+                                            chipcolor="primary"
+                                            variant="outlined"
+                                        />
+                                    </>
                                 )}
                             </Grid>
                             <Grid item xs={12} sx={{ ml: 1 }}>
@@ -376,7 +396,7 @@ const ProductInfo = ({
                         <Typography variant="h4">{product?.categoryName}</Typography>
                     )}
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <Rating
                             name="simple-controlled"
@@ -388,51 +408,17 @@ const ProductInfo = ({
                         />
                         <Typography variant="caption">({product.salePrice}+)</Typography>
                     </Stack>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <Typography variant="h2" color="primary">
-                            ${product.offerPrice}
-                        </Typography>
-                        <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
-                            ${product.salePrice}
-                        </Typography>
-                        <Typography variant="caption">(Inclusive of all taxes)</Typography>
-                    </Stack>
-                </Grid>
-                <Grid item xs={12}>
-                    <Divider />
+                    <Divider sx={{ mt: 2 }} />
                 </Grid>
             </form>
             <Grid item xs={12}>
                 <FormikProvider value={formik}>
-                    <h2>Información del Sku</h2>
                     <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
+                        <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>Información del Sku</h2>
+                        <Grid container spacing={1}>
                             <Grid item xs={12} lg={10}>
-                                <Grid item xs={12}>
-                                    {active ? (
-                                        <Box
-                                            sx={{
-                                                '& .MuiTextField-root': { mt: 2 }
-                                            }}
-                                        >
-                                            <TextField
-                                                fullWidth
-                                                multiline
-                                                id="outlined-basic"
-                                                label="Nombre Sku"
-                                                variant="outlined"
-                                                name="skuName"
-                                                defaultValue={skuprod[0]?.name}
-                                                value={productInfo?.skuName}
-                                                onChange={handleChangeProd}
-                                            />
-                                        </Box>
-                                    ) : (
-                                        skuprod?.length > 0 && <Typography variant="h4">{skuprod[0]?.name}</Typography>
-                                    )}
-                                </Grid>
                                 <Table>
                                     <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                         <TableRow>
@@ -471,6 +457,118 @@ const ProductInfo = ({
                                                 )}
                                             </TableCell>
                                         </TableRow>
+                                    </TableBody>
+                                </Table>
+                                <Grid item xs={12}>
+                                    {active ? (
+                                        <Box
+                                            sx={{
+                                                '& .MuiTextField-root': { mt: 2 }
+                                            }}
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                id="outlined-basic"
+                                                label="Nombre Sku"
+                                                variant="outlined"
+                                                name="skuName"
+                                                defaultValue={skuprod[0]?.name}
+                                                value={productInfo?.skuName}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </Box>
+                                    ) : (
+                                        skuprod?.length > 0 && (
+                                            <Typography variant="h3" sx={{ ml: 2 }}>
+                                                {skuprod[0]?.name}
+                                            </Typography>
+                                        )
+                                    )}
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Table>
+                                        <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
+                                                        Precios
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {skuprod[0]?.prices?.map(
+                                                        ({
+                                                            price,
+                                                            priceDiscount,
+                                                            tradePolicy
+                                                        }: {
+                                                            // eslint-disable-next-line react/no-unused-prop-types
+                                                            price: number;
+                                                            // eslint-disable-next-line react/no-unused-prop-types
+                                                            priceDiscount: number;
+                                                            // eslint-disable-next-line react/no-unused-prop-types
+                                                            tradePolicy: number;
+                                                        }) => (
+                                                            <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
+                                                                {active ? (
+                                                                    <>
+                                                                        <Box
+                                                                            sx={{
+                                                                                '& .MuiTextField-root': { mt: 2 }
+                                                                            }}
+                                                                        >
+                                                                            <TextField
+                                                                                fullWidth
+                                                                                multiline
+                                                                                id="outlined-basic"
+                                                                                label="Precio con Descuento"
+                                                                                variant="outlined"
+                                                                                name="priceDiscount"
+                                                                                defaultValue={priceDiscount}
+                                                                            />
+                                                                        </Box>
+                                                                        <Box
+                                                                            sx={{
+                                                                                '& .MuiTextField-root': { mt: 2 }
+                                                                            }}
+                                                                        >
+                                                                            <TextField
+                                                                                fullWidth
+                                                                                multiline
+                                                                                id="outlined-basic"
+                                                                                label="Precio"
+                                                                                variant="outlined"
+                                                                                name="price"
+                                                                                defaultValue={price}
+                                                                            />
+                                                                        </Box>
+                                                                        <Typography variant="caption">
+                                                                            {filterTradePolicy(tradePolicy)}
+                                                                        </Typography>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Typography variant="h2" color="primary">
+                                                                            {formatterDolar.format(priceDiscount)}
+                                                                        </Typography>
+                                                                        <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                                                                            {formatterDolar.format(price)}
+                                                                        </Typography>
+                                                                        <Typography variant="caption">
+                                                                            (Trade Policy: {filterTradePolicy(tradePolicy)} )
+                                                                        </Typography>
+                                                                    </>
+                                                                )}
+                                                            </Stack>
+                                                        )
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </Grid>
+                                <Table>
+                                    <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                         <TableRow>
                                             <TableCell>
                                                 <Stack>
