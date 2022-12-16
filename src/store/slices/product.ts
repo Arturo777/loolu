@@ -2,9 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import axios from 'axios';
+import axios from 'utils/axios';
 import { dispatch } from '../index';
-import { STYRK_API, STYRK_TOKEN } from 'config';
+import { STYRK_API } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -126,9 +126,6 @@ export function getProducts(searchParams: SearchProductType) {
                     productName: searchParams.productName || null,
                     idSKU: searchParams.idSKU,
                     idProd: searchParams.idProd
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getProductsSuccess(response.data.response));

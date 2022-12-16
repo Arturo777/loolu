@@ -82,6 +82,7 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
 
         usr.authenticateUser(authData, {
             onSuccess: (session: CognitoUserSession) => {
+                console.log(session.getAccessToken().getJwtToken());
                 setSession(session.getAccessToken().getJwtToken());
 
                 dispatch({
