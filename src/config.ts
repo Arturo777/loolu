@@ -7,30 +7,30 @@ export const JWT_API = {
 };
 
 export const FIREBASE_API = {
-    apiKey: 'AIzaSyBernKzdSojh_vWXBHt0aRhf5SC9VLChbM',
-    authDomain: 'berry-material-react.firebaseapp.com',
-    projectId: 'berry-material-react',
-    storageBucket: 'berry-material-react.appspot.com',
-    messagingSenderId: '901111229354',
-    appId: '1:901111229354:web:a5ae5aa95486297d69d9d3',
-    measurementId: 'G-MGJHSL8XW3'
+    apiKey: '',
+    authDomain: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: '',
+    measurementId: ''
 };
 
 export const AUTH0_API = {
-    client_id: '7T4IlWis4DKHSbG8JAye4Ipk0rvXkH9V',
-    domain: 'dev-w0-vxep3.us.auth0.com'
+    client_id: '',
+    domain: ''
 };
 
 export const AWS_API = {
-    poolId: 'us-east-1_AOfOTXLvD',
-    appClientId: '3eau2osduslvb7vks3vsh9t7b0'
+    poolId: 'us-east-1_YRimhKJeh',
+    appClientId: '1dqlt9vqcovkrqnebcud7f1s9f'
 };
 
 export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
 export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
 
 export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MTIzMjYwNiwiZXhwIjoxNjcxMjM4NjA2fQ.g0kXTBa5a3lyBqTqJF1bv-j9ObBruoYN5St8GlKQ07p4fDjqvq1Z__ui3RCdMBLGN9P46WoX32X0bh_C0oVrHw';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MTIzODIyNywiZXhwIjoxNjcxMjQ0MjI3fQ.Z2xfkwK6L8qTNRLbJY_Ndgf-nBP3tBLmUC1wPLO7FbY36tztxc9MUkcwWwVgS7ttTCXbkdP7sv-GnnDrYkMXJw';
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
@@ -42,7 +42,7 @@ const config: ConfigProps = {
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 8,
     outlinedFilled: true,
-    navType: 'dark', // light, dark
+    navType: 'light', // light, dark
     presetColor: 'default', // default, theme1, theme2, theme3, theme4, theme5, theme6
     locale: 'en', // 'en' - English, 'fr' - French, 'ro' - Romanian, 'zh' - Chinese
     rtlLayout: false,

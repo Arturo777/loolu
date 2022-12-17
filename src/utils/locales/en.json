@@ -13,6 +13,7 @@
     "social-profile": "Social Profile",
     "account-profile": "Account Profile",
     "profile": "Profile",
+    "profiles": "Profiles",
     "cards": "Cards",
     "list": "List",
     "style": "Style",
@@ -22,6 +23,7 @@
     "create-invoice": "Create Invoice",
     "order-details": "Order Details",
     "product": "Product",
+    "sku": "SKU",
     "product-review": "Product Review",
     "chat": "Chat",
     "mail": "Mail",
@@ -149,6 +151,10 @@
     "rows": "Rows",
     "search": "Buscar",
     "filter": "Filter",
+
+    "hi_welcome": "Hi, Welcome back",
+    "enter_credentials": "Enter your credentials to continue",
+    "password": "Password",
 
     "type": "Type",
     "description": "Description",

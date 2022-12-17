@@ -23,6 +23,7 @@
     "create-invoice": "Create Invoice",
     "order-details": "Order Details",
     "product": "Product",
+    "sku": "SKU",
     "product-review": "Product Review",
     "chat": "Chat",
     "mail": "Mail",
@@ -150,6 +151,10 @@
     "rows": "Filas",
     "search": "Buscar",
     "filter": "Filtrar",
+
+    "hi_welcome": "¡Hola! Bienvenido",
+    "enter_credentials": "Ingresa tus datos para continuar",
+    "password": "Contraseña",
 
     "type": "Tipo",
     "description": "Descripción",

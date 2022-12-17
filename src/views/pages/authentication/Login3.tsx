@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Divider, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Grid, Stack, Typography, useMediaQuery } from '@mui/material';
 
 // project imports
 import AuthWrapper1 from '../AuthWrapper1';
@@ -10,15 +10,17 @@ import AuthCardWrapper from '../AuthCardWrapper';
 import AuthLogin from './auth-forms/AuthLogin';
 import Logo from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-import useAuth from 'hooks/useAuth';
+import { useIntl } from 'react-intl';
 
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 
 const Login = () => {
+    // hooks
     const theme = useTheme();
-    const { isLoggedIn } = useAuth();
+    const intl = useIntl();
+
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
@@ -48,14 +50,18 @@ const Login = () => {
                                                         gutterBottom
                                                         variant={matchDownSM ? 'h3' : 'h2'}
                                                     >
-                                                        Hi, Welcome Back
+                                                        {intl.formatMessage({
+                                                            id: 'hi_welcome'
+                                                        })}
                                                     </Typography>
                                                     <Typography
                                                         variant="caption"
                                                         fontSize="16px"
                                                         textAlign={matchDownSM ? 'center' : 'inherit'}
                                                     >
-                                                        Enter your credentials to continue
+                                                        {intl.formatMessage({
+                                                            id: 'enter_credentials'
+                                                        })}
                                                     </Typography>
                                                 </Stack>
                                             </Grid>
@@ -63,21 +69,6 @@ const Login = () => {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <AuthLogin />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Grid item container direction="column" alignItems="center" xs={12}>
-                                            <Typography
-                                                component={Link}
-                                                to={isLoggedIn ? '/pages/register/register3' : '/register'}
-                                                variant="subtitle1"
-                                                sx={{ textDecoration: 'none' }}
-                                            >
-                                                Don&apos;t have an account?
-                                            </Typography>
-                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </AuthCardWrapper>

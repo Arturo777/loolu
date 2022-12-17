@@ -12,7 +12,7 @@ import { STYRK_API, STYRK_TOKEN } from 'config';
 import { NewProfileType } from 'types/user';
 
 // ----------------------------------------------------------------------
-
+const baseURL = process.env.REACT_APP_STYRK_API;
 const initialState: DefaultRootStateProps['user'] = {
     error: null,
     usersS1: [],
@@ -128,7 +128,7 @@ export function getUsersList(idMerchant?: string) {
         dispatch(slice.actions.getUsersListPending());
         try {
             const response = await axios.get(`styrk/api/user/searchall`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -150,7 +150,7 @@ export function getUserInfo(userId: number, idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/user/searchall`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -208,7 +208,7 @@ export function getProfiles(idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/profile/search`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -230,7 +230,7 @@ export function getProviders(idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/supplier/search`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -252,7 +252,7 @@ export function getApprovalProfiles(idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/product/approvalprofile`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: idMerchant || 1
                 },
@@ -293,7 +293,7 @@ export function getMenuPermissions(idMerchant?: number) {
     return async () => {
         try {
             const response = await axios.get(`styrk/api/menu/search`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: idMerchant || 1
                 },

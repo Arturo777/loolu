@@ -143,7 +143,7 @@ export function getProducts(searchParams: SearchProductType) {
 
         try {
             const response = await axios.get(`styrk/api/product/search`, {
-                baseURL: STYRK_API,
+                baseURL,
                 params: {
                     idMerchant: searchParams.idMerchant || 1,
                     page: searchParams.page || hasParams ? 0 : 1,
@@ -155,6 +155,7 @@ export function getProducts(searchParams: SearchProductType) {
                     authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
+            console.log('productlist', response);
             dispatch(slice.actions.getProductsSuccess(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
@@ -165,8 +166,8 @@ export function getProducts(searchParams: SearchProductType) {
 export function filterProducts(filter: ProductsFilter) {
     return async () => {
         try {
-            const response = await axios.post('/api/products/filter', { filter });
-            dispatch(slice.actions.filterProductsSuccess(response.data));
+            /* const response = await axios.post('/api/products/filter', { filter });
+            dispatch(slice.actions.filterProductsSuccess(response.data)); */
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

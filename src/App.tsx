@@ -9,7 +9,7 @@ import Snackbar from 'ui-component/extended/Snackbar';
 import ThemeCustomization from 'themes';
 
 // auth provider
-import { FirebaseProvider as AuthProvider } from 'contexts/FirebaseContext';
+import { AWSCognitoProvider as AuthProvider } from 'contexts/AWSCognitoContext';
 
 // ==============================|| APP ||============================== //
 
