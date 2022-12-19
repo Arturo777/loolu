@@ -12,7 +12,8 @@ import {
     ListItemIcon,
     ListItemText,
     Collapse,
-    Button
+    Button,
+    Fade
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
@@ -77,7 +78,9 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     const content = () => (
         <>
             {/* SEARCH */}
-            <SearchFacetsComponent />
+            <Collapse in={!editingSpec}>
+                <SearchFacetsComponent />
+            </Collapse>
             {/* SPECS */}
             <Collapse in={!editingSpec} collapsedSize={0} sx={{ p: 0 }}>
                 <Box>

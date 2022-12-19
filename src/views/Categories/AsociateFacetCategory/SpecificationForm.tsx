@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 
 // mui imports
 import { FormControlLabel, FormGroup, Switch, Typography, Grid, Box, Stack, Divider, IconButton, TextField, Checkbox } from '@mui/material';
@@ -174,14 +174,22 @@ type RenderValuesProps = {
 };
 
 const RenderValues = ({ specification }: RenderValuesProps) => {
-    const [newValue, setNewValue] = useState<string>();
+    const [newValue, setNewValue] = useState<string>('');
+    const [newSpecs, setNewSpecs] = useState<string[]>([]);
 
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewValue(e.target.value);
     };
 
-    const saveNewVal = () => {
-        console.log(`Save, ${newValue}`);
+    const addSpec = () => {
+        setNewSpecs([...newSpecs, newValue]);
+        setNewValue('');
+    };
+
+    const handleEnter = (e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter') {
+            addSpec();
+        }
     };
 
     return (
@@ -195,14 +203,30 @@ const RenderValues = ({ specification }: RenderValuesProps) => {
             <Typography variant="body2" mb={2}>
                 Agrega valores para la especificación
             </Typography>
-            <Stack mb={3} direction="row" onClick={saveNewVal}>
-                <TextField size="small" name="newVal" value={newValue} label="Nuevo valor" onChange={onchangeText} fullWidth />
-                <IconButton>
+            <Stack mb={3} direction="row">
+                <TextField
+                    onKeyDown={handleEnter}
+                    size="small"
+                    name="newVal"
+                    value={newValue}
+                    label="Nuevo valor"
+                    onChange={onchangeText}
+                    fullWidth
+                />
+                <IconButton color="primary" disabled={newValue.length === 0} onClick={addSpec}>
                     <AddBoxIcon />
                 </IconButton>
             </Stack>
+
+            {newSpecs.map((newSpec, index) => (
+                <Stack direction="row" mb={2} key={`new-specs-values-list-${index}`}>
+                    <Checkbox defaultChecked />
+                    <TextField size="small" name={`${index}`} value={newSpec} fullWidth />
+                </Stack>
+            ))}
+
             {specification.specificationValues.map((specValue) => (
-                <Stack direction="row" mb={2}>
+                <Stack direction="row" mb={2} key={`specs-values-list-${specValue.specificationValueId}`}>
                     <Checkbox defaultChecked />
                     <TextField size="small" name={`${specValue.specificationValueId}`} value={specValue.name} fullWidth />
                 </Stack>
