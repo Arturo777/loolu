@@ -22,8 +22,13 @@ import {
     TableCell,
     TableRow,
     Typography,
-    TextField
+    TextField,
+    InputLabel,
+    Checkbox,
+    ListItemText,
+    OutlinedInput
 } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 // third-party
 import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
@@ -398,23 +403,26 @@ const ProductInfo = ({
                 </Grid>
                 <Grid item xs={12}>
                     {active ? (
-                        <Box
-                            sx={{
-                                '& .MuiTextField-root': { mt: 2 }
-                            }}
-                        >
-                            <TextField
-                                fullWidth
-                                multiline
-                                id="outlined-basic"
-                                label="Politica Comercial"
-                                variant="outlined"
-                                name="tradePolicy"
-                                defaultValue={product.categoryName}
-                                value={productInfo.categoryName}
+                        <FormControl sx={{ m: 1, width: 300 }}>
+                            <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                            {/*  <Select
+                                labelId="demo-multiple-checkbox-label"
+                                id="demo-multiple-checkbox"
+                                multiple
+                                value={productInfo}
                                 onChange={handleChangeProd}
-                            />
-                        </Box>
+                                input={<OutlinedInput label="Tag" />}
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {product.map((name) => (
+                                    <MenuItem key={name} value={name}>
+                                        <Checkbox checked={personName.indexOf(name) > -1} />
+                                        <ListItemText primary={name} />
+                                    </MenuItem>
+                                ))}
+                            </Select> */}
+                        </FormControl>
                     ) : (
                         <Typography variant="h4">{product?.categoryName}</Typography>
                     )}
