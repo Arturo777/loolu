@@ -7,7 +7,8 @@ import axios from 'axios';
 const axiosServices = axios.create();
 
 axiosServices.interceptors.request.use((config) => {
-    const token = localStorage.getItem('serviceToken');
+    const token = localStorage.getItem('looluToken');
+    // const token = localStorage.getItem('serviceToken');
 
     if (token && config && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
