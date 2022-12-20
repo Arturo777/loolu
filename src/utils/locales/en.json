@@ -197,5 +197,10 @@
     "show_mode": "Mode to show",
     "active_link": "Active link",
     "show_brand_filter": "Show brand filters",
-    "show_in_store": "Show in store"
+    "show_in_store": "Show in store",
+
+    "product_details": "Product details",
+    "required": "Required",
+    "search_filter": "Search filter",
+    "top_menu": "Top menu"
 }
