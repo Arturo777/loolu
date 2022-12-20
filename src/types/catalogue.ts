@@ -76,7 +76,13 @@ export type SpecificationGroupType = {
     skuSpecs: SpecificationsType[];
 };
 
+export enum SpecificationValuesType {
+    'PRODUCT' = 'product',
+    'SKU' = 'sku'
+}
+
 export type SpecificationsType = {
+    specificationId: number;
     categoryId: number;
     description: string;
     fieldTypeId: number;
@@ -94,7 +100,6 @@ export type SpecificationsType = {
     name: string;
     position: number;
     rawSpecId: number;
-    specificationId: number;
     vtexFieldId: number;
     specificationValues: {
         isActive: boolean;

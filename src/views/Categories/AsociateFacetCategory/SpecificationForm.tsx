@@ -1,7 +1,24 @@
 import React, { KeyboardEvent, useEffect, useState } from 'react';
 
 // mui imports
-import { FormControlLabel, FormGroup, Switch, Typography, Grid, Box, Stack, Divider, IconButton, TextField, Checkbox } from '@mui/material';
+import {
+    FormControlLabel,
+    FormGroup,
+    Switch,
+    Typography,
+    Grid,
+    Box,
+    Stack,
+    Divider,
+    IconButton,
+    TextField,
+    Checkbox,
+    FormControl,
+    InputLabel,
+    Select,
+    SelectChangeEvent,
+    MenuItem
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 
@@ -12,28 +29,58 @@ import { useIntl } from 'react-intl';
 import { gridSpacing } from 'store/constant';
 
 // types
-import { SpecificationsType } from 'types/catalogue';
+import { SpecificationsType, SpecificationValuesType } from 'types/catalogue';
 
 type SpecificationFormProps = {
     specificationToEdit: SpecificationsType | null;
     handleCancel: () => void;
+    categoryId: number;
+    show: boolean;
+    edit: boolean;
 };
 
-/* 
-
-*/
-
-export default function SpecificationForm({ specificationToEdit, handleCancel }: SpecificationFormProps) {
+export default function SpecificationForm({ specificationToEdit, handleCancel, categoryId, show, edit }: SpecificationFormProps) {
     // hooks
     const intl = useIntl();
 
+    // vars
     const [specData, setSpecData] = useState<SpecificationsType>();
+
+    useEffect(() => {
+        console.log(show);
+    }, [show]);
 
     useEffect(() => {
         if (specificationToEdit) {
             setSpecData(specificationToEdit);
+        } else {
+            const defaultData: SpecificationsType = {
+                categoryId,
+                specificationId: 0,
+
+                description: '',
+                fieldTypeId: 1,
+                fieldTypeName: '',
+                // todo => select groupd id
+                groupId: 1, //
+                groupName: '',
+                isActive: false,
+                isStockKeepingUnit: false,
+                isFilter: false,
+                isOnProductDetails: false,
+                isRequired: false,
+                isSideMenuLinkActive: false,
+                isTopMenuLinkActive: false,
+                isVtexSync: false,
+                name: '',
+                position: 0,
+                rawSpecId: 1,
+                vtexFieldId: 1,
+                specificationValues: []
+            };
+            setSpecData(defaultData);
         }
-    }, [specificationToEdit]);
+    }, [categoryId, specificationToEdit]);
 
     const handleChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (specData) {
@@ -48,14 +95,21 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
         }
     };
 
-    if (!specificationToEdit) {
+    const handleChangeSelect = (event: SelectChangeEvent) => {
+        if (specData) {
+            setSpecData({ ...specData, [event.target.name]: Number(event.target.value) ?? 1 });
+        }
+    };
+
+    if (!show) {
+        console.log('SHOW:', show);
         return null;
     }
 
     return (
         <Box sx={{ pl: 2, pr: 2, pb: 8, width: 1 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h4">{specificationToEdit.name}</Typography>
+                <Typography variant="h4">{specificationToEdit?.name ?? 'ADD'}</Typography>
                 <IconButton size="small" onClick={handleCancel}>
                     <CloseIcon />
                 </IconButton>
@@ -137,16 +191,31 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
                 </Grid>
 
                 <Grid item xs={12} lg={6}>
-                    <TextField
-                        sx={{ ml: 1 }}
-                        label={intl.formatMessage({
-                            id: 'type'
-                        })}
-                        size="small"
-                        name="fieldTypeName"
-                        value={specData?.fieldTypeName}
-                        InputProps={{ readOnly: true }}
-                    />
+                    <FormControl fullWidth>
+                        <InputLabel id="select-country-label">
+                            {intl.formatMessage({
+                                id: 'show_mode'
+                            })}
+                        </InputLabel>
+                        <Select
+                            labelId="select-category-label"
+                            id="select-category"
+                            value={`${specData?.fieldTypeId}`}
+                            label={intl.formatMessage({
+                                id: 'show_mode'
+                            })}
+                            onChange={handleChangeSelect}
+                            name="fieldTypeId"
+                            required
+                            disabled={!edit}
+                        >
+                            {specificationType.map((item: { [key: string]: any }, index: number) => (
+                                <MenuItem key={`selected-item-${index}`} value={item.value}>
+                                    <Typography>{item.label}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Grid>
 
                 <Grid item xs={12}>
@@ -165,7 +234,7 @@ export default function SpecificationForm({ specificationToEdit, handleCancel }:
                     />
                 </Grid>
             </Grid>
-            {specificationToEdit?.fieldTypeId !== 1 && <RenderValues specification={specificationToEdit} />}
+            {specificationToEdit?.fieldTypeId !== 1 && <RenderValues specification={specificationToEdit!} />}
         </Box>
     );
 }
@@ -225,7 +294,7 @@ const RenderValues = ({ specification }: RenderValuesProps) => {
                 </Stack>
             ))}
 
-            {specification.specificationValues.map((specValue) => (
+            {specification?.specificationValues.map((specValue) => (
                 <Stack direction="row" mb={2} key={`specs-values-list-${specValue.specificationValueId}`}>
                     <Checkbox defaultChecked />
                     <TextField size="small" name={`${specValue.specificationValueId}`} value={specValue.name} fullWidth />
@@ -234,3 +303,53 @@ const RenderValues = ({ specification }: RenderValuesProps) => {
         </Box>
     );
 };
+
+const specificationType: { [key: string]: any } = [
+    {
+        value: '1',
+        label: 'Texto',
+        hide: [SpecificationValuesType.SKU]
+    },
+    {
+        value: '7',
+        label: 'Checkbox',
+        hide: [SpecificationValuesType.SKU]
+    },
+    {
+        value: '5',
+        label: 'Combo',
+        hide: []
+    },
+    {
+        value: '6',
+        label: 'Radio',
+        hide: []
+    }
+];
+
+/*
+
+
+
+
+ <option value="0" disabled>
+                                Selecciona
+                              </option>
+                              {currentSpecificationType !== 'skuSpecs' && (
+                                <>
+                                  <option value="1" title="Texto">
+                                    Texto
+                                  </option>
+                                  <option value="7" title="Checkbox">
+                                    Checkbox
+                                  </option>
+                                </>
+                              )}
+                              <option value="5" title="Combo">
+                                Combo
+                              </option>
+                              <option value="6" title="Radio">
+                                Radio
+                              </option>
+
+*/

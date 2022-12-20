@@ -8,7 +8,14 @@ import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'store';
 import { getFacetsService } from 'store/slices/catalogue';
 
-export default function SearchFacetsComponent() {
+// types
+import { FacetType, SpecificationValuesType } from 'types/catalogue';
+
+type SearchFacetsComponentProps = {
+    handleAddFacet: (facet: FacetType, mode: SpecificationValuesType) => void;
+};
+
+export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsComponentProps) {
     // hooks
     const dispatch = useDispatch();
 
@@ -34,12 +41,12 @@ export default function SearchFacetsComponent() {
         setSearchText(value);
     };
 
-    const addToProduct = (id: number) => {
-        console.log('product', id);
+    const addToProduct = (facet: FacetType) => {
+        handleAddFacet(facet, SpecificationValuesType.PRODUCT);
     };
 
-    const addToSKU = (id: number) => {
-        console.log('sku', id);
+    const addToSKU = (facet: FacetType) => {
+        console.log(facet, SpecificationValuesType.SKU);
     };
 
     return (
@@ -68,7 +75,7 @@ export default function SearchFacetsComponent() {
                         facets.map((item, index) => {
                             const isTheLastOne = Number(index) === facets.length - 1;
                             return (
-                                <Box sx={{ p: 1 }}>
+                                <Box sx={{ p: 1 }} key={`facets-list-item-${item.id}`}>
                                     <Stack
                                         direction="row"
                                         justifyContent="space-between"
@@ -81,18 +88,13 @@ export default function SearchFacetsComponent() {
                                                 size="small"
                                                 variant="outlined"
                                                 startIcon={<AddIcon />}
-                                                onClick={() => addToProduct(item.id)}
+                                                onClick={() => addToProduct(item)}
                                                 sx={{ mr: 1 }}
                                                 color="success"
                                             >
                                                 Producto
                                             </Button>
-                                            <Button
-                                                size="small"
-                                                variant="outlined"
-                                                startIcon={<AddIcon />}
-                                                onClick={() => addToSKU(item.id)}
-                                            >
+                                            <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => addToSKU(item)}>
                                                 SKU
                                             </Button>
                                         </Box>
