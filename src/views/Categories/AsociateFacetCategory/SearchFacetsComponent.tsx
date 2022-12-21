@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Box, TextField, Fade, Card, Typography, Divider, CircularProgress, Stack, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
+// third-part imports
+import { useIntl } from 'react-intl';
+
 // project imports
 import { useDispatch, useSelector } from 'store';
 import { getFacetsService } from 'store/slices/catalogue';
@@ -18,6 +21,7 @@ type SearchFacetsComponentProps = {
 export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsComponentProps) {
     // hooks
     const dispatch = useDispatch();
+    const intl = useIntl();
 
     // store
     const {
@@ -46,7 +50,7 @@ export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsCo
     };
 
     const addToSKU = (facet: FacetType) => {
-        console.log(facet, SpecificationValuesType.SKU);
+        handleAddFacet(facet, SpecificationValuesType.SKU);
     };
 
     return (
@@ -57,7 +61,7 @@ export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsCo
                 sx={{ zIndex: 6 }}
                 type="search"
                 fullWidth
-                label="Buscar facets"
+                label={intl.formatMessage({ id: 'search_facets' })}
                 value={searchText}
                 onChange={onchangeText}
             />
@@ -92,10 +96,10 @@ export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsCo
                                                 sx={{ mr: 1 }}
                                                 color="success"
                                             >
-                                                Producto
+                                                {intl.formatMessage({ id: 'product' })}
                                             </Button>
                                             <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => addToSKU(item)}>
-                                                SKU
+                                                {intl.formatMessage({ id: 'sku' })}
                                             </Button>
                                         </Box>
                                     </Stack>

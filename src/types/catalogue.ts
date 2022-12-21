@@ -101,12 +101,14 @@ export type SpecificationsType = {
     position: number;
     rawSpecId: number;
     vtexFieldId: number;
-    specificationValues: {
-        isActive: boolean;
-        isVtexSync: boolean;
-        name: string;
-        position: number;
-        specificationValueId: number;
-        vtexValueId: number;
-    }[];
+    specificationValues: SpecificationValueDataType[];
+};
+
+export type SpecificationValueDataType = {
+    isActive: boolean;
+    isVtexSync: boolean;
+    name: string;
+    position: number;
+    specificationValueId: number;
+    vtexValueId: number;
 };

@@ -202,5 +202,14 @@
     "product_details": "Product details",
     "required": "Required",
     "search_filter": "Search filter",
-    "top_menu": "Top menu"
+    "top_menu": "Top menu",
+
+    "add": "Add",
+    "edit": "Edit",
+    "attributes": "Attributes",
+    "values": "Values",
+    "new_value": "New value",
+    "search_facets": "Search facets",
+    "select_attributes": "Select attributes for the specification",
+    "add_values": "Add values for the especification"
 }
