@@ -50,6 +50,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Key } from 'react';
 
 import ProductDimensions from './ProductDimensions';
+import { FormattedMessage, useIntl } from 'react-intl';
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -57,7 +58,16 @@ const validationSchema = yup.object({
     color: yup.string().required('Color selection is required'),
     size: yup.number().required('Size selection is required.')
 });
-
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250
+        }
+    }
+};
 const Increment = (props: string | FieldHookConfig<any>) => {
     const [field, , helpers] = useField(props);
 
@@ -137,6 +147,7 @@ const ProductInfo = ({
     categories: any;
     tradePolicies: any;
 }) => {
+    const intl = useIntl();
     const dispatch = useDispatch();
     const history = useNavigate();
     const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
@@ -194,11 +205,18 @@ const ProductInfo = ({
         style: 'currency',
         currency: 'USD'
     });
+    /* const selectTradePolicy =(idPolicy)=> {
+        const res = product?.tradePolicies?.filter((tr: any) =>{
+            tr
+        })
+    } */
     return (
         <Grid container spacing={2}>
             <form style={{ width: '100%' }}>
                 <Grid item xs={12}>
-                    <h2>Información del Producto</h2>
+                    <h2>
+                        <FormattedMessage id="product-detail-title" />
+                    </h2>
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
@@ -207,7 +225,7 @@ const ProductInfo = ({
                                         <FormControlLabel
                                             sx={{ ml: 2 }}
                                             control={<Android12Switch defaultChecked={product.isActive} />}
-                                            label="Activo"
+                                            label={<FormattedMessage id="active" />}
                                         />
                                         <FormControlLabel
                                             sx={{ ml: 1 }}
@@ -405,26 +423,53 @@ const ProductInfo = ({
                     {active ? (
                         <FormControl sx={{ m: 1, width: 300 }}>
                             <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
-                            {/*  <Select
+                            <Select
                                 labelId="demo-multiple-checkbox-label"
                                 id="demo-multiple-checkbox"
                                 multiple
-                                value={productInfo}
-                                onChange={handleChangeProd}
+                                defaultValue={product.tradePolicies
+                                    .filter(({ isSelected }) => isSelected)
+                                    .map(({ tradePolicyName }) => tradePolicyName)}
+                                /* value={filterTradePolicy(product.tradePolicies[0].idPolicy)} */
+                                onChange={(event) => {
+                                    setProductInfo(
+                                        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
+                                    );
+                                }}
+                                name="tradePolicy"
                                 input={<OutlinedInput label="Tag" />}
-                                renderValue={(selected) => selected.join(', ')}
+                                renderValue={(selected: any) => selected.join(', ')}
                                 MenuProps={MenuProps}
                             >
-                                {product.map((name) => (
-                                    <MenuItem key={name} value={name}>
-                                        <Checkbox checked={personName.indexOf(name) > -1} />
-                                        <ListItemText primary={name} />
-                                    </MenuItem>
-                                ))}
-                            </Select> */}
+                                {product?.tradePolicies?.map(
+                                    (tr: {
+                                        isSelected: boolean | undefined;
+                                        idPolicy: Key | null | undefined;
+                                        tradePolicyName: string | number | readonly string[] | undefined;
+                                    }) => (
+                                        <MenuItem key={tr.idPolicy} value={tr.tradePolicyName}>
+                                            <Checkbox checked={tr.isSelected} />
+                                            <ListItemText primary={tr.tradePolicyName} />
+                                        </MenuItem>
+                                    )
+                                )}
+                            </Select>
                         </FormControl>
                     ) : (
-                        <Typography variant="h4">{product?.categoryName}</Typography>
+                        product?.tradePolicies?.map(
+                            (trade: {
+                                isSelected: boolean | undefined;
+                                tradePolicyName: string | number | readonly string[] | undefined;
+                                // eslint-disable-next-line consistent-return
+                            }) => {
+                                if (trade?.isSelected)
+                                    return (
+                                        <Typography variant="h4" sx={{ ml: 1 }}>
+                                            Trade Policy: {trade.tradePolicyName}
+                                        </Typography>
+                                    );
+                            }
+                        )
                     )}
                 </Grid>
                 <Grid item xs={12}>

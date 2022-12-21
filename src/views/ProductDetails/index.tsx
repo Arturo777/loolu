@@ -14,9 +14,11 @@ import MainCard from 'ui-component/cards/MainCard';
 import FloatingCart from 'ui-component/cards/FloatingCart';
 import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
+import { Products } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies } from 'store/slices/product';
+import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -44,6 +46,8 @@ const ProductDetails = () => {
     const [valueSku, setValueSku] = useState('');
     const [active, setActive] = useState(false);
     const [productInfo, setProductInfo] = useState({});
+    const [originalData, setOriginalData] = useState<Products>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { id } = useParams();
 
     const dispatch = useDispatch();
@@ -60,7 +64,27 @@ const ProductDetails = () => {
      }, [dispatch, valueSku]); */
     useEffect(() => {
         // getProduct();
-        dispatch(getProduct(id));
+        setIsLoading(true);
+        dispatch(getProduct(id))
+            .then(({ payload }) => {
+                setOriginalData(payload.response);
+            })
+            .catch(() => {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: 'Error al obtener producto',
+                        variant: 'alert',
+                        alert: {
+                            color: 'error'
+                        },
+                        close: true
+                    })
+                );
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
         dispatch(getCategories());
         dispatch(getTradePolicies());
         // clear cart if complete order
@@ -71,7 +95,6 @@ const ProductDetails = () => {
     }, [cart.checkout.step, dispatch, id]);
 
     const { product, skus, categories, tradePolicies } = useSelector((state) => state.product);
-    console.log('url', process.env.REACT_APP_STYRK_API);
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
@@ -149,3 +172,46 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
+const createNewProduct = (newData: NewCategoryType, originalData: CategoryType) => ({
+    productID: originalData.productID,
+    departmentId: originalData.departmentId,
+    categoryId: originalData.categoryId,
+    productGlobalCategoryID: originalData.productGlobalCategoryID,
+    nameComplete: originalData.nameComplete,
+    merchantId: originalData.merchantId,
+    releaseDate: originalData.releaseDate,
+    lastDateUpdate: originalData.lastDateUpdate,
+    brandId: originalData.brandId,
+    productDescription: originalData.productDescription,
+    productStatus: originalData.productStatus,
+    syncStatusVTEX: originalData.syncStatusVTEX,
+    isActive: originalData.isActive,
+    skuName: originalData.skuName,
+    cscIdentification: originalData.cscIdentification,
+    informationSource: originalData.informationSource,
+    kit: originalData.kit,
+    transported: originalData.transported,
+    inventoried: originalData.inventoried,
+    giftCardRecharge: originalData.giftCardRecharge,
+    sku: originalData.sku,
+    hiddenTradePolicies: originalData.hiddenTradePolicies,
+    productName: originalData.productName,
+    title: originalData.title,
+    linkId: originalData.linkId,
+    provider: originalData.provider,
+    productRefID: originalData.productRefID,
+    taxCode: originalData.taxCode,
+    categoryName: originalData.categoryName,
+    brandName: originalData.brandName,
+    descriptionShort: originalData.descriptionShort,
+    description: originalData.description,
+    metaTagDescription: originalData.metaTagDescription,
+    keyWords: originalData.keyWords,
+    isEcommerce: originalData.isEcommerce,
+    isVisible: originalData.isVisible,
+    showWithoutStock: originalData.showWithoutStock,
+    preventa: originalData.preventa,
+    sobrePedido: originalData.sobrePedido,
+    variants: originalData.variants
+});

@@ -1,5 +1,6 @@
 // product shop list
 export type Products = {
+    tradePolicies: Trade[];
     inventoried: boolean | undefined;
     isEcommerce: boolean;
     categoryName: string;
@@ -69,6 +70,11 @@ export type Categories = {
 };
 export type TradePolicies = {
     TradePolicies: Policy;
+};
+export type Trade = {
+    idPolicy: number;
+    isSelected: boolean;
+    tradePolicyName: string;
 };
 export type Policy = {
     filter(arg0: (tra: any) => boolean): unknown;
