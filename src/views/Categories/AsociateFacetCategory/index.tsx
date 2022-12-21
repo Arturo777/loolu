@@ -50,14 +50,20 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
         specification: SpecificationsType | null;
         specType: SpecificationValuesType | null;
         facet?: FacetType | null;
-    }>({ show: false, specification: null, specType: null, facet: null });
+        mode: 'EDIT' | 'ADD';
+        groupInfo?: {
+            id: number;
+            name: string;
+        };
+    }>({ show: false, specification: null, specType: null, facet: null, mode: 'EDIT' });
 
     const handleCloseForm = () => {
         setEditingForm({
             specification: null,
             show: false,
             specType: null,
-            facet: null
+            facet: null,
+            mode: 'EDIT'
         });
     };
 
@@ -74,7 +80,6 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
             setIsLoading(true);
             dispatch(getFacetVariant({ idMerchant: 1, catId: category.id }))
                 .then(({ payload }) => {
-                    console.log(payload.response);
                     const newSpecs: SpecificationGroupType[] = payload.response[0].specificationGroups;
                     setSpecificationsGroups(newSpecs);
                 })
@@ -93,17 +98,26 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
         setEditingForm({
             specification: spec,
             show: spec !== null,
-            specType: type
+            specType: type,
+            mode: 'EDIT'
         });
     };
 
     const handeAdd = (facet: FacetType, specType: SpecificationValuesType) => {
-        setEditingForm({
-            specification: null,
-            facet,
-            show: true,
-            specType
-        });
+        if (specificationGroups) {
+            const groupData = specificationGroups[specificationGroups?.length - 1];
+            setEditingForm({
+                groupInfo: {
+                    id: groupData.groupId,
+                    name: groupData.name
+                },
+                specification: null,
+                facet,
+                show: true,
+                specType,
+                mode: 'ADD'
+            });
+        }
     };
 
     const handleSuccesFetch = () => {
@@ -137,7 +151,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                                         }
                                     }}
                                 >
-                                    <ListItemText primary={specificationGroup.name} secondary={specificationGroup.groupId} />
+                                    <ListItemText primary={specificationGroup.name} />
                                     <ListItemIcon>
                                         <KeyboardArrowDownIcon />
                                     </ListItemIcon>
@@ -169,10 +183,11 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                 categoryId={category?.id ?? 1}
                 specificationToEdit={editingForm.specification}
                 show={editingForm.show}
-                mode={editingForm.specification !== null && editingForm.show ? 'EDIT' : 'ADD'}
+                mode={editingForm.mode}
                 facet={editingForm.facet}
                 specType={editingForm.specType ?? SpecificationValuesType.PRODUCT}
                 handleCancel={handleCloseForm}
+                groupInfo={editingForm.groupInfo}
             />
         </>
     );

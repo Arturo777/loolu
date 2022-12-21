@@ -46,6 +46,7 @@ type SpecificationFormProps = {
     facet?: FacetType | null;
     groupId: number;
     handleSuccesFetch: () => void;
+    groupInfo?: { id: number; name: string };
 };
 
 type newSpecificationType = {
@@ -62,7 +63,8 @@ export default function SpecificationForm({
     specType,
     facet,
     groupId,
-    handleSuccesFetch
+    handleSuccesFetch,
+    groupInfo
 }: SpecificationFormProps) {
     // hooks
     const intl = useIntl();
@@ -140,29 +142,26 @@ export default function SpecificationForm({
             ...newValues.map((item) => ({ specificationValueId: 0, isActive: item.isActive, name: item.name }))
         ];
 
-        console.log(facet, specificationToEdit, categoryId);
-
         if (mode === 'ADD') {
             const toSaveData = [
                 {
                     categoryId,
                     specificationGroups: [
                         {
-                            name: specData?.name,
+                            name: groupInfo?.name,
                             groupId,
                             [specType === SpecificationValuesType.SKU ? 'skuSpecs' : 'prodSpecs']: [
                                 {
-                                    __typename: 'SpecificactionValue',
                                     fieldTypeId: specData?.fieldTypeId,
                                     fieldTypeName:
                                         specificationType.find((item) => Number(item.value) === specData?.fieldTypeId)?.label ?? '',
                                     description: specData?.description,
                                     categoryId,
-                                    facetList: null,
                                     name: facet?.name,
                                     specificationValues,
                                     groupId,
-                                    specificationId: 0,
+                                    groupName: groupInfo?.name,
+                                    specificationId: null,
                                     isVtexSync: specData?.isVtexSync,
                                     isRequired: specData?.isRequired,
                                     isActive: specData?.isActive,
@@ -179,12 +178,38 @@ export default function SpecificationForm({
                 }
             ];
 
-            console.log(JSON.stringify(toSaveData));
-            // dispatch(updateFacetVariant({ idMerchant: 1, data: toSaveData })).then((resp) => {
-            //     console.log('creae', resp);
-            // });
+            dispatch(updateFacetVariant({ idMerchant: 1, data: toSaveData }))
+                .then(({ payload }) => {
+                    if (payload.status === 'Success') {
+                        dispatch(
+                            openSnackbar({
+                                open: true,
+                                message: 'Creado correctamente',
+                                variant: 'alert',
+                                alert: {
+                                    color: 'success'
+                                },
+                                close: true
+                            })
+                        );
+                    } else {
+                        dispatch(
+                            openSnackbar({
+                                open: true,
+                                message: 'Error al crear',
+                                variant: 'alert',
+                                alert: {
+                                    color: 'error'
+                                },
+                                close: true
+                            })
+                        );
+                    }
+                })
+                .finally(() => {
+                    handleSuccesFetch();
+                });
         } else {
-            console.log('EDIT');
             // EDIT
             const toSaveData = [
                 {
@@ -220,7 +245,6 @@ export default function SpecificationForm({
                 }
             ];
 
-            console.log(JSON.stringify(toSaveData));
             dispatch(updateFacetVariant({ idMerchant: 1, data: toSaveData }))
                 .then(({ payload }) => {
                     if (payload.status === 'Success') {
@@ -455,7 +479,6 @@ const RenderValues = ({ specification, handleAddValues, handleUpdateCurrent }: R
 
     useEffect(() => {
         if (specification && specification.specificationValues) {
-            console.log(specification.specificationValues);
             setCurrentValues(specification.specificationValues);
         }
     }, [specification]);
@@ -637,37 +660,32 @@ const saveButtonContainer = {
 
 // ADD
 
-const editStyk = [
+const createSruk = [
     {
         categoryId: 0,
         specificationGroups: [
             {
                 name: 'Retail',
                 groupId: 248,
-                skuSpecs: [
+                prodSpecs: [
                     {
-                        __typename: 'SpecificactionValue',
                         categoryId: 0,
                         description: 'prueba large text',
-                        facetList: null,
-                        fieldTypeId: 0,
-                        fieldTypeName: 'Combo',
+                        fieldTypeId: 6,
+                        fieldTypeName: 'Radio',
                         groupId: 248,
+                        groupName: 'Retail',
                         isActive: false,
                         isOnProductDetails: false,
                         isRequired: false,
-                        isSideMenuLinkActive: true,
-                        isStockKeepingUnit: true,
-                        isTopMenuLinkActive: true,
+                        isSideMenuLinkActive: false,
+                        isTopMenuLinkActive: false,
                         isVtexSync: false,
-                        name: 'NuevoFacetCat1',
-                        rawSpecId: 444,
-                        specificationId: 3957,
-                        specificationValues: [
-                            { specificationValueId: 4225, isActive: true, name: 'prueba sku' },
-                            { specificationValueId: 4226, isActive: false, name: 'prueba sku 2' },
-                            { specificationValueId: 4227, isActive: true, name: '22' }
-                        ]
+                        name: 'NuevaSimetria',
+                        position: 1,
+                        rawSpecId: 458,
+                        specificationId: null,
+                        specificationValues: [{ specificationValueId: 0, isActive: true, name: 'radio 1' }]
                     }
                 ]
             }
@@ -675,37 +693,32 @@ const editStyk = [
     }
 ];
 
-const edit = [
+const styke2 = [
     {
-        categoryId: 0,
+        categoryId: 9325,
         specificationGroups: [
             {
                 name: 'Retail',
                 groupId: 248,
-                skuSpecs: [
+                prodSpecs: [
                     {
-                        __typename: 'SpecificactionValue',
-                        categoryId: 0,
+                        categoryId: 9325,
                         description: 'prueba large text',
-                        facetList: null,
-                        fieldTypeId: 5,
-                        fieldTypeName: 'Combo',
+                        fieldTypeId: 6,
+                        fieldTypeName: 'Radio',
                         groupId: 248,
+                        groupName: 'Retail',
                         isActive: false,
                         isOnProductDetails: false,
                         isRequired: false,
-                        isSideMenuLinkActive: true,
-                        isStockKeepingUnit: true,
-                        isTopMenuLinkActive: true,
+                        isSideMenuLinkActive: false,
+                        isTopMenuLinkActive: false,
                         isVtexSync: false,
-                        name: 'NuevoFacetCat1',
-                        rawSpecId: 444,
-                        specificationId: 3957,
-                        specificationValues: [
-                            { specificationValueId: 4225, isActive: true, name: 'prueba sku' },
-                            { specificationValueId: 4226, isActive: true, name: 'prueba sku 2' },
-                            { specificationValueId: 4227, isActive: true, name: '22' }
-                        ]
+                        name: 'NuevaSimetria',
+                        position: 1,
+                        rawSpecId: 458,
+                        specificationId: null,
+                        specificationValues: [{ specificationValueId: 0, isActive: true, name: 'valor 1' }]
                     }
                 ]
             }
