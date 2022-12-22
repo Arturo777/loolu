@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // mui imports
 import {
@@ -9,10 +9,8 @@ import {
     Grid,
     Box,
     Stack,
-    Divider,
     IconButton,
     TextField,
-    Checkbox,
     FormControl,
     InputLabel,
     Select,
@@ -22,19 +20,19 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 
 // third-party imports
 import { useIntl } from 'react-intl';
 
 // project imports
+import { useDispatch } from 'store';
 import { gridSpacing } from 'store/constant';
+import { openSnackbar } from 'store/slices/snackbar';
+import { updateFacetVariant } from 'store/slices/catalogue';
 
 // types
 import { FacetType, SpecificationsType, SpecificationValuesType, SpecificationValueDataType } from 'types/catalogue';
-import { updateFacetVariant } from 'store/slices/catalogue';
-import { useDispatch } from 'store';
-import { openSnackbar } from 'store/slices/snackbar';
+import SpecValuesForm, { newSpecificationType } from './SpecValuesForm';
 
 type SpecificationFormProps = {
     specificationToEdit: SpecificationsType | null;
@@ -47,11 +45,6 @@ type SpecificationFormProps = {
     groupId: number;
     handleSuccesFetch: () => void;
     groupInfo?: { id: number; name: string };
-};
-
-type newSpecificationType = {
-    name: string;
-    isActive: boolean;
 };
 
 export default function SpecificationForm({
@@ -73,6 +66,7 @@ export default function SpecificationForm({
     // vars
     const [specData, setSpecData] = useState<SpecificationsType>();
     const [newValues, setNewValues] = useState<newSpecificationType[]>([]);
+    const [updating, setUpdating] = useState<boolean>(false);
 
     useEffect(() => {
         if (specData?.fieldTypeId === 1) {
@@ -84,29 +78,7 @@ export default function SpecificationForm({
         if (specificationToEdit) {
             setSpecData(specificationToEdit);
         } else {
-            const defaultData: SpecificationsType = {
-                categoryId,
-                specificationId: 0,
-                description: '',
-                fieldTypeId: 11111,
-                fieldTypeName: '',
-                // todo => select groupd id
-                groupId, //
-                groupName: '',
-                isActive: false,
-                isStockKeepingUnit: false,
-                isFilter: false,
-                isOnProductDetails: false,
-                isRequired: false,
-                isSideMenuLinkActive: false,
-                isTopMenuLinkActive: false,
-                isVtexSync: false,
-                name: '',
-                position: 0,
-                rawSpecId: 1,
-                vtexFieldId: 1,
-                specificationValues: []
-            };
+            const defaultData: SpecificationsType = createDefaultData(categoryId, groupId);
             setSpecData(defaultData);
         }
     }, [categoryId, specificationToEdit, specType, groupId]);
@@ -142,41 +114,11 @@ export default function SpecificationForm({
             ...newValues.map((item) => ({ specificationValueId: 0, isActive: item.isActive, name: item.name }))
         ];
 
+        setUpdating(true);
+
         if (mode === 'ADD') {
-            const toSaveData = [
-                {
-                    categoryId,
-                    specificationGroups: [
-                        {
-                            name: groupInfo?.name,
-                            groupId,
-                            [specType === SpecificationValuesType.SKU ? 'skuSpecs' : 'prodSpecs']: [
-                                {
-                                    fieldTypeId: specData?.fieldTypeId,
-                                    fieldTypeName:
-                                        specificationType.find((item) => Number(item.value) === specData?.fieldTypeId)?.label ?? '',
-                                    description: specData?.description,
-                                    categoryId,
-                                    name: facet?.name,
-                                    specificationValues,
-                                    groupId,
-                                    groupName: groupInfo?.name,
-                                    specificationId: null,
-                                    isVtexSync: specData?.isVtexSync,
-                                    isRequired: specData?.isRequired,
-                                    isActive: specData?.isActive,
-                                    isSideMenuLinkActive: specData?.isSideMenuLinkActive,
-                                    isTopMenuLinkActive: specData?.isTopMenuLinkActive,
-                                    isOnProductDetails: specData?.isOnProductDetails,
-                                    isStockKeepingUnit: specData?.isStockKeepingUnit,
-                                    rawSpecId: mode === 'ADD' ? facet?.id : specificationToEdit?.specificationId,
-                                    position: 1
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ];
+            if (specificationToEdit == null || specData == null) return;
+            const toSaveData = generateCreateData({ specificationToEdit, groupId, specType, specData, specificationValues });
 
             dispatch(updateFacetVariant({ idMerchant: 1, data: toSaveData }))
                 .then(({ payload }) => {
@@ -206,44 +148,17 @@ export default function SpecificationForm({
                         );
                     }
                 })
+                .then(() => {
+                    setUpdating(false);
+                })
                 .finally(() => {
                     handleSuccesFetch();
                 });
-        } else {
+        } else if (mode === 'EDIT') {
             // EDIT
-            const toSaveData = [
-                {
-                    categoryId: 0,
-                    specificationGroups: [
-                        {
-                            name: specificationToEdit?.groupName,
-                            groupId,
-                            [specType === SpecificationValuesType.SKU ? 'skuSpecs' : 'prodSpecs']: [
-                                {
-                                    __typename: 'SpecificactionValue',
-                                    categoryId: 0,
-                                    description: specData?.description,
-                                    fieldTypeId: specData?.fieldTypeId,
-                                    fieldTypeName:
-                                        specificationType.find((item) => Number(item.value) === specData?.fieldTypeId)?.label ?? '',
-                                    groupId,
-                                    isActive: specData?.isActive,
-                                    isOnProductDetails: specData?.isOnProductDetails,
-                                    isRequired: specData?.isRequired,
-                                    isSideMenuLinkActive: specData?.isSideMenuLinkActive,
-                                    isStockKeepingUnit: specData?.isStockKeepingUnit,
-                                    isTopMenuLinkActive: specData?.isTopMenuLinkActive,
-                                    isVtexSync: specData?.isVtexSync,
-                                    name: specificationToEdit?.name ?? 'NAME',
-                                    rawSpecId: specificationToEdit?.rawSpecId,
-                                    specificationId: specData?.specificationId,
-                                    specificationValues
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ];
+
+            if (specificationToEdit == null || specData == null) return;
+            const toSaveData = generatUpdateData({ specificationToEdit, groupId, specType, specData, specificationValues });
 
             dispatch(updateFacetVariant({ idMerchant: 1, data: toSaveData }))
                 .then(({ payload }) => {
@@ -273,9 +188,14 @@ export default function SpecificationForm({
                         );
                     }
                 })
+                .then(() => {
+                    setUpdating(false);
+                })
                 .finally(() => {
                     handleSuccesFetch();
                 });
+        } else {
+            setUpdating(false);
         }
     };
 
@@ -436,7 +356,7 @@ export default function SpecificationForm({
             </Grid>
 
             {specData?.fieldTypeId !== 1 && (
-                <RenderValues
+                <SpecValuesForm
                     handleUpdateCurrent={handleUpdateCurrentValues}
                     specification={specificationToEdit!}
                     handleAddValues={handleAddValues}
@@ -446,169 +366,23 @@ export default function SpecificationForm({
             {/* SAVE BUTTON */}
 
             <Stack sx={saveButtonContainer} direction="row">
-                <Button onClick={handleCancel} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
+                <Button
+                    disabled={updating}
+                    onClick={handleCancel}
+                    variant="outlined"
+                    startIcon={<CloseIcon />}
+                    color="error"
+                    sx={{ mr: 2 }}
+                >
                     Cancelar
                 </Button>
-                <Button startIcon={<SaveIcon />} variant="outlined" type="submit">
+                <Button disabled={updating} startIcon={<SaveIcon />} variant="outlined" type="submit">
                     Guardar
                 </Button>
             </Stack>
         </Box>
     );
 }
-type RenderValuesProps = {
-    specification: SpecificationsType;
-    handleAddValues: (value: newSpecificationType[]) => void;
-    handleUpdateCurrent: (data: SpecificationValueDataType[]) => void;
-};
-
-const RenderValues = ({ specification, handleAddValues, handleUpdateCurrent }: RenderValuesProps) => {
-    // hooks
-    const intl = useIntl();
-
-    // vars
-    const [newValue, setNewValue] = useState<string>('');
-    const [newSpecs, setNewSpecs] = useState<newSpecificationType[]>([]);
-
-    const [currentValues, setCurrentValues] = useState<SpecificationValueDataType[]>();
-
-    useEffect(() => {
-        handleUpdateCurrent(currentValues ?? []);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentValues]);
-
-    useEffect(() => {
-        if (specification && specification.specificationValues) {
-            setCurrentValues(specification.specificationValues);
-        }
-    }, [specification]);
-
-    useEffect(() => {
-        handleAddValues(newSpecs);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newSpecs]);
-
-    const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewValue(e.target.value);
-    };
-
-    const addSpec = () => {
-        setNewSpecs([...newSpecs, { name: newValue, isActive: true }]);
-        setNewValue('');
-    };
-
-    const handleToggleActiveNew = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
-
-        const i = Number(name.replace('new-value-', ''));
-
-        const updatedSpecs = newSpecs.map((item, y) => {
-            if (i === y) {
-                return { ...item, isActive: checked };
-            }
-            return item;
-        });
-
-        setNewSpecs(updatedSpecs);
-    };
-
-    const handleToggleActiveCurrent = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
-
-        const id = Number(name.replace('current-values-', ''));
-        const isActive = checked;
-
-        if (currentValues) {
-            const news = currentValues?.map((item) => {
-                if (item.specificationValueId === id) {
-                    return { ...item, isActive };
-                }
-
-                return item;
-            });
-            setCurrentValues(news);
-        }
-    };
-
-    const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-
-        const id = Number(name.replace('current-values-name-', ''));
-
-        if (currentValues) {
-            const news = currentValues?.map((item) => {
-                if (item.specificationValueId === id) {
-                    return { ...item, name: value };
-                }
-
-                return item;
-            });
-            setCurrentValues(news);
-        }
-    };
-
-    const handleEnter = (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === 'Enter') {
-            addSpec();
-        }
-    };
-
-    return (
-        <Box>
-            <Box sx={{ mt: 2, mb: 2 }}>
-                <Divider />
-            </Box>
-            <Typography variant="subtitle1" mt={1}>
-                {intl.formatMessage({ id: 'values' })}
-            </Typography>
-            <Typography variant="body2" mb={2}>
-                {intl.formatMessage({ id: 'add_values' })}
-            </Typography>
-            <Stack mb={3} direction="row">
-                <TextField
-                    onKeyDown={handleEnter}
-                    size="small"
-                    name="newVal"
-                    value={newValue}
-                    label={intl.formatMessage({
-                        id: 'new_value'
-                    })}
-                    onChange={onchangeText}
-                    fullWidth
-                />
-                <IconButton size="small" color="primary" disabled={newValue.length === 0} onClick={addSpec}>
-                    <AddBoxIcon />
-                </IconButton>
-            </Stack>
-
-            {newSpecs.map((newSpec, index) => (
-                <Stack direction="row" mb={2} key={`new-specs-values-list-${index}`}>
-                    <Checkbox onChange={handleToggleActiveNew} name={`new-value-${index}`} checked={newSpec.isActive} />
-                    <TextField size="small" name={`${index}`} value={newSpec.name} fullWidth />
-                </Stack>
-            ))}
-
-            {currentValues &&
-                currentValues.map((specValue) => (
-                    <Stack direction="row" mb={2} key={`specs-values-list-${specValue.specificationValueId}`}>
-                        <Checkbox
-                            size="small"
-                            onChange={handleToggleActiveCurrent}
-                            name={`current-values-${specValue.specificationValueId}`}
-                            checked={specValue.isActive}
-                        />
-                        <TextField
-                            size="small"
-                            onChange={handleChangeValue}
-                            name={`current-values-name-${specValue.specificationValueId}`}
-                            value={specValue.name}
-                            fullWidth
-                        />
-                    </Stack>
-                ))}
-        </Box>
-    );
-};
 
 type specificationTypeOption = {
     value: string;
@@ -658,34 +432,63 @@ const saveButtonContainer = {
     zIndex: 5
 };
 
-// ADD
+const createDefaultData = (categoryId: number, groupId: number): SpecificationsType => ({
+    categoryId,
+    specificationId: 0,
+    description: '',
+    fieldTypeId: 11111,
+    fieldTypeName: '',
+    groupId, //
+    groupName: '',
+    isActive: false,
+    isStockKeepingUnit: false,
+    isFilter: false,
+    isOnProductDetails: false,
+    isRequired: false,
+    isSideMenuLinkActive: false,
+    isTopMenuLinkActive: false,
+    isVtexSync: false,
+    name: '',
+    position: 0,
+    rawSpecId: 1,
+    vtexFieldId: 1,
+    specificationValues: []
+});
 
-const createSruk = [
+type createUpdateDataProps = {
+    specData: SpecificationsType;
+    specificationToEdit: SpecificationsType;
+    groupId: number;
+    specType: SpecificationValuesType;
+    specificationValues: { specificationValueId: number; isActive: boolean; name: string }[];
+};
+
+const generatUpdateData = ({ specificationToEdit, groupId, specType, specData, specificationValues }: createUpdateDataProps) => [
     {
         categoryId: 0,
         specificationGroups: [
             {
-                name: 'Retail',
-                groupId: 248,
-                prodSpecs: [
+                name: specificationToEdit?.groupName,
+                groupId,
+                [specType === SpecificationValuesType.SKU ? 'skuSpecs' : 'prodSpecs']: [
                     {
+                        __typename: 'SpecificactionValue',
                         categoryId: 0,
-                        description: 'prueba large text',
-                        fieldTypeId: 6,
-                        fieldTypeName: 'Radio',
-                        groupId: 248,
-                        groupName: 'Retail',
-                        isActive: false,
-                        isOnProductDetails: false,
-                        isRequired: false,
-                        isSideMenuLinkActive: false,
-                        isTopMenuLinkActive: false,
-                        isVtexSync: false,
-                        name: 'NuevaSimetria',
-                        position: 1,
-                        rawSpecId: 458,
-                        specificationId: null,
-                        specificationValues: [{ specificationValueId: 0, isActive: true, name: 'radio 1' }]
+                        description: specData?.description,
+                        fieldTypeId: specData?.fieldTypeId,
+                        fieldTypeName: specificationType.find((item) => Number(item.value) === specData?.fieldTypeId)?.label ?? '',
+                        groupId,
+                        isActive: specData?.isActive,
+                        isOnProductDetails: specData?.isOnProductDetails,
+                        isRequired: specData?.isRequired,
+                        isSideMenuLinkActive: specData?.isSideMenuLinkActive,
+                        isStockKeepingUnit: specData?.isStockKeepingUnit,
+                        isTopMenuLinkActive: specData?.isTopMenuLinkActive,
+                        isVtexSync: specData?.isVtexSync,
+                        name: specificationToEdit?.name ?? 'NAME',
+                        rawSpecId: specificationToEdit?.rawSpecId,
+                        specificationId: specData?.specificationId,
+                        specificationValues
                     }
                 ]
             }
@@ -693,32 +496,32 @@ const createSruk = [
     }
 ];
 
-const styke2 = [
+const generateCreateData = ({ specificationToEdit, groupId, specType, specData, specificationValues }: createUpdateDataProps) => [
     {
-        categoryId: 9325,
+        categoryId: 0,
         specificationGroups: [
             {
-                name: 'Retail',
-                groupId: 248,
-                prodSpecs: [
+                name: specificationToEdit?.groupName,
+                groupId,
+                [specType === SpecificationValuesType.SKU ? 'skuSpecs' : 'prodSpecs']: [
                     {
-                        categoryId: 9325,
-                        description: 'prueba large text',
-                        fieldTypeId: 6,
-                        fieldTypeName: 'Radio',
-                        groupId: 248,
-                        groupName: 'Retail',
-                        isActive: false,
-                        isOnProductDetails: false,
-                        isRequired: false,
-                        isSideMenuLinkActive: false,
-                        isTopMenuLinkActive: false,
-                        isVtexSync: false,
-                        name: 'NuevaSimetria',
-                        position: 1,
-                        rawSpecId: 458,
-                        specificationId: null,
-                        specificationValues: [{ specificationValueId: 0, isActive: true, name: 'valor 1' }]
+                        __typename: 'SpecificactionValue',
+                        categoryId: 0,
+                        description: specData?.description,
+                        fieldTypeId: specData?.fieldTypeId,
+                        fieldTypeName: specificationType.find((item) => Number(item.value) === specData?.fieldTypeId)?.label ?? '',
+                        groupId,
+                        isActive: specData?.isActive,
+                        isOnProductDetails: specData?.isOnProductDetails,
+                        isRequired: specData?.isRequired,
+                        isSideMenuLinkActive: specData?.isSideMenuLinkActive,
+                        isStockKeepingUnit: specData?.isStockKeepingUnit,
+                        isTopMenuLinkActive: specData?.isTopMenuLinkActive,
+                        isVtexSync: specData?.isVtexSync,
+                        name: specificationToEdit?.name ?? 'NAME',
+                        rawSpecId: specificationToEdit?.rawSpecId,
+                        specificationId: specData?.specificationId,
+                        specificationValues
                     }
                 ]
             }

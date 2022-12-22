@@ -22,7 +22,7 @@ import { FormattedMessage } from 'react-intl';
 // project imports
 import { getFacetVariant } from 'store/slices/catalogue';
 import { useDispatch } from 'store';
-import SpecificationForm from './SpecificationForm';
+import SpecificationForm from './SpecificationFormComponent';
 import SearchFacetsComponent from './SearchFacetsComponent';
 
 // type
