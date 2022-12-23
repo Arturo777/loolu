@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 // mui imports
 import {
@@ -11,21 +11,22 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Collapse,
-    Button
+    Collapse
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
+
+// third-party imports
+import { FormattedMessage } from 'react-intl';
+
+// project imports
+import { getFacetVariant } from 'store/slices/catalogue';
+import { useDispatch } from 'store';
+import SpecificationForm from './SpecificationFormComponent';
+import SearchFacetsComponent from './SearchFacetsComponent';
 
 // type
-import { useDispatch } from 'store';
-import { getFacetVariant } from 'store/slices/catalogue';
-import { CategoryType, SpecificationGroupType, SpecificationsType } from 'types/catalogue';
-import { FormattedMessage } from 'react-intl';
-import SpecificationForm from './SpecificationForm';
-import SearchFacetsComponent from './SearchFacetsComponent';
+import { CategoryType, FacetType, SpecificationGroupType, SpecificationsType, SpecificationValuesType } from 'types/catalogue';
 
 type AsociateFacetCategoryComponentProps = {
     open: boolean;
@@ -43,43 +44,100 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     // collapse group
     const [openGroup, setOpenGroup] = useState<number | null>(null);
     // edit
-    const [editingSpec, setEditingSpec] = useState<SpecificationsType | null>(null);
+
+    const [editingForm, setEditingForm] = useState<{
+        show: boolean;
+        specification: SpecificationsType | null;
+        specType: SpecificationValuesType | null;
+        facet?: FacetType | null;
+        mode: 'EDIT' | 'ADD';
+        groupInfo?: {
+            id: number;
+            name: string;
+        };
+    }>({ show: false, specification: null, specType: null, facet: null, mode: 'EDIT' });
+
+    const handleCloseForm = () => {
+        setEditingForm({
+            specification: null,
+            show: false,
+            specType: null,
+            facet: null,
+            mode: 'EDIT'
+        });
+    };
 
     useEffect(() => {
         // reset
         if (!open) {
             setOpenGroup(null);
-            setEditingSpec(null);
+            handleCloseForm();
         }
     }, [open]);
 
-    useEffect(() => {
+    const getCategory = () => {
         if (category) {
             setIsLoading(true);
             dispatch(getFacetVariant({ idMerchant: 1, catId: category.id }))
                 .then(({ payload }) => {
                     const newSpecs: SpecificationGroupType[] = payload.response[0].specificationGroups;
-                    console.log(payload.response[0]);
                     setSpecificationsGroups(newSpecs);
                 })
                 .finally(() => {
                     setIsLoading(false);
                 });
         }
+    };
+
+    useEffect(() => {
+        getCategory();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category, dispatch]);
 
-    const handleEditSpec = (spec: SpecificationsType | null) => {
-        if (spec !== null) {
-            setEditingSpec(spec);
+    const handleEditSpec = (spec: SpecificationsType | null, type: SpecificationValuesType) => {
+        setEditingForm({
+            specification: spec,
+            show: spec !== null,
+            specType: type,
+            mode: 'EDIT'
+        });
+    };
+
+    const handeAdd = (facet: FacetType, specType: SpecificationValuesType) => {
+        if (specificationGroups) {
+            const groupData = specificationGroups[specificationGroups?.length - 1];
+            setEditingForm({
+                groupInfo: {
+                    id: groupData.groupId,
+                    name: groupData.name
+                },
+                specification: null,
+                facet,
+                show: true,
+                specType,
+                mode: 'ADD'
+            });
         }
     };
+
+    const handleSuccesFetch = () => {
+        getCategory();
+        handleCloseForm();
+    };
+
+    const getSpecificationGroupId = useMemo(
+        () => (specificationGroups ? specificationGroups[specificationGroups?.length - 1].groupId : 0),
+        [specificationGroups]
+    );
 
     const content = () => (
         <>
             {/* SEARCH */}
-            <SearchFacetsComponent />
+            <Collapse in={!editingForm.show}>
+                <SearchFacetsComponent handleAddFacet={handeAdd} />
+            </Collapse>
             {/* SPECS */}
-            <Collapse in={!editingSpec} collapsedSize={0} sx={{ p: 0 }}>
+            <Collapse in={!editingForm.show} collapsedSize={0} sx={{ p: 0 }}>
                 <Box>
                     {specificationGroups &&
                         specificationGroups.map((specificationGroup) => (
@@ -103,14 +161,14 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                                         <RenderSpecifications
                                             onEditClick={handleEditSpec}
                                             specifications={specificationGroup.prodSpecs}
-                                            titleType="PRODUCT"
+                                            titleType={SpecificationValuesType.PRODUCT}
                                         />
                                     )}
                                     {specificationGroup.skuSpecs.length > 0 && (
                                         <RenderSpecifications
                                             onEditClick={handleEditSpec}
                                             specifications={specificationGroup.skuSpecs}
-                                            titleType="SKU"
+                                            titleType={SpecificationValuesType.SKU}
                                         />
                                     )}
                                 </Collapse>
@@ -119,18 +177,18 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                 </Box>
             </Collapse>
             {/* FORM */}
-            <SpecificationForm specificationToEdit={editingSpec} handleCancel={() => setEditingSpec(null)} />
-            {/* SAVE BUTTON */}
-            {Boolean(editingSpec) && (
-                <Stack sx={saveButtonContainer} direction="row">
-                    <Button onClick={() => setEditingSpec(null)} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
-                        Cancelar
-                    </Button>
-                    <Button startIcon={<SaveIcon />} variant="outlined" type="submit">
-                        Guardar
-                    </Button>
-                </Stack>
-            )}
+            <SpecificationForm
+                handleSuccesFetch={handleSuccesFetch}
+                groupId={getSpecificationGroupId}
+                categoryId={category?.id ?? 1}
+                specificationToEdit={editingForm.specification}
+                show={editingForm.show}
+                mode={editingForm.mode}
+                facet={editingForm.facet}
+                specType={editingForm.specType ?? SpecificationValuesType.PRODUCT}
+                handleCancel={handleCloseForm}
+                groupInfo={editingForm.groupInfo}
+            />
         </>
     );
 
@@ -159,20 +217,21 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
 
 type RenderSpecificationsProps = {
     specifications: SpecificationsType[];
-    titleType: 'PRODUCT' | 'SKU';
-    onEditClick: (spec: SpecificationsType) => void;
+    titleType: SpecificationValuesType;
+    // titleType: 'PRODUCT' | 'SKU';
+    onEditClick: (spec: SpecificationsType, type: SpecificationValuesType) => void;
 };
 
 const RenderSpecifications = ({ specifications, titleType, onEditClick }: RenderSpecificationsProps) => (
     <>
         <Typography sx={{ ml: 3 }} variant="subtitle1">
-            <FormattedMessage id={titleType.toLocaleLowerCase()} />
+            <FormattedMessage id={titleType} />
         </Typography>
         {specifications.map((spec, index) => (
             <ListItemButton key={`specification-${index}`} sx={{ p: 1, pl: 4 }}>
                 <ListItemText primary={spec.name} secondary={spec.description} />
                 <ListItemIcon>
-                    <EditIcon onClick={() => onEditClick(spec)} />
+                    <EditIcon onClick={() => onEditClick(spec, titleType)} />
                 </ListItemIcon>
             </ListItemButton>
         ))}
@@ -183,17 +242,4 @@ const dynamicWidth = {
     xs: 1,
     md: 0.9,
     lg: 480
-};
-
-const saveButtonContainer = {
-    width: dynamicWidth,
-    position: 'fixed',
-    bottom: 0,
-    right: 0,
-    p: 1,
-    borderTop: 1,
-    borderTopColor: 'rgba(100,100,100,0.3)',
-    justifyContent: 'flex-end',
-    background: 'white',
-    zIndex: 5
 };

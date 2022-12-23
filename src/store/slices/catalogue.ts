@@ -379,3 +379,23 @@ export const getFacetVariant = createAsyncThunk(`${slice.name}/getFacetVariant`,
         return e.response;
     }
 });
+
+type updateFacetVariantProps = {
+    idMerchant: number;
+    data: { [key: string]: any };
+};
+
+// `${BASE_API_URL_ALTERNATIVE}/facets/fv/merchant/${merchantId}`
+export const updateFacetVariant = createAsyncThunk(
+    `${slice.name}/getFacetVariant`,
+    async ({ idMerchant, data }: updateFacetVariantProps) => {
+        try {
+            const response = await axios.post(`/facets/fv/merchant/${idMerchant}`, data, {
+                baseURL: STYRK_API_ALTERNATIVE
+            });
+            return response.data;
+        } catch (e: any) {
+            return e.response;
+        }
+    }
+);

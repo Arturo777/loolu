@@ -197,5 +197,19 @@
     "show_mode": "Modo en el que se mostrará el producto",
     "active_link": "Activar link",
     "show_brand_filter": "Mostrar filtro de marca",
-    "show_in_store": "Mostrar en tienda"
+    "show_in_store": "Mostrar en tienda",
+
+    "product_details": "Detalle de producto",
+    "required": "Requerido",
+    "search_filter": "Filtro de busqueda",
+    "top_menu": "Top menú",
+
+    "add": "Agregar",
+    "edit": "Editar",
+    "attributes": "Atributos",
+    "values": "Valores",
+    "new_value": "Nuevo valor",
+    "search_facets": "Buscar facets",
+    "select_attributes": "Selecciona atributos para la especificación",
+    "add_values": "Agrega valores para la especificación"
 }
