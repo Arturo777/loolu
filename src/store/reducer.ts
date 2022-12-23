@@ -11,7 +11,7 @@ import productReducer from './slices/product';
 import chatReducer from './slices/chat';
 import calendarReducer from './slices/calendar';
 import mailReducer from './slices/mail';
-import userReducer from './slices/user';
+import userReducer from './slices/security';
 import cartReducer from './slices/cart';
 import kanbanReducer from './slices/kanban';
 import menuReducer from './slices/menu';

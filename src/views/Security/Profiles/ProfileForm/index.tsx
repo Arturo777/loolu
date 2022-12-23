@@ -11,9 +11,9 @@ import { useDispatch } from 'react-redux';
 // project imports
 import { gridSpacing } from 'store/constant';
 import { MenuDetailsType, ProfileType } from 'types/user-profile';
-import { getMenuPermissions } from 'store/slices/user';
+import { getMenuPermissions } from 'store/slices/security';
 import { useSelector } from 'store';
-import { NewProfileType } from 'types/user';
+import { NewProfileType } from 'types/security';
 
 type NewProfieState = {
     type: string;

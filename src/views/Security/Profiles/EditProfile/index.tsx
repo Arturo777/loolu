@@ -11,9 +11,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import MainCard from 'ui-component/cards/MainCard';
 import ProfileForm from '../ProfileForm';
 
-import { NewProfileType } from 'types/user';
+import { NewProfileType } from 'types/security';
 
-import { deleteMenusService, getProfiles, updateProfileService } from 'store/slices/user';
+import { deleteMenusService, getProfiles, updateProfileService } from 'store/slices/security';
 import { useSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import { ProfileType } from 'types/user-profile';

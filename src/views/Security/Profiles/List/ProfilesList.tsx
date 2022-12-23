@@ -12,7 +12,7 @@ import { ProfileType } from 'types/user-profile';
 import { useDispatch, useSelector } from 'store';
 
 // assets
-import { getProfiles } from 'store/slices/user';
+import { getProfiles } from 'store/slices/security';
 import { gridSpacing } from 'store/constant';
 import { FormattedMessage } from 'react-intl';
 

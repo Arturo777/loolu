@@ -1,14 +1,4 @@
-import { GenericCardProps } from 'types';
-import {
-    PostDataType,
-    UserProfile,
-    Profile,
-    UserType,
-    ProfileType,
-    ProviderType,
-    ApprovalProfileType,
-    MenuDetailsType
-} from 'types/user-profile';
+import { UserProfile, Profile, UserType, ProfileType, ProviderType, ApprovalProfileType, MenuDetailsType } from 'types/user-profile';
 
 export interface FollowerCardProps {
     avatar: string;
@@ -38,16 +28,16 @@ export interface UserSimpleCardProps {
 }
 
 export interface UserStateProps {
-    usersS1: UserProfile[];
-    usersS2: UserProfileStyle2[];
-    followers: FollowerCardProps[];
-    friendRequests: FriendRequestCardProps[];
-    friends: FriendsCardProps[];
-    gallery: GenericCardProps[];
-    posts: PostDataType[];
-    detailCards: UserProfile[];
-    simpleCards: UserSimpleCardProps[];
-    profileCards: UserProfileCardProps[];
+    // usersS1: UserProfile[];
+    // usersS2: UserProfileStyle2[];
+    // followers: FollowerCardProps[];
+    // friendRequests: FriendRequestCardProps[];
+    // friends: FriendsCardProps[];
+    // gallery: GenericCardProps[];
+    // posts: PostDataType[];
+    // detailCards: UserProfile[];
+    // simpleCards: UserSimpleCardProps[];
+    // profileCards: UserProfileCardProps[];
     error: object | string | null;
     loading: boolean;
     usersList: UserType[];

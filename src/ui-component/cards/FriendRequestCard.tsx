@@ -6,7 +6,7 @@ import { Avatar, Button, Card, Grid, IconButton, ListItemIcon, Menu, MenuItem, T
 
 // project import
 import { gridSpacing } from 'store/constant';
-import { FriendRequestCardProps } from 'types/user';
+import { FriendRequestCardProps } from 'types/security';
 
 // assets
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';

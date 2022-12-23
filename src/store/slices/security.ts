@@ -1,30 +1,21 @@
 // third-party
 import { createSlice } from '@reduxjs/toolkit';
+import axiosGlobal from 'axios';
 
 // project imports
-import axios from 'axios';
 import { dispatch } from '../index';
+import axios from 'utils/axios';
 
 // types
 import { DefaultRootStateProps } from 'types';
 import { ProfileType, ProviderType, UserType } from 'types/user-profile';
 import { STYRK_API, STYRK_TOKEN } from 'config';
-import { NewProfileType } from 'types/user';
+import { NewProfileType } from 'types/security';
 
 // ----------------------------------------------------------------------
 
 const initialState: DefaultRootStateProps['user'] = {
     error: null,
-    usersS1: [],
-    usersS2: [],
-    followers: [],
-    friendRequests: [],
-    friends: [],
-    gallery: [],
-    posts: [],
-    detailCards: [],
-    simpleCards: [],
-    profileCards: [],
     loading: true,
     usersList: [],
     currentUser: undefined,
@@ -99,10 +90,6 @@ const slice = createSlice({
         deleteMenusServiceSuccess(state) {
             state.fetching = false;
         },
-        // profile => create
-        // createProfileServiceSuccess(state, action) {
-        //     state.
-        // },
         // user info
         updateUserInfoPending(state) {
             state.fetching = true;
@@ -131,9 +118,6 @@ export function getUsersList(idMerchant?: string) {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -153,9 +137,6 @@ export function getUserInfo(userId: number, idMerchant?: string) {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -211,9 +192,6 @@ export function getProfiles(idMerchant?: string) {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -233,9 +211,6 @@ export function getProviders(idMerchant?: string) {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -255,9 +230,6 @@ export function getApprovalProfiles(idMerchant?: string) {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -276,9 +248,6 @@ export function updateUserInfo(data: any, idMerchant?: number) {
             await axios.post(`${STYRK_API}/styrk/api/user/save`, data, {
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -296,9 +265,6 @@ export function getMenuPermissions(idMerchant?: number) {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
 
@@ -315,9 +281,6 @@ export function createProfileService(data: NewProfileType, idMerchant?: number) 
             return await axios.post(`${STYRK_API}/styrk/api/profile/save`, data, {
                 params: {
                     idMerchant: idMerchant || 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
         } catch (error) {
@@ -348,9 +311,6 @@ export function updateProfileService({ data, idMerchant }: updateProfileServiceP
                 {
                     params: {
                         idMerchant: idMerchant || 1
-                    },
-                    headers: {
-                        authorization: `Bearer ${STYRK_TOKEN}`
                     }
                 }
             );
@@ -377,16 +337,13 @@ export function deleteMenusService({ menus, idPerfil, idMerchant }: deleteMenusS
                 idMerchant: idMerchant || 1,
                 idMenu: `${item}`,
                 idPerfil
-            },
-            headers: {
-                authorization: `Bearer ${STYRK_TOKEN}`
             }
         })
     );
 
     return async () => {
         try {
-            await axios.all(promises).then((values) => {
+            await axiosGlobal.all(promises).then((values) => {
                 console.log(values);
             });
             return dispatch(slice.actions.deleteMenusServiceSuccess());

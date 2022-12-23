@@ -15,7 +15,7 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 
 // types
-import { FollowerCardProps } from 'types/user';
+import { FollowerCardProps } from 'types/security';
 
 const avatarImage = require.context('assets/images/profile', true);
 

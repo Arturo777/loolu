@@ -9,7 +9,7 @@ import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getUsersList } from 'store/slices/user';
+import { getUsersList } from 'store/slices/security';
 
 // assets
 import { IconSearch } from '@tabler/icons';

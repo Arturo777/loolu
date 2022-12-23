@@ -6,9 +6,9 @@ import React from 'react';
 import MainCard from 'ui-component/cards/MainCard';
 import ProfileForm from '../ProfileForm';
 import { useIntl } from 'react-intl';
-import { NewProfileType } from 'types/user';
+import { NewProfileType } from 'types/security';
 import { useDispatch } from 'store';
-import { createProfileService } from 'store/slices/user';
+import { createProfileService } from 'store/slices/security';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileFormView = () => {

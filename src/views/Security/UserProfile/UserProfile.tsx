@@ -9,7 +9,7 @@ import { gridSpacing } from 'store/constant';
 import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'store';
-import { getApprovalProfiles, getProfiles, getProviders, getUserInfo, updateUserInfo } from 'store/slices/user';
+import { getApprovalProfiles, getProfiles, getProviders, getUserInfo, updateUserInfo } from 'store/slices/security';
 import Loader from 'ui-component/Loader';
 import { UserType } from 'types/user-profile';
 import { Box } from '@mui/system';

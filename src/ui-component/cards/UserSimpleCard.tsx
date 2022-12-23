@@ -15,7 +15,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 // types
-import { UserSimpleCardProps } from 'types/user';
+import { UserSimpleCardProps } from 'types/security';
 
 const avatarImage = require.context('assets/images/profile', true);
 

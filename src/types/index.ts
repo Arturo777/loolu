@@ -17,7 +17,7 @@ import { ProductStateProps } from './e-commerce';
 import { ChatStateProps } from './chat';
 import { CalendarStateProps } from './calendar';
 import { MailStateProps } from './mail';
-import { AuthStateProps, ProfileStateProps, UserStateProps } from './user';
+import { AuthStateProps, ProfileStateProps, UserStateProps } from './security';
 
 import { SnackbarProps } from './snackbar';
 import { CatalogueStateProps } from './catalogue';
