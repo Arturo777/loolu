@@ -20,7 +20,7 @@ import { MailStateProps } from './mail';
 import { AuthStateProps, ProfileStateProps, UserStateProps } from './security';
 
 import { SnackbarProps } from './snackbar';
-import { CatalogueStateProps } from './catalogue';
+import { CatalogueStateProps } from './catalog';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface

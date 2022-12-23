@@ -17,20 +17,20 @@ const CreateProfile = Loadable(lazy(() => import('views/Security/Profiles/Create
 const EditProfile = Loadable(lazy(() => import('views/Security/Profiles/EditProfile')));
 
 // ========= brands =========
-const BrandsListPage = Loadable(lazy(() => import('views/Brands/List')));
-const EditBrandPage = Loadable(lazy(() => import('views/Brands/Edit')));
-const CreateBrandPage = Loadable(lazy(() => import('views/Brands/Create')));
+const BrandsListPage = Loadable(lazy(() => import('views/Catalog/Brands/List')));
+const EditBrandPage = Loadable(lazy(() => import('views/Catalog/Brands/Edit')));
+const CreateBrandPage = Loadable(lazy(() => import('views/Catalog/Brands/Create')));
 
 // ========= providers - suppliers =========
-const ProvidersListPage = Loadable(lazy(() => import('views/Suppliers/List')));
-const CreateSupplierPage = Loadable(lazy(() => import('views/Suppliers/Create')));
-const EditSupplierPage = Loadable(lazy(() => import('views/Suppliers/Edit')));
+const ProvidersListPage = Loadable(lazy(() => import('views/Catalog/Suppliers/List')));
+const CreateSupplierPage = Loadable(lazy(() => import('views/Catalog/Suppliers/Create')));
+const EditSupplierPage = Loadable(lazy(() => import('views/Catalog/Suppliers/Edit')));
 
 // ========= FACETS =========
-const FacetsMainPage = Loadable(lazy(() => import('views/Facets/Main')));
+const FacetsMainPage = Loadable(lazy(() => import('views/Catalog/Facets/Main')));
 
 // ========= CATEGORIES =========
-const CategoriesMainPage = Loadable(lazy(() => import('views/Categories/Main')));
+const CategoriesMainPage = Loadable(lazy(() => import('views/Catalog/Categories/Main')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 

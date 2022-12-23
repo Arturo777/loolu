@@ -9,7 +9,7 @@ import axios from 'utils/axios';
 // types
 import { DefaultRootStateProps } from 'types';
 import { ProfileType, ProviderType, UserType } from 'types/user-profile';
-import { STYRK_API, STYRK_TOKEN } from 'config';
+import { STYRK_API } from 'config';
 import { NewProfileType } from 'types/security';
 
 // ----------------------------------------------------------------------
@@ -28,7 +28,7 @@ const initialState: DefaultRootStateProps['user'] = {
 };
 
 const slice = createSlice({
-    name: 'user',
+    name: 'security',
     initialState,
     reducers: {
         // HAS ERROR
@@ -343,9 +343,7 @@ export function deleteMenusService({ menus, idPerfil, idMerchant }: deleteMenusS
 
     return async () => {
         try {
-            await axiosGlobal.all(promises).then((values) => {
-                console.log(values);
-            });
+            await axiosGlobal.all(promises);
             return dispatch(slice.actions.deleteMenusServiceSuccess());
         } catch (error) {
             dispatch(slice.actions.hasError(error));
