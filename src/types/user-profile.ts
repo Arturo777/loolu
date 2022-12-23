@@ -8,6 +8,7 @@ export type ProfileProgress = {
 
 export type UserProfile = {
     id?: string;
+    user?: string;
     avatar?: string;
     image?: string;
     name?: string;

@@ -27,7 +27,7 @@ export interface UserSimpleCardProps {
     status: string;
 }
 
-export interface UserStateProps {
+export interface SecurityStateProps {
     // usersS1: UserProfile[];
     // usersS2: UserProfileStyle2[];
     // followers: FollowerCardProps[];
@@ -64,7 +64,9 @@ export type UserProfileStyle2 = {
 
 export type AuthStateProps = {
     userName?: string;
+    loading: boolean;
     error: object | string | null;
+    user: UserType | null;
 };
 
 export type ProfileStateProps = {

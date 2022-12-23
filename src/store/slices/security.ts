@@ -14,7 +14,7 @@ import { NewProfileType } from 'types/security';
 
 // ----------------------------------------------------------------------
 
-const initialState: DefaultRootStateProps['user'] = {
+const initialState: DefaultRootStateProps['security'] = {
     error: null,
     loading: true,
     usersList: [],

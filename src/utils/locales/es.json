@@ -155,6 +155,10 @@
     "hi_welcome": "¡Hola! Bienvenido",
     "enter_credentials": "Ingresa tus datos para continuar",
     "password": "Contraseña",
+    "hello": "Hola",
+    "sign_in": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "account_settings": "Ajustes de cuenta",
 
     "type": "Tipo",
     "description": "Descripción",

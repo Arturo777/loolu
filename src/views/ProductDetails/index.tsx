@@ -13,7 +13,7 @@ import RelatedProducts from './RelatedProducts';
 import MainCard from 'ui-component/cards/MainCard';
 import FloatingCart from 'ui-component/cards/FloatingCart';
 import Chip from 'ui-component/extended/Chip';
-import { DefaultRootStateProps, TabsProps } from 'types';
+import { TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories } from 'store/slices/product';
@@ -47,7 +47,7 @@ const ProductDetails = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
-    const cart = useSelector((state: DefaultRootStateProps) => state.cart);
+    const cart = useSelector((state) => state.cart);
 
     // product description tabs
     const [value, setValue] = useState(0);

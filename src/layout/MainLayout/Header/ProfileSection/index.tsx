@@ -29,16 +29,25 @@ import useAuth from 'hooks/useAuth';
 // assets
 import { IconLogout, IconSettings, IconUserCircle } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
+import { useSelector } from 'store';
+import { useIntl } from 'react-intl';
 
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
+    // hooks
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const navigate = useNavigate();
+    const intl = useIntl();
 
+    // store
+    const { user } = useSelector((state) => state.auth);
+
+    const { logout } = useAuth();
+
+    // vars
     const [selectedIndex, setSelectedIndex] = useState(-1);
-    const { logout, user } = useAuth();
     const [open, setOpen] = useState(false);
     /**
      * anchorRef is used on different components and specifying one type leads to other components throwing an error
@@ -128,7 +137,7 @@ const ProfileSection = () => {
                             sx={{ fontWeight: '500' }}
                             color="inherit"
                         >
-                            {user?.name}
+                            {user?.user ?? ''}
                         </Typography>
                     </Box>
                 }
@@ -167,12 +176,12 @@ const ProfileSection = () => {
                                         <Box sx={{ p: 2, pb: 0 }}>
                                             <Stack sx={{ mb: 2 }}>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    <Typography variant="h4">Good Morning,</Typography>
+                                                    <Typography variant="h4">{intl.formatMessage({ id: 'hello' })},</Typography>
                                                     <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {user?.name}
+                                                        {user?.user}
                                                     </Typography>
                                                 </Stack>
-                                                <Typography variant="subtitle2">Project Admin</Typography>
+                                                {user?.profile && <Typography variant="subtitle2"> {user?.profile.type}</Typography>}
                                             </Stack>
 
                                             <Divider />
@@ -206,7 +215,15 @@ const ProfileSection = () => {
                                                         <ListItemIcon>
                                                             <IconSettings stroke={1.5} size="1.3rem" />
                                                         </ListItemIcon>
-                                                        <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
+                                                        <ListItemText
+                                                            primary={
+                                                                <Typography variant="body2">
+                                                                    {intl.formatMessage({
+                                                                        id: 'account_settings'
+                                                                    })}
+                                                                </Typography>
+                                                            }
+                                                        />
                                                     </ListItemButton>
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
@@ -216,7 +233,15 @@ const ProfileSection = () => {
                                                         <ListItemIcon>
                                                             <IconLogout stroke={1.5} size="1.3rem" />
                                                         </ListItemIcon>
-                                                        <ListItemText primary={<Typography variant="body2">Logout</Typography>} />
+                                                        <ListItemText
+                                                            primary={
+                                                                <Typography variant="body2">
+                                                                    {intl.formatMessage({
+                                                                        id: 'logout'
+                                                                    })}
+                                                                </Typography>
+                                                            }
+                                                        />
                                                     </ListItemButton>
                                                 </List>
                                             </Box>

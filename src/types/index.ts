@@ -17,7 +17,7 @@ import { ProductStateProps } from './e-commerce';
 import { ChatStateProps } from './chat';
 import { CalendarStateProps } from './calendar';
 import { MailStateProps } from './mail';
-import { AuthStateProps, ProfileStateProps, UserStateProps } from './security';
+import { AuthStateProps, ProfileStateProps, SecurityStateProps } from './security';
 
 import { SnackbarProps } from './snackbar';
 import { CatalogueStateProps } from './catalog';
@@ -123,7 +123,7 @@ export interface DefaultRootStateProps {
     calendar: CalendarStateProps;
     mail: MailStateProps;
     // loolu
-    user: UserStateProps;
+    security: SecurityStateProps;
     auth: AuthStateProps;
     profile: ProfileStateProps;
     catalogue: CatalogueStateProps;
