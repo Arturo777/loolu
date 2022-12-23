@@ -28,9 +28,13 @@ type BrandFormProps = {
 };
 
 export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
+    // hooks
     const intl = useIntl();
+
+    // store
     const { loading } = useSelector((state) => state.catalogue);
 
+    // vars
     const [newBrandData, setNewBrandData] = useState<NewBrandType>(initialBrandData);
 
     useEffect(() => {
@@ -141,7 +145,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button disabled={loading} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            Guardar
+                            {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>

@@ -374,10 +374,10 @@ export default function SpecificationForm({
                     color="error"
                     sx={{ mr: 2 }}
                 >
-                    Cancelar
+                    {intl.formatMessage({ id: 'cancel' })}
                 </Button>
                 <Button disabled={updating} startIcon={<SaveIcon />} variant="outlined" type="submit">
-                    Guardar
+                    {intl.formatMessage({ id: 'save' })}
                 </Button>
             </Stack>
         </Box>

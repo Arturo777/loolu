@@ -25,7 +25,7 @@ const ProfileFormView = () => {
     return (
         <MainCard
             title={intl.formatMessage({
-                id: 'edit_profile'
+                id: 'create_profile'
             })}
         >
             <ProfileForm handleSaveClick={handleSave} mode="create" />

@@ -102,10 +102,10 @@ export default function FacetFormComponent({ handleSave, handleCancel, editingDa
                         sx={{ mr: 2 }}
                         startIcon={<CloseIcon />}
                     >
-                        Cancelar
+                        {intl.formatMessage({ id: 'cancel' })}
                     </Button>
                     <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                        Guardar
+                        {intl.formatMessage({ id: 'save' })}
                     </Button>
                 </Box>
             </Grid>

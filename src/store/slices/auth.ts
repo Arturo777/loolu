@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { STYRK_API } from 'config';
 import { DefaultRootStateProps } from 'types';
 import axios from 'utils/axios';
-import UserProfile from 'views/Security/UserProfile/UserProfile';
 
 const initialState: DefaultRootStateProps['auth'] = {
     userName: undefined,

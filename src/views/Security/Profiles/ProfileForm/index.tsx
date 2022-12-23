@@ -146,7 +146,7 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
                 <Grid item xs={12}>
                     <Stack sx={{ display: 'flex' }}>
                         <Typography variant="subtitle2" mt={2}>
-                            Accesos
+                            {intl.formatMessage({ id: 'permissions' })}
                         </Typography>
                         <Collapse in={Boolean(hasError)}>
                             <Typography mt={1} color="error">
@@ -180,7 +180,7 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button disabled={fetching || loading} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            Guardar
+                            {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>

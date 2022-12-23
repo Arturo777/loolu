@@ -143,7 +143,7 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            Guardar
+                            {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>

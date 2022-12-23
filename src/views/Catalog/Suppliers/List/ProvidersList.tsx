@@ -6,7 +6,7 @@ import { Card, Grid, Box, Stack, Typography, Chip, Button } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
 import { Link } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 // project imports
 import { useDispatch, useSelector } from 'store';
@@ -27,11 +27,16 @@ type ProvidersListProps = {
 };
 
 const ProvidersList = ({ filterText }: ProvidersListProps) => {
+    // hooks
     const theme = useTheme();
     const dispatch = useDispatch();
+    const intl = useIntl();
 
-    const [filteredSuppliers, setFilteredSuppliers] = useState<SupplierType[]>([]);
+    // store
     const { suppliers } = useSelector((state) => state.catalogue);
+
+    // vars
+    const [filteredSuppliers, setFilteredSuppliers] = useState<SupplierType[]>([]);
 
     useEffect(() => {
         dispatch(getSuppliers());
@@ -101,7 +106,7 @@ const ProvidersList = ({ filterText }: ProvidersListProps) => {
                                                 fullWidth
                                                 startIcon={<EditIcon />}
                                             >
-                                                Editar
+                                                {intl.formatMessage({ id: 'edit' })}
                                             </Button>
                                         </Grid>
                                     </Grid>

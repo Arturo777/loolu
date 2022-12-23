@@ -163,7 +163,7 @@
     "type": "Tipo",
     "description": "Descripción",
     "status": "Estatus",
-    "persmissions": "Accesos",
+    "permissions": "Accesos",
     "active": "Activo",
     "inactive": "Inactivo",
 
@@ -215,5 +215,9 @@
     "new_value": "Nuevo valor",
     "search_facets": "Buscar facets",
     "select_attributes": "Selecciona atributos para la especificación",
-    "add_values": "Agrega valores para la especificación"
+    "add_values": "Agrega valores para la especificación",
+    "associate_facet_category": "Asociar Facet-Categoria",
+
+    "save": "Guardar",
+    "cancel": "Cancelar"
 }

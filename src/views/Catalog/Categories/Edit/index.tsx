@@ -182,13 +182,13 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                             })}
                         </Typography>
                         <Stack direction="row" alignItems="center">
-                            <Tooltip title="Asociar Facet-Categoria">
+                            <Tooltip title={intl.formatMessage({ id: 'associate_facet_category' })}>
                                 <Button
                                     onClick={() => openAssociate(originalData)}
                                     startIcon={<MergeTypeIcon sx={{ p: 0 }} />}
                                     sx={{ mr: 2 }}
                                 >
-                                    Asociar Facet-Categoria
+                                    {intl.formatMessage({ id: 'associate_facet_category' })}
                                 </Button>
                             </Tooltip>
 
@@ -334,7 +334,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                             Cancelar
                         </Button>
                         <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            Guardar
+                            {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>

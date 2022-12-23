@@ -84,7 +84,7 @@ const BrandsList = ({ filterText }: BransListProps) => {
             renderCell: (params) => (
                 <Box>
                     <Button component={Link} to={`${params.row.idBrand}/edit`} size="small" startIcon={<EditIcon />} variant="outlined">
-                        EDITAR
+                        {intl.formatMessage({ id: 'edit' })}
                     </Button>
                 </Box>
             ),

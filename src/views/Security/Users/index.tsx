@@ -17,15 +17,22 @@ import { IconSearch } from '@tabler/icons';
 // types
 import { UserType } from 'types/user-profile';
 import Loader from 'ui-component/Loader';
+import { useIntl } from 'react-intl';
 
 // ==============================|| USER CARD STYLE 1 ||============================== //
 
 const UsersList = () => {
+    // hooks
+    const intl = useIntl();
     const dispatch = useDispatch();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    // store
+    const { usersList, loading } = useSelector((state) => state.user);
+
+    // vars
     const [users, setUsers] = React.useState<UserType[]>([]);
     const [search, setSearch] = React.useState<string | undefined>('');
-    const { usersList, loading } = useSelector((state) => state.user);
 
     useEffect(() => {
         const searchText = searchParams.get('search');
@@ -71,12 +78,16 @@ const UsersList = () => {
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
-                        <Typography variant="h3">Usuarios</Typography>
+                        <Typography variant="h3">
+                            {intl.formatMessage({
+                                id: 'users'
+                            })}
+                        </Typography>
                     </Grid>
                     <Grid item>
                         <OutlinedInput
                             id="input-search-card-style1"
-                            placeholder="Search"
+                            placeholder={intl.formatMessage({ id: 'search' })}
                             value={search}
                             onChange={handleSearch}
                             startAdornment={

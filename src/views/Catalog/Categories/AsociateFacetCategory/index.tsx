@@ -17,7 +17,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
 
 // third-party imports
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 // project imports
 import { getFacetVariant } from 'store/slices/catalog';
@@ -37,6 +37,7 @@ type AsociateFacetCategoryComponentProps = {
 export default function AsociateFacetCategoryComponent({ open, toggleDrawer, category }: AsociateFacetCategoryComponentProps) {
     // hooks
     const dispatch = useDispatch();
+    const intl = useIntl();
 
     // vars
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -199,7 +200,10 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
             <Box sx={{ width: dynamicWidth, height: '100vh', position: 'relative', overflowY: 'scroll' }}>
                 <Stack sx={{ padding: 2 }}>
                     <Typography mb={1} variant="h4">
-                        Asociar Facet-Categoria: {category.name}
+                        {intl.formatMessage({
+                            id: 'associate_facet_category'
+                        })}
+                        {category.name}
                     </Typography>
                     <Divider />
                 </Stack>

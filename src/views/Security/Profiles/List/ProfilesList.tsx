@@ -14,18 +14,23 @@ import { useDispatch, useSelector } from 'store';
 // assets
 import { getProfiles } from 'store/slices/security';
 import { gridSpacing } from 'store/constant';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 type UserListProps = {
     filterText: string;
 };
 
 const UserList = ({ filterText }: UserListProps) => {
+    // hooks
     const theme = useTheme();
     const dispatch = useDispatch();
+    const intl = useIntl();
 
-    const [filteredProfiles, setFilteredProfiles] = useState<ProfileType[]>([]);
+    // store
     const { profiles } = useSelector((state) => state.user);
+
+    // vars
+    const [filteredProfiles, setFilteredProfiles] = useState<ProfileType[]>([]);
 
     useEffect(() => {
         dispatch(getProfiles());
@@ -107,7 +112,7 @@ const UserList = ({ filterText }: UserListProps) => {
                                                 fullWidth
                                                 startIcon={<EditIcon />}
                                             >
-                                                Editar
+                                                {intl.formatMessage({ id: 'edit' })}
                                             </Button>
                                         </Grid>
                                     </Grid>

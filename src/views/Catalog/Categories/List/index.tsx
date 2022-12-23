@@ -7,6 +7,9 @@ import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import MergeTypeIcon from '@mui/icons-material/MergeType';
 
+// third party imports
+import { useIntl } from 'react-intl';
+
 // project imports
 import { getCategoriesService } from 'store/slices/catalog';
 import { useDispatch, useSelector } from 'store';
@@ -79,6 +82,10 @@ type MainCategoryProps = {
 };
 
 const MainCategoryComponent = ({ category, openCreate, handleShowInfo, openAssociate }: MainCategoryProps) => {
+    // hooks
+    const intl = useIntl();
+
+    // vars
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -92,13 +99,13 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo, openAssoc
                 </ListItemIcon>
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
                 {/* FACET - CATEGORY */}
-                <Tooltip title="Asociar Facet-Categoria">
+                <Tooltip title={intl.formatMessage({ id: 'associate_facet_category' })}>
                     <IconButton onClick={openAssociate}>
                         <MergeTypeIcon />
                     </IconButton>
                 </Tooltip>
                 {/* EDIT */}
-                <Tooltip title="Editar">
+                <Tooltip title={intl.formatMessage({ id: 'edit' })}>
                     <IconButton
                         onClick={() => {
                             handleShowInfo(category.id);

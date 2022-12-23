@@ -10,13 +10,16 @@ import Avatar from '../extended/Avatar';
 // assets
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 
 const avatarImage = require.context('assets/images/profile', true);
 
 // ==============================|| USER DETAILS CARD ||============================== //
 
 const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, phoneNumber, avatar }: UserType) => {
+    // hooks
     const theme = useTheme();
+    const intl = useIntl();
 
     const avatarProfile = avatar && avatarImage(`./${avatar}`).default;
 
@@ -105,7 +108,9 @@ const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, 
                         </Grid> */}
                         <Grid item xs={6}>
                             <Button component={Link} to={`/users/${id}/edit`} variant="outlined" fullWidth startIcon={<EditIcon />}>
-                                Editar
+                                {intl.formatMessage({
+                                    id: 'edit'
+                                })}
                             </Button>
                         </Grid>
                     </Grid>

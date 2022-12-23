@@ -1,26 +1,39 @@
+import React, { FormEvent, useEffect, useState } from 'react';
+
 // material-ui
-import { Grid, TextField, Divider, Select, MenuItem, FormControl, InputLabel, Button, SelectChangeEvent } from '@mui/material';
+import { Grid, TextField, Divider, Select, MenuItem, FormControl, InputLabel, Button, SelectChangeEvent, Box } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+
+// third-party imports
+import { useIntl } from 'react-intl';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // project imports
 import { gridSpacing } from 'store/constant';
+import Loader from 'ui-component/Loader';
+import { useDispatch, useSelector } from 'store';
+
+// actions
+import { openSnackbar } from 'store/slices/snackbar';
+import { getApprovalProfiles, getProfiles, getProviders, getUserInfo, updateUserInfo } from 'store/slices/security';
 
 // assets
-import { FormEvent, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'store';
-import { getApprovalProfiles, getProfiles, getProviders, getUserInfo, updateUserInfo } from 'store/slices/security';
-import Loader from 'ui-component/Loader';
+
+// types
 import { UserType } from 'types/user-profile';
-import { Box } from '@mui/system';
-import { openSnackbar } from 'store/slices/snackbar';
 
 const UserProfile = () => {
+    // hooks
     const { userId } = useParams();
     const dispatch = useDispatch();
-    const { currentUser, loading, loadingEditInfo, profiles, providers, approvalProfiles, fetching } = useSelector((state) => state.user);
-    const [user, setUser] = useState<UserType | undefined>();
     const navigate = useNavigate();
+    const intl = useIntl();
+
+    // store
+    const { currentUser, loading, loadingEditInfo, profiles, providers, approvalProfiles, fetching } = useSelector((state) => state.user);
+
+    // vars
+    const [user, setUser] = useState<UserType | undefined>();
 
     useEffect(() => {
         setUser(currentUser);
@@ -186,7 +199,7 @@ const UserProfile = () => {
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button disabled={fetching || loading || loadingEditInfo} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            Guardar
+                            {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>

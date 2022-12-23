@@ -34,11 +34,6 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange, re
             return (
                 <Box sx={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
                     <Typography>{selectedItem.name}</Typography>
-                    {Boolean(selectedItem.description) && (
-                        <Typography ml={1} variant="caption">
-                            {selectedItem.description}
-                        </Typography>
-                    )}
                 </Box>
             );
         },

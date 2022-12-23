@@ -162,10 +162,10 @@ const CreateCategoryPage = ({ handleClose, selectedCatId }: CreateCategoryPagePr
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button onClick={handleCancel} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
-                            Cancelar
+                            {intl.formatMessage({ id: 'cancel' })}
                         </Button>
                         <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            Guardar
+                            {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>

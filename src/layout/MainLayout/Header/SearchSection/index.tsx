@@ -27,6 +27,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
 import { shouldForwardProp } from '@mui/system';
 import { useNavigate, createSearchParams, useLocation } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 // styles
 const PopperStyle = styled(Popper, { shouldForwardProp })(({ theme }) => ({
     zIndex: 1100,
@@ -137,9 +138,13 @@ const MobileSearch = ({ value, setValue, popupState, handleOptions, handleEnter,
 // ==============================|| SEARCH INPUT ||============================== //
 
 const SearchSection = () => {
+    // hooks
     const theme = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
+    const intl = useIntl();
+
+    // varss
     const [value, setValue] = useState('');
     const [searchField, setSearchField] = useState<string>('productName');
     const [valueIsNumber, setValueIsNumber] = useState<boolean>(true);
@@ -261,7 +266,7 @@ const SearchSection = () => {
                     id="input-search-header"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
-                    placeholder="Buscar"
+                    placeholder={intl.formatMessage({ id: 'search' })}
                     onKeyDown={handleEnter}
                     startAdornment={
                         <InputAdornment position="start">
