@@ -30,14 +30,14 @@ const Aditionalinfo = ({
                             label="Descripción Corta"
                             variant="outlined"
                             name="descriptionShort"
-                            defaultValue={product.descriptionShort}
-                            value={productInfo.descriptionShort}
+                            defaultValue={product?.descriptionShort}
+                            value={productInfo?.descriptionShort}
                             onChange={handleChangeProd}
                         />
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">Descripción Corta:</Typography> {product.descriptionShort}
+                        <Typography variant="h4">Descripción Corta:</Typography> {product?.descriptionShort}
                     </Typography>
                 )}
             </Grid>
@@ -55,14 +55,14 @@ const Aditionalinfo = ({
                             label="Descripción De Metatag"
                             variant="outlined"
                             name="metaTagDescription"
-                            defaultValue={product.metaTagDescription}
-                            value={productInfo.metaTagDescription}
+                            defaultValue={product?.metaTagDescription}
+                            value={productInfo?.metaTagDescription}
                             onChange={handleChangeProd}
                         />
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">Descripción De Metatag:</Typography> {product.metaTagDescription}
+                        <Typography variant="h4">Descripción De Metatag:</Typography> {product?.metaTagDescription}
                     </Typography>
                 )}
             </Grid>
@@ -80,14 +80,14 @@ const Aditionalinfo = ({
                             label="Keywords"
                             variant="outlined"
                             name="keyWords"
-                            defaultValue={product.keyWords}
-                            value={productInfo.keyWords}
+                            defaultValue={product?.keyWords}
+                            value={productInfo?.keyWords}
                             onChange={handleChangeProd}
                         />
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">Keywords:</Typography> {product.keyWords}
+                        <Typography variant="h4">Keywords:</Typography> {product?.keyWords}
                     </Typography>
                 )}
             </Grid>
