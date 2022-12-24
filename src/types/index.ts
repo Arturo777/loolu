@@ -9,14 +9,8 @@ import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 // project imports
 import { TablerIcon } from '@tabler/icons';
-import { CartStateProps } from './cart';
-import { KanbanStateProps } from './kanban';
-import { CustomerStateProps } from './customer';
-import { ContactStateProps } from './contact';
 import { ProductStateProps } from './e-commerce';
-import { ChatStateProps } from './chat';
-import { CalendarStateProps } from './calendar';
-import { MailStateProps } from './mail';
+import { CartStateProps } from './cart';
 import { AuthStateProps, ProfileStateProps, SecurityStateProps } from './security';
 
 import { SnackbarProps } from './snackbar';
@@ -115,13 +109,7 @@ export interface ColorPaletteProps {
 export interface DefaultRootStateProps {
     snackbar: SnackbarProps;
     cart: CartStateProps;
-    kanban: KanbanStateProps;
-    customer: CustomerStateProps;
-    contact: ContactStateProps;
     product: ProductStateProps;
-    chat: ChatStateProps;
-    calendar: CalendarStateProps;
-    mail: MailStateProps;
     // loolu
     security: SecurityStateProps;
     auth: AuthStateProps;
