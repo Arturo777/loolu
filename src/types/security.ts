@@ -1,15 +1,4 @@
-import { UserProfile, Profile, UserType, ProfileType, ProviderType, ApprovalProfileType, MenuDetailsType } from 'types/user-profile';
-
-export interface FollowerCardProps {
-    avatar: string;
-    follow: number;
-    location: string;
-    name: string;
-}
-
-export interface FriendRequestCardProps extends Profile {
-    mutual: number;
-}
+import { UserProfile, UserType, ProfileType, ProviderType, ApprovalProfileType, MenuDetailsType } from 'types/user-profile';
 
 export interface FriendsCardProps {
     avatar: string;
@@ -28,16 +17,6 @@ export interface UserSimpleCardProps {
 }
 
 export interface SecurityStateProps {
-    // usersS1: UserProfile[];
-    // usersS2: UserProfileStyle2[];
-    // followers: FollowerCardProps[];
-    // friendRequests: FriendRequestCardProps[];
-    // friends: FriendsCardProps[];
-    // gallery: GenericCardProps[];
-    // posts: PostDataType[];
-    // detailCards: UserProfile[];
-    // simpleCards: UserSimpleCardProps[];
-    // profileCards: UserProfileCardProps[];
     error: object | string | null;
     loading: boolean;
     usersList: UserType[];
