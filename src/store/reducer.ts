@@ -4,13 +4,7 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // project imports
-import customerReducer from './slices/customer';
-import contactReducer from './slices/contact';
-import chatReducer from './slices/chat';
-import calendarReducer from './slices/calendar';
-import mailReducer from './slices/mail';
 import cartReducer from './slices/cart';
-import kanbanReducer from './slices/kanban';
 // loolu
 import productReducer from './slices/product';
 import snackbarReducer from './slices/snackbar';
@@ -31,13 +25,7 @@ const reducer = combineReducers({
         },
         cartReducer
     ),
-    kanban: kanbanReducer,
-    customer: customerReducer,
-    contact: contactReducer,
     product: productReducer,
-    chat: chatReducer,
-    calendar: calendarReducer,
-    mail: mailReducer,
     // loolu
     menu: menuReducer,
     user: securityReducer,
