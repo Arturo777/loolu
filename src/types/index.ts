@@ -14,7 +14,7 @@ import { CartStateProps } from './cart';
 import { AuthStateProps, ProfileStateProps, SecurityStateProps } from './security';
 
 import { SnackbarProps } from './snackbar';
-import { CatalogueStateProps } from './catalog';
+import { CatalogStateProps } from './catalog';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -114,7 +114,7 @@ export interface DefaultRootStateProps {
     security: SecurityStateProps;
     auth: AuthStateProps;
     profile: ProfileStateProps;
-    catalogue: CatalogueStateProps;
+    catalogue: CatalogStateProps;
 }
 
 export interface ColorProps {

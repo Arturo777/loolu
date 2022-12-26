@@ -21,7 +21,7 @@ const reducer = combineReducers({
         {
             key: 'cart',
             storage,
-            keyPrefix: 'berry-'
+            keyPrefix: 'loolu-'
         },
         cartReducer
     ),

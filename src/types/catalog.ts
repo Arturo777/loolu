@@ -1,4 +1,4 @@
-export type CatalogueStateProps = {
+export type CatalogStateProps = {
     error: object | string | null;
     loading: boolean;
     updating: boolean;
