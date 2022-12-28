@@ -9,6 +9,7 @@ import {
     Grid,
     List,
     ListItemButton,
+    ListItemIcon,
     ListItemText,
     Paper,
     Popper,
@@ -20,6 +21,8 @@ import {
 import Transitions from 'ui-component/extended/Transitions';
 
 // assets
+import flagMX from 'assets/images/countries/mx.png';
+import flagUS from 'assets/images/countries/us.png';
 import TranslateTwoToneIcon from '@mui/icons-material/TranslateTwoTone';
 import useConfig from 'hooks/useConfig';
 
@@ -72,6 +75,7 @@ const LocalizationSection = () => {
             <Box
                 sx={{
                     ml: 2,
+                    mr: 2,
                     [theme.breakpoints.down('md')]: {
                         ml: 1
                     }
@@ -99,12 +103,7 @@ const LocalizationSection = () => {
                     onClick={handleToggle}
                     color="inherit"
                 >
-                    {language !== 'en' && (
-                        <Typography variant="h5" sx={{ textTransform: 'uppercase' }} color="inherit">
-                            {language}
-                        </Typography>
-                    )}
-                    {language === 'en' && <TranslateTwoToneIcon sx={{ fontSize: '1.3rem' }} />}
+                    <TranslateTwoToneIcon sx={{ fontSize: '1.3rem' }} />
                 </Avatar>
             </Box>
 
@@ -145,6 +144,9 @@ const LocalizationSection = () => {
                                         }}
                                     >
                                         <ListItemButton selected={language === 'en'} onClick={(event) => handleListItemClick(event, 'en')}>
+                                            <ListItemIcon>
+                                                <Box component="img" src={flagUS} alt="us" sx={{ width: 25, height: 25 }} />
+                                            </ListItemIcon>
                                             <ListItemText
                                                 primary={
                                                     <Grid container>
@@ -157,6 +159,9 @@ const LocalizationSection = () => {
                                             />
                                         </ListItemButton>
                                         <ListItemButton selected={language === 'es'} onClick={(event) => handleListItemClick(event, 'es')}>
+                                            <ListItemIcon>
+                                                <Box component="img" src={flagMX} alt="es" sx={{ width: 25, height: 25 }} />
+                                            </ListItemIcon>
                                             <ListItemText
                                                 primary={
                                                     <Grid container>

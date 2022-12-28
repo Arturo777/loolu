@@ -1,4 +1,4 @@
-import { CategoryType, FlatCategoryType } from 'types/catalogue';
+import { CategoryType, FlatCategoryType } from 'types/catalog';
 
 export const queryToObject = (query: string): object => {
     const queryArray = query.replace('?', '').split('&');

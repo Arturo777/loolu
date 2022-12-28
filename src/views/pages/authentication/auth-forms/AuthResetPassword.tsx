@@ -62,9 +62,9 @@ const AuthResetPassword = ({ ...others }) => {
     return (
         <Formik
             initialValues={{
-                email: 'info@codedthemes.com',
-                password: '123456',
-                confirmPassword: '123456',
+                email: '',
+                password: '',
+                confirmPassword: '',
                 submit: null
             }}
             validationSchema={Yup.object().shape({

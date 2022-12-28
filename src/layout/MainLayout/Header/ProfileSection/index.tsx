@@ -4,24 +4,17 @@ import { useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-    Avatar,
     Box,
-    Card,
-    CardContent,
     Chip,
     ClickAwayListener,
     Divider,
-    Grid,
-    InputAdornment,
     List,
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    OutlinedInput,
     Paper,
     Popper,
     Stack,
-    Switch,
     Typography
 } from '@mui/material';
 
@@ -31,26 +24,30 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
 import useAuth from 'hooks/useAuth';
-import User1 from 'assets/images/users/user-round.svg';
 
 // assets
-import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import { IconLogout, IconSettings, IconUserCircle } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
+import { useSelector } from 'store';
+import { useIntl } from 'react-intl';
 
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
+    // hooks
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const navigate = useNavigate();
+    const intl = useIntl();
 
-    const [sdm, setSdm] = useState(true);
-    const [value, setValue] = useState('');
-    const [notification, setNotification] = useState(false);
+    // store
+    const { user } = useSelector((state) => state.auth);
+
+    const { logout } = useAuth();
+
+    // vars
     const [selectedIndex, setSelectedIndex] = useState(-1);
-    const { logout, user } = useAuth();
     const [open, setOpen] = useState(false);
     /**
      * anchorRef is used on different components and specifying one type leads to other components throwing an error
@@ -97,7 +94,8 @@ const ProfileSection = () => {
                 sx={{
                     height: '48px',
                     alignItems: 'center',
-                    borderRadius: '27px',
+                    borderRadius: '30px',
+                    paddingX: 2,
                     transition: 'all .2s ease-in-out',
                     borderColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
                     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.primary.light,
@@ -110,24 +108,39 @@ const ProfileSection = () => {
                         }
                     },
                     '& .MuiChip-label': {
-                        lineHeight: 0
+                        lineHeight: 0,
+                        paddingRight: 0
                     }
                 }}
-                icon={
-                    <Avatar
-                        src={User1}
+                label={
+                    <Stack
                         sx={{
                             ...theme.typography.mediumAvatar,
-                            margin: '8px 0 8px 8px !important',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            m: 0
                         }}
-                        ref={anchorRef}
-                        aria-controls={open ? 'menu-list-grow' : undefined}
-                        aria-haspopup="true"
                         color="inherit"
-                    />
+                        alignItems="center"
+                        justifyContent="center"
+                    >
+                        <IconUserCircle stroke={1.5} size="2rem" color={theme.palette.primary.main} />
+                    </Stack>
                 }
-                label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
+                icon={
+                    <Box sx={{ ml: 10 }}>
+                        <Typography
+                            ref={anchorRef}
+                            aria-controls={open ? 'menu-list-grow' : undefined}
+                            aria-haspopup="true"
+                            component="span"
+                            variant="h4"
+                            sx={{ fontWeight: '500' }}
+                            color="inherit"
+                        >
+                            {user?.user ?? ''}
+                        </Typography>
+                    </Box>
+                }
                 variant="outlined"
                 ref={anchorRef}
                 aria-controls={open ? 'menu-list-grow' : undefined}
@@ -148,7 +161,7 @@ const ProfileSection = () => {
                         {
                             name: 'offset',
                             options: {
-                                offset: [0, 14]
+                                offset: [10, 14]
                             }
                         }
                     ]
@@ -161,89 +174,27 @@ const ProfileSection = () => {
                                 {open && (
                                     <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                         <Box sx={{ p: 2, pb: 0 }}>
-                                            <Stack>
+                                            <Stack sx={{ mb: 2 }}>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    <Typography variant="h4">Good Morning,</Typography>
+                                                    <Typography variant="h4">{intl.formatMessage({ id: 'hello' })},</Typography>
                                                     <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {user?.name}
+                                                        {user?.user}
                                                     </Typography>
                                                 </Stack>
-                                                <Typography variant="subtitle2">Project Admin</Typography>
+                                                {user?.profile && <Typography variant="subtitle2"> {user?.profile.type}</Typography>}
                                             </Stack>
-                                            <OutlinedInput
-                                                sx={{ width: '100%', pr: 1, pl: 2, my: 2 }}
-                                                id="input-search-profile"
-                                                value={value}
-                                                onChange={(e) => setValue(e.target.value)}
-                                                placeholder="Search profile options"
-                                                startAdornment={
-                                                    <InputAdornment position="start">
-                                                        <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
-                                                    </InputAdornment>
-                                                }
-                                                aria-describedby="search-helper-text"
-                                                inputProps={{
-                                                    'aria-label': 'weight'
-                                                }}
-                                            />
+
                                             <Divider />
                                         </Box>
                                         <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                                             <Box sx={{ p: 2, pt: 0 }}>
-                                                <UpgradePlanCard />
-                                                <Divider />
-                                                <Card
-                                                    sx={{
-                                                        bgcolor:
-                                                            theme.palette.mode === 'dark'
-                                                                ? theme.palette.dark[800]
-                                                                : theme.palette.primary.light,
-                                                        my: 2
-                                                    }}
-                                                >
-                                                    <CardContent>
-                                                        <Grid container spacing={3} direction="column">
-                                                            <Grid item>
-                                                                <Grid item container alignItems="center" justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="subtitle1">Start DND Mode</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Switch
-                                                                            color="primary"
-                                                                            checked={sdm}
-                                                                            onChange={(e) => setSdm(e.target.checked)}
-                                                                            name="sdm"
-                                                                            size="small"
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Grid>
-                                                            <Grid item>
-                                                                <Grid item container alignItems="center" justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="subtitle1">Allow Notifications</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Switch
-                                                                            checked={notification}
-                                                                            onChange={(e) => setNotification(e.target.checked)}
-                                                                            name="sdm"
-                                                                            size="small"
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </CardContent>
-                                                </Card>
                                                 <Divider />
                                                 <List
                                                     component="nav"
                                                     sx={{
                                                         width: '100%',
                                                         maxWidth: 350,
-                                                        minWidth: 300,
+                                                        minWidth: 280,
                                                         backgroundColor: theme.palette.background.paper,
                                                         borderRadius: '10px',
                                                         [theme.breakpoints.down('md')]: {
@@ -264,38 +215,13 @@ const ProfileSection = () => {
                                                         <ListItemIcon>
                                                             <IconSettings stroke={1.5} size="1.3rem" />
                                                         </ListItemIcon>
-                                                        <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
-                                                    </ListItemButton>
-                                                    <ListItemButton
-                                                        sx={{ borderRadius: `${borderRadius}px` }}
-                                                        selected={selectedIndex === 1}
-                                                        onClick={(event: React.MouseEvent<HTMLDivElement>) =>
-                                                            handleListItemClick(event, 1, '/user/social-profile/posts')
-                                                        }
-                                                    >
-                                                        <ListItemIcon>
-                                                            <IconUser stroke={1.5} size="1.3rem" />
-                                                        </ListItemIcon>
                                                         <ListItemText
                                                             primary={
-                                                                <Grid container spacing={1} justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="body2">Social Profile</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Chip
-                                                                            label="02"
-                                                                            size="small"
-                                                                            sx={{
-                                                                                bgcolor:
-                                                                                    theme.palette.mode === 'dark'
-                                                                                        ? theme.palette.dark.dark
-                                                                                        : theme.palette.warning.dark,
-                                                                                color: theme.palette.background.default
-                                                                            }}
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
+                                                                <Typography variant="body2">
+                                                                    {intl.formatMessage({
+                                                                        id: 'account_settings'
+                                                                    })}
+                                                                </Typography>
                                                             }
                                                         />
                                                     </ListItemButton>
@@ -307,7 +233,15 @@ const ProfileSection = () => {
                                                         <ListItemIcon>
                                                             <IconLogout stroke={1.5} size="1.3rem" />
                                                         </ListItemIcon>
-                                                        <ListItemText primary={<Typography variant="body2">Logout</Typography>} />
+                                                        <ListItemText
+                                                            primary={
+                                                                <Typography variant="body2">
+                                                                    {intl.formatMessage({
+                                                                        id: 'logout'
+                                                                    })}
+                                                                </Typography>
+                                                            }
+                                                        />
                                                     </ListItemButton>
                                                 </List>
                                             </Box>

@@ -10,13 +10,16 @@ import Avatar from '../extended/Avatar';
 // assets
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 
 const avatarImage = require.context('assets/images/profile', true);
 
 // ==============================|| USER DETAILS CARD ||============================== //
 
 const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, phoneNumber, avatar }: UserType) => {
+    // hooks
     const theme = useTheme();
+    const intl = useIntl();
 
     const avatarProfile = avatar && avatarImage(`./${avatar}`).default;
 
@@ -37,36 +40,6 @@ const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, 
                         <Grid item xs zeroMinWidth>
                             <Avatar alt={name} size="lg" src={avatarProfile} />
                         </Grid>
-                        {/* <Grid item>
-                            <IconButton size="small" sx={{ mt: -0.75, mr: -0.75 }} onClick={handleClick}>
-                                <MoreHorizOutlinedIcon
-                                    fontSize="small"
-                                    color="inherit"
-                                    aria-controls="menu-friend-card"
-                                    aria-haspopup="true"
-                                    sx={{ opacity: 0.6 }}
-                                />
-                            </IconButton>
-                            <Menu
-                                id="menu-user-details-card"
-                                anchorEl={anchorEl}
-                                keepMounted
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                                variant="selectedMenu"
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right'
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right'
-                                }}
-                            >
-                                <MenuItem onClick={handleClose}>Edit</MenuItem>
-                                <MenuItem onClick={handleClose}>Delete</MenuItem>
-                            </Menu>
-                        </Grid> */}
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
@@ -75,19 +48,14 @@ const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, 
                     </Typography>
                     <Typography variant="caption">{profile.type}</Typography>
                 </Grid>
-                {/* <Grid item xs={12}>
-                    <Typography variant="subtitle2" sx={{ color: theme.palette.grey[700] }}>
-                        {about}
-                    </Typography>
-                </Grid> */}
                 <Grid item xs={12}>
-                    <Typography variant="caption">Email</Typography>
+                    <Typography variant="caption">{intl.formatMessage({ id: 'email' })}</Typography>
                     <Typography variant="h6">{email}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={6}>
-                            <Typography variant="caption">Phone</Typography>
+                            <Typography variant="caption">{intl.formatMessage({ id: 'phone' })}</Typography>
                             <Typography variant="h6">{phoneNumber}</Typography>
                         </Grid>
                         {/* <Grid item xs={6}>
@@ -105,7 +73,9 @@ const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, 
                         </Grid> */}
                         <Grid item xs={6}>
                             <Button component={Link} to={`/users/${id}/edit`} variant="outlined" fullWidth startIcon={<EditIcon />}>
-                                Editar
+                                {intl.formatMessage({
+                                    id: 'edit'
+                                })}
                             </Button>
                         </Grid>
                     </Grid>
