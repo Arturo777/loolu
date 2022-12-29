@@ -14,12 +14,14 @@ import MainCard from 'ui-component/cards/MainCard';
 import FloatingCart from 'ui-component/cards/FloatingCart';
 import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
-import { Products } from 'types/e-commerce';
+import { Products, Skus } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
+import { getBrands } from 'store/slices/catalogue';
 import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
+import { BrandType } from 'types/catalogue';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -47,6 +49,7 @@ const ProductDetails = () => {
     const [active, setActive] = useState(false);
     const [productInfo, setProductInfo] = useState<Products>();
     const [originalData, setOriginalData] = useState<Products>();
+    const [skuInfo, setSkuInfo] = useState<Skus>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { id } = useParams();
 
@@ -55,7 +58,9 @@ const ProductDetails = () => {
 
     // product description tabs
     const [value, setValue] = useState(0);
+    const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
     const { product, skus, categories, tradePolicies } = useSelector((state) => state.product);
+    const { brands, loading } = useSelector((state) => state.catalogue);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -66,6 +71,7 @@ const ProductDetails = () => {
         // getProduct();
         setIsLoading(true);
         dispatch(getProduct(id));
+        dispatch(getBrands());
         dispatch(getCategories());
         dispatch(getTradePolicies());
         // clear cart if complete order
@@ -76,17 +82,25 @@ const ProductDetails = () => {
     }, [cart.checkout.step, dispatch, id]);
 
     useEffect(() => {
+        if (brands?.length) {
+            setBrandsInfo(brands);
+        }
+    }, [brands]);
+
+    useEffect(() => {
         if (product !== null) {
             setOriginalData(product);
             setProductInfo(product);
             setIsLoading(false);
         }
     }, [product]);
-
+    console.log('brands', brandsInfo);
     const handleSave = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (productInfo) {
-            dispatch(saveProduct(productInfo))
+            const prodsku = { ...productInfo, sku: skuInfo };
+            console.log('prod new', prodsku);
+            dispatch(saveProduct(prodsku))
                 .then(({ payload }) => {
                     console.log(payload.response);
                     dispatch(
@@ -151,6 +165,9 @@ const ProductDetails = () => {
                                             active={active}
                                             setProductInfo={setProductInfo}
                                             productInfo={productInfo}
+                                            setSkuInfo={setSkuInfo}
+                                            skuInfo={skuInfo}
+                                            brandsInfo={brandsInfo}
                                             categories={categories}
                                             tradePolicies={tradePolicies}
                                         />

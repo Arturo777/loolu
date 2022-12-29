@@ -30,7 +30,7 @@ export type Products = {
     brandName?: string;
     brandId: number;
     productID: string | number;
-    skus: any;
+    sku: any;
 };
 
 export type Skus = {

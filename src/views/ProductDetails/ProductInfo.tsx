@@ -28,6 +28,7 @@ import {
     ListItemText,
     OutlinedInput
 } from '@mui/material';
+import formatUrl from 'utils/formatUrl';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 // third-party
@@ -36,7 +37,7 @@ import * as yup from 'yup';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { Products, TradePolicies } from 'types/e-commerce';
+import { Products, TradePolicies, Skus } from 'types/e-commerce';
 import { openSnackbar } from 'store/slices/snackbar';
 import { useDispatch, useSelector } from 'store';
 import { addProduct } from 'store/slices/cart';
@@ -46,10 +47,11 @@ import { addProduct } from 'store/slices/cart';
 import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone'; */
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Key } from 'react';
+import { Key, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import ProductDimensions from './ProductDimensions';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { BrandType } from 'types/catalogue';
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -134,7 +136,10 @@ const ProductInfo = ({
     productInfo,
     setProductInfo,
     categories,
-    tradePolicies
+    tradePolicies,
+    skuInfo,
+    setSkuInfo,
+    brandsInfo
 }: {
     product: any;
     setValueSku: any;
@@ -145,33 +150,74 @@ const ProductInfo = ({
     setProductInfo: any;
     categories: any;
     tradePolicies: any;
+    skuInfo: Skus | undefined;
+    setSkuInfo: any;
+    brandsInfo: BrandType[] | undefined;
 }) => {
     const intl = useIntl();
+    const wrapperRef = useRef(null);
     const dispatch = useDispatch();
     const history = useNavigate();
-    const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
+    const [button, setButton] = useState(false);
+    const [display, setDisplay] = useState(false);
+    const [search, setSearch] = useState('');
+    const [brandSku, setBrandSku] = useState<BrandType>();
     const cart = useSelector((state) => state.cart);
     /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
     );
     console.log(flatCategories); */
-    console.log(product);
-
+    const handleClickOutside = (event: { target: any }) => {
+        const { current: wrap }: any = wrapperRef;
+        if (wrap && !wrap.contains(event.target)) {
+            setDisplay(false);
+        }
+    };
+    useEffect(() => {
+        window.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            window.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+    useEffect(() => {
+        const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
+        setSkuInfo(skuprod[0]);
+    }, [product?.skus, setSkuInfo, valueSku]);
     const handleRadioChange = (event: { target: { value: any } }) => {
         setValueSku(event.target.value);
     };
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        if (event.target.type === 'checkbox') {
+            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
+        } else {
+            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+    };
+    const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.type === 'checkbox') {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
+        } else {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
     };
     const filterTradePolicy = (trade: number) => {
         const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
-        console.log('nametrade', resultTrade[0]?.name);
         return resultTrade[0]?.name;
     };
     const formatterDolar = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
     });
+    const customBrand = (value: SetStateAction<string>, id: number) => {
+        setSearch(value);
+        setDisplay(false);
+    };
+    const newBrand = (value: SetStateAction<string>) => {
+        setSearch(value);
+        /* setFlagBrand(true) */
+        /* setBrand(value, null) */
+        /* handleCreateBrandModal(value) */
+    };
     /* const selectTradePolicy =(idPolicy)=> {
         const res = product?.tradePolicies?.filter((tr: any) =>{
             tr
@@ -205,7 +251,13 @@ const ProductInfo = ({
                                     />
                                     <FormControlLabel
                                         sx={{ ml: 1 }}
-                                        control={<Android12Switch defaultChecked={product?.inventoried} />}
+                                        control={
+                                            <Android12Switch
+                                                name="showWithoutStock"
+                                                onChange={handleChangeProd}
+                                                defaultChecked={product?.showWithoutStock}
+                                            />
+                                        }
                                         label="Sin Inventario"
                                     />
                                 </>
@@ -234,7 +286,7 @@ const ProductInfo = ({
                                     <Chip
                                         sx={{ ml: 2 }}
                                         size="small"
-                                        label={product?.inventoried ? 'Sin Inventario' : 'Con Inventario'}
+                                        label={product?.showWithoutStock ? 'Sin Inventario' : 'Con Inventario'}
                                         chipcolor="primary"
                                         variant="outlined"
                                     />
@@ -275,7 +327,7 @@ const ProductInfo = ({
                                             label="URL del Producto"
                                             variant="outlined"
                                             name="linkId"
-                                            defaultValue={product?.linkId}
+                                            defaultValue={formatUrl(product?.linkId)}
                                             value={productInfo?.linkId}
                                             onChange={handleChangeProd}
                                         />
@@ -346,17 +398,53 @@ const ProductInfo = ({
                             '& .MuiTextField-root': { mt: 2 }
                         }}
                     >
-                        <TextField
-                            fullWidth
-                            multiline
-                            id="outlined-basic"
-                            label="Marca"
-                            variant="outlined"
-                            name="brandName"
-                            defaultValue={product?.brandName}
-                            value={productInfo?.brandName}
-                            onChange={handleChangeProd}
-                        />
+                        <FormControl fullWidth ref={wrapperRef}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                id="outlined-basic"
+                                label="Marca"
+                                variant="outlined"
+                                name="brandName"
+                                defaultValue={product?.brandName}
+                                value={productInfo?.brandName}
+                                onChange={handleChangeProd}
+                                onClick={() => setDisplay(true)}
+                            />
+                            {display && (
+                                <div className="autoContainer">
+                                    <div className="btn-add">
+                                        <input
+                                            className="input is-normal"
+                                            type="text"
+                                            placeholder="+ Crear Marca"
+                                            onClick={() => setButton(true)}
+                                            onBlur={(event) => {
+                                                newBrand(event.target.value);
+                                                /* setValueField({
+                                                ...valueField,
+                                                brandName: event.target.value
+                                            }); */
+                                            }}
+                                        />
+
+                                        {button && (
+                                            <Button variant="contained" color="success" size="large">
+                                                <i className="fas fa-plus-circle" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                    {brandsInfo
+                                        ?.filter(({ name }) => name.indexOf(search.toLowerCase()) > -1)
+                                        .map((v: BrandType, i: Key): any => (
+                                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                                            <div onClick={() => customBrand(v.name, v.idBrand)} className="option" key={i}>
+                                                <Typography variant="body2">{v.name}</Typography>
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
+                        </FormControl>
                     </Box>
                 ) : (
                     <Typography variant="h4">{product?.brandName}</Typography>
@@ -388,7 +476,7 @@ const ProductInfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FormControl sx={{ m: 1, width: 300 }}>
-                        <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                        <InputLabel id="demo-multiple-checkbox-label">Trade Policies</InputLabel>
                         <Select
                             labelId="demo-multiple-checkbox-label"
                             id="demo-multiple-checkbox"
@@ -401,7 +489,7 @@ const ProductInfo = ({
                                 setProductInfo(typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value);
                             }}
                             name="tradePolicy"
-                            input={<OutlinedInput label="Tag" />}
+                            input={<OutlinedInput label="Trade Policies" />}
                             renderValue={(selected: any) => selected.join(', ')}
                             MenuProps={MenuProps}
                         >
@@ -498,16 +586,43 @@ const ProductInfo = ({
                                             id="outlined-basic"
                                             label="Nombre Sku"
                                             variant="outlined"
-                                            name="skuName"
-                                            defaultValue={skuprod[0]?.name}
-                                            value={productInfo?.skuName}
-                                            onChange={handleChangeProd}
+                                            name="name"
+                                            defaultValue={skuInfo?.name}
+                                            value={skuInfo?.name}
+                                            onChange={handleChangeSku}
                                         />
                                     </Box>
                                 ) : (
-                                    skuprod?.length > 0 && (
+                                    skuInfo !== undefined && (
                                         <Typography variant="h3" sx={{ ml: 2 }}>
-                                            {skuprod[0]?.name}
+                                            {skuInfo?.name}
+                                        </Typography>
+                                    )
+                                )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                {active ? (
+                                    <Box
+                                        sx={{
+                                            '& .MuiTextField-root': { mt: 2 }
+                                        }}
+                                    >
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            id="outlined-basic"
+                                            label="EAN/UPC"
+                                            variant="outlined"
+                                            name="ean"
+                                            defaultValue={skuInfo?.ean}
+                                            value={skuInfo?.ean}
+                                            onChange={handleChangeSku}
+                                        />
+                                    </Box>
+                                ) : (
+                                    skuInfo !== undefined && (
+                                        <Typography variant="body2" sx={{ ml: 2 }}>
+                                            EAN/UPC: {skuInfo?.ean}
                                         </Typography>
                                     )
                                 )}
@@ -522,7 +637,7 @@ const ProductInfo = ({
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
-                                                {skuprod[0]?.prices?.map(
+                                                {skuInfo?.prices?.map(
                                                     ({
                                                         price,
                                                         priceDiscount,
@@ -641,7 +756,7 @@ const ProductInfo = ({
                                             <Typography variant="body2">Dimensions</Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <ProductDimensions valueSku={valueSku} product={product} active={active} />
+                                            <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
                                         </TableCell>
                                     </TableRow>
                                     <br />
