@@ -21,7 +21,7 @@ import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/
 import { getBrands } from 'store/slices/catalogue';
 import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
-import { BrandType } from 'types/catalogue';
+import { BrandType, CategoryType } from 'types/catalogue';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -45,22 +45,35 @@ function a11yProps(index: number) {
 }
 
 const ProductDetails = () => {
-    const [valueSku, setValueSku] = useState('');
-    const [active, setActive] = useState(false);
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const cart = useSelector((state: DefaultRootStateProps) => state.cart);
+
+    // information product and sku
     const [productInfo, setProductInfo] = useState<Products>();
     const [originalData, setOriginalData] = useState<Products>();
     const [skuInfo, setSkuInfo] = useState<Skus>();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { id } = useParams();
+    const [valueSku, setValueSku] = useState('');
 
-    const dispatch = useDispatch();
-    const cart = useSelector((state: DefaultRootStateProps) => state.cart);
+    // actice mode edit product
+    const [active, setActive] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // product description tabs
     const [value, setValue] = useState(0);
     const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
-    const { product, skus, categories, tradePolicies } = useSelector((state) => state.product);
+
+    // info new Brands and Categories
+    const [newBrandSku, setNewBrandSku] = useState<BrandType>();
+    const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
+
+    // flags brands and categories
+    const [flagBrand, setFlagBrand] = useState(false);
+    const [flagCategory, setFlagCategory] = useState(false);
+
+    const { product, skus, tradePolicies } = useSelector((state) => state.product);
     const { brands, loading } = useSelector((state) => state.catalogue);
+
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -168,7 +181,12 @@ const ProductDetails = () => {
                                             setSkuInfo={setSkuInfo}
                                             skuInfo={skuInfo}
                                             brandsInfo={brandsInfo}
-                                            categories={categories}
+                                            setFlagBrand={setFlagBrand}
+                                            flagBrand={flagBrand}
+                                            setNewBrandSku={setNewBrandSku}
+                                            setFlagCategory={setFlagCategory}
+                                            flagCategory={flagCategory}
+                                            setNewCategorySku={setNewCategorySku}
                                             tradePolicies={tradePolicies}
                                         />
                                         <Grid item xs={12}>
@@ -250,46 +268,3 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
-
-/* const createNewProduct = (newData: NewCategoryType, originalData: CategoryType) => ({
-    productID: originalData.productID,
-    departmentId: originalData.departmentId,
-    categoryId: originalData.categoryId,
-    productGlobalCategoryID: originalData.productGlobalCategoryID,
-    nameComplete: originalData.nameComplete,
-    merchantId: originalData.merchantId,
-    releaseDate: originalData.releaseDate,
-    lastDateUpdate: originalData.lastDateUpdate,
-    brandId: originalData.brandId,
-    productDescription: originalData.productDescription,
-    productStatus: originalData.productStatus,
-    syncStatusVTEX: originalData.syncStatusVTEX,
-    isActive: originalData.isActive,
-    skuName: originalData.skuName,
-    cscIdentification: originalData.cscIdentification,
-    informationSource: originalData.informationSource,
-    kit: originalData.kit,
-    transported: originalData.transported,
-    inventoried: originalData.inventoried,
-    giftCardRecharge: originalData.giftCardRecharge,
-    sku: originalData.sku,
-    hiddenTradePolicies: originalData.hiddenTradePolicies,
-    productName: originalData.productName,
-    title: originalData.title,
-    linkId: originalData.linkId,
-    provider: originalData.provider,
-    productRefID: originalData.productRefID,
-    taxCode: originalData.taxCode,
-    categoryName: originalData.categoryName,
-    brandName: originalData.brandName,
-    descriptionShort: originalData.descriptionShort,
-    description: originalData.description,
-    metaTagDescription: originalData.metaTagDescription,
-    keyWords: originalData.keyWords,
-    isEcommerce: originalData.isEcommerce,
-    isVisible: originalData.isVisible,
-    showWithoutStock: originalData.showWithoutStock,
-    preventa: originalData.preventa,
-    sobrePedido: originalData.sobrePedido,
-    variants: originalData.variants
-}); */

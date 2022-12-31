@@ -26,11 +26,13 @@ import {
     InputLabel,
     Checkbox,
     ListItemText,
-    OutlinedInput
+    OutlinedInput,
+    IconButton,
+    Switch
 } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import formatUrl from 'utils/formatUrl';
 import { SelectChangeEvent } from '@mui/material/Select';
-import Switch from '@mui/material/Switch';
 // third-party
 import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
 import * as yup from 'yup';
@@ -51,7 +53,9 @@ import { Key, MouseEventHandler, SetStateAction, useEffect, useRef, useState } f
 
 import ProductDimensions from './ProductDimensions';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { BrandType } from 'types/catalogue';
+import { BrandType, CategoryType } from 'types/catalogue';
+import { getCategoriesService } from 'store/slices/catalogue';
+import CategoryOptions from 'views/Categories/components/CategoryOptions';
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -135,11 +139,16 @@ const ProductInfo = ({
     active,
     productInfo,
     setProductInfo,
-    categories,
     tradePolicies,
     skuInfo,
     setSkuInfo,
-    brandsInfo
+    brandsInfo,
+    setFlagBrand,
+    flagBrand,
+    setNewBrandSku,
+    setFlagCategory,
+    flagCategory,
+    setNewCategorySku
 }: {
     product: any;
     setValueSku: any;
@@ -148,21 +157,35 @@ const ProductInfo = ({
     active: boolean;
     productInfo: any;
     setProductInfo: any;
-    categories: any;
     tradePolicies: any;
     skuInfo: Skus | undefined;
     setSkuInfo: any;
     brandsInfo: BrandType[] | undefined;
+    setFlagBrand: any;
+    flagBrand: boolean;
+    setNewBrandSku: any;
+    setFlagCategory: any;
+    flagCategory: boolean;
+    setNewCategorySku: any;
 }) => {
     const intl = useIntl();
-    const wrapperRef = useRef(null);
     const dispatch = useDispatch();
-    const history = useNavigate();
+    const wrapperRef = useRef(null);
+    /* const dispatch = useDispatch(); */
+    /* const history = useNavigate(); */
+
+    // info Brands
     const [button, setButton] = useState(false);
     const [display, setDisplay] = useState(false);
-    const [search, setSearch] = useState('');
-    const [brandSku, setBrandSku] = useState<BrandType>();
-    const cart = useSelector((state) => state.cart);
+    const [search, setSearch] = useState(product?.brandName);
+
+    // info Categories
+    const [buttonCat, setButtonCat] = useState(false);
+    const [displayCat, setDisplayCat] = useState(false);
+    const [searchCat, setSearchCat] = useState(product?.categoryName);
+
+    const { filterCategories, loading } = useSelector((state) => state.catalogue);
+    /* const cart = useSelector((state) => state.cart); */
     /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
     );
@@ -173,6 +196,10 @@ const ProductInfo = ({
             setDisplay(false);
         }
     };
+    useEffect(() => {
+        dispatch(getCategoriesService({ idMerchant: 1 }));
+    }, [dispatch]);
+    console.log('falgCatsd', filterCategories);
     useEffect(() => {
         window.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -210,13 +237,25 @@ const ProductInfo = ({
     });
     const customBrand = (value: SetStateAction<string>, id: number) => {
         setSearch(value);
+        setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
     const newBrand = (value: SetStateAction<string>) => {
         setSearch(value);
-        /* setFlagBrand(true) */
-        /* setBrand(value, null) */
-        /* handleCreateBrandModal(value) */
+        setFlagBrand(true);
+        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
+        setDisplay(false);
+    };
+    const customCategory = (value: SetStateAction<string>, id: number) => {
+        setSearch(value);
+        setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
+        setDisplay(false);
+    };
+    const newCategory = (value: SetStateAction<string>, id: number | null) => {
+        setSearch(value);
+        setFlagBrand(true);
+        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
+        setDisplay(false);
     };
     /* const selectTradePolicy =(idPolicy)=> {
         const res = product?.tradePolicies?.filter((tr: any) =>{
@@ -398,49 +437,51 @@ const ProductInfo = ({
                             '& .MuiTextField-root': { mt: 2 }
                         }}
                     >
-                        <FormControl fullWidth ref={wrapperRef}>
+                        <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
                             <TextField
                                 fullWidth
-                                multiline
                                 id="outlined-basic"
                                 label="Marca"
                                 variant="outlined"
                                 name="brandName"
-                                defaultValue={product?.brandName}
-                                value={productInfo?.brandName}
-                                onChange={handleChangeProd}
+                                /* defaultValue={product?.brandName} */
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 onClick={() => setDisplay(true)}
                             />
                             {display && (
-                                <div className="autoContainer">
+                                <div className="BrandsAutoContainer">
                                     <div className="btn-add">
-                                        <input
-                                            className="input is-normal"
-                                            type="text"
-                                            placeholder="+ Crear Marca"
+                                        <TextField
+                                            fullWidth
+                                            sx={{ width: '90%' }}
+                                            id="outlined-basic"
+                                            label="+ Nueva Marca"
+                                            variant="outlined"
+                                            /* defaultValue={product?.brandName} */
                                             onClick={() => setButton(true)}
-                                            onBlur={(event) => {
-                                                newBrand(event.target.value);
-                                                /* setValueField({
-                                                ...valueField,
-                                                brandName: event.target.value
-                                            }); */
-                                            }}
+                                            onBlur={(event) => newBrand(event.target.value)}
                                         />
 
                                         {button && (
-                                            <Button variant="contained" color="success" size="large">
-                                                <i className="fas fa-plus-circle" />
-                                            </Button>
+                                            <IconButton color="success" size="large">
+                                                <AddCircleOutlineIcon />
+                                            </IconButton>
                                         )}
                                     </div>
                                     {brandsInfo
-                                        ?.filter(({ name }) => name.indexOf(search.toLowerCase()) > -1)
+                                        ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
                                         .map((v: BrandType, i: Key): any => (
                                             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-                                            <div onClick={() => customBrand(v.name, v.idBrand)} className="option" key={i}>
-                                                <Typography variant="body2">{v.name}</Typography>
-                                            </div>
+                                            <Typography
+                                                variant="body2"
+                                                className="brandsOption"
+                                                sx={{ pl: 2, pt: 1, pb: 1 }}
+                                                key={i}
+                                                onClick={() => customBrand(v.name, v.idBrand)}
+                                            >
+                                                {v.name}
+                                            </Typography>
                                         ))}
                                 </div>
                             )}
@@ -464,10 +505,66 @@ const ProductInfo = ({
                             label="Categoria"
                             variant="outlined"
                             name="categoryName"
-                            defaultValue={product?.categoryName}
-                            value={productInfo?.categoryName}
-                            onChange={handleChangeProd}
+                            value={searchCat}
+                            onClick={() => setDisplayCat(true)}
+                            onChange={(e) => {
+                                setSearchCat(e.target.value);
+                            }}
                         />
+                        {displayCat && (
+                            <div className="autoContainer">
+                                <div className="btn-add">
+                                    <input
+                                        className="input is-normal"
+                                        type="text"
+                                        placeholder="+ Crear Categoría Padre"
+                                        onClick={() => {
+                                            setButtonCat(true);
+                                            setSearchCat('');
+                                        }}
+                                        onBlur={(event) => newCategory(event.target.value, null)}
+                                    />
+                                    {buttonCat && (
+                                        // eslint-disable-next-line react/button-has-type
+                                        <button className="button is-success">
+                                            <i className="fas fa-plus-circle" />
+                                        </button>
+                                    )}
+                                </div>
+                                {filterCategories
+                                    .filter(({ name }) => name.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
+                                    .map((v) => {
+                                        const rtn = (
+                                            <>
+                                                <div
+                                                    className="option2"
+                                                    key={v.id}
+                                                    /* tabIndex="0" */
+                                                    style={{
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <CategoryOptions flatCat={v} /* onClick={customCategory(v.name, v.id)} */ />
+                                                    <div className="add">
+                                                        <input
+                                                            className="input is-small"
+                                                            placeholder="Agregar"
+                                                            style={{
+                                                                maxWidth: '150px'
+                                                            }}
+                                                            onBlur={(event) => newCategory(event.target.value, v.id)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        );
+
+                                        return rtn;
+                                    })}
+                            </div>
+                        )}
                     </Box>
                 ) : (
                     <Typography variant="h4">{product?.categoryName}</Typography>

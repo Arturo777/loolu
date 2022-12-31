@@ -45,3 +45,22 @@
     bottom: 5px;
     right: 5px;
 }
+.BrandsAutoContainer {
+    position: absolute;
+    background: #1a223f;
+    width: 100%;
+    z-index: 2000;
+    top: 100%;
+    box-shadow: 7px 9px 6px -3px rgba(0, 0, 0, 0.59);
+}
+.BrandsAutoContainer .btn-add {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+.brandsOption:hover,
+.categoryOption:hover {
+    border: 1px solid #2196f3;
+    cursor: pointer;
+}
