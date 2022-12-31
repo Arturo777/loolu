@@ -7,7 +7,7 @@ const CategoryOptions = ({ flatCat }: { flatCat: FilterCategoryType }) => {
         return <Typography>{`${flatCat.grandFatherName} (Padre) > ${flatCat.fatherName} > ${flatCat.name}`}</Typography>;
     }
     if (flatCat.fatherName) {
-        return <Typography> {`${flatCat.fatherName} (Padre)` + ` > ${flatCat.name}`} </Typography>;
+        return <Typography> {`${flatCat.fatherName} (Padre) > ${flatCat.name}`} </Typography>;
     }
     return <Typography variant="body2" className="categoryOption" sx={{ pl: 2, pt: 1, pb: 1 }}>{`${flatCat.name} (Padre)`}</Typography>;
 };
