@@ -13,7 +13,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import ChatBubbleTwoToneIcon from '@mui/icons-material/ChatBubbleTwoTone';
 
 // types
-import { UserProfileCardProps } from 'types/user';
+import { UserProfileCardProps } from 'types/security';
 
 const avatarImage = require.context('assets/images/profile', true);
 

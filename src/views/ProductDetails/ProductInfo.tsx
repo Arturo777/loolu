@@ -500,7 +500,6 @@ const ProductInfo = ({
                     >
                         <TextField
                             fullWidth
-                            multiline
                             id="outlined-basic"
                             label="Categoria"
                             variant="outlined"
@@ -514,10 +513,10 @@ const ProductInfo = ({
                         {displayCat && (
                             <div className="autoContainer">
                                 <div className="btn-add">
-                                    <input
-                                        className="input is-normal"
-                                        type="text"
-                                        placeholder="+ Crear Categoría Padre"
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="+ Crear Categoría Padre"
+                                        variant="outlined"
                                         onClick={() => {
                                             setButtonCat(true);
                                             setSearchCat('');

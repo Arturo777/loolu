@@ -9,18 +9,12 @@ import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 // project imports
 import { TablerIcon } from '@tabler/icons';
-import { CartStateProps } from './cart';
-import { KanbanStateProps } from './kanban';
-import { CustomerStateProps } from './customer';
-import { ContactStateProps } from './contact';
 import { ProductStateProps } from './e-commerce';
-import { ChatStateProps } from './chat';
-import { CalendarStateProps } from './calendar';
-import { MailStateProps } from './mail';
-import { AuthStateProps, ProfileStateProps, UserStateProps } from './user';
+import { CartStateProps } from './cart';
+import { AuthStateProps, ProfileStateProps, SecurityStateProps } from './security';
 
 import { SnackbarProps } from './snackbar';
-import { CatalogueStateProps } from './catalogue';
+import { CatalogStateProps } from './catalog';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -115,18 +109,12 @@ export interface ColorPaletteProps {
 export interface DefaultRootStateProps {
     snackbar: SnackbarProps;
     cart: CartStateProps;
-    kanban: KanbanStateProps;
-    customer: CustomerStateProps;
-    contact: ContactStateProps;
     product: ProductStateProps;
-    chat: ChatStateProps;
-    calendar: CalendarStateProps;
-    mail: MailStateProps;
     // loolu
-    user: UserStateProps;
+    security: SecurityStateProps;
     auth: AuthStateProps;
     profile: ProfileStateProps;
-    catalogue: CatalogueStateProps;
+    catalogue: CatalogStateProps;
 }
 
 export interface ColorProps {

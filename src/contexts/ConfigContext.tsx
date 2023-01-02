@@ -30,7 +30,7 @@ type ConfigProviderProps = {
 };
 
 function ConfigProvider({ children }: ConfigProviderProps) {
-    const [config, setConfig] = useLocalStorage('berry-config', {
+    const [config, setConfig] = useLocalStorage('loolu-config', {
         fontFamily: initialState.fontFamily,
         borderRadius: initialState.borderRadius,
         outlinedFilled: initialState.outlinedFilled,

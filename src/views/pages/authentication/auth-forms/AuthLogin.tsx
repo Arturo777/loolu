@@ -53,8 +53,8 @@ const AwsCognitoLogin = ({ loginProp }: { loginProp?: number }, { ...others }) =
     return (
         <Formik
             initialValues={{
-                email: 'info@codedthemes.com',
-                password: '123456',
+                email: '',
+                password: '',
                 submit: null
             }}
             validationSchema={Yup.object().shape({

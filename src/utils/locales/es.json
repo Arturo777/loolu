@@ -155,11 +155,15 @@
     "hi_welcome": "¡Hola! Bienvenido",
     "enter_credentials": "Ingresa tus datos para continuar",
     "password": "Contraseña",
+    "hello": "Hola",
+    "sign_in": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "account_settings": "Ajustes de cuenta",
 
     "type": "Tipo",
     "description": "Descripción",
     "status": "Estatus",
-    "persmissions": "Accesos",
+    "permissions": "Accesos",
     "active": "Activo",
     "inactive": "Inactivo",
 
@@ -199,5 +203,25 @@
     "show_brand_filter": "Mostrar filtro de marca",
     "show_in_store": "Mostrar en tienda",
 
+<<<<<<< HEAD
     "product-detail-title": "Información del Producto"
+=======
+    "product_details": "Detalle de producto",
+    "required": "Requerido",
+    "search_filter": "Filtro de busqueda",
+    "top_menu": "Top menú",
+
+    "add": "Agregar",
+    "edit": "Editar",
+    "attributes": "Atributos",
+    "values": "Valores",
+    "new_value": "Nuevo valor",
+    "search_facets": "Buscar facets",
+    "select_attributes": "Selecciona atributos para la especificación",
+    "add_values": "Agrega valores para la especificación",
+    "associate_facet_category": "Asociar Facet-Categoria",
+
+    "save": "Guardar",
+    "cancel": "Cancelar"
+>>>>>>> e3e097f1efcd784a0fde9164d2209bde3d385bbf
 }

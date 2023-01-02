@@ -18,10 +18,10 @@ import { Products, Skus } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
-import { getBrands } from 'store/slices/catalogue';
+import { getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
-import { BrandType, CategoryType } from 'types/catalogue';
+import { BrandType, CategoryType } from 'types/catalog';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -47,7 +47,7 @@ function a11yProps(index: number) {
 const ProductDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
-    const cart = useSelector((state: DefaultRootStateProps) => state.cart);
+    const cart = useSelector((state) => state.cart);
 
     // information product and sku
     const [productInfo, setProductInfo] = useState<Products>();

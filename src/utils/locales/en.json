@@ -35,7 +35,7 @@
     "product-list": "Product List",
     "checkout": "Checkout",
     "security": "Security",
-    "catalogue": "Catalogue",
+    "catalogue": "Catalog",
 
     "forms": "Forms",
     "components": "Components",
@@ -149,21 +149,25 @@
     "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiatnulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollitanim id est laborum.",
 
     "rows": "Rows",
-    "search": "Buscar",
+    "search": "Search",
     "filter": "Filter",
 
     "hi_welcome": "Hi, Welcome back",
     "enter_credentials": "Enter your credentials to continue",
     "password": "Password",
+    "hello": "Hello",
+    "sign_in": "Sign in",
+    "logout": "Logout",
+    "account_settings": "Account settings",
 
     "type": "Type",
     "description": "Description",
     "status": "Status",
-    "persmissions": "Persmissions",
+    "permissions": "Permissions",
     "active": "Active",
     "inactive": "Inactive",
 
-    "create_profile": "Add Profile",
+    "create_profile": "Create Profile",
     "edit_profile": "Edit Profile",
 
     "brands": "Brands",
@@ -199,5 +203,25 @@
     "show_brand_filter": "Show brand filters",
     "show_in_store": "Show in store",
 
+<<<<<<< HEAD
     "product-detail-title": "Product Information"
+=======
+    "product_details": "Product details",
+    "required": "Required",
+    "search_filter": "Search filter",
+    "top_menu": "Top menu",
+
+    "add": "Add",
+    "edit": "Edit",
+    "attributes": "Attributes",
+    "values": "Values",
+    "new_value": "New value",
+    "search_facets": "Search facets",
+    "select_attributes": "Select attributes for the specification",
+    "add_values": "Add values for the especification",
+    "associate_facet_category": "Associate Facet-Category",
+
+    "save": "Save",
+    "cancel": "Cancel"
+>>>>>>> e3e097f1efcd784a0fde9164d2209bde3d385bbf
 }

@@ -24,9 +24,15 @@ export const userPool = new CognitoUserPool({
     ClientId: AWS_API.appClientId || ''
 });
 
-const setSession = (serviceToken?: string | null) => {
-    if (serviceToken) {
+type setSessionProps = {
+    serviceToken?: string | null;
+    user?: string | null;
+};
+
+const setSession = ({ serviceToken, user }: setSessionProps) => {
+    if (serviceToken && user) {
         localStorage.setItem('serviceToken', serviceToken);
+        localStorage.setItem('user', user);
     } else {
         localStorage.removeItem('serviceToken');
     }
@@ -42,14 +48,15 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
         const init = async () => {
             try {
                 const serviceToken = window.localStorage.getItem('serviceToken');
+                const userName = window.localStorage.getItem('user') ?? '';
                 if (serviceToken) {
-                    setSession(serviceToken);
+                    setSession({ serviceToken, user: userName });
                     dispatch({
                         type: LOGIN,
                         payload: {
                             isLoggedIn: true,
                             user: {
-                                name: 'Betty'
+                                user: userName
                             }
                         }
                     });
@@ -82,16 +89,15 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
 
         usr.authenticateUser(authData, {
             onSuccess: (session: CognitoUserSession) => {
-                console.log(session.getAccessToken().getJwtToken());
-                setSession(session.getAccessToken().getJwtToken());
+                setSession({ serviceToken: session.getAccessToken().getJwtToken(), user: authData.getUsername() });
 
                 dispatch({
                     type: LOGIN,
                     payload: {
                         isLoggedIn: true,
                         user: {
-                            email: authData.getUsername(),
-                            name: 'John Doe'
+                            // email: authData.get(),
+                            user: authData.getUsername()
                         }
                     }
                 });
@@ -134,7 +140,7 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
     const logout = () => {
         const loggedInUser = userPool.getCurrentUser();
         if (loggedInUser) {
-            setSession(null);
+            setSession({});
             loggedInUser.signOut();
             dispatch({ type: LOGOUT });
         }

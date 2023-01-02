@@ -17,7 +17,8 @@ import { useDispatch, useSelector } from 'store';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
-import { setAuthData } from 'store/slices/auth';
+import { getUserProfile } from 'store/slices/auth';
+import useAuth from 'hooks/useAuth';
 
 interface MainStyleProps {
     theme: Theme;
@@ -75,13 +76,18 @@ const MainLayout = () => {
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
 
     const dispatch = useDispatch();
+    const { user } = useAuth();
     const { drawerOpen } = useSelector((state) => state.menu);
     const { container } = useConfig();
 
     React.useEffect(() => {
         // handle login
-        dispatch(setAuthData('ohuitron'));
-    }, [dispatch]);
+        if (user && user?.user) {
+            console.log('CognitoUser:', user?.user);
+            // TODO: SEND CognitoUser USER
+            dispatch(getUserProfile('ohuitron'));
+        }
+    }, [dispatch, user]);
 
     React.useEffect(() => {
         dispatch(openDrawer(!matchDownMd));
