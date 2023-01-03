@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/interactive-supports-focus */
 import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
@@ -28,9 +29,20 @@ import {
     ListItemText,
     OutlinedInput,
     IconButton,
-    Switch
+    Switch,
+    Card,
+    Drawer,
+    SwipeableDrawer,
+    ListItemButton,
+    ListItemIcon,
+    Tooltip,
+    Collapse,
+    InputAdornment
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
+import { IconSearch } from '@tabler/icons';
 import formatUrl from 'utils/formatUrl';
 import { SelectChangeEvent } from '@mui/material/Select';
 // third-party
@@ -49,13 +61,15 @@ import { addProduct } from 'store/slices/cart';
 import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone'; */
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Key, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Key, MouseEventHandler, SetStateAction, createContext, useEffect, useRef, useState } from 'react';
 
 import ProductDimensions from './ProductDimensions';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { BrandType, CategoryType } from 'types/catalogue';
-import { getCategoriesService } from 'store/slices/catalogue';
-import CategoryOptions from 'views/Categories/components/CategoryOptions';
+import { BrandType, CategoryType } from 'types/catalog';
+import { getCategoriesService } from 'store/slices/catalog';
+import CategoryOptions from 'views/Catalog/Categories/components/CategoryOptions';
+import { CustomizationProps } from 'types/config';
+import ConfigProvider from 'config';
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -129,6 +143,7 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
         margin: 2
     }
 }));
+type Anchor = 'top' | 'left' | 'bottom' | 'right';
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
 const ProductInfo = ({
@@ -171,9 +186,15 @@ const ProductInfo = ({
     const intl = useIntl();
     const dispatch = useDispatch();
     const wrapperRef = useRef(null);
+    const [stateDrawer, setStateDrawer] = useState({
+        top: false,
+        left: false,
+        bottom: false,
+        right: false
+    });
+    const [selectedCatId, setSelectedCatId] = useState<number>();
     /* const dispatch = useDispatch(); */
     /* const history = useNavigate(); */
-
     // info Brands
     const [button, setButton] = useState(false);
     const [display, setDisplay] = useState(false);
@@ -184,12 +205,19 @@ const ProductInfo = ({
     const [displayCat, setDisplayCat] = useState(false);
     const [searchCat, setSearchCat] = useState(product?.categoryName);
 
-    const { filterCategories, loading } = useSelector((state) => state.catalogue);
+    const { filterCategories, categories } = useSelector((state) => state.catalogue);
     /* const cart = useSelector((state) => state.cart); */
     /* const flatCategories = categories.map((cat: any) =>
         cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
     );
     console.log(flatCategories); */
+    const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+            return;
+        }
+
+        setStateDrawer({ ...stateDrawer, [anchor]: open });
+    };
     const handleClickOutside = (event: { target: any }) => {
         const { current: wrap }: any = wrapperRef;
         if (wrap && !wrap.contains(event.target)) {
@@ -199,7 +227,7 @@ const ProductInfo = ({
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
     }, [dispatch]);
-    console.log('falgCatsd', filterCategories);
+
     useEffect(() => {
         window.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -210,6 +238,7 @@ const ProductInfo = ({
         const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
         setSkuInfo(skuprod[0]);
     }, [product?.skus, setSkuInfo, valueSku]);
+
     const handleRadioChange = (event: { target: { value: any } }) => {
         setValueSku(event.target.value);
     };
@@ -246,13 +275,13 @@ const ProductInfo = ({
         setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
         setDisplay(false);
     };
-    const customCategory = (value: SetStateAction<string>, id: number) => {
-        setSearch(value);
+    const customCategory = (value: string, id: number) => {
+        setSearchCat(value);
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
     const newCategory = (value: SetStateAction<string>, id: number | null) => {
-        setSearch(value);
+        setSearchCat(value);
         setFlagBrand(true);
         setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
         setDisplay(false);
@@ -262,6 +291,10 @@ const ProductInfo = ({
             tr
         })
     } */
+    const openCreateFormById = (catId?: number) => {
+        // open form from categories list
+        setSelectedCatId(catId);
+    };
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -406,7 +439,7 @@ const ProductInfo = ({
                 )}
             </Grid>
             <Grid item xs={12}>
-                <Typography variant="body1" sx={{ ml: 2 }}>
+                <Typography variant="body1" sx={{ ml: 1 }}>
                     ID: {product?.productID}{' '}
                     {active ? (
                         <Box
@@ -450,11 +483,11 @@ const ProductInfo = ({
                                 onClick={() => setDisplay(true)}
                             />
                             {display && (
-                                <div className="BrandsAutoContainer">
+                                <div className={ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'}>
                                     <div className="btn-add">
                                         <TextField
                                             fullWidth
-                                            sx={{ width: '90%' }}
+                                            sx={{ width: '80%' }}
                                             id="outlined-basic"
                                             label="+ Nueva Marca"
                                             variant="outlined"
@@ -495,25 +528,58 @@ const ProductInfo = ({
                 {active ? (
                     <Box
                         sx={{
-                            '& .MuiTextField-root': { mt: 2 }
+                            '& .MuiTextField-root': { mt: 2 },
+                            position: 'relative'
                         }}
                     >
-                        <TextField
-                            fullWidth
-                            id="outlined-basic"
-                            label="Categoria"
-                            variant="outlined"
-                            name="categoryName"
-                            value={searchCat}
-                            onClick={() => setDisplayCat(true)}
-                            onChange={(e) => {
-                                setSearchCat(e.target.value);
-                            }}
-                        />
+                        <Button onClick={toggleDrawer('right', true)} variant="contained">
+                            Categoría
+                        </Button>
+
+                        <SwipeableDrawer
+                            sx={{ width: '600px' }}
+                            anchor="right"
+                            open={stateDrawer.right}
+                            onClose={toggleDrawer('right', false)}
+                            onOpen={toggleDrawer('right', true)}
+                        >
+                            {/* <TextField
+                                fullWidth
+                                id="outlined-basic"
+                                label="Buscar Categoría"
+                                variant="outlined"
+                                name="categoryName"
+                                
+                            /> */}
+                            <OutlinedInput
+                                sx={{ ml: 3, mt: 3, width: '90%' }}
+                                id="input-search-list-style1"
+                                placeholder={intl.formatMessage({
+                                    id: 'search'
+                                })}
+                                startAdornment={
+                                    <InputAdornment position="start">
+                                        <IconSearch stroke={1.5} size="16px" />
+                                    </InputAdornment>
+                                }
+                                size="small"
+                                value={searchCat}
+                                /* onClick={toggleDrawer('right', true)} */
+                                onChange={(e) => {
+                                    setSearchCat(e.target.value);
+                                }}
+                            />
+                            {categories
+                                ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
+                                .map((category) => (
+                                    <MainCategoryComponent category={category} />
+                                ))}
+                        </SwipeableDrawer>
                         {displayCat && (
-                            <div className="autoContainer">
+                            <div className={ConfigProvider.navType === 'dark' ? 'CatsAutoContainerDark' : 'CatssAutoContainerWhite'}>
                                 <div className="btn-add">
                                     <TextField
+                                        sx={{ width: '90%' }}
                                         id="outlined-basic"
                                         label="+ Crear Categoría Padre"
                                         variant="outlined"
@@ -524,44 +590,39 @@ const ProductInfo = ({
                                         onBlur={(event) => newCategory(event.target.value, null)}
                                     />
                                     {buttonCat && (
-                                        // eslint-disable-next-line react/button-has-type
-                                        <button className="button is-success">
-                                            <i className="fas fa-plus-circle" />
-                                        </button>
+                                        <IconButton color="success" size="large">
+                                            <AddCircleOutlineIcon />
+                                        </IconButton>
                                     )}
                                 </div>
-                                {filterCategories
+                                {/* {filterCategories
                                     .filter(({ name }) => name.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
-                                    .map((v) => {
-                                        const rtn = (
-                                            <>
-                                                <div
-                                                    className="option2"
-                                                    key={v.id}
-                                                    /* tabIndex="0" */
-                                                    style={{
-                                                        display: 'flex',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center'
-                                                    }}
-                                                >
-                                                    <CategoryOptions flatCat={v} /* onClick={customCategory(v.name, v.id)} */ />
-                                                    <div className="add">
-                                                        <input
-                                                            className="input is-small"
-                                                            placeholder="Agregar"
-                                                            style={{
-                                                                maxWidth: '150px'
-                                                            }}
-                                                            onBlur={(event) => newCategory(event.target.value, v.id)}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </>
-                                        );
+                                    .map((v) => (
+                                        <>
+                                            <div
+                                                className="option2"
+                                                key={v.id}
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                <CategoryOptions flatCat={v} customCategory={() => customCategory(v.name, v.id)} />
 
-                                        return rtn;
-                                    })}
+                                                <div className="categoryOption">
+                                                    <TextField
+                                                        sx={{ width: '150px' }}
+                                                        placeholder="Agregar"
+                                                        onBlur={(event) => newCategory(event.target.value, v.id)}
+                                                    />
+                                                    <IconButton color="success" size="large">
+                                                        <AddCircleOutlineIcon />
+                                                    </IconButton>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ))} */}
                             </div>
                         )}
                     </Box>
@@ -876,3 +937,48 @@ const ProductInfo = ({
 };
 
 export default ProductInfo;
+type MainCategoryProps = {
+    category: CategoryType;
+    /* openCreate: (catId: number) => void; */
+};
+const MainCategoryComponent = ({ category }: MainCategoryProps) => {
+    // hooks
+    const intl = useIntl();
+
+    // vars
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => {
+        setOpen(!open);
+    };
+    return (
+        <>
+            <ListItemButton sx={{ paddingY: 0, width: '600px' }}>
+                <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
+                    {category.children?.length ? <ExpandCircleDownIcon /> : null}
+                </ListItemIcon>
+                <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
+                {/* CREATE */}
+                {/* <Tooltip title="Crear subcategoria">
+                    <IconButton
+                        onClick={() => {
+                            openCreate(category.id);
+                        }}
+                    >
+                        <AddBoxIcon />
+                    </IconButton>
+                </Tooltip> */}
+            </ListItemButton>
+
+            {Boolean(category.children?.length) && (
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    {category.children.map((itemA) => (
+                        <Box key={`category-child-${itemA.id}`} sx={{ ml: 1 }}>
+                            <MainCategoryComponent category={itemA} /* openCreate={openCreate} */ />
+                        </Box>
+                    ))}
+                </Collapse>
+            )}
+        </>
+    );
+};

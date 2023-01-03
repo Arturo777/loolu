@@ -202,10 +202,7 @@
     "active_link": "Active link",
     "show_brand_filter": "Show brand filters",
     "show_in_store": "Show in store",
-
-<<<<<<< HEAD
-    "product-detail-title": "Product Information"
-=======
+    "product-detail-title": "Product Information",
     "product_details": "Product details",
     "required": "Required",
     "search_filter": "Search filter",
@@ -223,5 +220,4 @@
 
     "save": "Save",
     "cancel": "Cancel"
->>>>>>> e3e097f1efcd784a0fde9164d2209bde3d385bbf
 }

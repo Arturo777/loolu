@@ -45,7 +45,8 @@
     bottom: 5px;
     right: 5px;
 }
-.BrandsAutoContainer {
+.BrandsAutoContainerDark,
+.CatsAutoContainerDark {
     position: absolute;
     background: #1a223f;
     width: 100%;

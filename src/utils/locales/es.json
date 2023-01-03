@@ -202,10 +202,7 @@
     "active_link": "Activar link",
     "show_brand_filter": "Mostrar filtro de marca",
     "show_in_store": "Mostrar en tienda",
-
-<<<<<<< HEAD
-    "product-detail-title": "Información del Producto"
-=======
+    "product-detail-title": "Información del Producto",
     "product_details": "Detalle de producto",
     "required": "Requerido",
     "search_filter": "Filtro de busqueda",
@@ -223,5 +220,4 @@
 
     "save": "Guardar",
     "cancel": "Cancelar"
->>>>>>> e3e097f1efcd784a0fde9164d2209bde3d385bbf
 }

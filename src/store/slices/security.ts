@@ -115,7 +115,7 @@ export function getUsersList(idMerchant?: string) {
         dispatch(slice.actions.getUsersListPending());
         try {
             const response = await axios.get(`styrk/api/user/searchall`, {
-                baseURL,
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
                 }
@@ -134,7 +134,7 @@ export function getUserInfo(userId: number, idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/user/searchall`, {
-                baseURL,
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
                 }
@@ -189,7 +189,7 @@ export function getProfiles(idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/profile/search`, {
-                baseURL,
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
                 }
@@ -208,7 +208,7 @@ export function getProviders(idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/supplier/search`, {
-                baseURL,
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
                 }
@@ -227,7 +227,7 @@ export function getApprovalProfiles(idMerchant?: string) {
 
         try {
             const response = await axios.get(`styrk/api/product/approvalprofile`, {
-                baseURL,
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
                 }
@@ -262,7 +262,7 @@ export function getMenuPermissions(idMerchant?: number) {
     return async () => {
         try {
             const response = await axios.get(`styrk/api/menu/search`, {
-                baseURL,
+                baseURL: STYRK_API,
                 params: {
                     idMerchant: idMerchant || 1
                 }
