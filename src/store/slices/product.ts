@@ -1,17 +1,18 @@
 // third-party
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import axios from 'utils/axios';
+import axios from 'axios';
 import { dispatch } from '../index';
-import { STYRK_API } from 'config';
+import { STYRK_API, STYRK_TOKEN } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { ProductsFilter, Address } from 'types/e-commerce';
+import { ProductsFilter, Address, Products } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
+const baseURL = process.env.REACT_APP_STYRK_API;
 
 const initialState: DefaultRootStateProps['product'] = {
     error: null,
@@ -20,6 +21,7 @@ const initialState: DefaultRootStateProps['product'] = {
     relatedProducts: [],
     skus: [],
     categories: [],
+    tradePolicies: [],
     reviews: [],
     addresses: [],
     loadingProducts: true
@@ -39,7 +41,7 @@ const slice = createSlice({
         },
 
         // GET PRODUCTS
-        getProductsSuccess(state, action) {
+        /* getProductsSuccess(state, action) {
             const products = action.payload.map((item: ProductCardProps) => ({
                 ...item,
                 date: item.releaseDate,
@@ -51,7 +53,7 @@ const slice = createSlice({
 
             state.products = products;
             state.loadingProducts = false;
-        },
+        }, */
 
         // FILTER PRODUCTS
         filterProductsSuccess(state, action) {
@@ -59,26 +61,18 @@ const slice = createSlice({
         },
 
         // GET PRODUCT
-        getProductSuccess(state, action) {
-            /* console.log(action); */
-            /* const productOneProd = action.payload.map((item: ProductItem) => ({
-                ...item,
-                date: item.releaseDate,
-                image: item.imageUrl,
-                name: item.productName || item.skuName || '',
-                offerPrice: 1000,
-                salePrice: 1300
-            }));
-
-            console.log(productOneProd); */
+        /* getProductSuccess(state, action) {
             state.product = action.payload;
-        },
+        }, */
         // GET SKUS
         getSkuSuccess(state, action) {
             state.skus = action.payload;
         },
         getCategoriesSuccess(state, action) {
             state.categories = action.payload;
+        },
+        getTradePoliciesSucces(state, action) {
+            state.tradePolicies = action.payload;
         },
         // GET RELATED PRODUCTS
         getRelatedProductsSuccess(state, action) {
@@ -104,6 +98,43 @@ const slice = createSlice({
         editAddressSuccess(state, action) {
             state.addresses = action.payload;
         }
+    },
+    extraReducers(builder) {
+        builder
+            .addCase(getProducts.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(getProducts.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                const products = action.payload.response.map((item: ProductCardProps) => ({
+                    ...item,
+                    date: item.releaseDate,
+                    image: item.imageUrl,
+                    name: item.productName || item.skuName || '',
+                    offerPrice: 1000,
+                    salePrice: 1300
+                }));
+                state.products = products;
+            });
+
+        builder
+            .addCase(getProduct.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(getProduct.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                action.payload.response.departmentId = action.payload.response.categoryId;
+
+                state.product = action.payload.response;
+            });
+
+        builder
+            .addCase(saveProduct.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(saveProduct.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+            });
     }
 });
 
@@ -123,65 +154,58 @@ export interface SearchProductType {
 
 // ----------------------------------------------------------------------
 
-export function getProducts(searchParams: SearchProductType) {
-    return async () => {
-        dispatch(slice.actions.getProductsPending());
+export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (searchParams: SearchProductType) => {
+    dispatch(slice.actions.getProductsPending());
 
-        const hasParams = Boolean(
-            searchParams.productName ||
-                searchParams.ean ||
-                searchParams.idSKU ||
-                searchParams.productRefID ||
-                searchParams.idProd ||
-                searchParams.idApprovalStatus
-        );
-
-        try {
-            const response = await axios.get(`styrk/api/product/search`, {
-                baseURL: STYRK_API,
-                params: {
-                    idMerchant: searchParams.idMerchant || 1,
-                    page: searchParams.page || hasParams ? 0 : 1,
-                    productName: searchParams.productName || null,
-                    idSKU: searchParams.idSKU,
-                    idProd: searchParams.idProd
-                }
-            });
-            dispatch(slice.actions.getProductsSuccess(response.data.response));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
+    const hasParams = Boolean(
+        searchParams.productName ||
+            searchParams.ean ||
+            searchParams.idSKU ||
+            searchParams.productRefID ||
+            searchParams.idProd ||
+            searchParams.idApprovalStatus
+    );
+    const response = await axios.get(`styrk/api/product/search`, {
+        baseURL,
+        params: {
+            idMerchant: searchParams.idMerchant || 1,
+            page: searchParams.page || hasParams ? 0 : 1,
+            productName: searchParams.productName || null,
+            idSKU: searchParams.idSKU,
+            idProd: searchParams.idProd
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
         }
-    };
-}
+    });
+    return response.data;
+});
 
 export function filterProducts(filter: ProductsFilter) {
     return async () => {
         try {
-            const response = await axios.post('/api/products/filter', { filter });
-            dispatch(slice.actions.filterProductsSuccess(response.data));
+            /* const response = await axios.post('/api/products/filter', { filter });
+            dispatch(slice.actions.filterProductsSuccess(response.data)); */
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
     };
 }
 
-export function getProduct(id: string | undefined) {
-    return async () => {
-        try {
-            const response = await axios.get('styrk/api/product/detail/productSkus', {
-                baseURL: STYRK_API,
-                params: {
-                    idMerchant: 1,
-                    idProd: id,
-                    page: 0
-                }
-            });
-            dispatch(slice.actions.getProductSuccess(response.data.response));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
+export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async (id: string | undefined) => {
+    const response = await axios.get('styrk/api/product/detail/productSkus', {
+        baseURL,
+        params: {
+            idMerchant: 1,
+            idProd: id,
+            page: 0
+        },
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
         }
-    };
-}
+    });
+    return response.data;
+});
 
 export function getSku(id: string | undefined) {
     return async () => {
@@ -191,6 +215,9 @@ export function getSku(id: string | undefined) {
                 params: {
                     idMerchant: 1,
                     idSKU: id
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getSkuSuccess(response.data.response));
@@ -199,6 +226,19 @@ export function getSku(id: string | undefined) {
         }
     };
 }
+
+type productBody = Products;
+
+export const saveProduct = createAsyncThunk(`${slice.name}/saveProduct`, async (productBody: productBody) => {
+    const response = await axios.post('styrk/api/product/save/product', productBody, {
+        baseURL,
+        headers: {
+            authorization: `Bearer ${STYRK_TOKEN}`
+        }
+    });
+    console.log('res-guardado', response.data);
+    return response.data;
+});
 export function getCategories() {
     return async () => {
         try {
@@ -206,9 +246,30 @@ export function getCategories() {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getCategoriesSuccess(response.data.response));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        }
+    };
+}
+export function getTradePolicies() {
+    return async () => {
+        try {
+            const response = await axios.get('styrk/api/tradepolicies', {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant: 1
+                },
+                headers: {
+                    authorization: `Bearer ${STYRK_TOKEN}`
+                }
+            });
+            dispatch(slice.actions.getTradePoliciesSucces(response.data.response));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }

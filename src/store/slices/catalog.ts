@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'utils/axios';
 import { STYRK_API, STYRK_API_ALTERNATIVE } from 'config';
-import { getCategoriesFlat } from 'utils/helpers';
+import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -21,7 +21,8 @@ const initialState: DefaultRootStateProps['catalogue'] = {
         maxPage: 1
     },
     categories: [],
-    flatCategories: []
+    flatCategories: [],
+    filterCategories: []
 };
 
 const slice = createSlice({
@@ -92,6 +93,7 @@ const slice = createSlice({
                 state.categories = action.payload.response;
 
                 state.flatCategories = getCategoriesFlat(action.payload.response);
+                state.filterCategories = categoriesFlat(action.payload.response);
             })
             .addCase(createCategoryService.pending, (state) => {
                 state.updating = true;

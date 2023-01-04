@@ -42,7 +42,7 @@ function LinearProgressWithLabel({ like, star, color, value, ...others }: Progre
 
 // ==============================|| PRODUCT DETAILS - REVIEWS ||============================== //
 
-const ProductReviews = ({ product }: { product: Products }) => {
+const ProductReviews = ({ product }: { product: any }) => {
     const dispatch = useDispatch();
     const [reviews, setReviews] = useState<Reviews[]>([]);
     const productState = useSelector((state) => state.product);

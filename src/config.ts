@@ -22,15 +22,15 @@ export const AUTH0_API = {
 };
 
 export const AWS_API = {
-    poolId: 'us-east-1_YRimhKJeh',
-    appClientId: '1dqlt9vqcovkrqnebcud7f1s9f'
+    poolId: 'us-east-1_YRimhKJeh' /* process.env.REACT_APP_AWS_POOL_ID */,
+    appClientId: '1dqlt9vqcovkrqnebcud7f1s9f' /* process.env.REACT_APP_AWS_CLIENT_ID */
 };
 
 export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
 export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
 
 export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MTIxMDI3NSwiZXhwIjoxNjcxMjE2Mjc1fQ.RWEvLhropNsNmjExBsgiuf3c2GvijG03XzOYdJXgQGeyoswxH5mkCKBCoGMsJhG9N6nyMJo0DqwmIRn1FKcw2g';
+    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MjcwMzE3MiwiZXhwIjoxNjcyNzA5MTcyfQ.Z8RpShBpsZSXrRXOFHbphYZDKXqqFpUUZNV1OpRI32cCP1-hhhSVF_92PM1peDNK_aboBq7V9Gbd9agSjfB83A';
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
@@ -42,7 +42,7 @@ const config: ConfigProps = {
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 8,
     outlinedFilled: true,
-    navType: 'light', // light, dark
+    navType: 'dark', // light, dark
     presetColor: 'default', // default, theme1, theme2, theme3, theme4, theme5, theme6
     locale: 'en', // 'en' - English, 'fr' - French, 'ro' - Romanian, 'zh' - Chinese
     rtlLayout: false,

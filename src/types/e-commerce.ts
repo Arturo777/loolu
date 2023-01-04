@@ -1,5 +1,7 @@
 // product shop list
 export type Products = {
+    tradePolicies: Trade[];
+    inventoried: boolean | undefined;
     isEcommerce: boolean;
     categoryName: string;
     linkId: string;
@@ -28,7 +30,7 @@ export type Products = {
     brandName?: string;
     brandId: number;
     productID: string | number;
-    skus: any;
+    sku: any;
 };
 
 export type Skus = {
@@ -65,6 +67,21 @@ export type Categories = {
     score: string;
     name: string;
     children: Categories[];
+};
+export type TradePolicies = {
+    TradePolicies: Policy;
+};
+export type Trade = {
+    idPolicy: number;
+    isSelected: boolean;
+    tradePolicyName: string;
+};
+export type Policy = {
+    filter(arg0: (tra: any) => boolean): unknown;
+    isActive: boolean;
+    idMerchant: number;
+    idPolicy: number;
+    name: string;
 };
 // checkout-cart billing address
 export type Address = {
@@ -137,6 +154,7 @@ export interface ProductStateProps {
     relatedProducts: Products[];
     skus: Skus[];
     categories: Categories[];
+    tradePolicies: TradePolicies[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;

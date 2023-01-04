@@ -1,96 +1,148 @@
+/* eslint-disable react/no-unused-prop-types */
 /* eslint-disable @typescript-eslint/dot-notation */
 import item from '../../assets/images/item.png';
 import packageitem from '../../assets/images/package.png';
-import { TextField } from '@mui/material';
+import { TextField, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import filterUnitM, { catalogUnits } from 'utils/unitMeasurement';
 import './style.css';
+import { Key, useEffect, useState } from 'react';
 
-const ProductDimensions = ({ valueSku, product, active }: { valueSku: string; product: any; active: boolean }) => {
-    const resultDim = product.skus.filter((itemSku: any) => itemSku?.skuID === valueSku);
+const ProductDimensions = ({ skuFilter, setSkuInfo, active }: { skuFilter: any; setSkuInfo: any; active: boolean }) => {
+    const handleChangeSku = (event: any) => {
+        if (event.target.name === 'height' || 'length' || 'width') {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: parseInt(event.target.value, 10) }));
+        } else {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+    };
+
     return (
-        <div className="item-package">
-            <div className="content-pack">
+        <>
+            <div className="item-package">
+                <div className="content-pack">
+                    <div className="content-pack">
+                        {active ? (
+                            <>
+                                <TextField
+                                    id="standard-number"
+                                    label="Height"
+                                    type="number"
+                                    name="height"
+                                    defaultValue={skuFilter?.height}
+                                    onChange={handleChangeSku}
+                                />
+                                <TextField
+                                    id="standard-number"
+                                    label="length"
+                                    type="number"
+                                    name="length"
+                                    defaultValue={skuFilter['length']}
+                                    onChange={handleChangeSku}
+                                />
+                                <TextField
+                                    id="standard-number"
+                                    label="width"
+                                    type="number"
+                                    name="width"
+                                    defaultValue={skuFilter?.width}
+                                    onChange={handleChangeSku}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <p className="dim dim-height">{skuFilter?.height}</p>
+                                <img src={item} alt="item" className="img-itemPack" />
+                                {skuFilter ? <p className="dim dim-length">{skuFilter['length']}</p> : <></>}
+                                <p className="dim dim-width">{skuFilter?.width}</p>
+                            </>
+                        )}
+                    </div>
+                </div>
+                <div className="content-pack">
+                    {skuFilter &&
+                        (active ? (
+                            <>
+                                <TextField
+                                    id="standard-number"
+                                    label="Weight"
+                                    type="number"
+                                    name="weightKg"
+                                    defaultValue={skuFilter?.weightKg}
+                                    onChange={handleChangeSku}
+                                />
+                                <TextField
+                                    id="standard-number"
+                                    label="Packaged Weight"
+                                    type="number"
+                                    name="packagedWeightKg"
+                                    defaultValue={skuFilter?.packagedWeightKg}
+                                    onChange={handleChangeSku}
+                                />
+                                <FormControl sx={{ minWidth: 120 }}>
+                                    <InputLabel id="label-unit-measurement">Unidad de Medida</InputLabel>
+                                    <Select
+                                        labelId="label-unit-measurement"
+                                        id="unit-measurement"
+                                        name="measurementUnit"
+                                        label="Unidad de Medida"
+                                        defaultValue={skuFilter?.measurementUnit}
+                                        onChange={handleChangeSku}
+                                    >
+                                        {catalogUnits.map(({ name, unit }: { name: string; unit: string }, index: Key) => (
+                                            <MenuItem sx={{ p: 1.25 }} key={index} value={name}>
+                                                {name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </>
+                        ) : (
+                            <>
+                                <p>Peso (kg): {skuFilter?.weightKg}</p>
+                                <p>Peso Paquete (Kg): {skuFilter?.packagedWeightKg}</p>
+                                <p>Unidad de Medida: {filterUnitM(skuFilter?.measurementUnit)}</p>
+                            </>
+                        ))}
+                </div>
                 <div className="content-pack">
                     {active ? (
                         <>
                             <TextField
                                 id="standard-number"
-                                label="Height"
+                                label="Packaged Height"
                                 type="number"
-                                name="height"
-                                defaultValue={resultDim[0]?.height}
+                                name="packagedHeight"
+                                defaultValue={skuFilter?.packagedHeight}
+                                onChange={handleChangeSku}
                             />
                             <TextField
                                 id="standard-number"
-                                label="length"
+                                label="Packaged Length"
                                 type="number"
-                                name="length"
-                                defaultValue={resultDim[0]['length']}
+                                name="packagedLength"
+                                defaultValue={skuFilter?.packagedLength}
+                                onChange={handleChangeSku}
                             />
-                            <TextField id="standard-number" label="width" type="number" name="width" defaultValue={resultDim[0]?.width} />
+                            <TextField
+                                id="standard-number"
+                                label="Packaged Width"
+                                type="number"
+                                name="packagedWidth"
+                                defaultValue={skuFilter?.packagedWidth}
+                                onChange={handleChangeSku}
+                            />
                         </>
                     ) : (
                         <>
-                            <p className="dim dim-height">{resultDim[0]?.height}</p>
-                            <img src={item} alt="item" className="img-itemPack" />
-                            {resultDim.length ? <p className="dim dim-length">{resultDim[0]['length']}</p> : <></>}
-                            <p className="dim dim-width">{resultDim[0]?.width}</p>
+                            <p className="dim dim-pheight">{skuFilter?.packagedHeight}</p>
+                            <img src={packageitem} alt="package" className="img-itemPack" />
+                            <p className="dim dim-plength">{skuFilter?.packagedLength}</p>
+                            <p className="dim dim-pwidth">{skuFilter?.packagedWidth}</p>
                         </>
                     )}
                 </div>
             </div>
-            <div className={active ? '' : 'content-pack'}>
-                {active ? (
-                    <TextField id="standard-number" label="Weight" type="number" name="weightKg" defaultValue={resultDim[0]?.weightKg} />
-                ) : (
-                    <p>Peso (kg): {resultDim[0]?.weightKg}</p>
-                )}
-                {active ? (
-                    <TextField
-                        id="standard-number"
-                        label="Packaged Weight"
-                        type="number"
-                        name="packagedWeightKg"
-                        defaultValue={resultDim[0]?.packagedWeightKg}
-                    />
-                ) : (
-                    <p>Peso Paquete (Kg): {resultDim[0]?.packagedWeightKg}</p>
-                )}
-            </div>
-            <div className="content-pack">
-                {active ? (
-                    <>
-                        <TextField
-                            id="standard-number"
-                            label="Packaged Height"
-                            type="number"
-                            name="packagedHeight"
-                            defaultValue={resultDim[0]?.packagedHeight}
-                        />
-                        <TextField
-                            id="standard-number"
-                            label="Packaged Length"
-                            type="number"
-                            name="packagedLength"
-                            defaultValue={resultDim[0]?.packagedLength}
-                        />
-                        <TextField
-                            id="standard-number"
-                            label="Packaged Width"
-                            type="number"
-                            name="packagedWidth"
-                            defaultValue={resultDim[0]?.packagedWidth}
-                        />
-                    </>
-                ) : (
-                    <>
-                        <p className="dim dim-height">{resultDim[0]?.packagedHeight}</p>
-                        <img src={packageitem} alt="package" className="img-itemPack" />
-                        <p className="dim dim-length">{resultDim[0]?.packagedLength}</p>
-                        <p className="dim dim-width">{resultDim[0]?.packagedWidth}</p>
-                    </>
-                )}
-            </div>
-        </div>
+        </>
     );
 };
 

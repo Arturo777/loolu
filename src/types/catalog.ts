@@ -10,6 +10,7 @@ export type CatalogStateProps = {
     };
     categories: CategoryType[];
     flatCategories: FlatCategoryType[];
+    filterCategories: FilterCategoryType[];
 };
 
 export type BrandType = {
@@ -49,7 +50,7 @@ export type CategoryType = {
     name: string;
     title: string;
     activeStoreFrontLink: boolean;
-    children: CategoryType[];
+    children: CategoryType[] | [];
     hasChildren: boolean;
     isActive: boolean;
     showBrandFilter: boolean;
@@ -67,6 +68,15 @@ export type FlatCategoryType = {
     description: string;
     hasChildren: boolean;
     level: number;
+};
+
+export type FilterCategoryType = {
+    id: number;
+    name: string;
+    fatherName?: string;
+    grandFatherName?: string;
+    title?: string;
+    hasChildren?: boolean;
 };
 
 export type SpecificationGroupType = {
