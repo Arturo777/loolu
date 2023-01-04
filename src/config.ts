@@ -27,10 +27,7 @@ export const AWS_API = {
 };
 
 export const STYRK_API = process.env.REACT_APP_STYRK_API;
-export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
-
-export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3Mjc2Nzk0MywiZXhwIjoxNjcyNzczOTQzfQ.IgATTby5xqC2T-sXgh9fKSM5M9CZxqVFe9SnP7EDqT3CY0tynBnxxU2sjq08nKS20Tzi1jDHpbPhlk7ylHyd_Q';
+export const STYRK_API_ALTERNATIVE = process.env.REACT_APP_STYRK_API_ALTERNATIVE;
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'
