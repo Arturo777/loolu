@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'utils/axios';
 import { dispatch } from '../index';
-import { STYRK_API, STYRK_TOKEN } from 'config';
+import { STYRK_API } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
@@ -208,9 +208,6 @@ export function getSku(id: string | undefined) {
                 params: {
                     idMerchant: 1,
                     idSKU: id
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getSkuSuccess(response.data.response));
