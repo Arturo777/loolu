@@ -24,8 +24,10 @@ export type BrandType = {
 };
 
 export type NewBrandType = {
+    Id?: number;
     idBrand?: number;
     name: string;
+    Name?: string;
     title: string;
     metaTagDescription: string;
     imageUrl: string;

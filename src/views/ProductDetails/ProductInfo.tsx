@@ -37,11 +37,13 @@ import {
     ListItemIcon,
     Tooltip,
     Collapse,
-    InputAdornment
+    InputAdornment,
+    Modal
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { IconSearch } from '@tabler/icons';
 import formatUrl from 'utils/formatUrl';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -70,6 +72,7 @@ import { getCategoriesService } from 'store/slices/catalog';
 import CategoryOptions from 'views/Catalog/Categories/components/CategoryOptions';
 import { CustomizationProps } from 'types/config';
 import ConfigProvider from 'config';
+import filterUnitM from 'utils/unitMeasurement';
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -86,30 +89,6 @@ const MenuProps = {
             width: 250
         }
     }
-};
-const Increment = (props: string | FieldHookConfig<any>) => {
-    const [field, , helpers] = useField(props);
-
-    const { value } = field;
-    const { setValue } = helpers;
-    return (
-        <ButtonGroup size="large" variant="text" color="inherit" sx={{ border: '1px solid', borderColor: 'grey.400' }}>
-            <Button
-                key="three"
-                disabled={value <= 1}
-                onClick={() => setValue(value - 1)}
-                sx={{ pr: 0.75, pl: 0.75, minWidth: '0px !important' }}
-            >
-                <RemoveIcon fontSize="inherit" />
-            </Button>
-            <Button key="two" sx={{ pl: 0.5, pr: 0.5 }}>
-                {value}
-            </Button>
-            <Button key="one" onClick={() => setValue(value + 1)} sx={{ pl: 0.75, pr: 0.75, minWidth: '0px !important' }}>
-                <AddIcon fontSize="inherit" />
-            </Button>
-        </ButtonGroup>
-    );
 };
 const Android12Switch = styled(Switch)(({ theme }) => ({
     padding: 8,
@@ -143,6 +122,71 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
         margin: 2
     }
 }));
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3
+};
+
+function BrandModal({
+    setModalBrands,
+    modalBrands,
+    search,
+    setSearch,
+    newBrand,
+    setFlagBrand
+}: {
+    setModalBrands: any;
+    modalBrands: boolean;
+    search: string;
+    setSearch: any;
+    newBrand: any;
+    setFlagBrand: any;
+}) {
+    const handleClose = (value: string) => {
+        newBrand(value);
+        setModalBrands(false);
+    };
+    const handleReject = () => {
+        setFlagBrand(false);
+        setModalBrands(false);
+        setSearch('');
+    };
+
+    return (
+        <>
+            <Modal
+                hideBackdrop
+                open={modalBrands}
+                onClose={handleClose}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box sx={{ ...style, width: 500 }}>
+                    <h2 id="child-modal-title">Confirmar Creación de Marca</h2>
+                    <p id="child-modal-description">
+                        Por favor, confirma que el nombre <span style={{ fontWeight: 'bold' }}>{search}</span> asignado a tu Marca es
+                        correcto.
+                    </p>
+                    <Button onClick={handleReject} variant="outlined" sx={{ mr: 2 }}>
+                        Revisar
+                    </Button>
+                    <Button onClick={() => handleClose(search)} variant="contained">
+                        Confirmar
+                    </Button>
+                </Box>
+            </Modal>
+        </>
+    );
+}
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
@@ -199,12 +243,10 @@ const ProductInfo = ({
     const [button, setButton] = useState(false);
     const [display, setDisplay] = useState(false);
     const [search, setSearch] = useState(product?.brandName);
+    const [modalBrands, setModalBrands] = useState(false);
 
     // info Categories
-    const [buttonCat, setButtonCat] = useState(false);
-    const [displayCat, setDisplayCat] = useState(false);
     const [searchCat, setSearchCat] = useState(product?.categoryName);
-
     const { filterCategories, categories } = useSelector((state) => state.catalogue);
     /* const cart = useSelector((state) => state.cart); */
     /* const flatCategories = categories.map((cat: any) =>
@@ -235,8 +277,14 @@ const ProductInfo = ({
         };
     }, []);
     useEffect(() => {
-        const skuprod = product?.skus.filter((sku: { skuID: any }) => sku.skuID === valueSku);
-        setSkuInfo(skuprod[0]);
+        const skuprod: Skus[] = product?.skus
+            ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
+            .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }]);
+        if (skuprod.length > 0) {
+            const skufFiltUnit: any = skuprod[0];
+            console.log('unitmeas', skufFiltUnit[0]);
+            setSkuInfo(skufFiltUnit[0]);
+        }
     }, [product?.skus, setSkuInfo, valueSku]);
 
     const handleRadioChange = (event: { target: { value: any } }) => {
@@ -269,21 +317,11 @@ const ProductInfo = ({
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
-    const newBrand = (value: SetStateAction<string>) => {
+    const newBrand = (value: string) => {
+        /*  setModalBrands(true); */
         setSearch(value);
         setFlagBrand(true);
-        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
-        setDisplay(false);
-    };
-    const customCategory = (value: string, id: number) => {
-        setSearchCat(value);
-        setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
-        setDisplay(false);
-    };
-    const newCategory = (value: SetStateAction<string>, id: number | null) => {
-        setSearchCat(value);
-        setFlagBrand(true);
-        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
+        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
         setDisplay(false);
     };
     /* const selectTradePolicy =(idPolicy)=> {
@@ -291,10 +329,12 @@ const ProductInfo = ({
             tr
         })
     } */
-    const openCreateFormById = (catId?: number) => {
-        // open form from categories list
-        setSelectedCatId(catId);
-    };
+    /* useEffect(() => {
+        if (flagBrand) {
+            setModalBrands(true);
+        }
+    }, [flagBrand]); */
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -307,7 +347,7 @@ const ProductInfo = ({
                             {active ? (
                                 <>
                                     <FormControlLabel
-                                        sx={{ ml: 2 }}
+                                        sx={{ ml: 1 }}
                                         control={<Android12Switch defaultChecked={product?.isActive} />}
                                         label={<FormattedMessage id="active" />}
                                     />
@@ -482,6 +522,14 @@ const ProductInfo = ({
                                 onChange={(e) => setSearch(e.target.value)}
                                 onClick={() => setDisplay(true)}
                             />
+                            <BrandModal
+                                setModalBrands={setModalBrands}
+                                modalBrands={modalBrands}
+                                search={search}
+                                setSearch={setSearch}
+                                newBrand={newBrand}
+                                setFlagBrand={setFlagBrand}
+                            />
                             {display && (
                                 <div className={ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'}>
                                     <div className="btn-add">
@@ -493,7 +541,10 @@ const ProductInfo = ({
                                             variant="outlined"
                                             /* defaultValue={product?.brandName} */
                                             onClick={() => setButton(true)}
-                                            onBlur={(event) => newBrand(event.target.value)}
+                                            onBlur={(event) => {
+                                                setModalBrands(true);
+                                                setSearch(event.target.value);
+                                            }}
                                         />
 
                                         {button && (
@@ -533,11 +584,11 @@ const ProductInfo = ({
                         }}
                     >
                         <Button onClick={toggleDrawer('right', true)} variant="contained">
-                            Categoría
+                            Editar Categoría
                         </Button>
-
+                        <Typography variant="body2">Categoría Seleccionada: {searchCat}</Typography>
                         <SwipeableDrawer
-                            sx={{ width: '600px' }}
+                            sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
                             anchor="right"
                             open={stateDrawer.right}
                             onClose={toggleDrawer('right', false)}
@@ -572,59 +623,17 @@ const ProductInfo = ({
                             {categories
                                 ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
                                 .map((category) => (
-                                    <MainCategoryComponent category={category} />
+                                    <Grid item xs={12} key={`main-category-${category.id}`}>
+                                        <MainCategoryComponent
+                                            category={category}
+                                            setSearchCat={setSearchCat}
+                                            setProductInfo={setProductInfo}
+                                            setFlagCategory={setFlagCategory}
+                                            setNewCategorySku={setNewCategorySku}
+                                        />
+                                    </Grid>
                                 ))}
                         </SwipeableDrawer>
-                        {displayCat && (
-                            <div className={ConfigProvider.navType === 'dark' ? 'CatsAutoContainerDark' : 'CatssAutoContainerWhite'}>
-                                <div className="btn-add">
-                                    <TextField
-                                        sx={{ width: '90%' }}
-                                        id="outlined-basic"
-                                        label="+ Crear Categoría Padre"
-                                        variant="outlined"
-                                        onClick={() => {
-                                            setButtonCat(true);
-                                            setSearchCat('');
-                                        }}
-                                        onBlur={(event) => newCategory(event.target.value, null)}
-                                    />
-                                    {buttonCat && (
-                                        <IconButton color="success" size="large">
-                                            <AddCircleOutlineIcon />
-                                        </IconButton>
-                                    )}
-                                </div>
-                                {/* {filterCategories
-                                    .filter(({ name }) => name.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
-                                    .map((v) => (
-                                        <>
-                                            <div
-                                                className="option2"
-                                                key={v.id}
-                                                style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <CategoryOptions flatCat={v} customCategory={() => customCategory(v.name, v.id)} />
-
-                                                <div className="categoryOption">
-                                                    <TextField
-                                                        sx={{ width: '150px' }}
-                                                        placeholder="Agregar"
-                                                        onBlur={(event) => newCategory(event.target.value, v.id)}
-                                                    />
-                                                    <IconButton color="success" size="large">
-                                                        <AddCircleOutlineIcon />
-                                                    </IconButton>
-                                                </div>
-                                            </div>
-                                        </>
-                                    ))} */}
-                            </div>
-                        )}
                     </Box>
                 ) : (
                     <Typography variant="h4">{product?.categoryName}</Typography>
@@ -665,20 +674,18 @@ const ProductInfo = ({
                         </Select>
                     </FormControl>
                 ) : (
-                    product?.tradePolicies?.map(
-                        (trade: {
-                            isSelected: boolean | undefined;
-                            tradePolicyName: string | number | readonly string[] | undefined;
-                            // eslint-disable-next-line consistent-return
-                        }) => {
-                            if (trade?.isSelected)
-                                return (
-                                    <Typography variant="h4" sx={{ ml: 1 }}>
-                                        Trade Policy: {trade?.tradePolicyName}
-                                    </Typography>
-                                );
-                        }
-                    )
+                    <Typography variant="h5" sx={{ ml: 1 }}>
+                        Trade Policy:
+                        {product?.tradePolicies?.map(
+                            (trade: {
+                                isSelected: boolean | undefined;
+                                tradePolicyName: string | number | readonly string[] | undefined;
+                                // eslint-disable-next-line consistent-return
+                            }) => {
+                                if (trade?.isSelected) return <>{trade?.tradePolicyName}, </>;
+                            }
+                        )}
+                    </Typography>
                 )}
             </Grid>
             <Grid item xs={12}>
@@ -686,249 +693,243 @@ const ProductInfo = ({
             </Grid>
 
             <Grid item xs={12}>
-                <Grid>
-                    <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>Información del Sku</h2>
-                    <Grid container spacing={1}>
-                        <Grid item xs={12} lg={10}>
-                            <Table>
-                                <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body2">
-                                                Variantes{' '}
-                                                <Typography color="error" component="span">
-                                                    *
-                                                </Typography>
+                <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>Información del Sku</h2>
+                <Grid container spacing={1}>
+                    <Grid item xs={12} lg={10}>
+                        <Table>
+                            <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography variant="body2">
+                                            Variantes{' '}
+                                            <Typography color="error" component="span">
+                                                *
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <RadioGroup
-                                                row
-                                                value={valueSku}
-                                                onChange={handleRadioChange}
-                                                name="sku"
-                                                id="sku"
-                                                sx={{ ml: 1 }}
-                                                defaultValue={product?.skus[0].skuID}
-                                            >
-                                                {product?.skus.map((sku: any, index: Key | null | undefined) => (
-                                                    <FormControlLabel
-                                                        key={index}
-                                                        value={sku?.skuID}
-                                                        control={<Radio />}
-                                                        label={sku?.skuID}
-                                                        disabled={active}
-                                                    />
-                                                ))}
-                                            </RadioGroup>
-                                            {/* {errors.color && (
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <RadioGroup
+                                            row
+                                            value={valueSku}
+                                            onChange={handleRadioChange}
+                                            name="sku"
+                                            id="sku"
+                                            sx={{ ml: 1 }}
+                                            defaultValue={product?.skus[0].skuID}
+                                        >
+                                            {product?.skus.map((sku: any, index: Key | null | undefined) => (
+                                                <FormControlLabel
+                                                    key={index}
+                                                    value={sku?.skuID}
+                                                    control={<Radio />}
+                                                    label={sku?.skuID}
+                                                    disabled={active}
+                                                />
+                                            ))}
+                                        </RadioGroup>
+                                        {/* {errors.color && (
                                                     <FormHelperText error id="standard-label-color">
                                                         {errors.color}
                                                     </FormHelperText>
                                                 )} */}
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                            <Grid item xs={12}>
-                                {active ? (
-                                    <Box
-                                        sx={{
-                                            '& .MuiTextField-root': { mt: 2 }
-                                        }}
-                                    >
-                                        <TextField
-                                            fullWidth
-                                            multiline
-                                            id="outlined-basic"
-                                            label="Nombre Sku"
-                                            variant="outlined"
-                                            name="name"
-                                            defaultValue={skuInfo?.name}
-                                            value={skuInfo?.name}
-                                            onChange={handleChangeSku}
-                                        />
-                                    </Box>
-                                ) : (
-                                    skuInfo !== undefined && (
-                                        <Typography variant="h3" sx={{ ml: 2 }}>
-                                            {skuInfo?.name}
-                                        </Typography>
-                                    )
-                                )}
-                            </Grid>
-                            <Grid item xs={12}>
-                                {active ? (
-                                    <Box
-                                        sx={{
-                                            '& .MuiTextField-root': { mt: 2 }
-                                        }}
-                                    >
-                                        <TextField
-                                            fullWidth
-                                            multiline
-                                            id="outlined-basic"
-                                            label="EAN/UPC"
-                                            variant="outlined"
-                                            name="ean"
-                                            defaultValue={skuInfo?.ean}
-                                            value={skuInfo?.ean}
-                                            onChange={handleChangeSku}
-                                        />
-                                    </Box>
-                                ) : (
-                                    skuInfo !== undefined && (
-                                        <Typography variant="body2" sx={{ ml: 2 }}>
-                                            EAN/UPC: {skuInfo?.ean}
-                                        </Typography>
-                                    )
-                                )}
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Table>
-                                    <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
-                                        <TableRow>
-                                            <TableCell>
-                                                <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                    Precios
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                {skuInfo?.prices?.map(
-                                                    ({
-                                                        price,
-                                                        priceDiscount,
-                                                        tradePolicy
-                                                    }: {
-                                                        // eslint-disable-next-line react/no-unused-prop-types
-                                                        price: number;
-                                                        // eslint-disable-next-line react/no-unused-prop-types
-                                                        priceDiscount: number;
-                                                        // eslint-disable-next-line react/no-unused-prop-types
-                                                        tradePolicy: number;
-                                                    }) => (
-                                                        <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
-                                                            {active ? (
-                                                                <>
-                                                                    <Box
-                                                                        sx={{
-                                                                            '& .MuiTextField-root': { mt: 2 }
-                                                                        }}
-                                                                    >
-                                                                        <TextField
-                                                                            fullWidth
-                                                                            multiline
-                                                                            id="outlined-basic"
-                                                                            label="Precio con Descuento"
-                                                                            variant="outlined"
-                                                                            name="priceDiscount"
-                                                                            defaultValue={priceDiscount}
-                                                                        />
-                                                                    </Box>
-                                                                    <Box
-                                                                        sx={{
-                                                                            '& .MuiTextField-root': { mt: 2 }
-                                                                        }}
-                                                                    >
-                                                                        <TextField
-                                                                            fullWidth
-                                                                            multiline
-                                                                            id="outlined-basic"
-                                                                            label="Precio"
-                                                                            variant="outlined"
-                                                                            name="price"
-                                                                            defaultValue={price}
-                                                                        />
-                                                                    </Box>
-                                                                    <Typography variant="caption">
-                                                                        {filterTradePolicy(tradePolicy)}
-                                                                    </Typography>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <Typography variant="h2" color="primary">
-                                                                        {formatterDolar.format(priceDiscount)}
-                                                                    </Typography>
-                                                                    <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
-                                                                        {formatterDolar.format(price)}
-                                                                    </Typography>
-                                                                    <Typography variant="caption">
-                                                                        (Trade Policy: {filterTradePolicy(tradePolicy)} )
-                                                                    </Typography>
-                                                                </>
-                                                            )}
-                                                        </Stack>
-                                                    )
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </Grid>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                        <Grid item xs={12}>
+                            {active ? (
+                                <Box
+                                    sx={{
+                                        '& .MuiTextField-root': { mt: 2 }
+                                    }}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        id="outlined-basic"
+                                        label="Nombre Sku"
+                                        variant="outlined"
+                                        name="name"
+                                        defaultValue={skuInfo?.name}
+                                        value={skuInfo?.name}
+                                        onChange={handleChangeSku}
+                                    />
+                                </Box>
+                            ) : (
+                                skuInfo !== undefined && (
+                                    <Typography variant="h3" sx={{ ml: 2 }}>
+                                        {skuInfo?.name}
+                                    </Typography>
+                                )
+                            )}
+                        </Grid>
+                        <Grid item xs={12}>
+                            {active ? (
+                                <Box
+                                    sx={{
+                                        '& .MuiTextField-root': { mt: 2 }
+                                    }}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        id="outlined-basic"
+                                        label="EAN/UPC"
+                                        variant="outlined"
+                                        name="ean"
+                                        defaultValue={skuInfo?.ean}
+                                        value={skuInfo?.ean}
+                                        onChange={handleChangeSku}
+                                    />
+                                </Box>
+                            ) : (
+                                skuInfo !== undefined && (
+                                    <Typography variant="body2" sx={{ ml: 2 }}>
+                                        EAN/UPC: {skuInfo?.ean}
+                                    </Typography>
+                                )
+                            )}
+                        </Grid>
+                        <Grid item xs={12}>
                             <Table>
                                 <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                     <TableRow>
                                         <TableCell>
-                                            <Stack>
-                                                <Typography variant="body2">
-                                                    Size{' '}
-                                                    <Typography color="error" component="span">
-                                                        *
-                                                    </Typography>
-                                                </Typography>
-                                                <Typography variant="caption" color="primary" component={Link} to="#">
-                                                    Size Chart?
-                                                </Typography>
-                                            </Stack>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <FormControl sx={{ minWidth: 120 }}>
-                                                <Select
-                                                    id="size"
-                                                    name="size"
-                                                    /* value={values.size}
-                                                        onChange={handleChange} */
-                                                    displayEmpty
-                                                    inputProps={{ 'aria-label': 'Without label' }}
-                                                >
-                                                    <MenuItem value="">
-                                                        <em>None</em>
-                                                    </MenuItem>
-                                                    {sizeOptions.map((option, index) => (
-                                                        <MenuItem sx={{ p: 1.25 }} key={index} value={option}>
-                                                            {option}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                            {/* {errors.size && (
-                                                    <FormHelperText error id="standard-label-size">
-                                                        {errors.size}
-                                                    </FormHelperText>
-                                                )} */}
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body2">Dimensions</Typography>
+                                            <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
+                                                Precios
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
+                                            {skuInfo?.prices?.map(
+                                                ({
+                                                    price,
+                                                    priceDiscount,
+                                                    tradePolicy
+                                                }: {
+                                                    // eslint-disable-next-line react/no-unused-prop-types
+                                                    price: number;
+                                                    // eslint-disable-next-line react/no-unused-prop-types
+                                                    priceDiscount: number;
+                                                    // eslint-disable-next-line react/no-unused-prop-types
+                                                    tradePolicy: number;
+                                                }) => (
+                                                    <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
+                                                        {active ? (
+                                                            <>
+                                                                <Box
+                                                                    sx={{
+                                                                        '& .MuiTextField-root': { mt: 2 }
+                                                                    }}
+                                                                >
+                                                                    <TextField
+                                                                        fullWidth
+                                                                        multiline
+                                                                        id="outlined-basic"
+                                                                        label="Precio con Descuento"
+                                                                        variant="outlined"
+                                                                        name="priceDiscount"
+                                                                        defaultValue={priceDiscount}
+                                                                    />
+                                                                </Box>
+                                                                <Box
+                                                                    sx={{
+                                                                        '& .MuiTextField-root': { mt: 2 }
+                                                                    }}
+                                                                >
+                                                                    <TextField
+                                                                        fullWidth
+                                                                        multiline
+                                                                        id="outlined-basic"
+                                                                        label="Precio"
+                                                                        variant="outlined"
+                                                                        name="price"
+                                                                        defaultValue={price}
+                                                                    />
+                                                                </Box>
+                                                                <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Typography variant="h2" color="primary">
+                                                                    {formatterDolar.format(priceDiscount)}
+                                                                </Typography>
+                                                                <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                                                                    {formatterDolar.format(price)}
+                                                                </Typography>
+                                                                <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
+                                                            </>
+                                                        )}
+                                                    </Stack>
+                                                )
+                                            )}
                                         </TableCell>
-                                    </TableRow>
-                                    <br />
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body2">Quantity</Typography>
-                                        </TableCell>
-                                        <TableCell align="left" />
                                     </TableRow>
                                 </TableBody>
                             </Table>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Divider />
-                        </Grid>
+                        <Table>
+                            <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                <TableRow>
+                                    <TableCell>
+                                        <Stack>
+                                            <Typography variant="body2">
+                                                Size{' '}
+                                                <Typography color="error" component="span">
+                                                    *
+                                                </Typography>
+                                            </Typography>
+                                            <Typography variant="caption" color="primary" component={Link} to="#">
+                                                Size Chart?
+                                            </Typography>
+                                        </Stack>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <FormControl sx={{ minWidth: 120 }}>
+                                            <Select
+                                                id="size"
+                                                name="size"
+                                                /* value={values.size}
+                                                    onChange={handleChange} */
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                            >
+                                                <MenuItem value="">
+                                                    <em>None</em>
+                                                </MenuItem>
+                                                {sizeOptions.map((option, index) => (
+                                                    <MenuItem sx={{ p: 1.25 }} key={index} value={option}>
+                                                        {option}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        {/* {errors.size && (
+                                                    <FormHelperText error id="standard-label-size">
+                                                        {errors.size}
+                                                    </FormHelperText>
+                                                )} */}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography variant="body2">Dimensions</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
+                                    </TableCell>
+                                </TableRow>
+                                <br />
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography variant="body2">Quantity</Typography>
+                                    </TableCell>
+                                    <TableCell align="left" />
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Divider />
                     </Grid>
                 </Grid>
             </Grid>
@@ -939,17 +940,32 @@ const ProductInfo = ({
 export default ProductInfo;
 type MainCategoryProps = {
     category: CategoryType;
+    setSearchCat: any;
+    setProductInfo: any;
+    setFlagCategory: any;
+    setNewCategorySku: any;
     /* openCreate: (catId: number) => void; */
 };
-const MainCategoryComponent = ({ category }: MainCategoryProps) => {
+const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlagCategory, setNewCategorySku }: MainCategoryProps) => {
     // hooks
     const intl = useIntl();
 
     // vars
     const [open, setOpen] = useState(false);
+    const [buttonCat, setButtonCat] = useState(false);
+    const [displayCat, setDisplayCat] = useState(false);
 
     const handleOpen = () => {
         setOpen(!open);
+    };
+    const customCategory = (value: string, id: number) => {
+        setSearchCat(value);
+        setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
+    };
+    const newCategory = (value: SetStateAction<string>, id: number | null) => {
+        setSearchCat(value);
+        setFlagCategory(true);
+        setNewCategorySku((prev: any) => ({ ...prev, name: value, title: value }));
     };
     return (
         <>
@@ -958,23 +974,30 @@ const MainCategoryComponent = ({ category }: MainCategoryProps) => {
                     {category.children?.length ? <ExpandCircleDownIcon /> : null}
                 </ListItemIcon>
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
+                <Tooltip title="Seleccionar Categoría">
+                    <IconButton>
+                        <CheckCircleIcon onClick={() => customCategory(category.name, category.id)} />
+                    </IconButton>
+                </Tooltip>
                 {/* CREATE */}
-                {/* <Tooltip title="Crear subcategoria">
-                    <IconButton
-                        onClick={() => {
-                            openCreate(category.id);
-                        }}
-                    >
+                <Tooltip title="Crear subcategoria">
+                    <IconButton>
                         <AddBoxIcon />
                     </IconButton>
-                </Tooltip> */}
+                </Tooltip>
             </ListItemButton>
 
             {Boolean(category.children?.length) && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     {category.children.map((itemA) => (
                         <Box key={`category-child-${itemA.id}`} sx={{ ml: 1 }}>
-                            <MainCategoryComponent category={itemA} /* openCreate={openCreate} */ />
+                            <MainCategoryComponent
+                                category={itemA}
+                                setSearchCat={setSearchCat}
+                                /* openCreate={openCreate} */ setProductInfo={setProductInfo}
+                                setFlagCategory={setFlagCategory}
+                                setNewCategorySku={setNewCategorySku}
+                            />
                         </Box>
                     ))}
                 </Collapse>

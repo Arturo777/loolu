@@ -22,15 +22,12 @@ export const AUTH0_API = {
 };
 
 export const AWS_API = {
-    poolId: 'us-east-1_YRimhKJeh' /* process.env.REACT_APP_AWS_POOL_ID */,
-    appClientId: '1dqlt9vqcovkrqnebcud7f1s9f' /* process.env.REACT_APP_AWS_CLIENT_ID */
+    poolId: process.env.REACT_APP_AWS_POOL_ID,
+    appClientId: process.env.REACT_APP_AWS_CLIENT_ID
 };
 
-export const STYRK_API = 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093';
-export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
-
-export const STYRK_TOKEN =
-    'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzdHlya0pXVCIsInN1YiI6Im9odWl0cm9uIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3MjcwMzE3MiwiZXhwIjoxNjcyNzA5MTcyfQ.Z8RpShBpsZSXrRXOFHbphYZDKXqqFpUUZNV1OpRI32cCP1-hhhSVF_92PM1peDNK_aboBq7V9Gbd9agSjfB83A';
+export const STYRK_API = process.env.REACT_APP_STYRK_API;
+export const STYRK_API_ALTERNATIVE = process.env.REACT_APP_STYRK_API_ALTERNATIVE;
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'

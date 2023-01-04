@@ -2,8 +2,9 @@ import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 // material-ui
-import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Card, Button } from '@mui/material';
+import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 // project imports
 import ProductImages from './ProductImages';
 import ProductInfo from './ProductInfo';
@@ -11,17 +12,16 @@ import ProductDescription from './ProductDescription';
 import ProductReview from './ProductReview';
 import RelatedProducts from './RelatedProducts';
 import MainCard from 'ui-component/cards/MainCard';
-import FloatingCart from 'ui-component/cards/FloatingCart';
 import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
-import { getBrands } from 'store/slices/catalog';
+import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
-import { BrandType, CategoryType } from 'types/catalog';
+import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -64,7 +64,7 @@ const ProductDetails = () => {
     const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
 
     // info new Brands and Categories
-    const [newBrandSku, setNewBrandSku] = useState<BrandType>();
+    const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
     const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
 
     // flags brands and categories
@@ -106,20 +106,24 @@ const ProductDetails = () => {
             setProductInfo(product);
             setIsLoading(false);
         }
-    }, [product]);
-    console.log('brands', brandsInfo);
-    const handleSave = (e: FormEvent<HTMLFormElement>) => {
+        if (!active && product !== null) {
+            setOriginalData(product);
+        }
+    }, [product, active]);
+
+    const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (productInfo) {
-            const prodsku = { ...productInfo, sku: skuInfo };
-            console.log('prod new', prodsku);
-            dispatch(saveProduct(prodsku))
-                .then(({ payload }) => {
-                    console.log(payload.response);
+        if (flagBrand) {
+            const dataBrand: any = {
+                ...newBrandSku
+            };
+            await dispatch(createBrand({ dataBrand }))
+                .then(async ({ payload }) => {
+                    setNewBrandSku(payload.response);
                     dispatch(
                         openSnackbar({
                             open: true,
-                            message: `Producto actualizado correctamente`,
+                            message: `Marca creada con exito`,
                             variant: 'alert',
                             alert: {
                                 color: 'success'
@@ -127,13 +131,12 @@ const ProductDetails = () => {
                             close: false
                         })
                     );
-                    /* dispatch(getCategoriesService({ idMerchant: 1 })); */
                 })
                 .catch(() => {
                     dispatch(
                         openSnackbar({
                             open: true,
-                            message: 'Error al guardar el producto',
+                            message: 'Error al guardar la Marca',
                             variant: 'alert',
                             alert: {
                                 color: 'error'
@@ -142,8 +145,43 @@ const ProductDetails = () => {
                         })
                     );
                 });
+            if (productInfo) {
+                const prodsku = newBrandSku?.Id
+                    ? { ...productInfo, sku: skuInfo, brandName: newBrandSku?.Name, brandId: newBrandSku?.Id }
+                    : { ...productInfo, sku: skuInfo };
+                console.log('prod new', prodsku);
+                await dispatch(saveProduct(prodsku))
+                    .then(({ payload }) => {
+                        console.log(payload.response);
+                        dispatch(
+                            openSnackbar({
+                                open: true,
+                                message: `Producto actualizado correctamente`,
+                                variant: 'alert',
+                                alert: {
+                                    color: 'success'
+                                },
+                                close: false
+                            })
+                        );
+                    })
+                    .catch(() => {
+                        dispatch(
+                            openSnackbar({
+                                open: true,
+                                message: 'Error al guardar el producto',
+                                variant: 'alert',
+                                alert: {
+                                    color: 'error'
+                                },
+                                close: false
+                            })
+                        );
+                    });
+            }
         }
     };
+    console.log('newBrand', newBrandSku);
     /* console.log('primer prod', productInfo); */
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>
@@ -192,17 +230,31 @@ const ProductDetails = () => {
                                         <Grid item xs={12}>
                                             <Grid container spacing={1}>
                                                 <Grid item xs={6}>
-                                                    <Button
-                                                        fullWidth
-                                                        color="primary"
-                                                        variant="contained"
-                                                        size="large"
-                                                        startIcon={<EditIcon />}
-                                                        onClick={() => setActive(true)}
-                                                        disabled={valueSku === ''}
-                                                    >
-                                                        Edit Product
-                                                    </Button>
+                                                    {active ? (
+                                                        <Button
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            color="error"
+                                                            size="large"
+                                                            startIcon={<DeleteIcon />}
+                                                            onClick={() => setActive(false)}
+                                                            disabled={valueSku === ''}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            fullWidth
+                                                            color="primary"
+                                                            variant="contained"
+                                                            size="large"
+                                                            startIcon={<EditIcon />}
+                                                            onClick={() => setActive(true)}
+                                                            disabled={valueSku === ''}
+                                                        >
+                                                            Edit Product
+                                                        </Button>
+                                                    )}
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
