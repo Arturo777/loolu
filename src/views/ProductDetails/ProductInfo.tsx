@@ -140,20 +140,25 @@ function BrandModal({
     setModalBrands,
     modalBrands,
     search,
+    setSearch,
+    newBrand,
     setFlagBrand
 }: {
     setModalBrands: any;
     modalBrands: boolean;
     search: string;
+    setSearch: any;
+    newBrand: any;
     setFlagBrand: any;
 }) {
-    const handleClose = () => {
-        setFlagBrand(true);
+    const handleClose = (value: string) => {
+        newBrand(value);
         setModalBrands(false);
     };
     const handleReject = () => {
         setFlagBrand(false);
         setModalBrands(false);
+        setSearch('');
     };
 
     return (
@@ -174,7 +179,7 @@ function BrandModal({
                     <Button onClick={handleReject} variant="outlined" sx={{ mr: 2 }}>
                         Revisar
                     </Button>
-                    <Button onClick={handleClose} variant="contained">
+                    <Button onClick={() => handleClose(search)} variant="contained">
                         Confirmar
                     </Button>
                 </Box>
@@ -312,11 +317,11 @@ const ProductInfo = ({
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
-    const newBrand = (value: SetStateAction<string>) => {
+    const newBrand = (value: string) => {
         /*  setModalBrands(true); */
         setSearch(value);
         setFlagBrand(true);
-        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value }));
+        setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
         setDisplay(false);
     };
     /* const selectTradePolicy =(idPolicy)=> {
@@ -324,11 +329,11 @@ const ProductInfo = ({
             tr
         })
     } */
-    useEffect(() => {
+    /* useEffect(() => {
         if (flagBrand) {
             setModalBrands(true);
         }
-    }, [flagBrand]);
+    }, [flagBrand]); */
 
     return (
         <Grid container spacing={2}>
@@ -521,6 +526,8 @@ const ProductInfo = ({
                                 setModalBrands={setModalBrands}
                                 modalBrands={modalBrands}
                                 search={search}
+                                setSearch={setSearch}
+                                newBrand={newBrand}
                                 setFlagBrand={setFlagBrand}
                             />
                             {display && (
@@ -534,7 +541,10 @@ const ProductInfo = ({
                                             variant="outlined"
                                             /* defaultValue={product?.brandName} */
                                             onClick={() => setButton(true)}
-                                            onBlur={(event) => newBrand(event.target.value)}
+                                            onBlur={(event) => {
+                                                setModalBrands(true);
+                                                setSearch(event.target.value);
+                                            }}
                                         />
 
                                         {button && (

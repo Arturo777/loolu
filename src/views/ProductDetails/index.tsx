@@ -18,10 +18,10 @@ import { Products, Skus } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
-import { getBrands } from 'store/slices/catalog';
+import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
-import { BrandType, CategoryType } from 'types/catalog';
+import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -64,7 +64,7 @@ const ProductDetails = () => {
     const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
 
     // info new Brands and Categories
-    const [newBrandSku, setNewBrandSku] = useState<BrandType>();
+    const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
     const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
 
     // flags brands and categories
@@ -111,18 +111,19 @@ const ProductDetails = () => {
         }
     }, [product, active]);
 
-    const handleSave = (e: FormEvent<HTMLFormElement>) => {
+    const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (productInfo) {
-            const prodsku = { ...productInfo, sku: skuInfo };
-            console.log('prod new', prodsku);
-            dispatch(saveProduct(prodsku))
-                .then(({ payload }) => {
-                    console.log(payload.response);
+        if (flagBrand) {
+            const dataBrand: any = {
+                ...newBrandSku
+            };
+            await dispatch(createBrand({ dataBrand }))
+                .then(async ({ payload }) => {
+                    setNewBrandSku(payload.response);
                     dispatch(
                         openSnackbar({
                             open: true,
-                            message: `Producto actualizado correctamente`,
+                            message: `Marca creada con exito`,
                             variant: 'alert',
                             alert: {
                                 color: 'success'
@@ -130,13 +131,12 @@ const ProductDetails = () => {
                             close: false
                         })
                     );
-                    /* dispatch(getCategoriesService({ idMerchant: 1 })); */
                 })
                 .catch(() => {
                     dispatch(
                         openSnackbar({
                             open: true,
-                            message: 'Error al guardar el producto',
+                            message: 'Error al guardar la Marca',
                             variant: 'alert',
                             alert: {
                                 color: 'error'
@@ -145,9 +145,43 @@ const ProductDetails = () => {
                         })
                     );
                 });
+            if (productInfo) {
+                const prodsku = newBrandSku?.Id
+                    ? { ...productInfo, sku: skuInfo, brandName: newBrandSku?.Name, brandId: newBrandSku?.Id }
+                    : { ...productInfo, sku: skuInfo };
+                console.log('prod new', prodsku);
+                await dispatch(saveProduct(prodsku))
+                    .then(({ payload }) => {
+                        console.log(payload.response);
+                        dispatch(
+                            openSnackbar({
+                                open: true,
+                                message: `Producto actualizado correctamente`,
+                                variant: 'alert',
+                                alert: {
+                                    color: 'success'
+                                },
+                                close: false
+                            })
+                        );
+                    })
+                    .catch(() => {
+                        dispatch(
+                            openSnackbar({
+                                open: true,
+                                message: 'Error al guardar el producto',
+                                variant: 'alert',
+                                alert: {
+                                    color: 'error'
+                                },
+                                close: false
+                            })
+                        );
+                    });
+            }
         }
     };
-    console.log(skuInfo);
+    console.log('newBrand', newBrandSku);
     /* console.log('primer prod', productInfo); */
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>
