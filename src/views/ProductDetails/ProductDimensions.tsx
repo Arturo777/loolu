@@ -9,11 +9,13 @@ import { Key, useEffect, useState } from 'react';
 
 const ProductDimensions = ({ skuFilter, setSkuInfo, active }: { skuFilter: any; setSkuInfo: any; active: boolean }) => {
     const handleChangeSku = (event: any) => {
-        if (event.target.name === 'height' || 'length' || 'width') {
-            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: parseInt(event.target.value, 10) }));
-        } else {
-            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
-        }
+        console.log('datavalue', event.target);
+        // eslint-disable-next-line no-constant-condition
+
+        setSkuInfo((prev: any) => ({
+            ...prev,
+            [event.target.name]: event.target.name === 'measurementUnit' ? event.target.value : parseInt(event.target.value, 10)
+        }));
     };
 
     return (
@@ -88,7 +90,7 @@ const ProductDimensions = ({ skuFilter, setSkuInfo, active }: { skuFilter: any; 
                                         defaultValue={skuFilter?.measurementUnit}
                                         onChange={handleChangeSku}
                                     >
-                                        {catalogUnits.map(({ name, unit }: { name: string; unit: string }, index: Key) => (
+                                        {catalogUnits.map(({ name, unit }: { name: string; unit: string | undefined }, index: Key) => (
                                             <MenuItem sx={{ p: 1.25 }} key={index} value={name}>
                                                 {name}
                                             </MenuItem>
@@ -100,7 +102,7 @@ const ProductDimensions = ({ skuFilter, setSkuInfo, active }: { skuFilter: any; 
                             <>
                                 <p>Peso (kg): {skuFilter?.weightKg}</p>
                                 <p>Peso Paquete (Kg): {skuFilter?.packagedWeightKg}</p>
-                                <p>Unidad de Medida: {filterUnitM(skuFilter?.measurementUnit)}</p>
+                                <p>Unidad de Medida: {skuFilter?.measurementUnit}</p>
                             </>
                         ))}
                 </div>

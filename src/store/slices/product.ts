@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import axios from 'axios';
+import axios from 'utils/axios';
 import { dispatch } from '../index';
 import { STYRK_API, STYRK_TOKEN } from 'config';
 
@@ -12,7 +12,6 @@ import { ProductsFilter, Address, Products } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 
 // ----------------------------------------------------------------------
-const baseURL = process.env.REACT_APP_STYRK_API;
 
 const initialState: DefaultRootStateProps['product'] = {
     error: null,
@@ -166,16 +165,13 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             searchParams.idApprovalStatus
     );
     const response = await axios.get(`styrk/api/product/search`, {
-        baseURL,
+        baseURL: STYRK_API,
         params: {
             idMerchant: searchParams.idMerchant || 1,
             page: searchParams.page || hasParams ? 0 : 1,
             productName: searchParams.productName || null,
             idSKU: searchParams.idSKU,
             idProd: searchParams.idProd
-        },
-        headers: {
-            authorization: `Bearer ${STYRK_TOKEN}`
         }
     });
     return response.data;
@@ -194,14 +190,11 @@ export function filterProducts(filter: ProductsFilter) {
 
 export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async (id: string | undefined) => {
     const response = await axios.get('styrk/api/product/detail/productSkus', {
-        baseURL,
+        baseURL: STYRK_API,
         params: {
             idMerchant: 1,
             idProd: id,
             page: 0
-        },
-        headers: {
-            authorization: `Bearer ${STYRK_TOKEN}`
         }
     });
     return response.data;
@@ -231,12 +224,8 @@ type productBody = Products;
 
 export const saveProduct = createAsyncThunk(`${slice.name}/saveProduct`, async (productBody: productBody) => {
     const response = await axios.post('styrk/api/product/save/product', productBody, {
-        baseURL,
-        headers: {
-            authorization: `Bearer ${STYRK_TOKEN}`
-        }
+        baseURL: STYRK_API
     });
-    console.log('res-guardado', response.data);
     return response.data;
 });
 export function getCategories() {
@@ -246,9 +235,6 @@ export function getCategories() {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getCategoriesSuccess(response.data.response));
@@ -264,9 +250,6 @@ export function getTradePolicies() {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: 1
-                },
-                headers: {
-                    authorization: `Bearer ${STYRK_TOKEN}`
                 }
             });
             dispatch(slice.actions.getTradePoliciesSucces(response.data.response));

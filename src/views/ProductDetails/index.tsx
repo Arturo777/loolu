@@ -2,8 +2,9 @@ import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 // material-ui
-import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Card, Button } from '@mui/material';
+import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 // project imports
 import ProductImages from './ProductImages';
 import ProductInfo from './ProductInfo';
@@ -11,7 +12,6 @@ import ProductDescription from './ProductDescription';
 import ProductReview from './ProductReview';
 import RelatedProducts from './RelatedProducts';
 import MainCard from 'ui-component/cards/MainCard';
-import FloatingCart from 'ui-component/cards/FloatingCart';
 import Chip from 'ui-component/extended/Chip';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
@@ -106,8 +106,11 @@ const ProductDetails = () => {
             setProductInfo(product);
             setIsLoading(false);
         }
-    }, [product]);
-    console.log('brands', brandsInfo);
+        if (!active && product !== null) {
+            setOriginalData(product);
+        }
+    }, [product, active]);
+
     const handleSave = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (productInfo) {
@@ -144,6 +147,7 @@ const ProductDetails = () => {
                 });
         }
     };
+    console.log(skuInfo);
     /* console.log('primer prod', productInfo); */
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>
@@ -192,17 +196,31 @@ const ProductDetails = () => {
                                         <Grid item xs={12}>
                                             <Grid container spacing={1}>
                                                 <Grid item xs={6}>
-                                                    <Button
-                                                        fullWidth
-                                                        color="primary"
-                                                        variant="contained"
-                                                        size="large"
-                                                        startIcon={<EditIcon />}
-                                                        onClick={() => setActive(true)}
-                                                        disabled={valueSku === ''}
-                                                    >
-                                                        Edit Product
-                                                    </Button>
+                                                    {active ? (
+                                                        <Button
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            color="error"
+                                                            size="large"
+                                                            startIcon={<DeleteIcon />}
+                                                            onClick={() => setActive(false)}
+                                                            disabled={valueSku === ''}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            fullWidth
+                                                            color="primary"
+                                                            variant="contained"
+                                                            size="large"
+                                                            startIcon={<EditIcon />}
+                                                            onClick={() => setActive(true)}
+                                                            disabled={valueSku === ''}
+                                                        >
+                                                            Edit Product
+                                                        </Button>
+                                                    )}
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
