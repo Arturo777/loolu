@@ -22,11 +22,11 @@ export const AUTH0_API = {
 };
 
 export const AWS_API = {
-    poolId: /* 'us-east-1_YRimhKJeh' */ process.env.REACT_APP_AWS_POOL_ID,
-    appClientId: /* '1dqlt9vqcovkrqnebcud7f1s9f' */ process.env.REACT_APP_AWS_CLIENT_ID
+    poolId: process.env.REACT_APP_AWS_POOL_ID,
+    appClientId: process.env.REACT_APP_AWS_CLIENT_ID
 };
 
-export const STYRK_API = /* 'http://styrk-vinneren.us-east-1.elasticbeanstalk.com:8093' */ process.env.REACT_APP_STYRK_API;
+export const STYRK_API = process.env.REACT_APP_STYRK_API;
 export const STYRK_API_ALTERNATIVE = 'https://services.styrk.io/process-stage/styrk/';
 
 export const STYRK_TOKEN =
