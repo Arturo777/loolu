@@ -1,6 +1,6 @@
 {
     "name": "berry-material-react-ts",
-    "version": "3.1.2",
+    "version": "0.0.1-beta",
     "private": true,
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.21.1",
