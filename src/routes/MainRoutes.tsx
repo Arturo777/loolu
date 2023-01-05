@@ -6,6 +6,7 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProductList from 'views/Products';
 import ProductDetails from 'views/ProductDetails';
+import FirstLevel from 'views/Catalog/HealthContent/FirstLevel';
 
 //  ========= users =========
 const UsersList = Loadable(lazy(() => import('views/Security/Users')));
@@ -111,6 +112,11 @@ const MainRoutes = {
         {
             path: '/categories',
             element: <CategoriesMainPage />
+        },
+        //  ======== HEALTH CONTENT =========
+        {
+            path: '/health-content/first-level',
+            element: <FirstLevel />
         }
     ]
 };
