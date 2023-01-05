@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
 import axios from 'utils/axios';
-import { STYRK_API, STYRK_API_ALTERNATIVE } from 'config';
+import { STYRK_API_HEALTH_CONTENT } from 'config';
 import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
@@ -25,4 +25,19 @@ const slice = createSlice({
             state.error = action.payload;
         }
     }
+});
+export default slice.reducer;
+
+export const getFirstLevel = createAsyncThunk(`${slice.name}/fisrt-level`, async (idMerchant?: number) => {
+    const response = await axios.post(
+        `styrk/api/health-content/metrics/first-level`,
+        {},
+        {
+            baseURL: STYRK_API_HEALTH_CONTENT,
+            params: {
+                idMerchant: idMerchant || 1
+            }
+        }
+    );
+    return response.data;
 });
