@@ -3,9 +3,9 @@
 import item from '../../assets/images/item.png';
 import packageitem from '../../assets/images/package.png';
 import { TextField, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import filterUnitM, { catalogUnits } from 'utils/unitMeasurement';
+import { catalogUnits } from 'utils/unitMeasurement';
 import './style.css';
-import { Key, useEffect, useState } from 'react';
+import { Key } from 'react';
 
 const ProductDimensions = ({ skuFilter, setSkuInfo, active }: { skuFilter: any; setSkuInfo: any; active: boolean }) => {
     const handleChangeSku = (event: any) => {

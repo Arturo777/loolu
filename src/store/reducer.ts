@@ -13,6 +13,7 @@ import menuReducer from './slices/menu';
 import authReducer from './slices/auth';
 import profilesReducer from './slices/profiles';
 import catalogueReducer from './slices/catalog';
+import healthContentReducer from './slices/health-content';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -32,7 +33,8 @@ const reducer = combineReducers({
     auth: authReducer,
     snackbar: snackbarReducer,
     profile: profilesReducer,
-    catalogue: catalogueReducer
+    catalogue: catalogueReducer,
+    healthContent: healthContentReducer
 });
 
 export default reducer;

@@ -219,5 +219,8 @@
     "associate_facet_category": "Associate Facet-Category",
 
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+
+    "health-content": "Healt Content",
+    "status-market": "Overall status"
 }

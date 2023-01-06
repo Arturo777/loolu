@@ -4,16 +4,15 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'utils/axios';
 import { STYRK_API_HEALTH_CONTENT } from 'config';
-import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, NewBrandType } from 'types/catalog';
 
 const initialState: DefaultRootStateProps['healthContent'] = {
     loading: true,
     updating: false,
-    error: null
+    error: null,
+    firstLevel: []
 };
 
 const slice = createSlice({
@@ -24,20 +23,21 @@ const slice = createSlice({
         hasError(state, action) {
             state.error = action.payload;
         }
+    },
+    extraReducers(builder) {
+        builder
+            .addCase(getFirstLevel.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getFirstLevel.fulfilled, (state, action) => {
+                state.loading = false;
+                state.firstLevel = action.payload.response;
+            });
     }
 });
 export default slice.reducer;
 
-export const getFirstLevel = createAsyncThunk(`${slice.name}/fisrt-level`, async (idMerchant?: number) => {
-    const response = await axios.post(
-        `styrk/api/health-content/metrics/first-level`,
-        {},
-        {
-            baseURL: STYRK_API_HEALTH_CONTENT,
-            params: {
-                idMerchant: idMerchant || 1
-            }
-        }
-    );
+export const getFirstLevel = createAsyncThunk(`${slice.name}/fisrt-level`, async () => {
+    const response = await axios.get(`styrk/api/health-content/metrics/first-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });

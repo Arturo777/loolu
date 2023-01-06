@@ -6,7 +6,7 @@ import { Button, Box, Grid, CardContent, LinearProgress, Rating, Stack, Typograp
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import ProductReview from 'ui-component/cards/ProductReview';
-import { Products, Reviews } from 'types/e-commerce';
+import { Reviews } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProductReviews } from 'store/slices/product';

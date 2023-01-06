@@ -1,16 +1,14 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // material-ui
 import { styled } from '@mui/material/styles';
 import {
     Button,
     Box,
-    ButtonGroup,
     Divider,
     FormControl,
     FormControlLabel,
-    FormHelperText,
     Grid,
     MenuItem,
     Radio,
@@ -30,8 +28,6 @@ import {
     OutlinedInput,
     IconButton,
     Switch,
-    Card,
-    Drawer,
     SwipeableDrawer,
     ListItemButton,
     ListItemIcon,
@@ -46,40 +42,25 @@ import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { IconSearch } from '@tabler/icons';
 import formatUrl from 'utils/formatUrl';
-import { SelectChangeEvent } from '@mui/material/Select';
 // third-party
-import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
-import * as yup from 'yup';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { Products, TradePolicies, Skus } from 'types/e-commerce';
-import { openSnackbar } from 'store/slices/snackbar';
+import { Skus } from 'types/e-commerce';
 import { useDispatch, useSelector } from 'store';
-import { addProduct } from 'store/slices/cart';
 
 // assets
-/* import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
-import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone'; */
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import { Key, MouseEventHandler, SetStateAction, createContext, useEffect, useRef, useState } from 'react';
+import { Key, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import ProductDimensions from './ProductDimensions';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { BrandType, CategoryType } from 'types/catalog';
 import { getCategoriesService } from 'store/slices/catalog';
-import CategoryOptions from 'views/Catalog/Categories/components/CategoryOptions';
-import { CustomizationProps } from 'types/config';
 import ConfigProvider from 'config';
 import filterUnitM from 'utils/unitMeasurement';
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
-const validationSchema = yup.object({
-    color: yup.string().required('Color selection is required'),
-    size: yup.number().required('Size selection is required.')
-});
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -236,7 +217,7 @@ const ProductInfo = ({
         bottom: false,
         right: false
     });
-    const [selectedCatId, setSelectedCatId] = useState<number>();
+    /* const [selectedCatId, setSelectedCatId] = useState<number>(); */
     /* const dispatch = useDispatch(); */
     /* const history = useNavigate(); */
     // info Brands
@@ -247,12 +228,8 @@ const ProductInfo = ({
 
     // info Categories
     const [searchCat, setSearchCat] = useState(product?.categoryName);
-    const { filterCategories, categories } = useSelector((state) => state.catalogue);
-    /* const cart = useSelector((state) => state.cart); */
-    /* const flatCategories = categories.map((cat: any) =>
-        cat?.children.map((childCat: any) => childCat?.children.map(() => ({ name: childCat.name, id: childCat.id })))
-    );
-    console.log(flatCategories); */
+    const { categories } = useSelector((state) => state.catalogue);
+
     const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
             return;

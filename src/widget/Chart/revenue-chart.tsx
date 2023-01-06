@@ -1,4 +1,3 @@
-import { Props } from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 // ==============================|| WIDGET - REVENUE CHART ||============================== //
 
