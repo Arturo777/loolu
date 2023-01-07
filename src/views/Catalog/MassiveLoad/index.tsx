@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 // mui imports
-import { Divider, Grid, Typography, Box } from '@mui/material';
+import { Button, Divider, Grid, Typography, Box, Collapse } from '@mui/material';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 // third-party imports
 import { FormattedMessage } from 'react-intl';
@@ -24,6 +25,7 @@ export default function MassiveLoadPage() {
     // consts
     const [params, setParams] = useState<userSearchParams>({ productName: '', idBrand: '', idSKU: '', idCategory: '' });
     const [currentPage, setCurrentPage] = useState(1);
+    // const [file, setFile] = useState<string>('');
 
     const handlePage = (page: number) => setCurrentPage(page);
 
