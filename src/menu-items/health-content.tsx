@@ -18,10 +18,10 @@ const healthContent = {
     title: <FormattedMessage id="health-content" />,
     children: [
         {
-            id: 'first-level',
+            id: 'overall-score',
             title: <FormattedMessage id="status-market" />,
             type: 'item',
-            url: '/health-content/first-level',
+            url: '/health-content/overall-score',
             icon: icons.IconUsers,
             external: false,
             breadcrumbs: false

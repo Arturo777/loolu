@@ -3,15 +3,18 @@ import { ApexOptions } from 'apexcharts';
 
 export const options: ApexOptions = {
     chart: {
-        width: 300,
-        height: 350
+        width: 100,
+        height: 150
     },
     plotOptions: {
         radialBar: {
             hollow: {
-                size: '70%'
+                size: '55%'
             }
         }
+    },
+    noData: {
+        text: undefined
     }
 };
 export const series: any = {
