@@ -26,7 +26,6 @@ const TableUpdates = ({ updates }: { updates: SkuHC[] }) => {
         f = fh?.split(' ');
         h = f[1].split('.');
         fechaTotal = `${f[0].split('-').reverse().join('/')} ${h[0]}`;
-        console.log(fechaTotal);
         return fechaTotal;
     };
     return (

@@ -1,9 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { styled, useTheme } from '@mui/material/styles';
-import { Avatar, Box, CircularProgress, Fade, Grid, Menu, MenuItem, Typography } from '@mui/material';
+import {
+    Avatar,
+    Box,
+    Card,
+    Chip,
+    CircularProgress,
+    Collapse,
+    Fade,
+    Grid,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+    Menu,
+    MenuItem,
+    Typography
+} from '@mui/material';
+
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MainCard from 'ui-component/cards/MainCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSecondLevelProducts } from 'store/slices/healthContent';
+import { DefaultRootStateProps } from 'types';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.secondary.dark,
@@ -49,8 +73,29 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const Products = () => {
     const theme = useTheme();
-    const [first, setfirst] = useState('');
+    const dispatch = useDispatch();
+    const [secondLevel, setSecondLevel] = useState<any>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [open, setOpen] = React.useState(true);
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const { secondLevelProducts } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+
+    const handleClick = () => {
+        setOpen(!open);
+    };
+    useEffect(() => {
+        setIsLoading(true);
+        dispatch(getSecondLevelProducts());
+    }, [dispatch]);
+
+    useEffect(() => {
+        setSecondLevel(secondLevelProducts);
+        setIsLoading(false);
+    }, [secondLevelProducts]);
+
+    console.log(secondLevel);
+
     return (
         <>
             {isLoading ? (
@@ -60,60 +105,80 @@ const Products = () => {
                     </Box>
                 </Fade>
             ) : (
-                <CardWrapper border={false} content={false}>
-                    <Box sx={{ p: 2.25 }}>
-                        <Grid container direction="column">
-                            <Grid item>
-                                <Grid container justifyContent="space-between">
-                                    <Grid item>
-                                        <Avatar
-                                            variant="rounded"
-                                            sx={{
-                                                ...theme.typography.commonAvatar,
-                                                ...theme.typography.largeAvatar,
-                                                backgroundColor:
-                                                    theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.secondary[800],
-                                                mt: 1
-                                            }}
-                                        />
+                <>
+                    <CardWrapper border={false} content={false} sx={{ mb: 2 }}>
+                        <Box sx={{ p: 2.25 }}>
+                            <Grid container direction="column">
+                                <Grid item>
+                                    <Grid container alignItems="center">
+                                        <Grid item>
+                                            <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                                                Products
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Avatar
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    ...theme.typography.smallAvatar,
+                                                    backgroundColor: theme.palette.secondary[400],
+                                                    color: theme.palette.secondary.dark
+                                                }}
+                                            >
+                                                <ArrowUpwardIcon fontSize="inherit" />
+                                            </Avatar>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item sx={{ mb: 1.25 }}>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '1rem',
+                                            fontWeight: 500,
+                                            color:
+                                                theme.palette.mode === 'dark' ? theme.palette.text.secondary : theme.palette.secondary[200]
+                                        }}
+                                    >
+                                        Total Earning
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item>
-                                <Grid container alignItems="center">
-                                    <Grid item>
-                                        <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-                                            $500.00
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Avatar
-                                            sx={{
-                                                cursor: 'pointer',
-                                                ...theme.typography.smallAvatar,
-                                                backgroundColor: theme.palette.secondary[200],
-                                                color: theme.palette.secondary.dark
-                                            }}
+                        </Box>
+                    </CardWrapper>
+                    <Grid container spacing={1}>
+                        <Grid item xs={3}>
+                            <Card>
+                                <List
+                                    sx={{ width: '100%', bgcolor: 'background.paper' }}
+                                    component="nav"
+                                    aria-labelledby="nested-list-subheader"
+                                    subheader={
+                                        <ListSubheader
+                                            component="div"
+                                            id="nested-list-subheader"
+                                            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1, pb: 1 }}
                                         >
-                                            <ArrowUpwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
-                                        </Avatar>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <Grid item sx={{ mb: 1.25 }}>
-                                <Typography
-                                    sx={{
-                                        fontSize: '1rem',
-                                        fontWeight: 500,
-                                        color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : theme.palette.secondary[200]
-                                    }}
+                                            <Typography variant="h3">Buena</Typography>
+                                            <Chip label="99%" color="success" variant="outlined" />
+                                        </ListSubheader>
+                                    }
                                 >
-                                    Total Earning
-                                </Typography>
-                            </Grid>
+                                    <ListItemButton onClick={handleClick} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                        {open ? <ExpandLess /> : <ExpandMore />}
+                                    </ListItemButton>
+                                    <Collapse in={open} timeout="auto" unmountOnExit>
+                                        <ListItem>
+                                            {/* <ListItemIcon>
+                                                    <StarBorder />
+                                                </ListItemIcon> */}
+                                            <ListItemText primary="Starred" />
+                                        </ListItem>
+                                    </Collapse>
+                                </List>
+                            </Card>
                         </Grid>
-                    </Box>
-                </CardWrapper>
+                    </Grid>
+                </>
             )}
         </>
     );
