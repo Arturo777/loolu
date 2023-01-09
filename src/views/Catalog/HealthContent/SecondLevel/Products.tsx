@@ -28,6 +28,8 @@ import { getSecondLevelProducts } from 'store/slices/healthContent';
 import { DefaultRootStateProps } from 'types';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { ResumenProducts } from 'types/health-content';
+import CardRatings from './CardRatings';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.secondary.dark,
@@ -76,14 +78,9 @@ const Products = () => {
     const dispatch = useDispatch();
     const [secondLevel, setSecondLevel] = useState<any>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [open, setOpen] = React.useState(true);
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const { secondLevelProducts } = useSelector((state: DefaultRootStateProps) => state.healthContent);
-
-    const handleClick = () => {
-        setOpen(!open);
-    };
     useEffect(() => {
         setIsLoading(true);
         dispatch(getSecondLevelProducts());
@@ -145,38 +142,12 @@ const Products = () => {
                             </Grid>
                         </Box>
                     </CardWrapper>
-                    <Grid container spacing={1}>
-                        <Grid item xs={3}>
-                            <Card>
-                                <List
-                                    sx={{ width: '100%', bgcolor: 'background.paper' }}
-                                    component="nav"
-                                    aria-labelledby="nested-list-subheader"
-                                    subheader={
-                                        <ListSubheader
-                                            component="div"
-                                            id="nested-list-subheader"
-                                            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1, pb: 1 }}
-                                        >
-                                            <Typography variant="h3">Buena</Typography>
-                                            <Chip label="99%" color="success" variant="outlined" />
-                                        </ListSubheader>
-                                    }
-                                >
-                                    <ListItemButton onClick={handleClick} sx={{ display: 'flex', justifyContent: 'center' }}>
-                                        {open ? <ExpandLess /> : <ExpandMore />}
-                                    </ListItemButton>
-                                    <Collapse in={open} timeout="auto" unmountOnExit>
-                                        <ListItem>
-                                            {/* <ListItemIcon>
-                                                    <StarBorder />
-                                                </ListItemIcon> */}
-                                            <ListItemText primary="Starred" />
-                                        </ListItem>
-                                    </Collapse>
-                                </List>
-                            </Card>
-                        </Grid>
+                    <Grid container direction="column" spacing={1} xs={3}>
+                        {secondLevel?.resumeProducts?.map((resume: ResumenProducts) => (
+                            <Grid item xs={3}>
+                                <CardRatings resume={resume} />
+                            </Grid>
+                        ))}
                     </Grid>
                 </>
             )}
