@@ -233,5 +233,7 @@
     "no_options": "No options",
     "upload": "Upload",
     "attach_file": "Attach file",
-    "success_file_request": "Request saved with event number: {code}"
+    "success_file_request": "Request saved with event number: {code}",
+
+    "change_log": "Change log"
 }

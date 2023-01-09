@@ -37,6 +37,9 @@ const CategoriesMainPage = Loadable(lazy(() => import('views/Catalog/Categories/
 // ========= MASSIVE LOAD =========
 const MassiveLoadPage = Loadable(lazy(() => import('views/Catalog/MassiveLoad')));
 
+// ========= CHANGE LOG =========
+const ChangeLogPage = Loadable(lazy(() => import('views/Reports/ChangeLog')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -130,6 +133,11 @@ const MainRoutes = {
         {
             path: '/massive_load',
             element: <MassiveLoadPage />
+        },
+        // ========= REPORTS - CHANGE LOG =========
+        {
+            path: '/change_log',
+            element: <ChangeLogPage />
         }
     ]
 };
