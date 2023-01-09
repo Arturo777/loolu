@@ -1,16 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 // mui imports
-import { Box, Chip, Fade, Pagination, Stack, useTheme } from '@mui/material';
+import { Box, Chip, Fade, Pagination, Stack, Typography, useTheme, Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
+// third party imports
+import { FormattedMessage, useIntl } from 'react-intl';
+
+// project imports
 import { useDispatch } from 'store';
 import { getProductsThunk } from 'store/slices/product';
-import { FormattedMessage } from 'react-intl';
 
 // types
 
 import { Products } from 'types/e-commerce';
 import { userSearchParams } from './commons';
+import { downloadMassiveFile } from 'store/slices/catalog';
+import { openSnackbar } from 'store/slices/snackbar';
 
 type MassiLoadResultsProps = {
     searchParams: userSearchParams;
@@ -20,6 +27,7 @@ type MassiLoadResultsProps = {
 
 export default function MassiLoadResults({ searchParams, currentPage, setCurrentPage }: MassiLoadResultsProps) {
     // hooks
+    const intl = useIntl();
     const dispatch = useDispatch();
     const theme = useTheme();
 
@@ -95,8 +103,55 @@ export default function MassiLoadResults({ searchParams, currentPage, setCurrent
         setCurrentPage(value);
     };
 
+    const onDownloadClick = () => {
+        // user: user?.user
+
+        dispatch(downloadMassiveFile({ idMerchant: 1, user: 'ohuitron' })).then(({ payload }) => {
+            if (payload.code === 200 && payload.response) {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: intl.formatMessage(
+                            {
+                                id: 'success_file_request'
+                            },
+                            { code: payload.response }
+                        ),
+                        variant: 'alert',
+                        alert: {
+                            color: 'success'
+                        },
+                        close: true
+                    })
+                );
+            } else {
+                dispatch(
+                    openSnackbar({
+                        open: true,
+                        message: 'Error!',
+                        variant: 'alert',
+                        alert: {
+                            color: 'error'
+                        },
+                        close: true
+                    })
+                );
+            }
+        });
+    };
+
     return (
         <Box>
+            <Stack direction="row" sx={{ mb: 2 }} alignItems="center">
+                <Typography variant="h3" sx={{ mr: 2 }}>
+                    Resultados de busqueda
+                </Typography>
+                <Button variant="contained" startIcon={<FileDownloadIcon />} onClick={onDownloadClick}>
+                    {intl.formatMessage({
+                        id: 'download'
+                    })}
+                </Button>
+            </Stack>
             <DataGrid
                 loading={isLoading}
                 autoHeight

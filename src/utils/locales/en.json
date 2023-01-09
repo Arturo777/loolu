@@ -232,5 +232,6 @@
     "loading": "Loading",
     "no_options": "No options",
     "upload": "Upload",
-    "attach_file": "Attach file"
+    "attach_file": "Attach file",
+    "success_file_request": "Request saved with event number: {code}"
 }

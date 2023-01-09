@@ -426,3 +426,29 @@ export const uploadMassiveFile = createAsyncThunk(
         }
     }
 );
+export const downloadMassiveFile = createAsyncThunk(
+    `${slice.name}/uploadMassiveFile`,
+    async ({ idMerchant, user }: { idMerchant?: number; user: string }) => {
+        try {
+            // const bearerToken = localStorage.getItem("loo")
+
+            const token = localStorage.getItem('looluToken');
+            // const token = localStorage.getItem('serviceToken');
+
+            const response = await axios.post(
+                `/merchant/${idMerchant ?? 1}/user/${user}/contentRequest`,
+                {
+                    bearerToken: token,
+                    merchantId: idMerchant,
+                    user
+                },
+                {
+                    baseURL: STYRK_API_BULKLOAD
+                }
+            );
+            return response.data;
+        } catch (e: any) {
+            return e.response;
+        }
+    }
+);

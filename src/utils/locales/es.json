@@ -232,5 +232,6 @@
     "loading": "Cargando",
     "no_options": "No options",
     "upload": "Subir",
-    "attach_file": "Adjuntar archivo"
+    "attach_file": "Adjuntar archivo",
+    "success_file_request": "Solicitud guardada con el número de evento: {code}"
 }

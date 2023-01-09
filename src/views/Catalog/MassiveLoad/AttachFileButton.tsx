@@ -73,6 +73,17 @@ export default function AttachFileButton() {
             })
         )
             .then(() => {
+                openSnackbar({
+                    open: true,
+                    message: 'Archivo cargado',
+                    variant: 'alert',
+                    alert: {
+                        color: 'success'
+                    },
+                    close: true
+                });
+            })
+            .then(() => {
                 handleCleanForm();
             })
             .finally(() => {
