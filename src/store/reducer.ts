@@ -14,6 +14,7 @@ import authReducer from './slices/auth';
 import profilesReducer from './slices/profiles';
 import catalogueReducer from './slices/catalog';
 import healthContentReducer from './slices/healthContent';
+import reportsReducer from './slices/reports';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -34,7 +35,8 @@ const reducer = combineReducers({
     auth: authReducer,
     snackbar: snackbarReducer,
     profile: profilesReducer,
-    catalogue: catalogueReducer
+    catalogue: catalogueReducer,
+    reports: reportsReducer
 });
 
 export default reducer;

@@ -139,7 +139,9 @@ const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentP
 
     return (
         <Fade in={show}>
-            <Card sx={{ boxShadow: 2, p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>{renderContent()}</Card>
+            <Card elevation={2} sx={{ p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>
+                {renderContent()}
+            </Card>
         </Fade>
     );
 };

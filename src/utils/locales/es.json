@@ -151,6 +151,8 @@
     "rows": "Filas",
     "search": "Buscar",
     "filter": "Filtrar",
+    "sort_by": "Ordenar por",
+    "apply": "Aplicar",
 
     "hi_welcome": "¡Hola! Bienvenido",
     "enter_credentials": "Ingresa tus datos para continuar",
@@ -235,5 +237,6 @@
     "attach_file": "Adjuntar archivo",
     "success_file_request": "Solicitud guardada con el número de evento: {code}",
 
+    "reports": "Reportes",
     "change_log": "Bitácora de cambios"
 }

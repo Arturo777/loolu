@@ -151,6 +151,8 @@
     "rows": "Rows",
     "search": "Search",
     "filter": "Filter",
+    "sort_by": "Sort by",
+    "apply": "Apply",
 
     "hi_welcome": "Hi, Welcome back",
     "enter_credentials": "Enter your credentials to continue",
@@ -235,5 +237,6 @@
     "attach_file": "Attach file",
     "success_file_request": "Request saved with event number: {code}",
 
+    "reports": "Reports",
     "change_log": "Change log"
 }
