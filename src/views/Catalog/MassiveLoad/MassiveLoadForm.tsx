@@ -42,8 +42,8 @@ export default function MassiveLoadForm({ handleSearch, setCurrentPage }: Massiv
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit}>
-            <Grid container spacing={gridSpacing} alignItems="center">
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Grid container spacing={gridSpacing}>
                 <Grid item xs={12} sm={6} lg={2}>
                     <TextField
                         fullWidth
@@ -76,7 +76,7 @@ export default function MassiveLoadForm({ handleSearch, setCurrentPage }: Massiv
                     />
                 </Grid>
 
-                <Grid item xs={12} sm={6} lg={3}>
+                <Grid item xs={12} sm={6} lg={4}>
                     <CategorySelect
                         onChange={(categoryId) => {
                             setParams((value) => ({ ...value, idCategory: categoryId }));

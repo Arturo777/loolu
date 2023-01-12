@@ -16,7 +16,9 @@ import {
     SelectChangeEvent,
     TextField,
     FormControl,
-    InputLabel
+    InputLabel,
+    CircularProgress,
+    Collapse
 } from '@mui/material';
 
 // assets
@@ -34,6 +36,7 @@ import ChangeLogList from './ChangeLogList';
 import { getChangeLogList } from 'store/slices/reports';
 import { ChangeLog } from 'types/reports';
 import { compareAsc } from 'date-fns';
+import Loader from 'ui-component/Loader';
 
 enum sortOptions {
     'prodId' = 'prodId',
@@ -48,7 +51,7 @@ export default function ChangeLogPage() {
     const dispatch = useDispatch();
 
     // store
-    const { changeLog } = useSelector((state) => state.reports);
+    const { changeLog, loading } = useSelector((state) => state.reports);
 
     // vars
     const [filterText, setFilterText] = useState<string>('');
@@ -167,9 +170,19 @@ export default function ChangeLogPage() {
             }
             content={false}
         >
+            {loading && <Loader />}
             <Grid container spacing={gridSpacing} p={2}>
                 <Grid item xs={12} sm={6} md={5} lg={5} xl={4}>
-                    <ChangeLogList changeLog={formattedList} handleSelect={handleSelect} />
+                    <Collapse in={loading}>
+                        <Stack sx={{ width: 1, p: 5 }} alignItems="center" justifyContent="center">
+                            <CircularProgress />
+                        </Stack>
+                    </Collapse>
+                    <Fade in={!loading}>
+                        <Box>
+                            <ChangeLogList changeLog={formattedList} handleSelect={handleSelect} />
+                        </Box>
+                    </Fade>
                 </Grid>
                 <Grid item xs={12} sm={6} md={5} lg={5} xl={4}>
                     <Box sx={{ position: 'sticky', top: 100, bottom: 20 }}>
