@@ -84,9 +84,9 @@ export default function CategorySelect({ onChange, initialValue }: BrandSelectPr
                     {...props}
                     key={`${option.label}-${option.id}`}
                     sx={{
+                        color: theme.palette.grey[100],
                         p: 1,
-                        pl: option.level ?? 1,
-                        color: theme.palette.primary.main
+                        pl: option.level ?? 1
                     }}
                 >
                     <Box component="span" sx={{ color: 'transparent' }}>

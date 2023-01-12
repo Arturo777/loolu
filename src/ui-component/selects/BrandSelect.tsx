@@ -83,8 +83,7 @@ export default function BrandSelect({ onChange, initialValue }: BrandSelectProps
                     key={`${option.label}-${option.id}`}
                     sx={{
                         p: 1,
-                        background: selected ? theme.palette.primary.main : 'white',
-                        color: theme.palette.primary.main,
+                        color: theme.palette.grey[100],
                         transition: 'all 350ms ease',
                         '&:hover': {
                             background: theme.palette.divider,
