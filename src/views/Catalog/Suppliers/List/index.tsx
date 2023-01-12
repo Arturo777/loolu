@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // material-ui
-import { Button, CircularProgress, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports

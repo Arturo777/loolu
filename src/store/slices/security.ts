@@ -1,5 +1,5 @@
 // third-party
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosGlobal from 'axios';
 
 // project imports
@@ -62,11 +62,12 @@ const slice = createSlice({
         getEditInfoPending(state) {
             state.loadingEditInfo = true;
         },
-        getProfilesSuccess(state, action) {
-            const profiles: ProfileType[] = action.payload;
-            state.loadingEditInfo = false;
-            state.profiles = profiles;
-        },
+        // getProfilesPending(state) {
+        //     state.loading = true;
+        // },
+        // getProfilesSuccess(state, action) {
+
+        // },
         // providers
         getProvidersSuccess(state, action) {
             const providers: ProviderType[] = action.payload;
@@ -102,6 +103,18 @@ const slice = createSlice({
             state.menuOptions = action.payload;
             state.loading = false;
         }
+    },
+    extraReducers(builder) {
+        builder
+            .addCase(getProfiles.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getProfiles.fulfilled, (state, action) => {
+                state.loading = false;
+
+                const profiles: ProfileType[] = action.payload.response;
+                state.profiles = profiles;
+            });
     }
 });
 
@@ -183,24 +196,16 @@ export function getUserInfo(userId: number, idMerchant?: string) {
     };
 }
 
-export function getProfiles(idMerchant?: string) {
-    return async () => {
-        dispatch(slice.actions.getEditInfoPending());
-
-        try {
-            const response = await axios.get(`styrk/api/profile/search`, {
-                baseURL: STYRK_API,
-                params: {
-                    idMerchant: idMerchant || 1
-                }
-            });
-
-            dispatch(slice.actions.getProfilesSuccess(response.data.response));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
+export const getProfiles = createAsyncThunk(`${slice.name}/getProfiles`, async ({ idMerchant }: { idMerchant?: number }) => {
+    const response = await axios.get(`styrk/api/profile/search`, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
         }
-    };
-}
+    });
+
+    return response.data;
+});
 
 export function getProviders(idMerchant?: string) {
     return async () => {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 // material-ui
-import { Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { CircularProgress, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Stack, Typography } from '@mui/material';
 
 // project imports
 import { useSearchParams } from 'react-router-dom';
@@ -64,14 +64,14 @@ const UsersList = () => {
         }
     }, [search, usersList]);
 
-    let usersResult: React.ReactElement | React.ReactElement[] = <></>;
-    if (users) {
-        usersResult = users.map((user, index) => (
-            <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
-                <UserDetailsCard {...user} />
-            </Grid>
-        ));
-    }
+    // let usersResult: React.ReactElement | React.ReactElement[] = <></>;
+    // if (users) {
+    //     usersResult = users.map((user, index) => (
+    //         <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
+    //             <UserDetailsCard {...user} />
+    //         </Grid>
+    //     ));
+    // }
 
     return (
         <MainCard
@@ -102,8 +102,25 @@ const UsersList = () => {
             }
         >
             <Grid container direction="row" spacing={gridSpacing}>
-                {!loading && usersResult}
                 {loading && <Loader />}
+
+                <Grid item xs={12}>
+                    <Collapse in={!loading}>
+                        <Grid container direction="row" spacing={gridSpacing}>
+                            {users.map((user, index) => (
+                                <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
+                                    <UserDetailsCard {...user} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Collapse>
+                </Grid>
+                <Fade in={loading}>
+                    <Stack justifyContent="center" alignItems="center" p={5} sx={{ width: 1 }}>
+                        <CircularProgress />
+                    </Stack>
+                </Fade>
+
                 <Grid item xs={12}>
                     <Grid container justifyContent="flex-end" spacing={gridSpacing}>
                         <Grid item>
