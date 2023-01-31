@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { Box, TextField, Fade, Card, Typography, Divider, CircularProgress, Stack, Button } from '@mui/material';
+import {
+    Box,
+    TextField,
+    Fade,
+    Card,
+    Typography,
+    Divider,
+    CircularProgress,
+    Stack,
+    Button,
+    InputAdornment,
+    IconButton
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
 
 // third-part imports
 import { useIntl } from 'react-intl';
@@ -12,13 +25,14 @@ import { useDispatch, useSelector } from 'store';
 import { getFacetsService } from 'store/slices/catalog';
 
 // types
-import { FacetType, SpecificationValuesType } from 'types/catalog';
+import { FacetType } from 'types/catalog';
 
 type SearchFacetsComponentProps = {
-    handleAddFacet: (facet: FacetType, mode: SpecificationValuesType) => void;
+    handleAddFacet: (facet: FacetType | null) => void;
+    facetData: FacetType | null;
 };
 
-export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsComponentProps) {
+export default function SearchFacetsComponent({ handleAddFacet, facetData }: SearchFacetsComponentProps) {
     // hooks
     const dispatch = useDispatch();
     const intl = useIntl();
@@ -45,25 +59,47 @@ export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsCo
         setSearchText(value);
     };
 
-    const addToProduct = (facet: FacetType) => {
-        handleAddFacet(facet, SpecificationValuesType.PRODUCT);
+    const handleAssociate = (facet: FacetType) => {
+        setSearchText(facet.name);
+        handleAddFacet(facet);
     };
 
-    const addToSKU = (facet: FacetType) => {
-        handleAddFacet(facet, SpecificationValuesType.SKU);
+    const handleClear = () => {
+        handleAddFacet(null);
+        setSearchText('');
+    };
+
+    const handleBlur = () => {
+        if (facetData) {
+            if (searchText !== facetData?.name) {
+                setSearchText(facetData?.name);
+            }
+        }
     };
 
     return (
-        <Box sx={{ ml: 2, mr: 2, mb: 2, position: 'relative' }}>
+        <Box sx={{ mb: 2, position: 'relative' }}>
             <TextField
                 onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
+                onBlur={() => {
+                    setIsFocus(false);
+                    handleBlur();
+                }}
                 sx={{ zIndex: 6 }}
-                type="search"
+                type="text"
                 fullWidth
                 label={intl.formatMessage({ id: 'search_facets' })}
                 value={searchText}
                 onChange={onchangeText}
+                InputProps={{
+                    endAdornment: facetData ? (
+                        <InputAdornment position="end">
+                            <IconButton onClick={handleClear} size="small" color="error">
+                                <ClearIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ) : null
+                }}
             />
             <Fade in={Boolean(searchText.length > 2 && isFocus)}>
                 <Card elevation={2} sx={cardStyles}>
@@ -92,14 +128,11 @@ export default function SearchFacetsComponent({ handleAddFacet }: SearchFacetsCo
                                                 size="small"
                                                 variant="outlined"
                                                 startIcon={<AddIcon />}
-                                                onClick={() => addToProduct(item)}
+                                                onClick={() => handleAssociate(item)}
                                                 sx={{ mr: 1 }}
                                                 color="success"
                                             >
-                                                {intl.formatMessage({ id: 'product' })}
-                                            </Button>
-                                            <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => addToSKU(item)}>
-                                                {intl.formatMessage({ id: 'sku' })}
+                                                {intl.formatMessage({ id: 'associate' })}
                                             </Button>
                                         </Box>
                                     </Stack>

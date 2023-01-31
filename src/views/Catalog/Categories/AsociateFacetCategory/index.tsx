@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // mui imports
 import {
@@ -11,10 +11,12 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Collapse
+    Collapse,
+    Button
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
 // third-party imports
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -22,11 +24,10 @@ import { FormattedMessage, useIntl } from 'react-intl';
 // project imports
 import { getFacetVariant } from 'store/slices/catalog';
 import { useDispatch } from 'store';
-import SpecificationForm from './SpecificationFormComponent';
-import SearchFacetsComponent from './SearchFacetsComponent';
 
 // type
-import { CategoryType, FacetType, SpecificationGroupType, SpecificationsType, SpecificationValuesType } from 'types/catalog';
+import { CategoryType, FacetType, SpecificationGroupType, SpecificationsType, SpecificationGroupMode } from 'types/catalog';
+import AssociateFormComponent from './AssociateFormComponent';
 
 type AsociateFacetCategoryComponentProps = {
     open: boolean;
@@ -49,20 +50,14 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     const [editingForm, setEditingForm] = useState<{
         show: boolean;
         specification: SpecificationsType | null;
-        specType: SpecificationValuesType | null;
         facet?: FacetType | null;
         mode: 'EDIT' | 'ADD';
-        groupInfo?: {
-            id: number;
-            name: string;
-        };
-    }>({ show: false, specification: null, specType: null, facet: null, mode: 'EDIT' });
+    }>({ show: false, specification: null, facet: null, mode: 'EDIT' });
 
     const handleCloseForm = () => {
         setEditingForm({
             specification: null,
             show: false,
-            specType: null,
             facet: null,
             mode: 'EDIT'
         });
@@ -95,27 +90,20 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category, dispatch]);
 
-    const handleEditSpec = (spec: SpecificationsType | null, type: SpecificationValuesType) => {
+    const handleEditSpec = (spec: SpecificationsType | null, type: SpecificationGroupMode) => {
         setEditingForm({
             specification: spec,
             show: spec !== null,
-            specType: type,
             mode: 'EDIT'
         });
     };
 
-    const handeAdd = (facet: FacetType, specType: SpecificationValuesType) => {
+    const handeAdd = () => {
         if (specificationGroups) {
-            const groupData = specificationGroups[specificationGroups?.length - 1];
             setEditingForm({
-                groupInfo: {
-                    id: groupData.groupId,
-                    name: groupData.name
-                },
                 specification: null,
-                facet,
+                facet: null,
                 show: true,
-                specType,
                 mode: 'ADD'
             });
         }
@@ -126,20 +114,16 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
         handleCloseForm();
     };
 
-    const getSpecificationGroupId = useMemo(
-        () => (specificationGroups ? specificationGroups[specificationGroups?.length - 1].groupId : 0),
-        [specificationGroups]
-    );
-
     const content = () => (
         <>
-            {/* SEARCH */}
-            <Collapse in={!editingForm.show}>
-                <SearchFacetsComponent handleAddFacet={handeAdd} />
-            </Collapse>
             {/* SPECS */}
             <Collapse in={!editingForm.show} collapsedSize={0} sx={{ p: 0 }}>
                 <Box>
+                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button onClick={handeAdd} variant="text" startIcon={<AddIcon />}>
+                            Asociar nuevo facet
+                        </Button>
+                    </Box>
                     {specificationGroups &&
                         specificationGroups.map((specificationGroup) => (
                             <React.Fragment key={`specification-grup-${specificationGroup.groupId}`}>
@@ -162,14 +146,14 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                                         <RenderSpecifications
                                             onEditClick={handleEditSpec}
                                             specifications={specificationGroup.prodSpecs}
-                                            titleType={SpecificationValuesType.PRODUCT}
+                                            titleType={SpecificationGroupMode.PRODUCT}
                                         />
                                     )}
                                     {specificationGroup.skuSpecs.length > 0 && (
                                         <RenderSpecifications
                                             onEditClick={handleEditSpec}
                                             specifications={specificationGroup.skuSpecs}
-                                            titleType={SpecificationValuesType.SKU}
+                                            titleType={SpecificationGroupMode.SKU}
                                         />
                                     )}
                                 </Collapse>
@@ -178,18 +162,24 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                 </Box>
             </Collapse>
             {/* FORM */}
-            <SpecificationForm
+            <AssociateFormComponent
+                show={editingForm.show}
+                handleCancel={handleCloseForm}
                 handleSuccesFetch={handleSuccesFetch}
-                groupId={getSpecificationGroupId}
+                mode={editingForm.mode}
+                specificationGroups={specificationGroups}
+            />
+            {/* <SpecificationForm
+                handleSuccesFetch={handleSuccesFetch}
+                // groupId={getSpecificationGroupId}
                 categoryId={category?.id ?? 1}
                 specificationToEdit={editingForm.specification}
                 show={editingForm.show}
                 mode={editingForm.mode}
                 facet={editingForm.facet}
-                specType={editingForm.specType ?? SpecificationValuesType.PRODUCT}
                 handleCancel={handleCloseForm}
                 groupInfo={editingForm.groupInfo}
-            />
+            /> */}
         </>
     );
 
@@ -197,14 +187,28 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
 
     return (
         <Drawer anchor="right" open={open} onClose={toggleDrawer}>
-            <Box sx={{ width: dynamicWidth, height: '100vh', position: 'relative', overflowY: 'scroll' }}>
-                <Stack sx={{ padding: 2 }}>
+            <Box
+                sx={{
+                    minWidth: {
+                        xs: '100%',
+                        sm: 350,
+                        md: 400
+                    },
+                    maxWidth: 550,
+                    height: '100vh',
+                    overflowY: 'scroll',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr',
+                    gridTemplateRows: '1fr 100%'
+                }}
+            >
+                <Stack sx={{ padding: 2, gridArea: '1 / 1 / 2 / 2' }}>
                     <Typography mb={1} variant="h4">
-                        {intl.formatMessage({
+                        {`${intl.formatMessage({
                             id: 'associate_facet_category'
-                        })}
-                        {category.name}
+                        })}: ${category.name}`}
                     </Typography>
+
                     <Divider />
                 </Stack>
 
@@ -213,7 +217,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                         <CircularProgress />
                     </Box>
                 )}
-                {!isLoading && specificationGroups && content()}
+                <Box sx={{ gridArea: '2 / 1 / 3 / 2' }}>{!isLoading && specificationGroups && content()}</Box>
             </Box>
         </Drawer>
     );
@@ -221,9 +225,9 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
 
 type RenderSpecificationsProps = {
     specifications: SpecificationsType[];
-    titleType: SpecificationValuesType;
+    titleType: SpecificationGroupMode;
     // titleType: 'PRODUCT' | 'SKU';
-    onEditClick: (spec: SpecificationsType, type: SpecificationValuesType) => void;
+    onEditClick: (spec: SpecificationsType, type: SpecificationGroupMode) => void;
 };
 
 const RenderSpecifications = ({ specifications, titleType, onEditClick }: RenderSpecificationsProps) => (
@@ -241,9 +245,3 @@ const RenderSpecifications = ({ specifications, titleType, onEditClick }: Render
         ))}
     </>
 );
-
-const dynamicWidth = {
-    xs: 1,
-    md: 0.9,
-    lg: 480
-};

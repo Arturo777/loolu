@@ -187,6 +187,7 @@ const SearchSection = () => {
 
     const handleSearch = () => {
         const params = { [searchField]: value };
+
         // CLOSE
         setAnchorEl(null);
         // REDIRECT

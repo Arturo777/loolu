@@ -252,5 +252,8 @@
     "first_name": "First name",
     "last_name": "Last name",
     "phone": "Phone",
-    "edit_user": "Edit user"
+    "edit_user": "Edit user",
+    "associate": "Associate",
+    "group": "Group",
+    "add_group": "ADD GROUP"
 }

@@ -10,39 +10,33 @@ import { useIntl } from 'react-intl';
 // project imports
 
 // types
-import { SpecificationsType, SpecificationValueDataType } from 'types/catalog';
+import { SpecificationValueDataType } from 'types/catalog';
+// import { NewSpecificationType } from './CustomTypes';
 
-export type newSpecificationType = {
+// export type newSpecificationType = {
+//     name: string;
+//     isActive: boolean;
+// };
+
+export type NewSpecificationValueType = {
     name: string;
     isActive: boolean;
 };
 
 type SpecValuesFormProps = {
-    specification: SpecificationsType;
-    handleAddValues: (value: newSpecificationType[]) => void;
+    // specification: SpecificationsType | NewSpecificationType;
+    currentValues: SpecificationValueDataType[];
+    handleAddValues: (value: NewSpecificationValueType[]) => void;
     handleUpdateCurrent: (data: SpecificationValueDataType[]) => void;
 };
 
-const SpecValuesForm = ({ specification, handleAddValues, handleUpdateCurrent }: SpecValuesFormProps) => {
+const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }: SpecValuesFormProps) => {
     // hooks
     const intl = useIntl();
 
     // vars
     const [newValue, setNewValue] = useState<string>('');
-    const [newSpecs, setNewSpecs] = useState<newSpecificationType[]>([]);
-
-    const [currentValues, setCurrentValues] = useState<SpecificationValueDataType[]>();
-
-    useEffect(() => {
-        handleUpdateCurrent(currentValues ?? []);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentValues]);
-
-    useEffect(() => {
-        if (specification && specification.specificationValues) {
-            setCurrentValues(specification.specificationValues);
-        }
-    }, [specification]);
+    const [newSpecs, setNewSpecs] = useState<NewSpecificationValueType[]>([]);
 
     useEffect(() => {
         handleAddValues(newSpecs);
@@ -80,14 +74,14 @@ const SpecValuesForm = ({ specification, handleAddValues, handleUpdateCurrent }:
         const isActive = checked;
 
         if (currentValues) {
-            const news = currentValues?.map((item) => {
+            const updatedValues = currentValues?.map((item) => {
                 if (item.specificationValueId === id) {
                     return { ...item, isActive };
                 }
 
                 return item;
             });
-            setCurrentValues(news);
+            handleUpdateCurrent(updatedValues);
         }
     };
 
@@ -97,14 +91,14 @@ const SpecValuesForm = ({ specification, handleAddValues, handleUpdateCurrent }:
         const id = Number(name.replace('current-values-name-', ''));
 
         if (currentValues) {
-            const news = currentValues?.map((item) => {
+            const updatedValues = currentValues?.map((item) => {
                 if (item.specificationValueId === id) {
                     return { ...item, name: value };
                 }
 
                 return item;
             });
-            setCurrentValues(news);
+            handleUpdateCurrent(updatedValues);
         }
     };
 
@@ -142,15 +136,16 @@ const SpecValuesForm = ({ specification, handleAddValues, handleUpdateCurrent }:
                 </IconButton>
             </Stack>
 
-            {newSpecs.map((newSpec, index) => (
-                <Stack direction="row" mb={2} key={`new-specs-values-list-${index}`}>
-                    <Checkbox onChange={handleToggleActiveNew} name={`new-value-${index}`} checked={newSpec.isActive} />
-                    <TextField size="small" name={`${index}`} value={newSpec.name} fullWidth />
-                </Stack>
-            ))}
+            {newSpecs &&
+                newSpecs?.map((newSpec, index) => (
+                    <Stack direction="row" mb={2} key={`new-specs-values-list-${index}`}>
+                        <Checkbox onChange={handleToggleActiveNew} name={`new-value-${index}`} checked={newSpec.isActive} />
+                        <TextField size="small" name={`${index}`} value={newSpec.name} fullWidth />
+                    </Stack>
+                ))}
 
             {currentValues &&
-                currentValues.map((specValue) => (
+                currentValues?.map((specValue) => (
                     <Stack direction="row" mb={2} key={`specs-values-list-${specValue.specificationValueId}`}>
                         <Checkbox
                             size="small"
