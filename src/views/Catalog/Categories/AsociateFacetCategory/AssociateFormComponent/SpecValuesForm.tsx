@@ -11,23 +11,13 @@ import { useIntl } from 'react-intl';
 
 // types
 import { SpecificationValueDataType } from 'types/catalog';
-// import { NewSpecificationType } from './CustomTypes';
-
-// export type newSpecificationType = {
-//     name: string;
-//     isActive: boolean;
-// };
-
-export type NewSpecificationValueType = {
-    name: string;
-    isActive: boolean;
-};
+import { NewSpecificationValueType } from './CustomTypes';
 
 type SpecValuesFormProps = {
     // specification: SpecificationsType | NewSpecificationType;
-    currentValues: SpecificationValueDataType[];
+    currentValues?: SpecificationValueDataType[];
     handleAddValues: (value: NewSpecificationValueType[]) => void;
-    handleUpdateCurrent: (data: SpecificationValueDataType[]) => void;
+    handleUpdateCurrent?: (data: SpecificationValueDataType[]) => void;
 };
 
 const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }: SpecValuesFormProps) => {
@@ -52,22 +42,8 @@ const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }:
         setNewValue('');
     };
 
-    const handleToggleActiveNew = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
-
-        const i = Number(name.replace('new-value-', ''));
-
-        const updatedSpecs = newSpecs.map((item, y) => {
-            if (i === y) {
-                return { ...item, isActive: checked };
-            }
-            return item;
-        });
-
-        setNewSpecs(updatedSpecs);
-    };
-
-    const handleToggleActiveCurrent = (e: ChangeEvent<HTMLInputElement>) => {
+    // current list handlers
+    const toggleActiveCurrent = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = e.target;
 
         const id = Number(name.replace('current-values-', ''));
@@ -81,7 +57,9 @@ const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }:
 
                 return item;
             });
-            handleUpdateCurrent(updatedValues);
+            if (handleUpdateCurrent) {
+                handleUpdateCurrent(updatedValues);
+            }
         }
     };
 
@@ -98,8 +76,41 @@ const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }:
 
                 return item;
             });
-            handleUpdateCurrent(updatedValues);
+            if (handleUpdateCurrent) {
+                handleUpdateCurrent(updatedValues);
+            }
         }
+    };
+
+    // NEW LIST handlers
+    const toggleActiveNew = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = e.target;
+
+        const i = Number(name.replace('new-value-', ''));
+
+        const updatedSpecs = newSpecs.map((item, y) => {
+            if (i === y) {
+                return { ...item, isActive: checked };
+            }
+            return item;
+        });
+
+        setNewSpecs(updatedSpecs);
+    };
+
+    const handleChangeNewValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        const id = Number(name.replace('new-value-name-', ''));
+
+        const updatedSpecs = newSpecs.map((item, y) => {
+            if (id === y) {
+                return { ...item, name: value };
+            }
+            return item;
+        });
+
+        setNewSpecs(updatedSpecs);
     };
 
     const handleEnter = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -139,8 +150,14 @@ const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }:
             {newSpecs &&
                 newSpecs?.map((newSpec, index) => (
                     <Stack direction="row" mb={2} key={`new-specs-values-list-${index}`}>
-                        <Checkbox onChange={handleToggleActiveNew} name={`new-value-${index}`} checked={newSpec.isActive} />
-                        <TextField size="small" name={`${index}`} value={newSpec.name} fullWidth />
+                        <Checkbox onChange={toggleActiveNew} name={`new-value-${index}`} checked={newSpec.isActive} />
+                        <TextField
+                            size="small"
+                            name={`new-value-name-${index}`}
+                            value={newSpec.name}
+                            fullWidth
+                            onChange={handleChangeNewValue}
+                        />
                     </Stack>
                 ))}
 
@@ -149,7 +166,7 @@ const SpecValuesForm = ({ currentValues, handleAddValues, handleUpdateCurrent }:
                     <Stack direction="row" mb={2} key={`specs-values-list-${specValue.specificationValueId}`}>
                         <Checkbox
                             size="small"
-                            onChange={handleToggleActiveCurrent}
+                            onChange={toggleActiveCurrent}
                             name={`current-values-${specValue.specificationValueId}`}
                             checked={specValue.isActive}
                         />

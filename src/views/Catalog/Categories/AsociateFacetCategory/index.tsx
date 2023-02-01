@@ -76,7 +76,8 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
             setIsLoading(true);
             dispatch(getFacetVariant({ idMerchant: 1, catId: category.id }))
                 .then(({ payload }) => {
-                    const newSpecs: SpecificationGroupType[] = payload.response[0].specificationGroups;
+                    const dataElement = payload.response[0];
+                    const newSpecs: SpecificationGroupType[] = dataElement?.specificationGroups ?? [];
                     setSpecificationsGroups(newSpecs);
                 })
                 .finally(() => {
@@ -168,6 +169,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                 handleSuccesFetch={handleSuccesFetch}
                 mode={editingForm.mode}
                 specificationGroups={specificationGroups}
+                category={category!}
             />
             {/* <SpecificationForm
                 handleSuccesFetch={handleSuccesFetch}

@@ -23,27 +23,49 @@ import { gridSpacing } from 'store/constant';
 
 // types
 import { SpecificationGroupMode } from 'types/catalog';
-import { specificationFieldTypes, NewSpecificationType } from './CustomTypes';
+import { specificationFieldTypes, SpecificationAttributesType } from './CustomTypes';
 
 type AttributesFormProps = {
-    handleChangeSelect: (e: SelectChangeEvent) => void;
-    handleChangeSwitch: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onchangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    specData: NewSpecificationType;
     mode: 'EDIT' | 'ADD';
     specTypeMode: SpecificationGroupMode;
+    specificationAttributes?: SpecificationAttributesType;
+    handleUpdate: React.Dispatch<React.SetStateAction<SpecificationAttributesType>>;
 };
 
 export default function AttributesForm({
-    handleChangeSelect,
-    handleChangeSwitch,
-    onchangeText,
-    specData,
+    // handleChangeSelect,
+    // handleChangeSwitch,
+    // onchangeText,
+    specificationAttributes,
     mode,
-    specTypeMode
+    specTypeMode,
+    handleUpdate
 }: AttributesFormProps) {
     // hooks
     const intl = useIntl();
+
+    const handleChangeSelect = (event: SelectChangeEvent) => {
+        const { name, value } = event.target;
+
+        handleUpdate((prevData) => ({ ...prevData, [name]: value }));
+
+        if (name === 'fieldTypeId' && specificationFieldTypes) {
+            const searchField = specificationFieldTypes.find((item) => item.value === value);
+            if (searchField) {
+                handleUpdate((prevData) => ({ ...prevData, fieldTypeName: searchField?.label }));
+            }
+        }
+    };
+
+    const handleChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleUpdate((prevData) => ({ ...prevData, [event.target.name]: event.target.checked }));
+    };
+
+    const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleUpdate((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
+    };
+
+    if (!specificationAttributes) return null;
 
     return (
         <>
@@ -54,11 +76,11 @@ export default function AttributesForm({
                 {intl.formatMessage({ id: 'select_attributes' })}
             </Typography>
             <Grid container spacing={gridSpacing} mt={1} sx={{ maxWidth: 450 }}>
-                {specData &&
+                {specificationAttributes &&
                     booleanAttributesList.map((item, index) => {
                         const accessKey = item.name;
                         // transform object to be able read with dynamic keys
-                        const specDataObject: { [key: string]: any } = specData;
+                        const specDataObject: { [key: string]: any } = specificationAttributes;
                         return (
                             <Grid
                                 key={`attribute-type-${index}`}
@@ -88,15 +110,15 @@ export default function AttributesForm({
                     <FormControl fullWidth>
                         <InputLabel id="select-country-label">
                             {intl.formatMessage({
-                                id: 'show_mode'
+                                id: 'field_type'
                             })}
                         </InputLabel>
                         <Select
                             labelId="select-category-label"
                             id="select-category"
-                            value={`${specData?.fieldTypeId === '11111' ? '' : specData?.fieldTypeId}`}
+                            value={`${specificationAttributes?.fieldTypeId === '11111' ? '' : specificationAttributes?.fieldTypeId}`}
                             label={intl.formatMessage({
-                                id: 'show_mode'
+                                id: 'field_type'
                             })}
                             onChange={handleChangeSelect}
                             name="fieldTypeId"
@@ -104,8 +126,11 @@ export default function AttributesForm({
                             disabled={mode === 'EDIT'}
                         >
                             {mode === 'EDIT' && (
-                                <MenuItem key={`selected-item-${specData?.fieldTypeId ?? 1}`} value={specData?.fieldTypeId}>
-                                    <Typography>{specData?.fieldTypeName}</Typography>
+                                <MenuItem
+                                    key={`selected-item-${specificationAttributes?.fieldTypeId ?? 1}`}
+                                    value={specificationAttributes?.fieldTypeId}
+                                >
+                                    <Typography>{specificationAttributes?.fieldTypeName}</Typography>
                                 </MenuItem>
                             )}
                             {mode === 'ADD' &&
@@ -132,7 +157,7 @@ export default function AttributesForm({
                         })}
                         size="small"
                         name="description"
-                        value={specData?.description}
+                        value={specificationAttributes?.description}
                         onChange={onchangeText}
                     />
                 </Grid>

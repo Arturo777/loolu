@@ -255,5 +255,7 @@
     "edit_user": "Edit user",
     "associate": "Associate",
     "group": "Group",
-    "add_group": "ADD GROUP"
+    "add_group": "Add group",
+    "group_name": "Group name",
+    "field_type": "Field type"
 }

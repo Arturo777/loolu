@@ -51,3 +51,23 @@ export const specificationFieldTypes: FieldTypeType[] = [
         hide: []
     }
 ];
+
+export type NewSpecificationValueType = {
+    name: string;
+    isActive: boolean;
+};
+
+export type SpecificationAttributesType = {
+    isActive: boolean;
+    isFilter: boolean;
+    isOnProductDetails: boolean;
+    isRequired: boolean;
+    isSideMenuLinkActive: boolean;
+    isStockKeepingUnit: boolean;
+    isTopMenuLinkActive: boolean;
+    description: string;
+    fieldTypeId: string;
+    fieldTypeName: string;
+};
+
+export const newValueListToCurrentList = (newList: NewSpecificationValueType[]): any[] => newList.map((item) => ({ ...item, id: 0 }));
