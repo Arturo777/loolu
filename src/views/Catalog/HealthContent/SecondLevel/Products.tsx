@@ -30,6 +30,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { ResumenProducts } from 'types/health-content';
 import CardRatings from './CardRatings';
+import TableProducts from './TableProducts';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.secondary.dark,
@@ -78,9 +79,11 @@ const Products = () => {
     const dispatch = useDispatch();
     const [secondLevel, setSecondLevel] = useState<any>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const [typeScore, setTypeScore] = useState('');
+    const [products, setProducts] = useState();
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const { secondLevelProducts } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+
     useEffect(() => {
         setIsLoading(true);
         dispatch(getSecondLevelProducts());
@@ -90,9 +93,25 @@ const Products = () => {
         setSecondLevel(secondLevelProducts);
         setIsLoading(false);
     }, [secondLevelProducts]);
+    useEffect(() => {
+        if (typeScore === 'Good') {
+            setProducts(secondLevel?.metricsGood);
+        } else if (typeScore === 'Fair') {
+            setProducts(secondLevel?.metricsFair);
+        } else {
+            setProducts(secondLevel?.metricsPoor);
+        }
+    }, [secondLevel?.metricsFair, secondLevel?.metricsGood, secondLevel?.metricsPoor, typeScore]);
+    console.log(typeScore);
 
-    console.log(secondLevel);
-
+    const sumaValores = () => {
+        let suma = 0;
+        suma =
+            secondLevel.resumeProducts[0].totalProducts +
+            secondLevel.resumeProducts[1].totalProducts +
+            secondLevel.resumeProducts[2].totalProducts;
+        return suma;
+    };
     return (
         <>
             {isLoading ? (
@@ -142,12 +161,19 @@ const Products = () => {
                             </Grid>
                         </Box>
                     </CardWrapper>
-                    <Grid container direction="column" spacing={1} xs={3}>
-                        {secondLevel?.resumeProducts?.map((resume: ResumenProducts) => (
-                            <Grid item xs={3}>
-                                <CardRatings resume={resume} />
+                    <Grid container direction="row" xs={12}>
+                        <Grid item xs={3.5}>
+                            <Grid container direction="column" spacing={1} xs={12}>
+                                {secondLevel?.resumeProducts?.map((resume: ResumenProducts) => (
+                                    <Grid item xs={3}>
+                                        <CardRatings resume={resume} sumaValores={sumaValores} setTypeScore={setTypeScore} />
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
+                        </Grid>
+                        <Grid item xs={8.5}>
+                            <TableProducts products={products} />
+                        </Grid>
                     </Grid>
                 </>
             )}

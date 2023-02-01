@@ -236,12 +236,12 @@ const FirstLevel = () => {
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
-                                                        <Grid item xs={6} sx={{ bgcolor: 'light', p: 1 }}>
+                                                        <Grid item xs={4} sx={{ bgcolor: 'light', p: 1 }}>
                                                             <ReactApexChart
                                                                 options={optionsBars(metric)}
                                                                 series={[metric?.percentage.toFixed(1)]}
                                                                 type="radialBar"
-                                                                height={175}
+                                                                height={170}
                                                             />
                                                         </Grid>
                                                     </Grid>
