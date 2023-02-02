@@ -1,4 +1,4 @@
-import { SpecificationGroupMode, SpecificationValueDataType } from 'types/catalog';
+import { SpecificationGroupMode, SpecificationsType, SpecificationValueDataType } from 'types/catalog';
 
 // export type NewSpecificationType = Omit<SpecificationsType, 'vtexFieldId' | 'specificationId' | 'groupId' | 'groupName'> & {
 //     groupId: number | null;
@@ -71,3 +71,33 @@ export type SpecificationAttributesType = {
 };
 
 export const newValueListToCurrentList = (newList: NewSpecificationValueType[]): any[] => newList.map((item) => ({ ...item, id: 0 }));
+
+export const defaultAttributes: SpecificationAttributesType = {
+    description: '',
+    fieldTypeId: '',
+    fieldTypeName: '',
+    isActive: false,
+    isFilter: false,
+    isOnProductDetails: false,
+    isRequired: false,
+    isSideMenuLinkActive: false,
+    isStockKeepingUnit: false,
+    isTopMenuLinkActive: false
+};
+
+export const getSpecificationAttributes = (specification: SpecificationsType): SpecificationAttributesType => {
+    const data: SpecificationAttributesType = {
+        isActive: specification.isActive,
+        isFilter: specification.isFilter,
+        isOnProductDetails: specification.isOnProductDetails,
+        isRequired: specification.isRequired,
+        isSideMenuLinkActive: specification.isSideMenuLinkActive,
+        isStockKeepingUnit: specification.isStockKeepingUnit,
+        isTopMenuLinkActive: specification.isTopMenuLinkActive,
+        description: specification.description,
+        fieldTypeId: `${specification.fieldTypeId}`,
+        fieldTypeName: specification.fieldTypeName
+    };
+
+    return data;
+};

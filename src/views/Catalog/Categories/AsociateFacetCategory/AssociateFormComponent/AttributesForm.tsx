@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 // mui imports
 import {
@@ -32,15 +32,7 @@ type AttributesFormProps = {
     handleUpdate: React.Dispatch<React.SetStateAction<SpecificationAttributesType>>;
 };
 
-export default function AttributesForm({
-    // handleChangeSelect,
-    // handleChangeSwitch,
-    // onchangeText,
-    specificationAttributes,
-    mode,
-    specTypeMode,
-    handleUpdate
-}: AttributesFormProps) {
+export default function AttributesForm({ specificationAttributes, mode, specTypeMode, handleUpdate }: AttributesFormProps) {
     // hooks
     const intl = useIntl();
 
@@ -64,6 +56,11 @@ export default function AttributesForm({
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
         handleUpdate((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
     };
+
+    const getFieldTypeValue = useMemo(() => {
+        if (specificationAttributes?.fieldTypeId === '0') return '';
+        return specificationAttributes?.fieldTypeId === '11111' ? '' : specificationAttributes?.fieldTypeId;
+    }, [specificationAttributes?.fieldTypeId]);
 
     if (!specificationAttributes) return null;
 
@@ -114,9 +111,9 @@ export default function AttributesForm({
                             })}
                         </InputLabel>
                         <Select
-                            labelId="select-category-label"
-                            id="select-category"
-                            value={`${specificationAttributes?.fieldTypeId === '11111' ? '' : specificationAttributes?.fieldTypeId}`}
+                            labelId="select-field-type-label"
+                            id="select-field-type"
+                            value={`${getFieldTypeValue}`}
                             label={intl.formatMessage({
                                 id: 'field_type'
                             })}

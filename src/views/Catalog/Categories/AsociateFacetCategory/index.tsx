@@ -52,7 +52,8 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
         specification: SpecificationsType | null;
         facet?: FacetType | null;
         mode: 'EDIT' | 'ADD';
-    }>({ show: false, specification: null, facet: null, mode: 'EDIT' });
+        specificationGroupMode?: SpecificationGroupMode;
+    }>({ show: false, specification: null, facet: null, mode: 'EDIT', specificationGroupMode: SpecificationGroupMode.PRODUCT });
 
     const handleCloseForm = () => {
         setEditingForm({
@@ -95,7 +96,8 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
         setEditingForm({
             specification: spec,
             show: spec !== null,
-            mode: 'EDIT'
+            mode: 'EDIT',
+            specificationGroupMode: type
         });
     };
 
@@ -170,18 +172,9 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                 mode={editingForm.mode}
                 specificationGroups={specificationGroups}
                 category={category!}
+                specificationData={editingForm?.specification ?? undefined}
+                specificationGroupMode={editingForm.specificationGroupMode ?? SpecificationGroupMode.PRODUCT}
             />
-            {/* <SpecificationForm
-                handleSuccesFetch={handleSuccesFetch}
-                // groupId={getSpecificationGroupId}
-                categoryId={category?.id ?? 1}
-                specificationToEdit={editingForm.specification}
-                show={editingForm.show}
-                mode={editingForm.mode}
-                facet={editingForm.facet}
-                handleCancel={handleCloseForm}
-                groupInfo={editingForm.groupInfo}
-            /> */}
         </>
     );
 

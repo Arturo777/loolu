@@ -1,5 +1,5 @@
 import React from 'react';
-import { CategoryType, SpecificationGroupType } from 'types/catalog';
+import { CategoryType, SpecificationGroupMode, SpecificationGroupType, SpecificationsType } from 'types/catalog';
 
 // mui imports
 
@@ -7,6 +7,7 @@ import { CategoryType, SpecificationGroupType } from 'types/catalog';
 
 // project impors
 import AddFormComponent from './AddForm';
+import EditFormComponent from './EditForm';
 
 type AssociateFormComponentProps = {
     handleCancel: () => void;
@@ -15,6 +16,8 @@ type AssociateFormComponentProps = {
     show: boolean;
     specificationGroups: SpecificationGroupType[] | undefined;
     category: CategoryType;
+    specificationData?: SpecificationsType;
+    specificationGroupMode: SpecificationGroupMode;
 };
 
 export default function AssociateFormComponent({
@@ -23,14 +26,24 @@ export default function AssociateFormComponent({
     handleSuccesFetch,
     show,
     specificationGroups,
-    category
+    category,
+    specificationData,
+    specificationGroupMode
 }: AssociateFormComponentProps) {
     if (!show) {
         return null;
     }
 
     if (mode === 'EDIT') {
-        return null;
+        return (
+            <EditFormComponent
+                category={category}
+                handleCancel={handleCancel}
+                specificationData={specificationData!}
+                specificationGroupMode={specificationGroupMode}
+                handleSuccesFetch={handleSuccesFetch}
+            />
+        );
     }
 
     return (

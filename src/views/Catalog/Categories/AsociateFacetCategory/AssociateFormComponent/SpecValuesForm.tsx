@@ -14,7 +14,6 @@ import { SpecificationValueDataType } from 'types/catalog';
 import { NewSpecificationValueType } from './CustomTypes';
 
 type SpecValuesFormProps = {
-    // specification: SpecificationsType | NewSpecificationType;
     currentValues?: SpecificationValueDataType[];
     handleAddValues: (value: NewSpecificationValueType[]) => void;
     handleUpdateCurrent?: (data: SpecificationValueDataType[]) => void;
