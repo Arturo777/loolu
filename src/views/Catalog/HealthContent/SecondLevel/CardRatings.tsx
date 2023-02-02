@@ -33,12 +33,13 @@ const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenPro
                             }}
                         >
                             <Typography variant="h3">{resume?.description}</Typography>
-                            <Chip
-                                label={`${resume?.totalProductsPercentage?.toFixed(2)}%`}
+                            {/* <Chip
+                                label=
                                 // eslint-disable-next-line no-nested-ternary
                                 color={resume?.description === 'Good' ? 'success' : resume?.description === 'Fair' ? 'warning' : 'error'}
                                 variant="outlined"
-                            />
+                            /> */}
+                            <Typography variant="h3">{`${resume?.totalProductsPercentage?.toFixed(2)}%`}</Typography>
                         </ListSubheader>
                     }
                 >

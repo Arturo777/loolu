@@ -657,7 +657,7 @@ const ProductInfo = ({
                             (trade: {
                                 isSelected: boolean | undefined;
                                 tradePolicyName: string | number | readonly string[] | undefined;
-                                // eslint-disable-next-line consistent-return
+                                // eslint-disable-next-line consistent-return, array-callback-return
                             }) => {
                                 if (trade?.isSelected) return <>{trade?.tradePolicyName}, </>;
                             }
@@ -925,12 +925,12 @@ type MainCategoryProps = {
 };
 const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlagCategory, setNewCategorySku }: MainCategoryProps) => {
     // hooks
-    const intl = useIntl();
+    /* const intl = useIntl(); */
 
     // vars
     const [open, setOpen] = useState(false);
-    const [buttonCat, setButtonCat] = useState(false);
-    const [displayCat, setDisplayCat] = useState(false);
+    /* const [buttonCat, setButtonCat] = useState(false);
+    const [displayCat, setDisplayCat] = useState(false); */
 
     const handleOpen = () => {
         setOpen(!open);
@@ -939,11 +939,11 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
         setSearchCat(value);
         setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
     };
-    const newCategory = (value: SetStateAction<string>, id: number | null) => {
+    /* const newCategory = (value: SetStateAction<string>, id: number | null) => {
         setSearchCat(value);
         setFlagCategory(true);
         setNewCategorySku((prev: any) => ({ ...prev, name: value, title: value }));
-    };
+    }; */
     return (
         <>
             <ListItemButton sx={{ paddingY: 0, width: '600px' }}>

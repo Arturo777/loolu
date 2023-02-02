@@ -32,6 +32,29 @@ export type SecondLevelProd = {
     resumeProducts?: ResumenProducts[];
     resume?: ResumenProducts[];
 };
+export type ThirdLevel = {
+    merchantId: number;
+    productId: number;
+    categoryIdProduct: number;
+    categoryIdMetric: number;
+    productReferenceCodeScore: boolean;
+    pageTitleScore: boolean;
+    brandNameScore: boolean;
+    categoryScore: boolean;
+    textLinkScore: boolean;
+    skuReferenceCodeScore: boolean;
+    eanUpcScore: boolean;
+    dimensionHeightScore: boolean;
+    dimensionWidthScore: boolean;
+    dimensionLargeScore: boolean;
+    dimensionWeightScore: boolean;
+    totalScore: number;
+    maxScore: number;
+    totalScorePercentage: number;
+    metricConfigRangeId: number;
+    metricDescription: string;
+    created: string;
+};
 export type Metric = {
     merchantId: number | null;
     productId: number;
@@ -94,4 +117,5 @@ export interface HealthContentStateProps {
     secondLevelProducts: SecondLevelProd[];
     secondLevelImages: SecondLevelProd[];
     secondLevelFacets: SecondLevelProd[];
+    thirdLevelProducts: ThirdLevel[];
 }

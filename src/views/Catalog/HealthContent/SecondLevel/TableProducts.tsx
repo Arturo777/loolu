@@ -5,7 +5,7 @@ import {
     Collapse,
     Box,
     CircularProgress,
-    Grid,
+    /* Grid, */
     Table,
     TableBody,
     TableCell,
@@ -19,21 +19,9 @@ import { CircularProgressProps } from '@mui/material/CircularProgress';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Key, useState } from 'react';
-import { SkuHC } from 'types/health-content';
 
 // project imports
-import Chip from 'ui-component/extended/Chip';
-
-// table data
-const createData = (
-    avtar: string,
-    name: string,
-    designation: string,
-    product: string,
-    date: string,
-    badgeText: string,
-    badgeType: string
-) => ({ avtar, name, designation, product, date, badgeText, badgeType });
+import ModalProducts from '../ThirdLevel/ModalProduct';
 
 function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
     return (
@@ -66,7 +54,7 @@ interface ExpandMoreProps extends IconButtonProps {
     expand: boolean;
 }
 const ExpandMore = styled((props: ExpandMoreProps) => {
-    const { expand, ...other } = props;
+    const { ...other } = props;
     return <IconButton {...other} />;
 })(({ theme, expand }) => ({
     transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
@@ -75,12 +63,22 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
         duration: theme.transitions.duration.shortest
     })
 }));
+type Anchor = 'right';
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //
 
 const TableProducts = ({ products }: { products: any }) => {
     const [expanded, setExpanded] = useState(false);
+    const [openModal, setOpenModal] = useState({ right: false });
+    const [idProd, setIdProd] = useState(0.0);
     const handleExpandClick = () => {
         setExpanded(!expanded);
+    };
+    const handledClickProduct = (anchor: Anchor, open: boolean, prodId: number) => (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+            return;
+        }
+        setIdProd(prodId);
+        setOpenModal({ ...openModal, [anchor]: open });
     };
     /* const formateFechas = (fh: string) => {
         let h = [];
@@ -91,7 +89,6 @@ const TableProducts = ({ products }: { products: any }) => {
         fechaTotal = `${f[0].split('-').reverse().join('/')} ${h[0]}`;
         return fechaTotal;
     }; */
-    const handledClickProduct = () => { };
     return (
         <>
             {products && (
@@ -142,7 +139,11 @@ const TableProducts = ({ products }: { products: any }) => {
                                         <CircularProgressWithLabel value={row?.completeness} />
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant="contained" color="secondary" onClick={() => handledClickProduct(row.productId)}>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={handledClickProduct('right', true, row.productId)}
+                                        >
                                             Ver más
                                         </Button>
                                     </TableCell>
@@ -152,6 +153,7 @@ const TableProducts = ({ products }: { products: any }) => {
                     </Table>
                 </TableContainer>
             )}
+            <ModalProducts productId={idProd} handledClickProduct={handledClickProduct} openModal={openModal} />
         </>
     );
 };

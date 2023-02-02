@@ -1,20 +1,9 @@
 // material-ui
-import { Avatar, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { SkuHC } from 'types/health-content';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-
-// table data
-const createData = (
-    avtar: string,
-    name: string,
-    designation: string,
-    product: string,
-    date: string,
-    badgeText: string,
-    badgeType: string
-) => ({ avtar, name, designation, product, date, badgeText, badgeType });
 
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //
 

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Box, Button, Card, CardActions, CardContent, CircularProgress, Fade, Grid, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Card, CardContent, CircularProgress, Fade, Grid, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
@@ -217,7 +217,7 @@ const FirstLevel = () => {
                                                                         <Typography sx={{
                                                                             textAlign: 'center',
                                                                             // eslint-disable-next-line no-nested-ternary
-                                                                            color: metric?.percentage <= 34 ? '#F44336' : metric.percentage >= 35 && metric.percentage <= 80 ? '#f17502' : '#02f13a',
+                                                                            color: metric?.percentage <= 34 ? '#F44336' : metric.percentage >= 35 && metric.percentage <= 80 ? '#ffe923' : '#02f13a',
                                                                             '& > svg': {
                                                                                 width: 30,
                                                                                 height: 30

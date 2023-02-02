@@ -1,33 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import { styled, useTheme } from '@mui/material/styles';
-import {
-    Avatar,
-    Box,
-    Card,
-    Chip,
-    CircularProgress,
-    Collapse,
-    Fade,
-    Grid,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    ListSubheader,
-    Menu,
-    MenuItem,
-    Typography
-} from '@mui/material';
+import { Avatar, Box, CircularProgress, Fade, Grid, Typography } from '@mui/material';
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MainCard from 'ui-component/cards/MainCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSecondLevelProducts } from 'store/slices/healthContent';
 import { DefaultRootStateProps } from 'types';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 import { ResumenProducts } from 'types/health-content';
 import CardRatings from './CardRatings';
 import TableProducts from './TableProducts';

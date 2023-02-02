@@ -16,7 +16,8 @@ const initialState: DefaultRootStateProps['healthContent'] = {
     firstLevel: [],
     secondLevelProducts: [],
     secondLevelImages: [],
-    secondLevelFacets: []
+    secondLevelFacets: [],
+    thirdLevelProducts: []
 };
 
 const slice = createSlice({
@@ -45,6 +46,14 @@ const slice = createSlice({
                 state.loading = false;
                 state.secondLevelProducts = action.payload.response;
             });
+        builder
+            .addCase(getThirdLevelProducts.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(getThirdLevelProducts.fulfilled, (state, action) => {
+                state.loading = false;
+                state.thirdLevelProducts = action.payload.response;
+            });
     }
 });
 export default slice.reducer;
@@ -56,5 +65,13 @@ export const getFirstLevel = createAsyncThunk(`${slice.name}/fisrt-level`, async
 
 export const getSecondLevelProducts = createAsyncThunk(`${slice.name}/second-level`, async () => {
     const response = await axios.get(`styrk/api/health-content/metrics/products/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
+    return response.data;
+});
+
+export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level`, async (id: number | undefined) => {
+    const response = await axios.get(`styrk/api/health-content/metrics/products/third-level`, {
+        baseURL: STYRK_API_HEALTH_CONTENT,
+        params: { productId: id }
+    });
     return response.data;
 });
