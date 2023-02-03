@@ -1,7 +1,7 @@
 import React, { FormEvent, useState, useEffect } from 'react';
 
 // mui imports
-import { Box, Button, Divider, Grid, SelectChangeEvent, TextField, Card, Typography, Stack, IconButton } from '@mui/material';
+import { Box, Button, Divider, Grid, SelectChangeEvent, TextField, Card, Typography, Stack, IconButton, Fade } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -32,9 +32,10 @@ const initialData: newCategoryType = {
 type CreateCategoryPageProps = {
     handleClose: (e?: any) => void;
     selectedCatId?: number;
+    show: boolean;
 };
 
-const CreateCategoryPage = ({ handleClose, selectedCatId }: CreateCategoryPageProps) => {
+const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategoryPageProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -118,59 +119,70 @@ const CreateCategoryPage = ({ handleClose, selectedCatId }: CreateCategoryPagePr
     };
 
     return (
-        <Card sx={{ boxShadow: 1, p: 3 }}>
-            <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing}>
-                <Grid item xs={12} pt={4} pl={3}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h4">
-                            {intl.formatMessage({
-                                id: 'create_category'
+        <Fade in={show}>
+            <Card
+                sx={{
+                    boxShadow: 2,
+                    position: 'sticky',
+                    top: 100,
+                    bottom: 20,
+                    zIndex: 5,
+                    p: 3
+                }}
+            >
+                <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing}>
+                    <Grid item xs={12} pt={4} pl={3}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography variant="h4">
+                                {intl.formatMessage({
+                                    id: 'create_category'
+                                })}
+                            </Typography>
+
+                            <IconButton onClick={handleCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
+                                <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
+                            </IconButton>
+                        </Stack>
+                    </Grid>
+
+                    <Grid item xs={12} pt={4} pl={3}>
+                        <Divider />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <SelectCategoryComponent fatherCategoryId={newCategory.catId ?? ''} onChange={handleChange} />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            value={newCategory.name}
+                            fullWidth
+                            label={intl.formatMessage({
+                                id: 'category_name'
                             })}
-                        </Typography>
+                            name="name"
+                            onChange={onchangeText}
+                            required
+                        />
+                    </Grid>
 
-                        <IconButton onClick={handleCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
-                            <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
-                        </IconButton>
-                    </Stack>
-                </Grid>
+                    <Grid item xs={12} pt={4} pl={3}>
+                        <Divider />
+                    </Grid>
 
-                <Grid item xs={12} pt={4} pl={3}>
-                    <Divider />
+                    <Grid item xs={12}>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button onClick={handleCancel} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
+                                {intl.formatMessage({ id: 'cancel' })}
+                            </Button>
+                            <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
+                                {intl.formatMessage({ id: 'save' })}
+                            </Button>
+                        </Box>
+                    </Grid>
                 </Grid>
-
-                <Grid item xs={12} sm={6} md={3} lg={3}>
-                    <SelectCategoryComponent fatherCategoryId={newCategory.catId ?? ''} onChange={handleChange} />
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3} lg={3}>
-                    <TextField
-                        value={newCategory.name}
-                        fullWidth
-                        label={intl.formatMessage({
-                            id: 'category_name'
-                        })}
-                        name="name"
-                        onChange={onchangeText}
-                        required
-                    />
-                </Grid>
-
-                <Grid item xs={12} pt={4} pl={3}>
-                    <Divider />
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button onClick={handleCancel} variant="outlined" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }}>
-                            {intl.formatMessage({ id: 'cancel' })}
-                        </Button>
-                        <Button disabled={updating} variant="outlined" startIcon={<SaveIcon />} type="submit">
-                            {intl.formatMessage({ id: 'save' })}
-                        </Button>
-                    </Box>
-                </Grid>
-            </Grid>
-        </Card>
+            </Card>
+        </Fade>
     );
 };
 

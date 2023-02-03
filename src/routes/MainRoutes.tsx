@@ -39,6 +39,7 @@ const MassiveLoadPage = Loadable(lazy(() => import('views/Catalog/MassiveLoad'))
 
 // ========= CHANGE LOG =========
 const ChangeLogPage = Loadable(lazy(() => import('views/Reports/ChangeLog')));
+const TestAdditionalFields = Loadable(lazy(() => import('views/Catalog/TestAdditionalFields')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -138,6 +139,11 @@ const MainRoutes = {
         {
             path: '/change_log',
             element: <ChangeLogPage />
+        },
+        // TEST ADDITIONAL FIELDS UI
+        {
+            path: '/test-page',
+            element: <TestAdditionalFields />
         }
     ]
 };

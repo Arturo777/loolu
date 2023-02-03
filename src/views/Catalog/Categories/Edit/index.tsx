@@ -364,7 +364,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
             <Card
                 sx={{
                     boxShadow: 2,
-                    background: 'white',
+                    // background: 'white',
                     position: 'sticky',
                     top: 100,
                     bottom: 20,

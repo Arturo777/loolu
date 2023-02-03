@@ -214,6 +214,8 @@
     "edit": "Edit",
     "attributes": "Attributes",
     "values": "Values",
+    "value": "Value",
+    "key": "Key",
     "new_value": "New value",
     "search_facets": "Search facets",
     "select_attributes": "Select attributes for the specification",
@@ -238,5 +240,6 @@
     "success_file_request": "Request saved with event number: {code}",
 
     "reports": "Reports",
-    "change_log": "Change log"
+    "change_log": "Change log",
+    "delete": "Delete"
 }
