@@ -18,10 +18,10 @@ import {
 import { CircularProgressProps } from '@mui/material/CircularProgress';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Key, useState } from 'react';
+import { Key, useEffect, useState } from 'react';
 
 // project imports
-import ModalProducts from '../ThirdLevel/ModalProduct';
+import ThirdProducts from '../ThirdLevel/ThirdProduct';
 
 function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
     return (
@@ -63,36 +63,20 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
         duration: theme.transitions.duration.shortest
     })
 }));
-type Anchor = 'right';
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //
 
 const TableProducts = ({ products }: { products: any }) => {
     const [expanded, setExpanded] = useState(false);
-    const [openModal, setOpenModal] = useState({ right: false });
-    const [idProd, setIdProd] = useState(0.0);
+
+    /* const [idProd, setIdProd] = useState<number>(0); */
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-    const handledClickProduct = (anchor: Anchor, open: boolean, prodId: number) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-            return;
-        }
-        setIdProd(prodId);
-        setOpenModal({ ...openModal, [anchor]: open });
-    };
-    /* const formateFechas = (fh: string) => {
-        let h = [];
-        let f = [];
-        let fechaTotal = '';
-        f = fh?.split(' ');
-        h = f[1].split('.');
-        fechaTotal = `${f[0].split('-').reverse().join('/')} ${h[0]}`;
-        return fechaTotal;
-    }; */
+
     return (
         <>
             {products && (
-                <TableContainer sx={{ maxHeight: 800, bgcolor: 'background.paper' }}>
+                <TableContainer sx={{ maxHeight: 850, bgcolor: 'background.paper' }}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
@@ -139,13 +123,7 @@ const TableProducts = ({ products }: { products: any }) => {
                                         <CircularProgressWithLabel value={row?.completeness} />
                                     </TableCell>
                                     <TableCell>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={handledClickProduct('right', true, row.productId)}
-                                        >
-                                            Ver más
-                                        </Button>
+                                        <ThirdProducts productId={row.productId} />
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -153,7 +131,6 @@ const TableProducts = ({ products }: { products: any }) => {
                     </Table>
                 </TableContainer>
             )}
-            <ModalProducts productId={idProd} handledClickProduct={handledClickProduct} openModal={openModal} />
         </>
     );
 };

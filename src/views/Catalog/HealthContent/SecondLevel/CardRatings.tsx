@@ -12,7 +12,7 @@ const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenPro
     const handleClickDetail = (type: string) => {
         setTypeScore(type);
     };
-    console.log(resume);
+
     return (
         <>
             <Card>

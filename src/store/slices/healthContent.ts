@@ -68,7 +68,7 @@ export const getSecondLevelProducts = createAsyncThunk(`${slice.name}/second-lev
     return response.data;
 });
 
-export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level`, async (id: number | undefined) => {
+export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level`, async (id: number | null | undefined) => {
     const response = await axios.get(`styrk/api/health-content/metrics/products/third-level`, {
         baseURL: STYRK_API_HEALTH_CONTENT,
         params: { productId: id }
