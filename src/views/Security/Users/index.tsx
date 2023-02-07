@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { Button, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Fade, Grid, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
@@ -15,9 +15,6 @@ import { getUsersList } from 'store/slices/security';
 // third party imports
 import { useIntl } from 'react-intl';
 
-// assets
-import { IconSearch } from '@tabler/icons';
-
 // components
 import UserListComponent from './UserList';
 import EditUser from './EditUser';
@@ -26,6 +23,7 @@ import EditUser from './EditUser';
 import { UserType } from 'types/user-profile';
 import Loader from 'ui-component/Loader';
 import CreateUser from './CreateUser';
+import SearchInput from 'ui-component/SearchInput';
 
 // ==============================|| USER CARD STYLE 1 ||============================== //
 
@@ -54,10 +52,9 @@ const UsersList = () => {
         dispatch(getUsersList());
     }, [dispatch]);
 
-    const handleSearch = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
-        const newString = event?.target.value;
-        setSearch(newString);
-        setSearchParams(`?search=${newString}`);
+    const handleSearch = async (newSearchText: string) => {
+        setSearch(newSearchText);
+        setSearchParams(`?search=${newSearchText}`);
     };
 
     useEffect(() => {
@@ -122,20 +119,7 @@ const UsersList = () => {
                                 })}
                             </Button>
                         </Fade>
-
-                        <OutlinedInput
-                            id="input-search-card-style1"
-                            placeholder={intl.formatMessage({ id: 'search' })}
-                            value={search}
-                            onChange={handleSearch}
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    <IconSearch stroke={1.5} size="16px" />
-                                </InputAdornment>
-                            }
-                            size="small"
-                            type="search"
-                        />
+                        <SearchInput initialValue={search ?? ''} onSearch={handleSearch} />
                     </Grid>
                 </Grid>
             }
