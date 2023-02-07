@@ -241,5 +241,7 @@
 
     "reports": "Reports",
     "change_log": "Change log",
-    "delete": "Delete"
+    "delete": "Delete",
+
+    "create_user": "Create user"
 }

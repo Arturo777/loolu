@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 // project imports
 import { useSearchParams } from 'react-router-dom';
@@ -24,6 +25,7 @@ import EditUser from './EditUser';
 // types
 import { UserType } from 'types/user-profile';
 import Loader from 'ui-component/Loader';
+import CreateUser from './CreateUser';
 
 // ==============================|| USER CARD STYLE 1 ||============================== //
 
@@ -40,7 +42,7 @@ const UsersList = () => {
     const [users, setUsers] = React.useState<UserType[]>([]);
     const [search, setSearch] = React.useState<string | undefined>('');
 
-    const [sideMode, setSideMode] = useState<'EDIT' | 'ADD' | null>(null);
+    const [sideMode, setSideMode] = useState<'EDIT' | 'CREATE' | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserType | null>(null);
 
     useEffect(() => {
@@ -82,6 +84,15 @@ const UsersList = () => {
         }, 200);
     };
 
+    const handleSuccess = (mode: 'EDIT' | 'CREATE') => {
+        dispatch(getUsersList());
+
+        setSideMode(null);
+        if (mode === 'EDIT') {
+            setUserToEdit(null);
+        }
+    };
+
     return (
         <MainCard
             sx={{
@@ -97,6 +108,21 @@ const UsersList = () => {
                         </Typography>
                     </Grid>
                     <Grid item>
+                        <Fade in={sideMode !== 'CREATE'}>
+                            <Button
+                                onClick={() => {
+                                    setSideMode('CREATE');
+                                }}
+                                variant="contained"
+                                startIcon={<AddIcon />}
+                                sx={{ mr: 3 }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'create_user'
+                                })}
+                            </Button>
+                        </Fade>
+
                         <OutlinedInput
                             id="input-search-card-style1"
                             placeholder={intl.formatMessage({ id: 'search' })}
@@ -108,6 +134,7 @@ const UsersList = () => {
                                 </InputAdornment>
                             }
                             size="small"
+                            type="search"
                         />
                     </Grid>
                 </Grid>
@@ -125,22 +152,25 @@ const UsersList = () => {
                     <UserListComponent users={users ?? []} loading={loading} onEditClick={openEdit} />
                 </Grid>
                 <Grid item xs={12} md={6} lg={6} xl={6}>
-                    <EditUser
-                        handleCancel={() => {
-                            setSideMode(null);
-                        }}
-                        show={sideMode === 'EDIT'}
-                        userToEdit={userToEdit!}
-                    />
+                    {sideMode === 'EDIT' ? (
+                        <EditUser
+                            handleSuccess={handleSuccess}
+                            handleCancel={() => {
+                                setSideMode(null);
+                            }}
+                            show={sideMode === 'EDIT'}
+                            userToEdit={userToEdit!}
+                        />
+                    ) : (
+                        <CreateUser
+                            handleSuccess={handleSuccess}
+                            handleCancel={() => {
+                                setSideMode(null);
+                            }}
+                            show={sideMode === 'CREATE'}
+                        />
+                    )}
                 </Grid>
-                {/* {!loading && usersResult} */}
-                {/*  <Grid item xs={12}>
-                    <Grid container justifyContent="flex-end" spacing={gridSpacing}>
-                        <Grid item>
-                            <Typography variant="h5">Mostrando {users.length} resultados</Typography>
-                        </Grid>
-                    </Grid>
-                </Grid> */}
             </Grid>
         </MainCard>
     );

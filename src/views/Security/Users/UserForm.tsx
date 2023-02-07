@@ -149,13 +149,45 @@ export default function UserForm({
     );
 }
 
-export type NewUserType = Omit<UserType, 'profile' | 'provider'> & {
+export type NewUserType = Omit<UserType, 'profile' | 'provider' | 'employeNumber'> & {
     profileId: string;
     providerId: string;
+    employeNumber: string;
 };
 
 const gridInputProps = {
     xs: 12,
     sm: 6,
     xl: 4
+};
+
+export const defaultUser: NewUserType = {
+    id: 0,
+    email: '',
+    name: '',
+    phoneNumber: '',
+    firstName: '',
+    lastName: '',
+    status: 1,
+    user: '',
+    employeNumber: '',
+    avatar: '',
+    idApprovalProfile: '',
+    pass: '',
+    profileId: '',
+    providerId: ''
+};
+
+export const modalStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    pt: 2,
+    px: 3,
+    pb: 3,
+    borderRadius: 2
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import {
@@ -25,47 +25,32 @@ import { useIntl } from 'react-intl';
 
 // project imports
 import { gridSpacing } from 'store/constant';
-import { useDispatch } from 'store';
+// import { useDispatch } from 'store';
 
 // types
-import { updateUserInfo } from 'store/slices/security';
-import { UserType } from 'types/user-profile';
+// import { updateUserInfo } from 'store/slices/security';
+// import { UserType } from 'types/user-profile';
 import UserForm, { NewUserType, defaultUser, modalStyle } from './UserForm';
-import { openSnackbar } from 'store/slices/snackbar';
+// import { openSnackbar } from 'store/slices/snackbar';
 
-export default function EditUser({
-    userToEdit,
+export default function CreateUser({
     show,
     handleCancel,
     handleSuccess
 }: {
-    userToEdit: UserType;
     show: boolean;
     handleCancel: () => void;
-    handleSuccess: (mode: 'EDIT') => void;
+    handleSuccess: (mode: 'CREATE') => void;
 }) {
     // hooks
     const intl = useIntl();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const theme = useTheme();
     const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     // consts
     const [userInfo, setUserInfo] = useState<NewUserType>(defaultUser);
     const [isFetching, setIsFetching] = useState<boolean>(false);
-
-    // set initial data
-    useEffect(() => {
-        // console.log(userToEdit);
-        if (userToEdit) {
-            setUserInfo({
-                ...userToEdit,
-                profileId: userToEdit.profile.id.toString() ?? '',
-                providerId: userToEdit?.provider?.idProvider.toString() ?? '',
-                employeNumber: `${userToEdit?.employeNumber ?? ''}`
-            });
-        }
-    }, [userToEdit]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -84,37 +69,22 @@ export default function EditUser({
 
         setIsFetching(true);
         const dataSend = {
-            ...userToEdit,
             ...userInfo,
-            employeNumber: userToEdit.employeNumber ?? '',
+            employeNumber: '',
             profile: { id: userInfo.profileId ?? '' },
             provider: { idProvider: userInfo.providerId ?? '' }
         };
-
-        dispatch(updateUserInfo(dataSend))
-            .then(() => {
-                dispatch(
-                    openSnackbar({
-                        open: true,
-                        message: 'Usuario actualizado correctamente',
-                        variant: 'alert',
-                        alert: {
-                            color: 'success'
-                        },
-                        close: false
-                    })
-                );
-                handleSuccess('EDIT');
-            })
-            .finally(() => {
-                setIsFetching(false);
-            });
+        console.log('ADD', dataSend);
     };
 
     const content = () => (
         <>
             <Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h3">Edit user</Typography>
+                <Typography variant="h3">
+                    {intl.formatMessage({
+                        id: 'create_user'
+                    })}
+                </Typography>
                 <IconButton onClick={handleCancel} sx={{ color: 'divider' }}>
                     <CloseOutlinedIcon />
                 </IconButton>
@@ -143,10 +113,6 @@ export default function EditUser({
             </Box>
         </>
     );
-
-    if (!userToEdit) {
-        return null;
-    }
 
     if (onlyMediumScreen) {
         return (

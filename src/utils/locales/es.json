@@ -241,5 +241,6 @@
 
     "reports": "Reportes",
     "change_log": "Bitácora de cambios",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "create_user": "Crear usuario"
 }
