@@ -13,6 +13,7 @@ import menuReducer from './slices/menu';
 import authReducer from './slices/auth';
 import profilesReducer from './slices/profiles';
 import catalogueReducer from './slices/catalog';
+import healthContentReducer from './slices/healthContent';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -26,6 +27,7 @@ const reducer = combineReducers({
         cartReducer
     ),
     product: productReducer,
+    healthContent: healthContentReducer,
     // loolu
     menu: menuReducer,
     user: securityReducer,

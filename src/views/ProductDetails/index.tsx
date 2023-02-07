@@ -13,7 +13,7 @@ import ProductReview from './ProductReview';
 import RelatedProducts from './RelatedProducts';
 import MainCard from 'ui-component/cards/MainCard';
 import Chip from 'ui-component/extended/Chip';
-import { DefaultRootStateProps, TabsProps } from 'types';
+import { TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
@@ -72,14 +72,12 @@ const ProductDetails = () => {
     const [flagCategory, setFlagCategory] = useState(false);
 
     const { product, skus, tradePolicies } = useSelector((state) => state.product);
-    const { brands, loading } = useSelector((state) => state.catalogue);
+    const { brands } = useSelector((state) => state.catalogue);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    /*  useEffect(() => {
-         dispatch(getSku(valueSku));
-     }, [dispatch, valueSku]); */
+
     useEffect(() => {
         // getProduct();
         setIsLoading(true);
@@ -181,7 +179,7 @@ const ProductDetails = () => {
             }
         }
     };
-    console.log('newBrand', newBrandSku);
+    console.log('newBrand', newBrandSku, newCategorySku);
     /* console.log('primer prod', productInfo); */
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>

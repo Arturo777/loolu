@@ -40,13 +40,11 @@ const ProductImages = ({
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const matchDownLG = useMediaQuery(theme.breakpoints.up('lg'));
-    /* const initialImage = imgprod.sku.images[0].ImageURL || product?.skus[0]?.sku?.images[0].ImageURL; */
     const [modal, setModal] = useState(false);
     const images = imgprod[0]?.images?.map((item: any) => ({ source: item?.ImageURL })) || product?.skus[0]?.images?.map((item: any) => ({ source: item?.ImageURL }));
 
     console.log("arrayIMGS", images);
 
-    const lgNo = matchDownLG ? 4 : 3;
     const settings = {
         dots: false,
         centerMode: true,

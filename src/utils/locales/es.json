@@ -219,5 +219,8 @@
     "associate_facet_category": "Asociar Facet-Categoria",
 
     "save": "Guardar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+
+    "health-content": "Salud del Contenido",
+    "status-market": "Estatus General"
 }
