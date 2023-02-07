@@ -9,9 +9,7 @@ import MainCard from 'ui-component/cards/MainCard';
 
 const UserProfile = () => (
     <MainCard title="Perfil de usuario">
-        <div>
-            <Profile />
-        </div>
+        <div>{/* <Profile /> */}</div>
     </MainCard>
 );
 

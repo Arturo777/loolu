@@ -25,7 +25,8 @@ import {
     Modal,
     IconButton,
     Stack,
-    Tooltip
+    Tooltip,
+    Collapse
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
@@ -360,7 +361,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
     }
 
     return (
-        <Fade in={show}>
+        <Collapse in={show}>
             <Card
                 sx={{
                     boxShadow: 2,
@@ -383,7 +384,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                 )}
                 {!isLoading && renderContent()}
             </Card>
-        </Fade>
+        </Collapse>
     );
 }
 

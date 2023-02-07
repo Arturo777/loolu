@@ -1,23 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { CircularProgress, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Stack, Typography } from '@mui/material';
+import { Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 
 // project imports
 import { useSearchParams } from 'react-router-dom';
-import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
+// import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getUsersList } from 'store/slices/security';
 
+// third party imports
+import { useIntl } from 'react-intl';
+
 // assets
 import { IconSearch } from '@tabler/icons';
+
+// components
+import UserListComponent from './UserList';
+import EditUser from './EditUser';
 
 // types
 import { UserType } from 'types/user-profile';
 import Loader from 'ui-component/Loader';
-import { useIntl } from 'react-intl';
 
 // ==============================|| USER CARD STYLE 1 ||============================== //
 
@@ -33,6 +39,9 @@ const UsersList = () => {
     // vars
     const [users, setUsers] = React.useState<UserType[]>([]);
     const [search, setSearch] = React.useState<string | undefined>('');
+
+    const [sideMode, setSideMode] = useState<'EDIT' | 'ADD' | null>(null);
+    const [userToEdit, setUserToEdit] = useState<UserType | null>(null);
 
     useEffect(() => {
         const searchText = searchParams.get('search');
@@ -64,17 +73,20 @@ const UsersList = () => {
         }
     }, [search, usersList]);
 
-    // let usersResult: React.ReactElement | React.ReactElement[] = <></>;
-    // if (users) {
-    //     usersResult = users.map((user, index) => (
-    //         <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
-    //             <UserDetailsCard {...user} />
-    //         </Grid>
-    //     ));
-    // }
+    const openEdit = (user: UserType) => {
+        setSideMode(null);
+
+        setTimeout(() => {
+            setSideMode('EDIT');
+            setUserToEdit(user);
+        }, 200);
+    };
 
     return (
         <MainCard
+            sx={{
+                overflow: 'initial'
+            }}
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
@@ -103,31 +115,32 @@ const UsersList = () => {
         >
             <Grid container direction="row" spacing={gridSpacing}>
                 {loading && <Loader />}
-
-                <Grid item xs={12}>
-                    <Collapse in={!loading}>
-                        <Grid container direction="row" spacing={gridSpacing}>
-                            {users.map((user, index) => (
-                                <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
-                                    <UserDetailsCard {...user} />
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Collapse>
+                <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    lg={6}
+                    // sx={{ backgroundColor: { xs: 'red', sm: 'orange', md: 'pink', lg: 'navy', xl: 'yellow' } }}
+                >
+                    <UserListComponent users={users ?? []} loading={loading} onEditClick={openEdit} />
                 </Grid>
-                <Fade in={loading}>
-                    <Stack justifyContent="center" alignItems="center" p={5} sx={{ width: 1 }}>
-                        <CircularProgress />
-                    </Stack>
-                </Fade>
-
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6} lg={6} xl={6}>
+                    <EditUser
+                        handleCancel={() => {
+                            setSideMode(null);
+                        }}
+                        show={sideMode === 'EDIT'}
+                        userToEdit={userToEdit!}
+                    />
+                </Grid>
+                {/* {!loading && usersResult} */}
+                {/*  <Grid item xs={12}>
                     <Grid container justifyContent="flex-end" spacing={gridSpacing}>
                         <Grid item>
                             <Typography variant="h5">Mostrando {users.length} resultados</Typography>
                         </Grid>
                     </Grid>
-                </Grid>
+                </Grid> */}
             </Grid>
         </MainCard>
     );
