@@ -242,5 +242,13 @@
     "reports": "Reportes",
     "change_log": "Bitácora de cambios",
     "delete": "Eliminar",
-    "create_user": "Crear usuario"
+    "create_user": "Crear usuario",
+    "approval_profile": "Perfil de aprobación",
+    "provider": "Proveedor",
+    "user": "Usuario",
+    "email": "Email",
+    "employee_number": "Número de empleado",
+    "first_name": "Nombre",
+    "last_name": "Apellidos",
+    "phone": "Teléfono"
 }

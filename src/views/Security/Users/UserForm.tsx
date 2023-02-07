@@ -1,19 +1,9 @@
 import React, { useEffect } from 'react';
 
 // material-ui
-import {
-    CircularProgress,
-    Collapse,
-    Divider,
-    Fade,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField
-} from '@mui/material';
+import { Fade, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+
+import { useIntl } from 'react-intl';
 
 // project imports
 import { useDispatch, useSelector } from 'store';
@@ -32,6 +22,7 @@ export default function UserForm({
     handleSelectChange: (e: SelectChangeEvent) => void;
 }) {
     // hooks
+    const intl = useIntl();
     const dispatch = useDispatch();
 
     // store
@@ -41,29 +32,60 @@ export default function UserForm({
         dispatch(getProfiles());
         dispatch(getProviders());
         dispatch(getApprovalProfiles());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <>
             <Grid item {...gridInputProps}>
-                <TextField fullWidth label="Usuario" value={user?.user ?? ''} name="user" onChange={handleChange} />
-            </Grid>
-            <Grid item {...gridInputProps}>
-                <TextField fullWidth label="Nombre" value={user?.firstName ?? ''} name="firstName" onChange={handleChange} />
-            </Grid>
-            <Grid item {...gridInputProps}>
-                <TextField fullWidth label="Apellidos" value={user?.lastName ?? ''} name="lastName" onChange={handleChange} />
-            </Grid>
-            <Grid item {...gridInputProps}>
-                <TextField fullWidth label="Email" value={user?.email ?? ''} name="email" onChange={handleChange} />
-            </Grid>
-            <Grid item {...gridInputProps}>
-                <TextField fullWidth label="Teléfono" value={user?.phoneNumber ?? ''} name="phoneNumber" onChange={handleChange} />
+                <TextField
+                    fullWidth
+                    label={intl.formatMessage({ id: 'user' })}
+                    value={user?.user ?? ''}
+                    name="user"
+                    onChange={handleChange}
+                />
             </Grid>
             <Grid item {...gridInputProps}>
                 <TextField
                     fullWidth
-                    label="Número de empleado"
+                    label={intl.formatMessage({ id: 'first_name' })}
+                    value={user?.firstName ?? ''}
+                    name="firstName"
+                    onChange={handleChange}
+                />
+            </Grid>
+            <Grid item {...gridInputProps}>
+                <TextField
+                    fullWidth
+                    label={intl.formatMessage({ id: 'last_name' })}
+                    value={user?.lastName ?? ''}
+                    name="lastName"
+                    onChange={handleChange}
+                />
+            </Grid>
+            <Grid item {...gridInputProps}>
+                <TextField
+                    fullWidth
+                    label={intl.formatMessage({ id: 'email' })}
+                    value={user?.email ?? ''}
+                    name="email"
+                    onChange={handleChange}
+                />
+            </Grid>
+            <Grid item {...gridInputProps}>
+                <TextField
+                    fullWidth
+                    label={intl.formatMessage({ id: 'phone' })}
+                    value={user?.phoneNumber ?? ''}
+                    name="phoneNumber"
+                    onChange={handleChange}
+                />
+            </Grid>
+            <Grid item {...gridInputProps}>
+                <TextField
+                    fullWidth
+                    label={intl.formatMessage({ id: 'employee_number' })}
                     value={user?.employeNumber ?? ''}
                     name="employeNumber"
                     onChange={handleChange}
@@ -77,11 +99,11 @@ export default function UserForm({
             <Grid item {...gridInputProps}>
                 <Fade in={!loadingEditInfo}>
                     <FormControl fullWidth>
-                        <InputLabel id="select-profile-id">Perfil</InputLabel>
+                        <InputLabel id="select-profile-id">{intl.formatMessage({ id: 'profile' })}</InputLabel>
                         <Select
                             labelId="select-profile-id"
                             id="select-profile"
-                            label="Perfil"
+                            label={intl.formatMessage({ id: 'profile' })}
                             fullWidth
                             value={user?.profileId}
                             name="profileId"
@@ -101,11 +123,11 @@ export default function UserForm({
             <Grid item {...gridInputProps}>
                 <Fade in={!loadingEditInfo}>
                     <FormControl fullWidth>
-                        <InputLabel id="select-provider-id">Proveedor</InputLabel>
+                        <InputLabel id="select-provider-id">{intl.formatMessage({ id: 'provider' })}</InputLabel>
                         <Select
                             labelId="select-provider-id"
                             id="select-provider"
-                            label="Proveedor"
+                            label={intl.formatMessage({ id: 'provider' })}
                             fullWidth
                             value={user?.providerId}
                             name="providerId"
@@ -125,11 +147,11 @@ export default function UserForm({
             <Grid item {...gridInputProps}>
                 <Fade in={!loadingEditInfo}>
                     <FormControl fullWidth>
-                        <InputLabel id="select-aproval-profile-id">Perfil de aprobación</InputLabel>
+                        <InputLabel id="select-aproval-profile-id">{intl.formatMessage({ id: 'approval_profile' })}</InputLabel>
                         <Select
                             labelId="select-aproval-profile-id"
                             id="select-aproval-profile"
-                            label="Perfil de aprobación"
+                            label={intl.formatMessage({ id: 'approval_profile' })}
                             fullWidth
                             value={user?.idApprovalProfile?.toString() ?? ''}
                             name="approval-select"
