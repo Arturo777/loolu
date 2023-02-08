@@ -44,7 +44,7 @@ export default function ProfilesMainPage() {
 
     const getProfilesList = () => {
         setIsLoading(true);
-        dispatch(getProfiles()).finally(() => {
+        dispatch(getProfiles({})).finally(() => {
             setIsLoading(false);
         });
     };

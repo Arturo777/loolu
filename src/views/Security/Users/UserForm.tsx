@@ -29,7 +29,7 @@ export default function UserForm({
     const { profiles, providers, approvalProfiles, loadingEditInfo } = useSelector((state) => state.user);
 
     useEffect(() => {
-        dispatch(getProfiles());
+        dispatch(getProfiles({}));
         dispatch(getProviders());
         dispatch(getApprovalProfiles());
         // eslint-disable-next-line react-hooks/exhaustive-deps

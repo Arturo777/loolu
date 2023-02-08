@@ -129,9 +129,6 @@ const slice = createSlice({
                 const profiles: ProfileType[] = action.payload.response;
                 state.profiles = profiles;
             });
-        builder.addCase(getProfiles.fulfilled, (state, action) => {
-            state.profiles = action.payload;
-        });
     }
 });
 
@@ -213,7 +210,7 @@ export function getUserInfo(userId: number, idMerchant?: string) {
     };
 }
 
-export const getProfiles = createAsyncThunk(`${slice.name}/getProfiles`, async (idMerchant?: number) => {
+export const getProfiles = createAsyncThunk(`${slice.name}/getProfiles`, async ({ idMerchant }: { idMerchant?: number }) => {
     const response = await axios.get(`styrk/api/profile/search`, {
         baseURL: STYRK_API,
         params: {

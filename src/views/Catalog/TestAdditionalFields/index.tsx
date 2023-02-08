@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // material-ui
 import { Grid, Typography, Card, TextField, IconButton, Button, SxProps } from '@mui/material';
@@ -17,8 +17,8 @@ import { gridSpacing } from 'store/constant';
 export default function TestAdditionalFields() {
     // hooks
 
-    // consts
-    const [showNew, setShowNew] = useState<boolean>(false);
+    // // consts
+    // const [showNew, setShowNew] = useState<boolean>(false);
 
     return (
         <MainCard
