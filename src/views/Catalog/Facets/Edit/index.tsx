@@ -40,7 +40,6 @@ const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentP
             setIsLoading(true);
             dispatch(getFacetService({ merchantId: 1, facetId }))
                 .then(({ payload }) => {
-                    // console.log(payload);
                     setFacetData(payload);
                 })
                 .finally(() => {
@@ -52,8 +51,6 @@ const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentP
 
     // save new info
     const handleSave = async (data: FacetType) => {
-        console.log('DAT', data);
-
         dispatch(
             editFacetService({
                 merchantId: 1,
@@ -142,7 +139,9 @@ const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentP
 
     return (
         <Fade in={show}>
-            <Card sx={{ boxShadow: 2, p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>{renderContent()}</Card>
+            <Card elevation={2} sx={{ p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>
+                {renderContent()}
+            </Card>
         </Fade>
     );
 };

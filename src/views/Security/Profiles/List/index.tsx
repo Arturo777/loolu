@@ -15,12 +15,20 @@ import { FormattedMessage, useIntl } from 'react-intl';
 // assets
 import { IconSearch } from '@tabler/icons';
 import { Link, useSearchParams } from 'react-router-dom';
+import Loader from 'ui-component/Loader';
+import { useSelector } from 'store';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
 const ListStylePage1 = () => {
+    // hooks
     const intl = useIntl();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    // store
+    const { loading } = useSelector((state) => state.user);
+
+    // state
     const [filterText, setFilterText] = useState<string>('');
 
     useEffect(() => {
@@ -70,6 +78,7 @@ const ListStylePage1 = () => {
             }
             content={false}
         >
+            {loading && <Loader />}
             <ProfilesList filterText={filterText} />
         </MainCard>
     );

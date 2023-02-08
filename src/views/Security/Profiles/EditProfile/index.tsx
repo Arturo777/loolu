@@ -30,7 +30,7 @@ const ProfileFormView = () => {
     const { profiles } = useSelector((state) => state.user);
 
     useEffect(() => {
-        dispatch(getProfiles());
+        dispatch(getProfiles({ idMerchant: 1 }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

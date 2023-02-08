@@ -151,6 +151,8 @@
     "rows": "Rows",
     "search": "Search",
     "filter": "Filter",
+    "sort_by": "Sort by",
+    "apply": "Apply",
 
     "hi_welcome": "Hi, Welcome back",
     "enter_credentials": "Enter your credentials to continue",
@@ -222,5 +224,19 @@
     "cancel": "Cancel",
 
     "health-content": "Healt Content",
-    "status-market": "Overall status"
+    "status-market": "Overall status",
+    "massive_load": "Upload",
+    "download": "Download",
+
+    "brand": "Brand",
+    "product_name": "Product name",
+
+    "loading": "Loading",
+    "no_options": "No options",
+    "upload": "Upload",
+    "attach_file": "Attach file",
+    "success_file_request": "Request saved with event number: {code}",
+
+    "reports": "Reports",
+    "change_log": "Change log"
 }

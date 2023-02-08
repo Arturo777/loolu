@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { Box, Button } from '@mui/material';
+import { Box, Button, CircularProgress, Collapse, Stack } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -21,12 +21,16 @@ type BransListProps = {
 };
 
 const BrandsList = ({ filterText }: BransListProps) => {
+    // hooks
     const intl = useIntl();
-    const [pageSize, setPageSize] = useState<number>(10);
     const dispatch = useDispatch();
 
-    const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
+    // store
     const { brands, loading } = useSelector((state) => state.catalogue);
+
+    // state
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
 
     useEffect(() => {
         dispatch(getBrands());
@@ -94,16 +98,23 @@ const BrandsList = ({ filterText }: BransListProps) => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <DataGrid
-                loading={loading}
-                rows={filteredBrands}
-                columns={columns}
-                pageSize={pageSize}
-                rowsPerPageOptions={[10, 20, 50, 100]}
-                onPageSizeChange={setPageSize}
-                autoHeight
-                disableSelectionOnClick
-            />
+            <Collapse in={!loading}>
+                <DataGrid
+                    loading={loading}
+                    rows={filteredBrands}
+                    columns={columns}
+                    pageSize={pageSize}
+                    rowsPerPageOptions={[10, 20, 50, 100]}
+                    onPageSizeChange={setPageSize}
+                    autoHeight
+                    disableSelectionOnClick
+                />
+            </Collapse>
+            <Collapse in={loading}>
+                <Stack justifyContent="center" alignItems="center" p={5}>
+                    <CircularProgress />
+                </Stack>
+            </Collapse>
         </Box>
     );
 };

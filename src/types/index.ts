@@ -16,6 +16,7 @@ import { AuthStateProps, ProfileStateProps, SecurityStateProps } from './securit
 import { SnackbarProps } from './snackbar';
 import { CatalogStateProps } from './catalog';
 import { HealthContentStateProps } from './health-content';
+import { ReportsStateProps } from './reports';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -117,6 +118,7 @@ export interface DefaultRootStateProps {
     auth: AuthStateProps;
     profile: ProfileStateProps;
     catalogue: CatalogStateProps;
+    reports: ReportsStateProps;
 }
 
 export interface ColorProps {

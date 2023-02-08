@@ -42,7 +42,7 @@ const UserProfile = () => {
     useEffect(() => {
         if (userId) {
             dispatch(getUserInfo(Number(userId))).then(() => {
-                dispatch(getProfiles());
+                dispatch(getProfiles({ idMerchant: 1 }));
                 dispatch(getProviders());
                 dispatch(getApprovalProfiles());
             });

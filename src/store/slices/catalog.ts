@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
 import axios from 'utils/axios';
-import { STYRK_API, STYRK_API_ALTERNATIVE } from 'config';
+import { STYRK_API, STYRK_API_ALTERNATIVE, STYRK_API_BULKLOAD } from 'config';
 import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
@@ -395,6 +395,57 @@ export const updateFacetVariant = createAsyncThunk(
             const response = await axios.post(`/facets/fv/merchant/${idMerchant}`, data, {
                 baseURL: STYRK_API_ALTERNATIVE
             });
+            return response.data;
+        } catch (e: any) {
+            return e.response;
+        }
+    }
+);
+
+// MASSIVE LOAD
+
+type uploadMassiveFileProps = {
+    file: File;
+    idMerchant?: number;
+    user: string;
+};
+
+export const uploadMassiveFile = createAsyncThunk(
+    `${slice.name}/uploadMassiveFile`,
+    async ({ idMerchant, file, user }: uploadMassiveFileProps) => {
+        try {
+            const data = new FormData();
+            data.append('file', file);
+
+            const response = await axios.post(`/merchant/${idMerchant ?? 1}/user/${user}/upload/file`, data, {
+                baseURL: STYRK_API_BULKLOAD
+            });
+            return response.data;
+        } catch (e: any) {
+            return e.response;
+        }
+    }
+);
+export const downloadMassiveFile = createAsyncThunk(
+    `${slice.name}/uploadMassiveFile`,
+    async ({ idMerchant, user }: { idMerchant?: number; user: string }) => {
+        try {
+            // const bearerToken = localStorage.getItem("loo")
+
+            const token = localStorage.getItem('looluToken');
+            // const token = localStorage.getItem('serviceToken');
+
+            const response = await axios.post(
+                `/merchant/${idMerchant ?? 1}/user/${user}/contentRequest`,
+                {
+                    bearerToken: token,
+                    merchantId: idMerchant,
+                    user
+                },
+                {
+                    baseURL: STYRK_API_BULKLOAD
+                }
+            );
             return response.data;
         } catch (e: any) {
             return e.response;

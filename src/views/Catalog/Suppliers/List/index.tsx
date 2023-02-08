@@ -10,18 +10,25 @@ import { gridSpacing } from 'store/constant';
 
 // third-party
 import { FormattedMessage, useIntl } from 'react-intl';
-
-// assets
 import { IconSearch } from '@tabler/icons';
 import { Link, useSearchParams } from 'react-router-dom';
+
+// assets
 import ProvidersList from './ProvidersList';
-// import { Link } from 'react-router-dom';
+import { useSelector } from 'store';
+import Loader from 'ui-component/Loader';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
 const ProvidersListPage = () => {
+    // hooks
     const intl = useIntl();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    // store
+    const { loading } = useSelector((state) => state.catalogue);
+
+    // vars
     const [filterText, setFilterText] = useState<string>('');
 
     useEffect(() => {
@@ -71,6 +78,7 @@ const ProvidersListPage = () => {
             }
             content={false}
         >
+            {loading && <Loader />}
             <ProvidersList filterText={filterText} />
         </MainCard>
     );
