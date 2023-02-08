@@ -13,6 +13,19 @@ export const queryToObject = (query: string): object => {
     return queryObject;
 };
 
+export const getSearchParamsFromObject = (data: { [key: string]: any }): string => {
+    let params = '?';
+
+    Object.keys(data).forEach((key) => {
+        const value = data[key]; // extract, value
+        if (value) {
+            params += `${key}=${value}&`;
+        }
+    });
+
+    return params;
+};
+
 export const other = () => {};
 
 export const getCategoriesFlat = (categories: CategoryType[]): FlatCategoryType[] => {

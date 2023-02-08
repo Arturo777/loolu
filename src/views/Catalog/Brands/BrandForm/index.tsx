@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 
-// material-u
+// material-ui
 import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,10 +10,10 @@ import { useIntl } from 'react-intl';
 
 // project imports
 import { gridSpacing } from 'store/constant';
+import { useSelector } from 'store';
 
 // types
 import { BrandType, NewBrandType } from 'types/catalog';
-import { useSelector } from 'store';
 
 const initialBrandData: NewBrandType = {
     name: '',

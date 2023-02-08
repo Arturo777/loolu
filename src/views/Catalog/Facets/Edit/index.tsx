@@ -40,7 +40,6 @@ const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentP
             setIsLoading(true);
             dispatch(getFacetService({ merchantId: 1, facetId }))
                 .then(({ payload }) => {
-                    // console.log(payload);
                     setFacetData(payload);
                 })
                 .finally(() => {
@@ -52,8 +51,6 @@ const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentP
 
     // save new info
     const handleSave = async (data: FacetType) => {
-        console.log('DAT', data);
-
         dispatch(
             editFacetService({
                 merchantId: 1,

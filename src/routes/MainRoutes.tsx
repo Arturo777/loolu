@@ -34,6 +34,9 @@ const FacetsMainPage = Loadable(lazy(() => import('views/Catalog/Facets/Main')))
 // ========= CATEGORIES =========
 const CategoriesMainPage = Loadable(lazy(() => import('views/Catalog/Categories/Main')));
 
+// ========= MASSIVE LOAD =========
+const MassiveLoadPage = Loadable(lazy(() => import('views/Catalog/MassiveLoad')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -122,6 +125,11 @@ const MainRoutes = {
         {
             path: '/health-content/overall-score/products',
             element: <Products />
+        },
+        // ========= MASSIVE  LOAD =========
+        {
+            path: '/massive_load',
+            element: <MassiveLoadPage />
         }
     ]
 };

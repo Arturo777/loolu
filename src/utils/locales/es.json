@@ -222,5 +222,15 @@
     "cancel": "Cancelar",
 
     "health-content": "Salud del Contenido",
-    "status-market": "Estatus General"
+    "status-market": "Estatus General",
+    "massive_load": "Carga masiva",
+    "download": "Descargar",
+
+    "brand": "Marca",
+    "product_name": "Nombre del producto",
+
+    "loading": "Cargando",
+    "no_options": "No options",
+    "upload": "Subir",
+    "attach_file": "Adjuntar archivo"
 }

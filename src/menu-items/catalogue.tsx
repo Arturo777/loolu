@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconPackage, IconLayout, IconTruckDelivery, IconBoxPadding, IconTag } from '@tabler/icons';
+import { IconPackage, IconLayout, IconTruckDelivery, IconBoxPadding, IconTag, IconCloudUpload } from '@tabler/icons';
 
 // constant
 const icons = {
@@ -10,7 +10,8 @@ const icons = {
     IconLayout,
     IconTruckDelivery,
     IconBoxPadding,
-    IconTag
+    IconTag,
+    IconCloudUpload
 };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
@@ -62,6 +63,15 @@ const catalogue = {
             type: 'item',
             url: '/categories',
             icon: icons.IconTag,
+            external: false,
+            breadcrumbs: false
+        },
+        {
+            id: 'massive_load',
+            title: <FormattedMessage id="massive_load" />,
+            type: 'item',
+            url: '/massive_load',
+            icon: icons.IconCloudUpload,
             external: false,
             breadcrumbs: false
         }

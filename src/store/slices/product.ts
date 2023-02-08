@@ -10,6 +10,7 @@ import { STYRK_API } from 'config';
 import { DefaultRootStateProps } from 'types';
 import { ProductsFilter, Address, Products } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
+import { getSearchParamsFromObject } from 'utils/helpers';
 
 // ----------------------------------------------------------------------
 
@@ -60,9 +61,9 @@ const slice = createSlice({
         },
 
         // GET PRODUCT
-        /* getProductSuccess(state, action) {
+        getProductSuccess(state, action) {
             state.product = action.payload;
-        }, */
+        },
         // GET SKUS
         getSkuSuccess(state, action) {
             state.skus = action.payload;
@@ -135,12 +136,46 @@ const slice = createSlice({
                 state.loadingProducts = false;
             });
     }
+    // extraReducers(builder) {}
 });
 
 // Reducer
 export default slice.reducer;
 
-export interface SearchProductType {
+export interface getProductsProps {
+    idMerchant?: number;
+    page?: number;
+    productName: string;
+    idSKU: string;
+    idBrand: string;
+    idCategory: string;
+}
+
+// ----------------------------------------------------------------------
+
+export const getProductsThunk = createAsyncThunk(
+    `${slice.name}/getProducts`,
+    async ({ idMerchant, page, productName, idSKU, idBrand, idCategory }: getProductsProps) => {
+        const currentPage = productName || idSKU || idBrand || idCategory ? 0 : page;
+
+        const response = await axios.get(
+            `styrk/api/massive/search${getSearchParamsFromObject({
+                idMerchant,
+                page: currentPage,
+                productName,
+                idSKU,
+                idBrand,
+                idCategory
+            })}`,
+            {
+                baseURL: STYRK_API
+            }
+        );
+        return response.data;
+    }
+);
+
+export type SearchProductType = {
     idMerchant?: number;
     page?: number;
     productName?: string;
@@ -149,13 +184,9 @@ export interface SearchProductType {
     productRefID?: number;
     idProd?: number;
     idApprovalStatus?: number;
-}
-
-// ----------------------------------------------------------------------
+};
 
 export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (searchParams: SearchProductType) => {
-    dispatch(slice.actions.getProductsPending());
-
     const hasParams = Boolean(
         searchParams.productName ||
             searchParams.ean ||
@@ -164,17 +195,29 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             searchParams.idProd ||
             searchParams.idApprovalStatus
     );
-    const response = await axios.get(`styrk/api/product/search`, {
-        baseURL: STYRK_API,
-        params: {
-            idMerchant: searchParams.idMerchant || 1,
-            page: searchParams.page || hasParams ? 0 : 1,
-            productName: searchParams.productName || null,
-            idSKU: searchParams.idSKU,
-            idProd: searchParams.idProd
-        }
-    });
-    return response.data;
+
+    try {
+        const response = await axios.get(`styrk/api/product/search`, {
+            baseURL: STYRK_API,
+            params: {
+                idMerchant: searchParams.idMerchant || 1,
+                page: searchParams.page || hasParams ? 0 : 1,
+                productName: searchParams.productName || null,
+                idSKU: searchParams.idSKU,
+                idProd: searchParams.idProd
+            }
+        });
+
+        return response.data;
+
+        // dispatch(slice.actions.getProductsSuccess(response.data.response));
+    } catch (error) {
+        dispatch(slice.actions.hasError(error));
+    }
+
+    return null;
+
+    // return response.data;
 });
 
 export function filterProducts(filter: ProductsFilter) {

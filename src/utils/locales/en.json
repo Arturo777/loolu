@@ -222,5 +222,15 @@
     "cancel": "Cancel",
 
     "health-content": "Healt Content",
-    "status-market": "Overall status"
+    "status-market": "Overall status",
+    "massive_load": "Massive Load",
+    "download": "Download",
+
+    "brand": "Brand",
+    "product_name": "Product name",
+
+    "loading": "Loading",
+    "no_options": "No options",
+    "upload": "Upload",
+    "attach_file": "Attach file"
 }

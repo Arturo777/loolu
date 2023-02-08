@@ -19,7 +19,6 @@ const slice = createSlice({
                 state.loading = true;
             })
             .addCase(getUserProfile.fulfilled, (state, action) => {
-                console.log('My user', action.payload.response);
                 state.user = action.payload.response;
                 state.loading = false;
             });

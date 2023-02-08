@@ -10,10 +10,10 @@ import { gridSpacing } from 'store/constant';
 
 // third-party
 import { FormattedMessage, useIntl } from 'react-intl';
-
-// assets
 import { IconSearch } from '@tabler/icons';
 import { Link, useSearchParams } from 'react-router-dom';
+
+// assets
 import BransList from './BrandsList';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
