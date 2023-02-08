@@ -3,6 +3,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 // material-ui
 import { Grid, TextField, Divider, Button, FormControlLabel, Checkbox, Box, Typography, Collapse, Stack } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
 
 // third-party imports
 import { useIntl } from 'react-intl';
@@ -30,12 +31,16 @@ const newProfileDefault: NewProfieState = {
 type ProfileFormProps = {
     handleSaveClick: (data: NewProfileType) => void;
     defaultData?: ProfileType;
-    mode: 'create' | 'edit';
+    mode: 'CREATE' | 'EDIT';
+    handleCancel: () => void;
 };
 
-export default function ProfileForm({ handleSaveClick, defaultData, mode }: ProfileFormProps) {
+export default function ProfileForm({ handleSaveClick, defaultData, mode, handleCancel }: ProfileFormProps) {
+    // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
+
+    // const
     const { menuOptions, fetching, loading } = useSelector((state) => state.user);
     const [newData, setNewData] = useState<NewProfieState>(newProfileDefault);
     const [hasError, setHasError] = useState<string>('');
@@ -90,8 +95,6 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
             }
         });
 
-        // console.log(currentMenus);
-
         setNewData({
             ...newData,
             menus: currentMenus
@@ -116,9 +119,9 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} sm={6} md={3} lg={4} xl={2}>
+                <Grid item xs={12} sm={6} md={3} lg={6} xl={4}>
                     <TextField
                         value={newData.type}
                         fullWidth
@@ -130,7 +133,7 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
                         required
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3} lg={4} xl={2}>
+                <Grid item xs={12} sm={6} md={3} lg={6} xl={4}>
                     <TextField
                         fullWidth
                         label={intl.formatMessage({
@@ -160,11 +163,11 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
                     <Grid container>
                         {menuOptions &&
                             menuOptions.map((item, i) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={`checkgroup-${i}`}>
+                                <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={`checkgroup-${i}`}>
                                     <CheckLabelGroup
                                         itemMenu={item}
                                         mode={mode}
-                                        defaultSelected={mode === 'create' ? null : defaultData?.menuDetails!}
+                                        defaultSelected={mode === 'CREATE' ? null : defaultData?.menuDetails!}
                                         onChange={handleCheckbox}
                                         fatherId={item.id}
                                     />
@@ -172,20 +175,31 @@ export default function ProfileForm({ handleSaveClick, defaultData, mode }: Prof
                             ))}
                     </Grid>
                 </Grid>
-
-                <Grid item xs={12} pt={4} pl={3}>
-                    <Divider />
+            </Grid>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Divider sx={{ mb: 1, mt: 1 }} />
                 </Grid>
-
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button disabled={fetching || loading} variant="outlined" startIcon={<SaveIcon />} type="submit">
+                        <Button
+                            disabled={loading || fetching}
+                            onClick={handleCancel}
+                            variant="outlined"
+                            color="error"
+                            sx={{ mr: 2 }}
+                            startIcon={<CloseIcon />}
+                        >
+                            {intl.formatMessage({ id: 'cancel' })}
+                        </Button>
+
+                        <Button disabled={loading || fetching} variant="outlined" startIcon={<SaveIcon />} type="submit">
                             {intl.formatMessage({ id: 'save' })}
                         </Button>
                     </Box>
                 </Grid>
             </Grid>
-        </form>
+        </Box>
     );
 }
 
@@ -193,7 +207,7 @@ type CheckLabelGroupProps = {
     itemMenu: MenuDetailsType;
     defaultSelected: MenuDetailsType[] | null;
     onChange: (checkedList: CheckListState[]) => void;
-    mode: 'create' | 'edit';
+    mode: 'CREATE' | 'EDIT';
     fatherId: number;
 };
 
@@ -236,10 +250,6 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }
     const handleChangeChild = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = event.target;
 
-        if (checked) {
-            console.log(mode, name);
-        }
-
         const newCheckList = checkedList.map((item) => {
             if (item.id === Number(name)) {
                 return { ...item, checked };
@@ -274,7 +284,7 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }
     return (
         <Box>
             <FormControlLabel
-                label={`${itemMenu.type} ${itemMenu.id}`}
+                label={`${itemMenu.type}`}
                 sx={{
                     '& .MuiFormControlLabel-label': {
                         fontWeight: 700
@@ -288,11 +298,26 @@ const CheckLabelGroup = ({ itemMenu, defaultSelected, onChange, mode, fatherId }
                     checkedList.map((itemChild) => (
                         <FormControlLabel
                             key={`item-check-${itemChild.name}`}
-                            label={`${itemChild.name} ${itemChild.id}`}
+                            label={`${itemChild.name}`}
                             control={<Checkbox name={`${itemChild.id}`} checked={isChecked(itemChild.id)} onChange={handleChangeChild} />}
                         />
                     ))}
             </Box>
         </Box>
     );
+};
+
+export const modalStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    maxWidth: 600,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    pt: 2,
+    px: 3,
+    pb: 3,
+    borderRadius: 2
 };

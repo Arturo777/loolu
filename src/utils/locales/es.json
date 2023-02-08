@@ -250,5 +250,6 @@
     "employee_number": "Número de empleado",
     "first_name": "Nombre",
     "last_name": "Apellidos",
-    "phone": "Teléfono"
+    "phone": "Teléfono",
+    "edit_user": "Editar usuario"
 }

@@ -5,7 +5,9 @@ import { useTheme } from '@mui/material/styles';
 import { Card, Grid, Box, Stack, Typography, Chip, Button, Collapse, CircularProgress, Fade } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
+// third-party imports
 import { Link } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 // project imports
 import { ProfileType } from 'types/user-profile';
@@ -14,7 +16,6 @@ import { useDispatch, useSelector } from 'store';
 // assets
 import { getProfiles } from 'store/slices/security';
 import { gridSpacing } from 'store/constant';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 type UserListProps = {
     filterText: string;

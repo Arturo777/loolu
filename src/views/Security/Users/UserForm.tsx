@@ -206,6 +206,7 @@ export const modalStyle = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '70%',
+    maxWidth: 600,
     bgcolor: 'background.paper',
     boxShadow: 24,
     pt: 2,

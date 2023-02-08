@@ -48,7 +48,7 @@ export default function EditUser({
     const intl = useIntl();
     const dispatch = useDispatch();
     const theme = useTheme();
-    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('xl'));
 
     // consts
     const [userInfo, setUserInfo] = useState<NewUserType>(defaultUser);
@@ -114,7 +114,11 @@ export default function EditUser({
     const content = () => (
         <>
             <Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h3">Edit user</Typography>
+                <Typography variant="h3">
+                    {intl.formatMessage({
+                        id: 'edit_user'
+                    })}
+                </Typography>
                 <IconButton onClick={handleCancel} sx={{ color: 'divider' }}>
                     <CloseOutlinedIcon />
                 </IconButton>
@@ -126,7 +130,7 @@ export default function EditUser({
                     <UserForm user={userInfo} handleChange={handleChange} handleSelectChange={handleSelectChange} />
 
                     <Grid item xs={12}>
-                        <Divider sx={{ mb: 3 }} />
+                        <Divider sx={{ mb: 1 }} />
                     </Grid>
                     <Grid item xs={12}>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -163,7 +167,7 @@ export default function EditUser({
 
     return (
         <Fade in={show}>
-            <Card elevation={2} sx={{ p: 3, position: 'sticky', top: 100 }}>
+            <Card elevation={2} sx={{ p: 3, position: 'sticky', top: 100, bottom: 0 }}>
                 {content()}
             </Card>
         </Fade>

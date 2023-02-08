@@ -1,7 +1,6 @@
 import React from 'react';
 
 // project imports
-import Profile from './UserProfile';
 
 import MainCard from 'ui-component/cards/MainCard';
 

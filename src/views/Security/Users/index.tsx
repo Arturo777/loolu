@@ -4,18 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { Button, Fade, Grid, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-// project imports
-import { useSearchParams } from 'react-router-dom';
-// import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
-import MainCard from 'ui-component/cards/MainCard';
-import { gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
-import { getUsersList } from 'store/slices/security';
-
 // third party imports
 import { useIntl } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
+
+// project imports
+import { useDispatch, useSelector } from 'store';
+import { gridSpacing } from 'store/constant';
+import { getUsersList } from 'store/slices/security';
 
 // components
+import MainCard from 'ui-component/cards/MainCard';
 import UserListComponent from './UserList';
 import EditUser from './EditUser';
 
@@ -73,12 +72,14 @@ const UsersList = () => {
     }, [search, usersList]);
 
     const openEdit = (user: UserType) => {
+        if (user.id === userToEdit?.id) {
+            return;
+        }
         setSideMode(null);
-
         setTimeout(() => {
             setSideMode('EDIT');
             setUserToEdit(user);
-        }, 200);
+        }, 100);
     };
 
     const handleSuccess = (mode: 'EDIT' | 'CREATE') => {
@@ -130,16 +131,17 @@ const UsersList = () => {
                     item
                     xs={12}
                     md={6}
-                    lg={6}
+                    lg={5}
                     // sx={{ backgroundColor: { xs: 'red', sm: 'orange', md: 'pink', lg: 'navy', xl: 'yellow' } }}
                 >
                     <UserListComponent users={users ?? []} loading={loading} onEditClick={openEdit} />
                 </Grid>
-                <Grid item xs={12} md={6} lg={6} xl={6}>
+                <Grid item xs={12} md={6} lg={7}>
                     {sideMode === 'EDIT' ? (
                         <EditUser
                             handleSuccess={handleSuccess}
                             handleCancel={() => {
+                                setUserToEdit(null);
                                 setSideMode(null);
                             }}
                             show={sideMode === 'EDIT'}

@@ -46,7 +46,7 @@ export default function CreateUser({
     const intl = useIntl();
     // const dispatch = useDispatch();
     const theme = useTheme();
-    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('xl'));
 
     // consts
     const [userInfo, setUserInfo] = useState<NewUserType>(defaultUser);
@@ -96,7 +96,7 @@ export default function CreateUser({
                     <UserForm user={userInfo} handleChange={handleChange} handleSelectChange={handleSelectChange} />
 
                     <Grid item xs={12}>
-                        <Divider sx={{ mb: 3 }} />
+                        <Divider sx={{ mb: 1 }} />
                     </Grid>
                     <Grid item xs={12}>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

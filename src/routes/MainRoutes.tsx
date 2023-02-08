@@ -14,7 +14,7 @@ const UsersList = Loadable(lazy(() => import('views/Security/Users')));
 const UserProfile = Loadable(lazy(() => import('views/Security/UserProfile')));
 
 // ========= profiles =========
-const ProfilesList = Loadable(lazy(() => import('views/Security/Profiles/List')));
+const ProfilesMainPage = Loadable(lazy(() => import('views/Security/Profiles')));
 const CreateProfile = Loadable(lazy(() => import('views/Security/Profiles/CreateProfile')));
 const EditProfile = Loadable(lazy(() => import('views/Security/Profiles/EditProfile')));
 
@@ -75,7 +75,7 @@ const MainRoutes = {
         // ========= profiles =========
         {
             path: '/profiles',
-            element: <ProfilesList />
+            element: <ProfilesMainPage />
         },
         {
             path: '/profiles/create',
