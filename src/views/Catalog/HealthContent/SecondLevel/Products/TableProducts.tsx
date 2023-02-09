@@ -21,7 +21,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Key, useEffect, useState } from 'react';
 
 // project imports
-import ThirdProducts from '../ThirdLevel/ThirdProduct';
+import ThirdProducts from '../../ThirdLevel/ThirdProduct';
 
 function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
     return (

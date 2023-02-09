@@ -6,7 +6,7 @@ import { Avatar, Box, CircularProgress, Fade, Grid, Typography } from '@mui/mate
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MainCard from 'ui-component/cards/MainCard';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSecondLevelProducts } from 'store/slices/healthContent';
+import { getSecondLevelImages } from 'store/slices/healthContent';
 import { DefaultRootStateProps } from 'types';
 import { ResumenProducts } from 'types/health-content';
 import CardRatings from './CardRatings';
@@ -54,7 +54,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     }
 }));
 
-const Products = () => {
+const Images = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const [secondLevel, setSecondLevel] = useState<any>();
@@ -62,42 +62,40 @@ const Products = () => {
     const [typeScore, setTypeScore] = useState('');
     const [products, setProducts] = useState([]);
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { secondLevelProducts } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+    const { secondLevelImages } = useSelector((state: DefaultRootStateProps) => state.healthContent);
 
     useEffect(() => {
         setIsLoading(true);
-        dispatch(getSecondLevelProducts());
+        dispatch(getSecondLevelImages());
     }, [dispatch]);
 
     useEffect(() => {
-        setSecondLevel(secondLevelProducts);
+        setSecondLevel(secondLevelImages);
         setIsLoading(false);
-    }, [secondLevelProducts]);
+    }, [secondLevelImages]);
     useEffect(() => {
         setIsLoading(true);
         if (typeScore === 'Good') {
-            setProducts(secondLevel?.metricsGood);
+            setProducts(secondLevel?.metricGood);
             setIsLoading(false);
         } else if (typeScore === 'Fair') {
-            setProducts(secondLevel?.metricsFair);
+            setProducts(secondLevel?.metricFair);
             setIsLoading(false);
         } else if (typeScore === 'Poor') {
-            setProducts(secondLevel?.metricsPoor);
+            setProducts(secondLevel?.metricPoor);
             setIsLoading(false);
         } else {
-            setProducts(secondLevel?.metricsGood);
+            setProducts(secondLevel?.metricGood);
             setIsLoading(false);
         }
-    }, [secondLevel?.metricsFair, secondLevel?.metricsGood, secondLevel?.metricsPoor, typeScore]);
+    }, [secondLevel?.metricFair, secondLevel?.metricGood, secondLevel?.metricPoor, typeScore]);
 
     const sumaValores = () => {
         let suma = 0;
-        suma =
-            secondLevel.resumeProducts[0].totalProducts +
-            secondLevel.resumeProducts[1].totalProducts +
-            secondLevel.resumeProducts[2].totalProducts;
+        suma = secondLevel.resume[0].totalProducts + secondLevel.resume[1].totalProducts + secondLevel.resume[2].totalProducts;
         return suma;
     };
+    console.log(typeScore);
     return (
         <>
             <CardWrapper border={false} content={false} sx={{ mb: 2 }}>
@@ -107,7 +105,7 @@ const Products = () => {
                             <Grid container alignItems="center">
                                 <Grid item>
                                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-                                        Products
+                                        Images
                                     </Typography>
                                 </Grid>
                                 <Grid item>
@@ -132,7 +130,7 @@ const Products = () => {
                                     color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : theme.palette.secondary[200]
                                 }}
                             >
-                                Total Earning
+                                Total
                             </Typography>
                         </Grid>
                     </Grid>
@@ -148,7 +146,7 @@ const Products = () => {
                 <Grid container direction="row" xs={12}>
                     <Grid item xs={3.5}>
                         <Grid container direction="column" spacing={1} xs={12}>
-                            {secondLevel?.resumeProducts?.map((resume: ResumenProducts) => (
+                            {secondLevel?.resume?.map((resume: ResumenProducts) => (
                                 <Grid item xs={3}>
                                     <CardRatings resume={resume} sumaValores={sumaValores} setTypeScore={setTypeScore} />
                                 </Grid>
@@ -157,7 +155,7 @@ const Products = () => {
                     </Grid>
                     <Grid item xs={8.5}>
                         {products?.length === 0 ? (
-                            <Typography variant="h3">No hay Productos para mostrar</Typography>
+                            <Typography variant="h3">No Have Products</Typography>
                         ) : (
                             <TableProducts products={products} />
                         )}
@@ -168,4 +166,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default Images;

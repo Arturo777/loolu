@@ -7,7 +7,9 @@ import Loadable from 'ui-component/Loadable';
 import ProductList from 'views/Products';
 import ProductDetails from 'views/ProductDetails';
 import FirstLevel from 'views/Catalog/HealthContent/FirstLevel';
-import Products from 'views/Catalog/HealthContent/SecondLevel/Products';
+import Products from 'views/Catalog/HealthContent/SecondLevel/Products/Products';
+import Images from 'views/Catalog/HealthContent/SecondLevel/Images';
+import Facets from 'views/Catalog/HealthContent/SecondLevel/Facets';
 
 //  ========= users =========
 const UsersList = Loadable(lazy(() => import('views/Security/Users')));
@@ -129,6 +131,14 @@ const MainRoutes = {
         {
             path: '/health-content/overall-score/products',
             element: <Products />
+        },
+        {
+            path: '/health-content/overall-score/images',
+            element: <Images />
+        },
+        {
+            path: '/health-content/overall-score/facets',
+            element: <Facets />
         },
         // ========= MASSIVE  LOAD =========
         {
