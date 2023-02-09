@@ -18,6 +18,7 @@ type AssociateFormComponentProps = {
     category: CategoryType;
     specificationData?: SpecificationsType;
     specificationGroupMode: SpecificationGroupMode;
+    canCancel: boolean;
 };
 
 export default function AssociateFormComponent({
@@ -28,7 +29,8 @@ export default function AssociateFormComponent({
     specificationGroups,
     category,
     specificationData,
-    specificationGroupMode
+    specificationGroupMode,
+    canCancel
 }: AssociateFormComponentProps) {
     if (!show) {
         return null;
@@ -52,6 +54,7 @@ export default function AssociateFormComponent({
             specificationGroups={specificationGroups ?? []}
             handleCancel={handleCancel}
             handleSuccesFetch={handleSuccesFetch}
+            canCancel={canCancel}
         />
     );
 }

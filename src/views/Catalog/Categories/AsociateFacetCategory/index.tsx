@@ -56,12 +56,16 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     }>({ show: false, specification: null, facet: null, mode: 'EDIT', specificationGroupMode: SpecificationGroupMode.PRODUCT });
 
     const handleCloseForm = () => {
-        setEditingForm({
-            specification: null,
-            show: false,
-            facet: null,
-            mode: 'EDIT'
-        });
+        if (!specificationGroups?.length) {
+            toggleDrawer();
+        } else {
+            setEditingForm({
+                specification: null,
+                show: false,
+                facet: null,
+                mode: 'EDIT'
+            });
+        }
     };
 
     useEffect(() => {
@@ -70,6 +74,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
             setOpenGroup(null);
             handleCloseForm();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     const getCategory = () => {
@@ -80,6 +85,14 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                     const dataElement = payload.response[0];
                     const newSpecs: SpecificationGroupType[] = dataElement?.specificationGroups ?? [];
                     setSpecificationsGroups(newSpecs);
+                    if (newSpecs.length === 0) {
+                        setEditingForm({
+                            specification: null,
+                            facet: null,
+                            show: true,
+                            mode: 'ADD'
+                        });
+                    }
                 })
                 .finally(() => {
                     setIsLoading(false);
@@ -174,6 +187,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
                 category={category!}
                 specificationData={editingForm?.specification ?? undefined}
                 specificationGroupMode={editingForm.specificationGroupMode ?? SpecificationGroupMode.PRODUCT}
+                canCancel={(specificationGroups?.length ?? 0) > 0}
             />
         </>
     );

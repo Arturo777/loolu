@@ -28,6 +28,7 @@ type AssociateFormComponentProps = {
     handleSuccesFetch: () => void;
     specificationGroups: SpecificationGroupType[];
     category: CategoryType;
+    canCancel: boolean;
 };
 
 type groupInfoType = {
@@ -36,7 +37,13 @@ type groupInfoType = {
     specificationGroupMode: SpecificationGroupMode;
 };
 
-export default function AddFormComponent({ handleCancel, handleSuccesFetch, specificationGroups, category }: AssociateFormComponentProps) {
+export default function AddFormComponent({
+    handleCancel,
+    handleSuccesFetch,
+    specificationGroups,
+    category,
+    canCancel
+}: AssociateFormComponentProps) {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -136,9 +143,11 @@ export default function AddFormComponent({ handleCancel, handleSuccesFetch, spec
                         id: 'add'
                     })}
                 </Typography>
-                <IconButton size="small" onClick={handleCancel}>
-                    <CloseIcon />
-                </IconButton>
+                {canCancel && (
+                    <IconButton size="small" onClick={handleCancel}>
+                        <CloseIcon />
+                    </IconButton>
+                )}
             </Stack>
 
             {/* BODY */}
@@ -188,6 +197,7 @@ export default function AddFormComponent({ handleCancel, handleSuccesFetch, spec
                 >
                     {intl.formatMessage({ id: 'cancel' })}
                 </Button>
+
                 <Button disabled={updating} startIcon={<SaveIcon />} variant="contained" type="submit">
                     {intl.formatMessage({ id: 'save' })}{' '}
                 </Button>
