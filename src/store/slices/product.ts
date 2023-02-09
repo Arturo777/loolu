@@ -195,29 +195,17 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             searchParams.idProd ||
             searchParams.idApprovalStatus
     );
-
-    try {
-        const response = await axios.get(`styrk/api/product/search`, {
-            baseURL: STYRK_API,
-            params: {
-                idMerchant: searchParams.idMerchant || 1,
-                page: searchParams.page || hasParams ? 0 : 1,
-                productName: searchParams.productName || null,
-                idSKU: searchParams.idSKU,
-                idProd: searchParams.idProd
-            }
-        });
-
-        return response.data;
-
-        // dispatch(slice.actions.getProductsSuccess(response.data.response));
-    } catch (error) {
-        dispatch(slice.actions.hasError(error));
-    }
-
-    return null;
-
-    // return response.data;
+    const response = await axios.get(`styrk/api/product/search`, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: searchParams.idMerchant || 1,
+            page: searchParams.page || !hasParams ? 0 : 1,
+            productName: searchParams.productName || null,
+            idSKU: searchParams.idSKU,
+            idProd: searchParams.idProd
+        }
+    });
+    return response.data;
 });
 
 export function filterProducts(filter: ProductsFilter) {

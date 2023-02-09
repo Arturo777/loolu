@@ -28,7 +28,7 @@ const ProfileFormView = () => {
                 id: 'create_profile'
             })}
         >
-            <ProfileForm handleSaveClick={handleSave} mode="create" />
+            <ProfileForm handleCancel={() => {}} handleSaveClick={handleSave} mode="CREATE" />
         </MainCard>
     );
 };

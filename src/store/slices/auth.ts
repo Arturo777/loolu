@@ -34,7 +34,7 @@ const slice = createSlice({
     }
 });
 
-export const getUserProfile = createAsyncThunk(`${slice.name}/getBrands`, async (user: string) => {
+export const getUserProfile = createAsyncThunk(`${slice.name}/getUserProfile`, async (user: string) => {
     const response = await axios.get(`styrk/api/profile/user`, {
         baseURL: STYRK_API,
         params: {

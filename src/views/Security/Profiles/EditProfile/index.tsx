@@ -107,7 +107,7 @@ const ProfileFormView = () => {
                 </FormGroup>
             }
         >
-            <ProfileForm handleSaveClick={handleSave} defaultData={profileData} mode="edit" />
+            <ProfileForm handleCancel={() => {}} handleSaveClick={handleSave} defaultData={profileData} mode="EDIT" />
         </MainCard>
     );
 };

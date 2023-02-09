@@ -214,6 +214,8 @@
     "edit": "Editar",
     "attributes": "Atributos",
     "values": "Valores",
+    "value": "Valor",
+    "key": "Clabe",
     "new_value": "Nuevo valor",
     "search_facets": "Buscar facets",
     "select_attributes": "Selecciona atributos para la especificación",
@@ -238,5 +240,16 @@
     "success_file_request": "Solicitud guardada con el número de evento: {code}",
 
     "reports": "Reportes",
-    "change_log": "Bitácora de cambios"
+    "change_log": "Bitácora de cambios",
+    "delete": "Eliminar",
+    "create_user": "Crear usuario",
+    "approval_profile": "Perfil de aprobación",
+    "provider": "Proveedor",
+    "user": "Usuario",
+    "email": "Email",
+    "employee_number": "Número de empleado",
+    "first_name": "Nombre",
+    "last_name": "Apellidos",
+    "phone": "Teléfono",
+    "edit_user": "Editar usuario"
 }

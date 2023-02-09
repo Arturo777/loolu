@@ -214,6 +214,8 @@
     "edit": "Edit",
     "attributes": "Attributes",
     "values": "Values",
+    "value": "Value",
+    "key": "Key",
     "new_value": "New value",
     "search_facets": "Search facets",
     "select_attributes": "Select attributes for the specification",
@@ -238,5 +240,17 @@
     "success_file_request": "Request saved with event number: {code}",
 
     "reports": "Reports",
-    "change_log": "Change log"
+    "change_log": "Change log",
+    "delete": "Delete",
+
+    "create_user": "Create user",
+    "approval_profile": "Approval profile",
+    "provider": "Provider",
+    "user": "User",
+    "email": "Email",
+    "employee_number": "Employee number",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "phone": "Phone",
+    "edit_user": "Edit user"
 }

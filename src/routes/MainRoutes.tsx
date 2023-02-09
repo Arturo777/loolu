@@ -14,7 +14,7 @@ const UsersList = Loadable(lazy(() => import('views/Security/Users')));
 const UserProfile = Loadable(lazy(() => import('views/Security/UserProfile')));
 
 // ========= profiles =========
-const ProfilesList = Loadable(lazy(() => import('views/Security/Profiles/List')));
+const ProfilesMainPage = Loadable(lazy(() => import('views/Security/Profiles')));
 const CreateProfile = Loadable(lazy(() => import('views/Security/Profiles/CreateProfile')));
 const EditProfile = Loadable(lazy(() => import('views/Security/Profiles/EditProfile')));
 
@@ -39,6 +39,7 @@ const MassiveLoadPage = Loadable(lazy(() => import('views/Catalog/MassiveLoad'))
 
 // ========= CHANGE LOG =========
 const ChangeLogPage = Loadable(lazy(() => import('views/Reports/ChangeLog')));
+const TestAdditionalFields = Loadable(lazy(() => import('views/Catalog/TestAdditionalFields')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -74,7 +75,7 @@ const MainRoutes = {
         // ========= profiles =========
         {
             path: '/profiles',
-            element: <ProfilesList />
+            element: <ProfilesMainPage />
         },
         {
             path: '/profiles/create',
@@ -138,6 +139,11 @@ const MainRoutes = {
         {
             path: '/change_log',
             element: <ChangeLogPage />
+        },
+        // TEST ADDITIONAL FIELDS UI
+        {
+            path: '/test-page',
+            element: <TestAdditionalFields />
         }
     ]
 };

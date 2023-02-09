@@ -1,23 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { CircularProgress, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Stack, Typography } from '@mui/material';
+import { Button, Fade, Grid, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+
+// third party imports
+import { useIntl } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 
 // project imports
-import { useSearchParams } from 'react-router-dom';
-import UserDetailsCard from 'ui-component/cards/UserDetailsCard';
-import MainCard from 'ui-component/cards/MainCard';
-import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
+import { gridSpacing } from 'store/constant';
 import { getUsersList } from 'store/slices/security';
 
-// assets
-import { IconSearch } from '@tabler/icons';
+// components
+import MainCard from 'ui-component/cards/MainCard';
+import UserListComponent from './UserList';
+import EditUser from './EditUser';
 
 // types
 import { UserType } from 'types/user-profile';
 import Loader from 'ui-component/Loader';
-import { useIntl } from 'react-intl';
+import CreateUser from './CreateUser';
+import SearchInput from 'ui-component/SearchInput';
 
 // ==============================|| USER CARD STYLE 1 ||============================== //
 
@@ -34,6 +39,9 @@ const UsersList = () => {
     const [users, setUsers] = React.useState<UserType[]>([]);
     const [search, setSearch] = React.useState<string | undefined>('');
 
+    const [sideMode, setSideMode] = useState<'EDIT' | 'CREATE' | null>(null);
+    const [userToEdit, setUserToEdit] = useState<UserType | null>(null);
+
     useEffect(() => {
         const searchText = searchParams.get('search');
         setSearch(searchText ?? '');
@@ -43,10 +51,9 @@ const UsersList = () => {
         dispatch(getUsersList());
     }, [dispatch]);
 
-    const handleSearch = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
-        const newString = event?.target.value;
-        setSearch(newString);
-        setSearchParams(`?search=${newString}`);
+    const handleSearch = async (newSearchText: string) => {
+        setSearch(newSearchText);
+        setSearchParams(`?search=${newSearchText}`);
     };
 
     useEffect(() => {
@@ -64,17 +71,31 @@ const UsersList = () => {
         }
     }, [search, usersList]);
 
-    // let usersResult: React.ReactElement | React.ReactElement[] = <></>;
-    // if (users) {
-    //     usersResult = users.map((user, index) => (
-    //         <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
-    //             <UserDetailsCard {...user} />
-    //         </Grid>
-    //     ));
-    // }
+    const openEdit = (user: UserType) => {
+        if (user.id === userToEdit?.id) {
+            return;
+        }
+        setSideMode(null);
+        setTimeout(() => {
+            setSideMode('EDIT');
+            setUserToEdit(user);
+        }, 100);
+    };
+
+    const handleSuccess = (mode: 'EDIT' | 'CREATE') => {
+        dispatch(getUsersList());
+
+        setSideMode(null);
+        if (mode === 'EDIT') {
+            setUserToEdit(null);
+        }
+    };
 
     return (
         <MainCard
+            sx={{
+                overflow: 'initial'
+            }}
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
@@ -85,48 +106,56 @@ const UsersList = () => {
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <OutlinedInput
-                            id="input-search-card-style1"
-                            placeholder={intl.formatMessage({ id: 'search' })}
-                            value={search}
-                            onChange={handleSearch}
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    <IconSearch stroke={1.5} size="16px" />
-                                </InputAdornment>
-                            }
-                            size="small"
-                        />
+                        <Fade in={sideMode !== 'CREATE'}>
+                            <Button
+                                onClick={() => {
+                                    setSideMode('CREATE');
+                                }}
+                                variant="contained"
+                                startIcon={<AddIcon />}
+                                sx={{ mr: 3 }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'create_user'
+                                })}
+                            </Button>
+                        </Fade>
+                        <SearchInput initialValue={search ?? ''} onSearch={handleSearch} />
                     </Grid>
                 </Grid>
             }
         >
             <Grid container direction="row" spacing={gridSpacing}>
                 {loading && <Loader />}
-
-                <Grid item xs={12}>
-                    <Collapse in={!loading}>
-                        <Grid container direction="row" spacing={gridSpacing}>
-                            {users.map((user, index) => (
-                                <Grid key={index} item xs={12} sm={6} lg={4} xl={3}>
-                                    <UserDetailsCard {...user} />
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Collapse>
+                <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    lg={5}
+                    // sx={{ backgroundColor: { xs: 'red', sm: 'orange', md: 'pink', lg: 'navy', xl: 'yellow' } }}
+                >
+                    <UserListComponent users={users ?? []} loading={loading} onEditClick={openEdit} />
                 </Grid>
-                <Fade in={loading}>
-                    <Stack justifyContent="center" alignItems="center" p={5} sx={{ width: 1 }}>
-                        <CircularProgress />
-                    </Stack>
-                </Fade>
-
-                <Grid item xs={12}>
-                    <Grid container justifyContent="flex-end" spacing={gridSpacing}>
-                        <Grid item>
-                            <Typography variant="h5">Mostrando {users.length} resultados</Typography>
-                        </Grid>
-                    </Grid>
+                <Grid item xs={12} md={6} lg={7}>
+                    {sideMode === 'EDIT' ? (
+                        <EditUser
+                            handleSuccess={handleSuccess}
+                            handleCancel={() => {
+                                setUserToEdit(null);
+                                setSideMode(null);
+                            }}
+                            show={sideMode === 'EDIT'}
+                            userToEdit={userToEdit!}
+                        />
+                    ) : (
+                        <CreateUser
+                            handleSuccess={handleSuccess}
+                            handleCancel={() => {
+                                setSideMode(null);
+                            }}
+                            show={sideMode === 'CREATE'}
+                        />
+                    )}
                 </Grid>
             </Grid>
         </MainCard>

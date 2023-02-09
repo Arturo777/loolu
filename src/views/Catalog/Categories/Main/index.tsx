@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
-import { Button, Collapse, Fade, Grid, InputAdornment, OutlinedInput, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Button, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
@@ -24,13 +24,11 @@ import { CategoryType } from 'types/catalog';
 
 const CategoriesListPage = () => {
     // hooks
-    const theme = useTheme();
-    const upMediumScreen = useMediaQuery(theme.breakpoints.up('md'));
 
     // ===== vars
     const [searchParams, setSearchParams] = useSearchParams();
     const [filterText, setFilterText] = useState<string>('');
-    const mainCardRef = useRef<null | HTMLDivElement>(null);
+    // const mainCardRef = useRef<null | HTMLDivElement>(null);
     // associate
     const [openAssociateDrawer, setOpenAssociateDrawer] = useState<boolean>(false);
     const [categoryAssociate, setCategoryAssociate] = useState<CategoryType | null>(null);
@@ -58,16 +56,22 @@ const CategoriesListPage = () => {
     }, []);
 
     const handleCreateForm = () => {
+        setShowInfo(false);
+        setSelectedCategory(undefined);
+
         setOpenCreate((prev) => !prev);
     };
 
     const openCreateFormById = (catId?: number) => {
-        if (upMediumScreen && mainCardRef && mainCardRef.current) {
-            mainCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
         // open form from categories list
-        setSelectedCatId(catId);
-        setOpenCreate(true);
+
+        setShowInfo(false);
+        setSelectedCategory(undefined);
+
+        setTimeout(() => {
+            setSelectedCatId(catId);
+            setOpenCreate(true);
+        }, 100);
     };
 
     // close edit
@@ -79,9 +83,7 @@ const CategoriesListPage = () => {
     const handleShowInfo = (cat?: number) => {
         setShowInfo(false);
         if (cat) {
-            if (upMediumScreen) {
-                console.log('UP');
-            }
+            setOpenCreate(false);
             setTimeout(() => {
                 setSelectedCategory(cat);
                 setShowInfo(true);
@@ -105,7 +107,6 @@ const CategoriesListPage = () => {
 
     return (
         <MainCard
-            ref={mainCardRef}
             title={
                 // TOP - Create form and header
                 <CustomPageHeader
@@ -131,6 +132,8 @@ const CategoriesListPage = () => {
                 </Grid>
                 {/* INFO  */}
                 <Grid item xs={12} sm={4} md={8}>
+                    <CreateCategoryPage show={openCreate} handleClose={handleCreateForm} selectedCatId={selectedCatId} />
+
                     <EditCategoryComponent
                         openAssociate={handleToggleAssociateDrawer}
                         selectedCategory={selectedCategory}
@@ -199,12 +202,6 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
                     value={filterText}
                     onChange={handleSearch}
                 />
-            </Grid>
-
-            <Grid item xs={12} sx={{ p: 0, mt: 3 }}>
-                <Collapse in={openCreate} collapsedSize={0}>
-                    <CreateCategoryPage handleClose={toggleForm} selectedCatId={selectedCatId} />
-                </Collapse>
             </Grid>
         </Grid>
     );

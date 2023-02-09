@@ -8,7 +8,7 @@ import axios from 'utils/axios';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { ProfileType, ProviderType, UserType } from 'types/user-profile';
+import { MenuDetailsType, ProfileType, ProviderType, UserType } from 'types/user-profile';
 import { STYRK_API } from 'config';
 import { NewProfileType } from 'types/security';
 
@@ -67,6 +67,10 @@ const slice = createSlice({
         // },
         // getProfilesSuccess(state, action) {
 
+        // getProfilesSuccess(state, action) {
+        //     const profiles: ProfileType[] = action.payload;
+        //     state.loadingEditInfo = false;
+        //     state.profiles = profiles;
         // },
         // providers
         getProvidersSuccess(state, action) {
@@ -100,7 +104,17 @@ const slice = createSlice({
         },
         // menu => access
         getMenuPermissionsSuccess(state, action) {
-            state.menuOptions = action.payload;
+            const optionsList: MenuDetailsType[] = [];
+            const payloadResponse: MenuDetailsType[] = action.payload;
+
+            payloadResponse.forEach((optionItem) => {
+                const exist = optionsList.some((item) => item.id === optionItem.id);
+                if (!exist) {
+                    optionsList.push(optionItem);
+                }
+            });
+
+            state.menuOptions = optionsList;
             state.loading = false;
         }
     },
@@ -203,8 +217,7 @@ export const getProfiles = createAsyncThunk(`${slice.name}/getProfiles`, async (
             idMerchant: idMerchant || 1
         }
     });
-
-    return response.data;
+    return response.data.response;
 });
 
 export function getProviders(idMerchant?: string) {
