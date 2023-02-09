@@ -132,14 +132,15 @@ const CategoriesListPage = () => {
                 </Grid>
                 {/* INFO  */}
                 <Grid item xs={12} sm={4} md={8}>
-                    <CreateCategoryPage show={openCreate} handleClose={handleCreateForm} selectedCatId={selectedCatId} />
-
-                    <EditCategoryComponent
-                        openAssociate={handleToggleAssociateDrawer}
-                        selectedCategory={selectedCategory}
-                        show={showInfo}
-                        onCancel={handleCancelEdit}
-                    />
+                    {openCreate && <CreateCategoryPage show={openCreate} handleClose={handleCreateForm} selectedCatId={selectedCatId} />}
+                    {showInfo && (
+                        <EditCategoryComponent
+                            openAssociate={handleToggleAssociateDrawer}
+                            selectedCategory={selectedCategory}
+                            show={showInfo}
+                            onCancel={handleCancelEdit}
+                        />
+                    )}
                 </Grid>
             </Grid>
             <AsociateFacetCategoryComponent

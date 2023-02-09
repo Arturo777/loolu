@@ -251,5 +251,10 @@
     "first_name": "Nombre",
     "last_name": "Apellidos",
     "phone": "Teléfono",
-    "edit_user": "Editar usuario"
+    "edit_user": "Editar usuario",
+    "associate": "Asociar",
+    "group": "Grupo",
+    "add_group": "Agregar grupo",
+    "group_name": "Nombre del grupo",
+    "field_type": "Tipo de atributo"
 }
