@@ -361,7 +361,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
     }
 
     return (
-        <Collapse in={show}>
+        <Fade in={show}>
             <Card
                 sx={{
                     boxShadow: 2,
@@ -384,7 +384,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                 )}
                 {!isLoading && renderContent()}
             </Card>
-        </Collapse>
+        </Fade>
     );
 }
 

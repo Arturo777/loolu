@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
 // mui imports
-import { Button, Divider, Grid, Typography, Box, Collapse } from '@mui/material';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { Divider, Grid, Typography, Box } from '@mui/material';
 
 // third-party imports
 import { FormattedMessage } from 'react-intl';
