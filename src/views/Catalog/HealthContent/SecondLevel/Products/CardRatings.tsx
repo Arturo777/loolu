@@ -47,7 +47,7 @@ const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenPro
                         {open ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <ListItem sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <ListItemText primary={`Productos: ${resume.totalProducts}/${sumaValores()}`} />
+                        <ListItemText primary={`Products: ${resume.totalProducts}/${sumaValores()}`} />
                         <Button
                             onClick={() => handleClickDetail(resume?.description)}
                             variant="outlined"

@@ -35,7 +35,7 @@ export const STYRK_API_BULKLOAD = process.env.REACT_APP_STYRK_API_BULKLOAD;
 // like '/berry-material-react/react/default'
 export const BASE_PATH = '';
 
-export const DASHBOARD_PATH = '/products';
+export const DASHBOARD_PATH = '/health-content/overall-score';
 
 const config: ConfigProps = {
     fontFamily: `'Roboto', sans-serif`,

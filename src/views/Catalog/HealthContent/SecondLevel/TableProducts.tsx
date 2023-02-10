@@ -13,15 +13,16 @@ import {
     TableHead,
     TableRow,
     Typography,
-    Button
+    Button,
+    Paper
 } from '@mui/material';
 import { CircularProgressProps } from '@mui/material/CircularProgress';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Key, useEffect, useState } from 'react';
+import { Key, useState } from 'react';
 
 // project imports
-import ThirdProducts from '../ThirdLevel/ThirdProduct';
+import DrawerProduct from '../ThirdLevel/DrawerProduct';
 
 function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
     return (
@@ -65,9 +66,18 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //
 
-const TableProducts = ({ products }: { products: any }) => {
+const TableProducts = ({ products, typeReq }: { products: any; typeReq: string }) => {
     const [expanded, setExpanded] = useState(false);
-
+    const [openModal, setOpenModal] = useState(false);
+    const [idProd, setIdProd] = useState<number | null>(null);
+    const handledClickProduct =
+        (open: boolean, prod: number | null = null) =>
+        (event: React.KeyboardEvent | React.MouseEvent) => {
+            setOpenModal(open);
+            if (prod !== null) {
+                setIdProd(prod);
+            }
+        };
     /* const [idProd, setIdProd] = useState<number>(0); */
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -76,61 +86,70 @@ const TableProducts = ({ products }: { products: any }) => {
     return (
         <>
             {products && (
-                <TableContainer sx={{ maxHeight: 850, bgcolor: 'background.paper' }}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ pl: 3 }}>Nombre</TableCell>
-                                <TableCell>Codigo de Referencia</TableCell>
-                                <TableCell>EAN / UPC</TableCell>
-                                <TableCell align="right" sx={{ pr: 3 }}>
-                                    Completado
-                                </TableCell>
-                                <TableCell align="right" sx={{ pr: 3 }} />
-                            </TableRow>
-                        </TableHead>
-                        <TableBody sx={{ overflow: 'scroll' }}>
-                            {products?.map((row: any, index: Key | null | undefined) => (
-                                <TableRow hover key={index}>
-                                    <TableCell sx={{ pl: 3 }}>{row.productName}</TableCell>
-                                    <TableCell>{row.productReferenceCode}</TableCell>
-                                    <TableCell>
-                                        {row?.eanUpc?.length > 1 ? (
-                                            <>
-                                                <div style={{ display: 'flex' }}>
-                                                    <p>{row?.eanUpc[0]}</p>
-                                                    <ExpandMore
-                                                        expand={expanded}
-                                                        onClick={handleExpandClick}
-                                                        aria-expanded={expanded}
-                                                        aria-label="show more"
-                                                        style={{ marginLeft: '2px' }}
-                                                    >
-                                                        <ExpandMoreIcon />
-                                                    </ExpandMore>
-                                                </div>
-                                                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                                    {row?.eanUpc?.map((ean: any) => (
-                                                        <p>{ean}</p>
-                                                    ))}
-                                                </Collapse>
-                                            </>
-                                        ) : (
-                                            <p>{row?.eanUpc}</p>
-                                        )}
-                                    </TableCell>
+                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                    <TableContainer sx={{ maxHeight: 850, bgcolor: 'background.paper' }}>
+                        <Table stickyHeader aria-label="sticky table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ pl: 3 }}>Name</TableCell>
+                                    <TableCell>Reference Code</TableCell>
+                                    <TableCell>EAN / UPC</TableCell>
                                     <TableCell align="right" sx={{ pr: 3 }}>
-                                        <CircularProgressWithLabel value={row?.completeness} />
+                                        Complete
                                     </TableCell>
-                                    <TableCell>
-                                        <ThirdProducts productId={row.productId} />
-                                    </TableCell>
+                                    <TableCell align="right" sx={{ pr: 3 }} />
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody sx={{ overflow: 'scroll' }}>
+                                {products?.map((row: any, index: Key | null | undefined) => (
+                                    <TableRow hover key={index}>
+                                        <TableCell sx={{ pl: 3 }}>{row.productName}</TableCell>
+                                        <TableCell>{row.productReferenceCode}</TableCell>
+                                        <TableCell>
+                                            {row?.eanUpc?.length > 1 ? (
+                                                <>
+                                                    <div style={{ display: 'flex' }}>
+                                                        <p>{row?.eanUpc[0]}</p>
+                                                        <ExpandMore
+                                                            expand={expanded}
+                                                            onClick={handleExpandClick}
+                                                            aria-expanded={expanded}
+                                                            aria-label="show more"
+                                                            style={{ marginLeft: '2px' }}
+                                                        >
+                                                            <ExpandMoreIcon />
+                                                        </ExpandMore>
+                                                    </div>
+                                                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                                        {row?.eanUpc?.map((ean: any) => (
+                                                            <p>{ean}</p>
+                                                        ))}
+                                                    </Collapse>
+                                                </>
+                                            ) : (
+                                                <p>{row?.eanUpc}</p>
+                                            )}
+                                        </TableCell>
+                                        <TableCell align="right" sx={{ pr: 3 }}>
+                                            <CircularProgressWithLabel value={row?.completeness} />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={handledClickProduct(true, row.productId)}
+                                            >
+                                                Ver más
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
             )}
+            <DrawerProduct handledClickProduct={handledClickProduct} openModal={openModal} idProd={idProd} typeReq={typeReq} />
         </>
     );
 };

@@ -10,7 +10,7 @@ import { getSecondLevelProducts } from 'store/slices/healthContent';
 import { DefaultRootStateProps } from 'types';
 import { ResumenProducts } from 'types/health-content';
 import CardRatings from './CardRatings';
-import TableProducts from './TableProducts';
+import TableProducts from '../TableProducts';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.secondary.dark,
@@ -132,7 +132,7 @@ const Products = () => {
                                     color: theme.palette.mode === 'dark' ? theme.palette.text.secondary : theme.palette.secondary[200]
                                 }}
                             >
-                                Total Earning
+                                Total
                             </Typography>
                         </Grid>
                     </Grid>
@@ -157,9 +157,9 @@ const Products = () => {
                     </Grid>
                     <Grid item xs={8.5}>
                         {products?.length === 0 ? (
-                            <Typography variant="h3">No hay Productos para mostrar</Typography>
+                            <Typography variant="h3">No Have Products</Typography>
                         ) : (
-                            <TableProducts products={products} />
+                            <TableProducts products={products} typeReq="products" />
                         )}
                     </Grid>
                 </Grid>

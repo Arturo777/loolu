@@ -10,7 +10,7 @@ import { NavItemType } from 'types';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-    items: [security, catalogue, reports, healthContent]
+    items: [healthContent, security, catalogue, reports]
 };
 
 export default menuItems;

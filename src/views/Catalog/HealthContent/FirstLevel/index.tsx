@@ -124,7 +124,7 @@ const FirstLevel = () => {
                                                         {firstLev.totalImages}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Imagenes Totales
+                                                        Total Images
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -144,7 +144,7 @@ const FirstLevel = () => {
                                                         {firstLev.totalProducts}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Productos Totales
+                                                        Total Products
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -166,7 +166,7 @@ const FirstLevel = () => {
                                                         {firstLev.totalSkus}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        SKU Totales
+                                                        Total Skus
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -181,7 +181,7 @@ const FirstLevel = () => {
                                                         {firstLev?.executionDate}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Ultima Actualización
+                                                        Last Update
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
