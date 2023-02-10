@@ -2,7 +2,7 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
-import { ThirdLevel } from 'types/health-content';
+/* import { ThirdLevel } from 'types/health-content'; */
 import { Key } from 'react';
 
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //

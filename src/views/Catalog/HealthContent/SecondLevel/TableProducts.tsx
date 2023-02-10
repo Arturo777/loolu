@@ -91,11 +91,11 @@ const TableProducts = ({ products, typeReq }: { products: any; typeReq: string }
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ pl: 3 }}>Nombre</TableCell>
-                                    <TableCell>Codigo de Referencia</TableCell>
+                                    <TableCell sx={{ pl: 3 }}>Name</TableCell>
+                                    <TableCell>Reference Code</TableCell>
                                     <TableCell>EAN / UPC</TableCell>
                                     <TableCell align="right" sx={{ pr: 3 }}>
-                                        Completado
+                                        Complete
                                     </TableCell>
                                     <TableCell align="right" sx={{ pr: 3 }} />
                                 </TableRow>
