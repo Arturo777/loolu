@@ -1,43 +1,114 @@
 // material-ui
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { SkuHC } from 'types/health-content';
-
-// project imports
-import Chip from 'ui-component/extended/Chip';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //
 
 const SpectsProduct = ({ product }: { product: any }) => {
-    const formateFechas = (fh: string) => {
-        let h = [];
-        let f = [];
-        let fechaTotal = '';
-        f = fh?.split(' ');
-        h = f[1].split('.');
-        fechaTotal = `${f[0].split('-').reverse().join('/')} ${h[0]}`;
-        return fechaTotal;
-    };
     console.log(product);
+
     return (
         <>
-            {product.length > 0 && (
-                <TableContainer>
+            {product ? (
+                <TableContainer sx={{ maxHeight: 850, bgcolor: 'background.paper' }}>
                     <Table>
                         <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ pl: 3 }}>Aspects to evaluate</TableCell>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Aspects to evaluate</TableCell>
                                 <TableCell>Complete</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody sx={{ overflow: 'scroll' }}>
-                            {product?.map((row: any, index: any) => (
-                                <TableRow hover key={index}>
-                                    <TableCell sx={{ pl: 3 }}>{product[index]}</TableCell>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Category</TableCell>
+                                <TableCell>
+                                    {product.categoryScore ? <CheckCircleIcon color="success" /> : <DoNotDisturbOnIcon color="error" />}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>EAN</TableCell>
+                                <TableCell>
+                                    {product.eanUpcScore ? <CheckCircleIcon color="success" /> : <DoNotDisturbOnIcon color="error" />}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Title</TableCell>
+                                <TableCell>
+                                    {product.pageTitleScore ? <CheckCircleIcon color="success" /> : <DoNotDisturbOnIcon color="error" />}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Product Reference Code</TableCell>
+                                <TableCell>
+                                    {product.productReferenceCodeScore ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        <DoNotDisturbOnIcon color="error" />
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Sku Reference Code</TableCell>
+                                <TableCell>
+                                    {product.skuReferenceCodeScore ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        <DoNotDisturbOnIcon color="error" />
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Text Link</TableCell>
+                                <TableCell>
+                                    {product.textLinkScore ? <CheckCircleIcon color="success" /> : <DoNotDisturbOnIcon color="error" />}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow sx={{ ml: 3 }}>
+                                <TableCell>Dimensions</TableCell>
+                                <TableRow>
+                                    <TableCell>Width</TableCell>
+                                    <TableCell>
+                                        {product.dimensionWidthScore ? (
+                                            <CheckCircleIcon color="success" />
+                                        ) : (
+                                            <DoNotDisturbOnIcon color="error" />
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>Height</TableCell>
+                                    <TableCell>
+                                        {product.dimensionHeightScore ? (
+                                            <CheckCircleIcon color="success" />
+                                        ) : (
+                                            <DoNotDisturbOnIcon color="error" />
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>Weight</TableCell>
+                                    <TableCell>
+                                        {product.dimensionWeightScore ? (
+                                            <CheckCircleIcon color="success" />
+                                        ) : (
+                                            <DoNotDisturbOnIcon color="error" />
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>Large</TableCell>
+                                    <TableCell>
+                                        {product.dimensionLargeScore ? (
+                                            <CheckCircleIcon color="success" />
+                                        ) : (
+                                            <DoNotDisturbOnIcon color="error" />
+                                        )}
+                                    </TableCell>
                                 </TableRow>
-                            ))}
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
+            ) : (
+                <p>Cargando ..</p>
             )}
         </>
     );

@@ -1,3 +1,9 @@
 {
-    "cSpell.words": ["Aditionalinfo", "chipcolor", "fathermerch", "Firt"]
+    "cSpell.words": [
+        "Aditionalinfo",
+        "chipcolor",
+        "fathermerch",
+        "Firt",
+    ],
+    "editor.formatOnSave": false
 }

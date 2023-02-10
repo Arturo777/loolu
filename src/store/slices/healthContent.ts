@@ -17,7 +17,9 @@ const initialState: DefaultRootStateProps['healthContent'] = {
     secondLevelProducts: [],
     secondLevelImages: [],
     secondLevelFacets: [],
-    thirdLevelProducts: []
+    thirdLevelProducts: [],
+    thirdLevelImages: [],
+    thirdLevelFacets: []
 };
 
 const slice = createSlice({
@@ -70,6 +72,22 @@ const slice = createSlice({
                 state.loading = false;
                 state.thirdLevelProducts = action.payload.response;
             });
+        builder
+            .addCase(getThirdLevelImages.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(getThirdLevelImages.fulfilled, (state, action) => {
+                state.loading = false;
+                state.thirdLevelImages = action.payload.response;
+            });
+        builder
+            .addCase(getThirdLevelFacets.pending, (state, action) => {
+                state.loading = true;
+            })
+            .addCase(getThirdLevelFacets.fulfilled, (state, action) => {
+                state.loading = false;
+                state.thirdLevelFacets = action.payload.response;
+            });
     }
 });
 export default slice.reducer;
@@ -88,13 +106,30 @@ export const getSecondLevelImages = createAsyncThunk(`${slice.name}/second-level
     const response = await axios.get(`styrk/api/health-content/metrics/images/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });
+
 export const getSecondLevelFacets = createAsyncThunk(`${slice.name}/second-level/facets`, async () => {
     const response = await axios.get(`styrk/api/health-content/metrics/specifications/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });
 
-export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level`, async (id: number | null) => {
+export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level/products`, async (id: number | null) => {
     const response = await axios.get(`styrk/api/health-content/metrics/products/third-level`, {
+        baseURL: STYRK_API_HEALTH_CONTENT,
+        params: { productId: id }
+    });
+    return response.data;
+});
+
+export const getThirdLevelImages = createAsyncThunk(`${slice.name}/third-level/images`, async (id: number | null) => {
+    const response = await axios.get(`styrk/api/health-content/metrics/images/third-level`, {
+        baseURL: STYRK_API_HEALTH_CONTENT,
+        params: { productId: id }
+    });
+    return response.data;
+});
+
+export const getThirdLevelFacets = createAsyncThunk(`${slice.name}/third-level/facets`, async (id: number | null) => {
+    const response = await axios.get(`styrk/api/health-content/metrics/specifications/third-level`, {
         baseURL: STYRK_API_HEALTH_CONTENT,
         params: { productId: id }
     });

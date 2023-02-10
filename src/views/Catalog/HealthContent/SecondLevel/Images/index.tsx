@@ -10,7 +10,7 @@ import { getSecondLevelImages } from 'store/slices/healthContent';
 import { DefaultRootStateProps } from 'types';
 import { ResumenProducts } from 'types/health-content';
 import CardRatings from './CardRatings';
-import TableProducts from './TableProducts';
+import TableProducts from '../TableProducts';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark.dark : theme.palette.secondary.dark,
@@ -157,7 +157,7 @@ const Images = () => {
                         {products?.length === 0 ? (
                             <Typography variant="h3">No Have Products</Typography>
                         ) : (
-                            <TableProducts products={products} />
+                            <TableProducts products={products} typeReq="images" />
                         )}
                     </Grid>
                 </Grid>
