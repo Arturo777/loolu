@@ -66,7 +66,6 @@ const slice = createSlice({
         //     state.loading = true;
         // },
         // getProfilesSuccess(state, action) {
-
         // getProfilesSuccess(state, action) {
         //     const profiles: ProfileType[] = action.payload;
         //     state.loadingEditInfo = false;

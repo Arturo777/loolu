@@ -88,7 +88,7 @@ export type SpecificationGroupType = {
     skuSpecs: SpecificationsType[];
 };
 
-export enum SpecificationValuesType {
+export enum SpecificationGroupMode {
     'PRODUCT' = 'product',
     'SKU' = 'sku'
 }

@@ -90,10 +90,12 @@ const slice = createSlice({
             })
             .addCase(getCategoriesService.fulfilled, (state, action) => {
                 state.loading = false;
-                state.categories = action.payload.response;
+                if (action.payload.response) {
+                    state.categories = action.payload.response;
 
-                state.flatCategories = getCategoriesFlat(action.payload.response);
-                state.filterCategories = categoriesFlat(action.payload.response);
+                    state.flatCategories = getCategoriesFlat(action.payload.response);
+                    state.filterCategories = categoriesFlat(action.payload.response);
+                }
             })
             .addCase(createCategoryService.pending, (state) => {
                 state.updating = true;

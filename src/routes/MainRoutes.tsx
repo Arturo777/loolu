@@ -41,6 +41,8 @@ const MassiveLoadPage = Loadable(lazy(() => import('views/Catalog/MassiveLoad'))
 
 // ========= CHANGE LOG =========
 const ChangeLogPage = Loadable(lazy(() => import('views/Reports/ChangeLog')));
+
+// TEST
 const TestAdditionalFields = Loadable(lazy(() => import('views/Catalog/TestAdditionalFields')));
 
 // ==============================|| MAIN ROUTING ||============================== //
