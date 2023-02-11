@@ -20,8 +20,8 @@ const SpectsFacets = ({ product }: { product: any }) => {
                                 <TableCell>Facets Sku</TableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody sx={{ overflow: 'scroll' }}>
-                            <TableRow sx={{ ml: 3, alignItems: 'flex-start' }}>
+                        <TableBody sx={{ overflow: 'scroll', width: '500px' }}>
+                            <TableRow sx={{ ml: 3 }}>
                                 <TableCell>
                                     <Table>
                                         <TableHead>

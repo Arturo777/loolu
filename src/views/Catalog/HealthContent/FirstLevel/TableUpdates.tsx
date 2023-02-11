@@ -10,7 +10,7 @@ import Chip from 'ui-component/extended/Chip';
 const TableUpdates = ({ updates }: { updates: SkuHC[] }) => (
     <>
         {updates && (
-            <TableContainer>
+            <TableContainer sx={{ maxHeight: 750, bgcolor: 'background.paper' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
