@@ -64,45 +64,49 @@ const SpectsProduct = ({ product }: { product: any }) => {
                                     {product.textLinkScore ? <CheckCircleIcon color="success" /> : <DoNotDisturbOnIcon color="error" />}
                                 </TableCell>
                             </TableRow>
-                            <TableRow sx={{ ml: 3 }}>
+                            <TableRow sx={{ ml: 3, background: '#000' }}>
                                 <TableCell>Dimensions</TableCell>
-                                <TableRow>
-                                    <TableCell>Width</TableCell>
-                                    <TableCell>
-                                        {product.dimensionWidthScore ? (
-                                            <CheckCircleIcon color="success" />
-                                        ) : (
-                                            <DoNotDisturbOnIcon color="error" />
-                                        )}
-                                    </TableCell>
-
-                                    <TableCell>Height</TableCell>
-                                    <TableCell>
-                                        {product.dimensionHeightScore ? (
-                                            <CheckCircleIcon color="success" />
-                                        ) : (
-                                            <DoNotDisturbOnIcon color="error" />
-                                        )}
-                                    </TableCell>
-
-                                    <TableCell>Weight</TableCell>
-                                    <TableCell>
-                                        {product.dimensionWeightScore ? (
-                                            <CheckCircleIcon color="success" />
-                                        ) : (
-                                            <DoNotDisturbOnIcon color="error" />
-                                        )}
-                                    </TableCell>
-
-                                    <TableCell>Large</TableCell>
-                                    <TableCell>
-                                        {product.dimensionLargeScore ? (
-                                            <CheckCircleIcon color="success" />
-                                        ) : (
-                                            <DoNotDisturbOnIcon color="error" />
-                                        )}
-                                    </TableCell>
-                                </TableRow>
+                                <TableCell />
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Width</TableCell>
+                                <TableCell>
+                                    {product.dimensionWidthScore ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        <DoNotDisturbOnIcon color="error" />
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Height</TableCell>
+                                <TableCell>
+                                    {product.dimensionHeightScore ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        <DoNotDisturbOnIcon color="error" />
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Weight</TableCell>
+                                <TableCell>
+                                    {product.dimensionWeightScore ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        <DoNotDisturbOnIcon color="error" />
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Large</TableCell>
+                                <TableCell>
+                                    {product.dimensionLargeScore ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        <DoNotDisturbOnIcon color="error" />
+                                    )}
+                                </TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

@@ -109,11 +109,12 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
                 // // password and required attributes, if any, to complete
                 // // authentication.
                 // // the api doesn't accept this field back
-                // delete userAttributes.email_verified;
+                delete userAttributes.email_verified;
+                delete userAttributes.email;
                 // // unsure about this field, but I don't send this back
                 // delete userAttributes.phone_number_verified;
                 // // Get these details and call
-                // usr.completeNewPasswordChallenge(password, userAttributes, requiredAttributes);
+                usr.completeNewPasswordChallenge(password, userAttributes, requiredAttributes);
             }
         });
     };
