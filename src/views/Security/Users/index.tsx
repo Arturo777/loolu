@@ -127,13 +127,7 @@ const UsersList = () => {
         >
             <Grid container direction="row" spacing={gridSpacing}>
                 {loading && <Loader />}
-                <Grid
-                    item
-                    xs={12}
-                    md={6}
-                    lg={5}
-                    // sx={{ backgroundColor: { xs: 'red', sm: 'orange', md: 'pink', lg: 'navy', xl: 'yellow' } }}
-                >
+                <Grid item xs={12} md={6} lg={5}>
                     <UserListComponent users={users ?? []} loading={loading} onEditClick={openEdit} />
                 </Grid>
                 <Grid item xs={12} md={6} lg={7}>
