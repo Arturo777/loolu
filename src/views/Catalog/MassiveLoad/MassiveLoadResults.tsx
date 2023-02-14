@@ -36,7 +36,7 @@ export default function MassiLoadResults({ searchParams, currentPage, setCurrent
     // consts
     const [products, setProducts] = useState<Products[]>([]);
 
-    const [maxPage, setMaxPage] = useState(2);
+    const [maxPage, setMaxPage] = useState(1);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -50,12 +50,11 @@ export default function MassiLoadResults({ searchParams, currentPage, setCurrent
                 ...searchParams
             })
         )
-            .then((resp) => {
-                // console.log(resp.payload);
-                const { response } = resp.payload;
+            .then((resp: any) => {
+                const { response } = resp.payload ?? {};
 
-                setProducts(response);
-                if (response.length) {
+                setProducts(response ?? []);
+                if (response?.length) {
                     setMaxPage(response[0].totalPages);
                 }
             })
@@ -146,11 +145,13 @@ export default function MassiLoadResults({ searchParams, currentPage, setCurrent
                 <Typography variant="h3" sx={{ mr: 2 }}>
                     Resultados de busqueda
                 </Typography>
-                <Button variant="contained" startIcon={<FileDownloadIcon />} onClick={onDownloadClick}>
-                    {intl.formatMessage({
-                        id: 'download'
-                    })}
-                </Button>
+                <Fade in={Boolean(products.length)}>
+                    <Button variant="contained" startIcon={<FileDownloadIcon />} onClick={onDownloadClick}>
+                        {intl.formatMessage({
+                            id: 'download'
+                        })}
+                    </Button>
+                </Fade>
             </Stack>
             <DataGrid
                 loading={isLoading}
@@ -164,7 +165,7 @@ export default function MassiLoadResults({ searchParams, currentPage, setCurrent
             />
 
             <Fade in={Boolean(!isLoading || products.length)}>
-                <Stack justifyContent="flex-end" direction="row">
+                <Stack justifyContent="flex-end" direction="row" sx={{ mt: 2 }}>
                     <Pagination count={maxPage} page={currentPage} onChange={handlePage} siblingCount={1} boundaryCount={1} />
                 </Stack>
             </Fade>

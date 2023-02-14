@@ -27,7 +27,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import useAuth from 'hooks/useAuth';
 
 // assets
-import { IconLogout, IconSettings, IconUserCircle } from '@tabler/icons';
+import { IconLogout, IconSettings, IconUserCircle, IconMoon, IconSun } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
 import { useSelector } from 'store';
 import { useIntl } from 'react-intl';
@@ -40,6 +40,7 @@ const ProfileSection = () => {
     const { borderRadius } = useConfig();
     const navigate = useNavigate();
     const intl = useIntl();
+    const { onChangeMenuType, navType } = useConfig();
 
     // store
     const { user } = useSelector((state) => state.auth);
@@ -220,6 +221,28 @@ const ProfileSection = () => {
                                                                 <Typography variant="body2">
                                                                     {intl.formatMessage({
                                                                         id: 'account_settings'
+                                                                    })}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                    </ListItemButton>
+                                                    <ListItemButton
+                                                        sx={{ borderRadius: `${borderRadius}px` }}
+                                                        selected={selectedIndex === 0}
+                                                        onClick={() => onChangeMenuType(navType === 'dark' ? 'light' : 'dark')}
+                                                    >
+                                                        <ListItemIcon>
+                                                            {navType === 'dark' ? (
+                                                                <IconSun stroke={1.5} size="1.3rem" />
+                                                            ) : (
+                                                                <IconMoon stroke={1.5} size="1.3rem" />
+                                                            )}
+                                                        </ListItemIcon>
+                                                        <ListItemText
+                                                            primary={
+                                                                <Typography variant="body2">
+                                                                    {intl.formatMessage({
+                                                                        id: navType === 'dark' ? 'light_mode' : 'dark_mode'
                                                                     })}
                                                                 </Typography>
                                                             }

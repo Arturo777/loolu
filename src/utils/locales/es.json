@@ -256,5 +256,7 @@
     "group": "Grupo",
     "add_group": "Agregar grupo",
     "group_name": "Nombre del grupo",
-    "field_type": "Tipo de atributo"
+    "field_type": "Tipo de atributo",
+    "dark_mode": "Modo oscuro",
+    "light_mode": "Modo claro"
 }
