@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Grid, IconButton, Card, Tooltip } from '@mui/material';
+import {
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Collapse,
+    Box,
+    Grid,
+    IconButton,
+    Card,
+    Tooltip,
+    List,
+    Stack,
+    CircularProgress
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -29,7 +42,7 @@ export default function CategoriesListComponent({ filterText, openCreate, handle
     // hooks
     const dispatch = useDispatch();
     // store
-    const { categories } = useSelector((state) => state.catalogue);
+    const { categories, loading } = useSelector((state) => state.catalogue);
     // vars
     const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>();
 
@@ -57,20 +70,29 @@ export default function CategoriesListComponent({ filterText, openCreate, handle
     }, [filterText, categories]);
 
     return (
-        <Card sx={{ boxShadow: 2 }}>
-            <Grid container spacing={gridSpacing}>
-                {filteredCategories?.map((category) => (
-                    <Grid item xs={12} key={`main-category-${category.id}`}>
-                        <MainCategoryComponent
-                            category={category}
-                            openCreate={openCreate}
-                            handleShowInfo={handleShowInfo}
-                            openAssociate={() => openAssociate(category)}
-                        />
+        <>
+            <Collapse in={loading}>
+                <Stack justifyContent="center" alignItems="center" sx={{ pt: 5, mb: 5 }}>
+                    <CircularProgress />
+                </Stack>
+            </Collapse>
+            <Collapse in={!loading}>
+                <List component={Card} elevation={2}>
+                    <Grid container spacing={gridSpacing}>
+                        {filteredCategories?.map((category) => (
+                            <Grid item xs={12} key={`main-category-${category.id}`}>
+                                <MainCategoryComponent
+                                    category={category}
+                                    openCreate={openCreate}
+                                    handleShowInfo={handleShowInfo}
+                                    openAssociate={() => openAssociate(category)}
+                                />
+                            </Grid>
+                        ))}
                     </Grid>
-                ))}
-            </Grid>{' '}
-        </Card>
+                </List>
+            </Collapse>
+        </>
     );
 }
 
@@ -95,7 +117,11 @@ const MainCategoryComponent = ({ category, openCreate, handleShowInfo, openAssoc
         <>
             <ListItemButton sx={{ paddingY: 0 }}>
                 <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
-                    {category.children?.length ? <ExpandCircleDownIcon /> : null}
+                    {category.children?.length ? (
+                        <ExpandCircleDownIcon
+                            sx={{ transition: 'transform 350ms ease', transform: open ? 'rotate(180deg)' : 'rotate(0)' }}
+                        />
+                    ) : null}
                 </ListItemIcon>
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
                 {/* FACET - CATEGORY */}
