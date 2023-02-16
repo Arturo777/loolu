@@ -9,7 +9,7 @@ import { gridSpacing } from 'store/constant';
 // ===========================|| WIDGET STATISTICS - CUSTOMER SATISFACTION ||=========================== //
 
 const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
-    <MainCard title="Estatus de la Tienda">
+    <MainCard title="Store Status">
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <Typography variant="h3" align="center">

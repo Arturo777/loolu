@@ -253,7 +253,7 @@ const FirstLevel = () => {
                                         <Card>
                                             <CardContent >
                                                 <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
-                                                    Ultimas Actualizaciones
+                                                Latest Updates
                                                 </Typography>
                                                 <TableUpdates updates={firstLev?.skuCatalog} />
                                             </CardContent>
