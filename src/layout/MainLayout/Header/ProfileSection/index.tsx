@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -27,7 +27,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import useAuth from 'hooks/useAuth';
 
 // assets
-import { IconLogout, IconSettings, IconUserCircle } from '@tabler/icons';
+import { IconLogout, IconUserCircle, IconMoon, IconSun } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
 import { useSelector } from 'store';
 import { useIntl } from 'react-intl';
@@ -38,8 +38,9 @@ const ProfileSection = () => {
     // hooks
     const theme = useTheme();
     const { borderRadius } = useConfig();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const intl = useIntl();
+    const { onChangeMenuType, navType } = useConfig();
 
     // store
     const { user } = useSelector((state) => state.auth);
@@ -47,7 +48,7 @@ const ProfileSection = () => {
     const { logout } = useAuth();
 
     // vars
-    const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [selectedIndex] = useState(-1);
     const [open, setOpen] = useState(false);
     /**
      * anchorRef is used on different components and specifying one type leads to other components throwing an error
@@ -61,14 +62,14 @@ const ProfileSection = () => {
         }
     };
 
-    const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number, route: string = '') => {
-        setSelectedIndex(index);
-        handleClose(event);
+    // const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number, route: string = '') => {
+    //     setSelectedIndex(index);
+    //     handleClose(event);
 
-        if (route && route !== '') {
-            navigate(route);
-        }
-    };
+    //     if (route && route !== '') {
+    //         navigate(route);
+    //     }
+    // };
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
     };
@@ -205,7 +206,7 @@ const ProfileSection = () => {
                                                         }
                                                     }}
                                                 >
-                                                    <ListItemButton
+                                                    {/* <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}
                                                         onClick={(event: React.MouseEvent<HTMLDivElement>) =>
@@ -220,6 +221,28 @@ const ProfileSection = () => {
                                                                 <Typography variant="body2">
                                                                     {intl.formatMessage({
                                                                         id: 'account_settings'
+                                                                    })}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                    </ListItemButton> */}
+                                                    <ListItemButton
+                                                        sx={{ borderRadius: `${borderRadius}px` }}
+                                                        selected={selectedIndex === 0}
+                                                        onClick={() => onChangeMenuType(navType === 'dark' ? 'light' : 'dark')}
+                                                    >
+                                                        <ListItemIcon>
+                                                            {navType === 'dark' ? (
+                                                                <IconSun stroke={1.5} size="1.3rem" />
+                                                            ) : (
+                                                                <IconMoon stroke={1.5} size="1.3rem" />
+                                                            )}
+                                                        </ListItemIcon>
+                                                        <ListItemText
+                                                            primary={
+                                                                <Typography variant="body2">
+                                                                    {intl.formatMessage({
+                                                                        id: navType === 'dark' ? 'light_mode' : 'dark_mode'
                                                                     })}
                                                                 </Typography>
                                                             }

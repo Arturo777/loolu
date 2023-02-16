@@ -77,7 +77,6 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
     }, []);
 
     const login = async (email: string, password: string) => {
-        console.log(userPool);
         const usr = new CognitoUser({
             Username: email,
             Pool: userPool

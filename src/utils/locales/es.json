@@ -256,5 +256,10 @@
     "group": "Grupo",
     "add_group": "Agregar grupo",
     "group_name": "Nombre del grupo",
-    "field_type": "Tipo de atributo"
+    "field_type": "Tipo de atributo",
+    "dark_mode": "Modo oscuro",
+    "light_mode": "Modo claro",
+    "account": "Cuenta",
+    "product_id": "Id de producto",
+    "reference_code": "Código de referencia"
 }

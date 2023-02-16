@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 // mui imports
-import { Box, IconButton, ListItemButton, ListItemText, Pagination, Card } from '@mui/material';
+import { Box, IconButton, ListItemButton, ListItemText, Pagination, Card, Collapse, List, Stack, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 // third-party imports
@@ -36,7 +36,8 @@ export default function FacetsListComponent({
 
     // variables
     const {
-        facetsInfo: { facets, maxPage }
+        facetsInfo: { facets, maxPage },
+        loading
     } = useSelector((state) => state.catalogue);
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -86,15 +87,22 @@ export default function FacetsListComponent({
 
     return (
         <>
-            <Card sx={{ boxShadow: 2 }}>
-                {facets &&
-                    facets.map((item: FacetType) => (
-                        <FacetItem key={`facet-item-${item.id}`} facet={item} handleShowInfo={handleShowInfo} />
-                    ))}
-            </Card>
-            <Box sx={{ mt: 3, mb: 2 }}>
-                <Pagination count={maxPage} page={currentPage} onChange={handlePageChange} />
-            </Box>
+            <Collapse in={loading}>
+                <Stack justifyContent="center" alignItems="center" sx={{ pt: 5, mb: 5 }}>
+                    <CircularProgress />
+                </Stack>
+            </Collapse>
+            <Collapse in={!loading}>
+                <List component={Card} sx={{ boxShadow: 2 }}>
+                    {facets &&
+                        facets.map((item: FacetType) => (
+                            <FacetItem key={`facet-item-${item.id}`} facet={item} handleShowInfo={handleShowInfo} />
+                        ))}
+                </List>
+                <Box sx={{ mt: 3, mb: 2 }}>
+                    <Pagination count={maxPage} page={currentPage} onChange={handlePageChange} />
+                </Box>
+            </Collapse>
         </>
     );
 }

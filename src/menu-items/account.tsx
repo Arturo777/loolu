@@ -15,7 +15,7 @@ const icons = {
 const security = {
     id: 'security-group',
     type: 'group',
-    title: <FormattedMessage id="security" />,
+    title: <FormattedMessage id="account" />,
     children: [
         {
             id: 'users',

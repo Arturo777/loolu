@@ -250,6 +250,3 @@ const generateData = ({ categoryId, groupInfo, specificationAttributes, facetDat
         }
     ];
 };
-
-const createQA =
-    '[{"categoryId":11501952,"specificationGroups":[{"name":"Retail","groupId":0,"prodSpecs":[{"rawSpecId":445,"name":"NuevaCreaciondeFacet02","categoryId":11501952,"groupId":0,"position":1,"groupName":"Retail","specificationValues":[],"isVtexSync":false,"specificationId":null,"isRequired":false,"isActive":true,"isTopMenuLinkActive":false,"isSideMenuLinkActive":false,"isOnProductDetails":false,"fieldTypeId":"1","fieldTypeName":"Texto","description":"A1"}]}]}]';

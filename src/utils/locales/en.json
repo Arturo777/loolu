@@ -257,5 +257,10 @@
     "group": "Group",
     "add_group": "Add group",
     "group_name": "Group name",
-    "field_type": "Field type"
+    "field_type": "Field type",
+    "dark_mode": "Dark mode",
+    "light_mode": "Light mode",
+    "account": "Account",
+    "product_id": "Product id",
+    "reference_code": "Reference code"
 }

@@ -35,20 +35,19 @@ export default function UserListComponent({
     loading: boolean;
     onEditClick: (user: UserType) => void;
 }) {
-    if (loading || !users) {
-        return (
-            <Stack justifyContent="center" alignItems="center" sx={{ pt: 5 }}>
-                <CircularProgress />
-            </Stack>
-        );
-    }
-
     return (
-        <Collapse in={!loading}>
-            <List component={Card} elevation={2} sx={{ bgcolor: 'background.paper', p: 2 }}>
-                {users && users.map((user) => <UserListItem key={`user-item-${user.id}`} user={user} onEditClick={onEditClick} />)}
-            </List>
-        </Collapse>
+        <>
+            <Collapse in={loading}>
+                <Stack justifyContent="center" alignItems="center" sx={{ pt: 5, mb: 5 }}>
+                    <CircularProgress />
+                </Stack>
+            </Collapse>
+            <Collapse in={!loading}>
+                <List component={Card} elevation={2} sx={{ bgcolor: 'background.paper', p: 2 }}>
+                    {users && users.map((user) => <UserListItem key={`user-item-${user.id}`} user={user} onEditClick={onEditClick} />)}
+                </List>
+            </Collapse>
+        </>
     );
 }
 
