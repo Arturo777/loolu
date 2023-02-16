@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -27,7 +27,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import useAuth from 'hooks/useAuth';
 
 // assets
-import { IconLogout, IconSettings, IconUserCircle, IconMoon, IconSun } from '@tabler/icons';
+import { IconLogout, IconUserCircle, IconMoon, IconSun } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
 import { useSelector } from 'store';
 import { useIntl } from 'react-intl';
@@ -38,7 +38,7 @@ const ProfileSection = () => {
     // hooks
     const theme = useTheme();
     const { borderRadius } = useConfig();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const intl = useIntl();
     const { onChangeMenuType, navType } = useConfig();
 
@@ -48,7 +48,7 @@ const ProfileSection = () => {
     const { logout } = useAuth();
 
     // vars
-    const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [selectedIndex] = useState(-1);
     const [open, setOpen] = useState(false);
     /**
      * anchorRef is used on different components and specifying one type leads to other components throwing an error
@@ -62,14 +62,14 @@ const ProfileSection = () => {
         }
     };
 
-    const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number, route: string = '') => {
-        setSelectedIndex(index);
-        handleClose(event);
+    // const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number, route: string = '') => {
+    //     setSelectedIndex(index);
+    //     handleClose(event);
 
-        if (route && route !== '') {
-            navigate(route);
-        }
-    };
+    //     if (route && route !== '') {
+    //         navigate(route);
+    //     }
+    // };
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
     };
@@ -206,7 +206,7 @@ const ProfileSection = () => {
                                                         }
                                                     }}
                                                 >
-                                                    <ListItemButton
+                                                    {/* <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}
                                                         onClick={(event: React.MouseEvent<HTMLDivElement>) =>
@@ -225,7 +225,7 @@ const ProfileSection = () => {
                                                                 </Typography>
                                                             }
                                                         />
-                                                    </ListItemButton>
+                                                    </ListItemButton> */}
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}

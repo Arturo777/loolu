@@ -327,36 +327,55 @@ interface SearchPopProps {
     id: string | undefined;
 }
 
-const SearchPopOptions = ({ valueIsNumber, handelFilter, searchField, show, anchorEl, id }: SearchPopProps) => (
-    <Popper open={show} anchorEl={anchorEl} id={id} placement="bottom-end">
-        <Box
-            component={Card}
-            elevation={2}
-            sx={{
-                minWidth: 200,
-                p: 1,
-                paddingRight: 2,
-                borderRadius: 2,
-                paddingTop: 3
-            }}
-        >
-            <FormControl>
-                <RadioGroup
-                    aria-labelledby="radio-filter-type"
-                    defaultValue="productName"
-                    name="radio-filter-type-group"
-                    onChange={handelFilter}
-                    value={searchField}
-                >
-                    <FormControlLabel value="productName" control={<Radio />} label="Nombre del producto" />
-                    <FormControlLabel disabled={!valueIsNumber} value="idProd" control={<Radio />} label="ID de producto" />
-                    <FormControlLabel disabled={!valueIsNumber} value="idSKU" control={<Radio />} label="SKU" />
-                    <FormControlLabel disabled={!valueIsNumber} value="productRefID" control={<Radio />} label="Código de referencia" />
-                    <FormControlLabel disabled={!valueIsNumber} value="ean" control={<Radio />} label="EAN" />
-                </RadioGroup>
-            </FormControl>
-        </Box>
-    </Popper>
-);
+const SearchPopOptions = ({ valueIsNumber, handelFilter, searchField, show, anchorEl, id }: SearchPopProps) => {
+    const intl = useIntl();
+
+    return (
+        <Popper open={show} anchorEl={anchorEl} id={id} placement="bottom-end">
+            <Box
+                component={Card}
+                elevation={2}
+                sx={{
+                    minWidth: 200,
+                    p: 1,
+                    paddingRight: 2,
+                    borderRadius: 2,
+                    paddingTop: 3
+                }}
+            >
+                <FormControl>
+                    <RadioGroup
+                        aria-labelledby="radio-filter-type"
+                        defaultValue="productName"
+                        name="radio-filter-type-group"
+                        onChange={handelFilter}
+                        value={searchField}
+                    >
+                        <FormControlLabel value="productName" control={<Radio />} label={intl.formatMessage({ id: 'product_name' })} />
+                        <FormControlLabel
+                            disabled={!valueIsNumber}
+                            value="idProd"
+                            control={<Radio />}
+                            label={intl.formatMessage({ id: 'product_id' })}
+                        />
+                        <FormControlLabel
+                            disabled={!valueIsNumber}
+                            value="idSKU"
+                            control={<Radio />}
+                            label={intl.formatMessage({ id: 'sku' })}
+                        />
+                        <FormControlLabel
+                            disabled={!valueIsNumber}
+                            value="productRefID"
+                            control={<Radio />}
+                            label={intl.formatMessage({ id: 'reference_code' })}
+                        />
+                        <FormControlLabel disabled={!valueIsNumber} value="ean" control={<Radio />} label="EAN" />
+                    </RadioGroup>
+                </FormControl>
+            </Box>
+        </Popper>
+    );
+};
 
 export default SearchSection;

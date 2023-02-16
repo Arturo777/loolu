@@ -32,6 +32,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Products as ProductsTypo, ProductsFilter } from 'types/e-commerce';
 import Loader from 'ui-component/Loader';
 import { queryToObject } from 'utils/helpers';
+import { useIntl } from 'react-intl';
 
 // product list container
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
@@ -57,6 +58,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ 
 // ==============================|| E-COMMERCE - PRODUCT GRID ||============================== //
 
 const ProductsList = () => {
+    const intl = useIntl();
     const theme = useTheme();
 
     const { borderRadius } = useConfig();
@@ -254,7 +256,7 @@ const ProductsList = () => {
                 <Grid container alignItems="center" justifyContent="space-between" spacing={matchDownMD ? 0.5 : 2}>
                     <Grid item>
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <Typography variant="h4">Productos</Typography>
+                            <Typography variant="h4">{intl.formatMessage({ id: 'products' })}</Typography>
                             <IconButton size="large">
                                 <ArrowForwardIosIcon sx={{ width: '0.875rem', height: '0.875rem', fontWeight: 500, color: 'grey.500' }} />
                             </IconButton>
@@ -268,7 +270,7 @@ const ProductsList = () => {
                                 color="secondary"
                                 startIcon={<FilterAltIcon sx={{ fontWeight: 500, color: 'secondary.200' }} />}
                             >
-                                Filtrar
+                                {intl.formatMessage({ id: 'filter' })}
                             </Button>
 
                             <Typography sx={{ display: { xs: 'none', sm: 'flex' }, fontSize: '1rem', color: 'grey.500', fontWeight: 400 }}>
