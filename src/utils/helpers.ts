@@ -56,14 +56,11 @@ export const getCategoriesFlat = (categories: CategoryType[]): FlatCategoryType[
         flatChild(itemA, 1);
     });
 
-    // console.log(toReturn);
-
     return toReturn;
 };
 
 export const categoriesFlat = (categories: CategoryType[]): FilterCategoryType[] => {
     const flat: FilterCategoryType[] = [];
-    console.log(categories);
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < categories.length; i++) {
         flat.push({ id: categories[i]?.id, name: categories[i]?.name });

@@ -76,18 +76,22 @@ const MainLayout = () => {
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
 
     const dispatch = useDispatch();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { drawerOpen } = useSelector((state) => state.menu);
     const { container } = useConfig();
 
     React.useEffect(() => {
         // handle login
         if (user && user?.user) {
-            console.log('CognitoUser:', user?.user);
             // TODO: SEND CognitoUser USER
-            dispatch(getUserProfile('ohuitron'));
+            dispatch(getUserProfile(user?.user)).then((resp) => {
+                // dispatch(getUserProfile('ohuitron')).then((resp) => {
+                if (!resp.payload) {
+                    logout();
+                }
+            });
         }
-    }, [dispatch, user]);
+    }, [dispatch, logout, user]);
 
     React.useEffect(() => {
         dispatch(openDrawer(!matchDownMd));

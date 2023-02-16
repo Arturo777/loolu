@@ -25,8 +25,7 @@ import {
     Modal,
     IconButton,
     Stack,
-    Tooltip,
-    Collapse
+    Tooltip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';

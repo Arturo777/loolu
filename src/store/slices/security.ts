@@ -125,7 +125,7 @@ const slice = createSlice({
             .addCase(getProfiles.fulfilled, (state, action) => {
                 state.loading = false;
 
-                const profiles: ProfileType[] = action.payload.response;
+                const profiles: ProfileType[] = action.payload;
                 state.profiles = profiles;
             });
     }
