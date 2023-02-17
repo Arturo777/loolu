@@ -22,6 +22,7 @@ import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import { resetCart } from 'store/slices/cart';
 import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
+import { useIntl } from 'react-intl';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -45,6 +46,7 @@ function a11yProps(index: number) {
 }
 
 const ProductDetails = () => {
+    const intl = useIntl();
     const { id } = useParams();
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
@@ -238,7 +240,7 @@ const ProductDetails = () => {
                                                             onClick={() => setActive(false)}
                                                             disabled={valueSku === ''}
                                                         >
-                                                            Cancel
+                                                            {intl.formatMessage({ id: 'cancel' })}
                                                         </Button>
                                                     ) : (
                                                         <Button
@@ -250,13 +252,13 @@ const ProductDetails = () => {
                                                             onClick={() => setActive(true)}
                                                             disabled={valueSku === ''}
                                                         >
-                                                            Edit Product
+                                                            {intl.formatMessage({ id: 'edit' })}
                                                         </Button>
                                                     )}
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
-                                                        Save Product
+                                                        {intl.formatMessage({ id: 'save' })}
                                                     </Button>
                                                 </Grid>
                                             </Grid>

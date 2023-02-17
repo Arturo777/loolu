@@ -336,7 +336,7 @@ const ProductInfo = ({
                                     <FormControlLabel
                                         sx={{ ml: 1 }}
                                         control={<Android12Switch defaultChecked={product?.isEcommerce} />}
-                                        label="Ecommerce"
+                                        label={<FormattedMessage id="e-commerce" />}
                                     />
                                     <FormControlLabel
                                         sx={{ ml: 1 }}
@@ -347,35 +347,35 @@ const ProductInfo = ({
                                                 defaultChecked={product?.showWithoutStock}
                                             />
                                         }
-                                        label="Sin Inventario"
+                                        label={<FormattedMessage id="out_of_stock" />}
                                     />
                                 </>
                             ) : (
                                 <>
                                     <Chip
                                         size="small"
-                                        label={product?.isActive ? 'Activo' : 'Inactive'}
+                                        label={intl.formatMessage({ id: product?.isActive ? 'active' : 'inactive' })}
                                         chipcolor={product?.isActive ? 'success' : 'error'}
                                         sx={{ ml: 1, borderRadius: '4px', textTransform: 'capitalize' }}
                                     />
                                     <Chip
                                         sx={{ ml: 2 }}
                                         size="small"
-                                        label={product?.isVisible ? 'Visible' : 'No visible'}
+                                        label={intl.formatMessage({ id: product?.isVisible ? 'visible' : 'hidden' })}
                                         chipcolor="primary"
                                         variant="outlined"
                                     />
                                     <Chip
                                         sx={{ ml: 2 }}
                                         size="small"
-                                        label={product?.isEcommerce ? 'Ecommerce' : 'No Ecommerce'}
+                                        label={product?.isEcommerce ? 'e-commerce' : 'No e-commerce'}
                                         chipcolor="primary"
                                         variant="outlined"
                                     />
                                     <Chip
                                         sx={{ ml: 2 }}
                                         size="small"
-                                        label={product?.showWithoutStock ? 'Sin Inventario' : 'Con Inventario'}
+                                        label={intl.formatMessage({ id: product?.showWithoutStock ? 'out_of_stock' : 'stock' })}
                                         chipcolor="primary"
                                         variant="outlined"
                                     />
@@ -393,7 +393,7 @@ const ProductInfo = ({
                                         <TextField
                                             fullWidth
                                             id="outlined-basic"
-                                            label="Nombre del Producto"
+                                            label={intl.formatMessage({ id: 'product_name' })}
                                             variant="outlined"
                                             name="productName"
                                             defaultValue={product?.productName}
@@ -403,7 +403,7 @@ const ProductInfo = ({
                                         <TextField
                                             fullWidth
                                             id="outlined-basic"
-                                            label="Título"
+                                            label={intl.formatMessage({ id: 'title' })}
                                             variant="outlined"
                                             name="title"
                                             defaultValue={product?.title}
@@ -413,7 +413,7 @@ const ProductInfo = ({
                                         <TextField
                                             fullWidth
                                             id="outlined-basic"
-                                            label="URL del Producto"
+                                            label={intl.formatMessage({ id: 'product_url' })}
                                             variant="outlined"
                                             name="linkId"
                                             defaultValue={formatUrl(product?.linkId)}
@@ -443,7 +443,7 @@ const ProductInfo = ({
                             fullWidth
                             multiline
                             id="outlined-basic"
-                            label="Descripción"
+                            label={intl.formatMessage({ id: 'description' })}
                             variant="outlined"
                             name="description"
                             defaultValue={product?.description}
@@ -467,7 +467,7 @@ const ProductInfo = ({
                             <TextField
                                 multiline
                                 id="outlined-basic"
-                                label="Código de Referencia"
+                                label={intl.formatMessage({ id: 'reference_code' })}
                                 variant="outlined"
                                 name="productRefID"
                                 defaultValue={product?.productRefID}
@@ -491,7 +491,7 @@ const ProductInfo = ({
                             <TextField
                                 fullWidth
                                 id="outlined-basic"
-                                label="Marca"
+                                label={intl.formatMessage({ id: 'brand' })}
                                 variant="outlined"
                                 name="brandName"
                                 /* defaultValue={product?.brandName} */
@@ -514,7 +514,7 @@ const ProductInfo = ({
                                             fullWidth
                                             sx={{ width: '80%' }}
                                             id="outlined-basic"
-                                            label="+ Nueva Marca"
+                                            label={intl.formatMessage({ id: 'new_brand' })}
                                             variant="outlined"
                                             /* defaultValue={product?.brandName} */
                                             onClick={() => setButton(true)}
@@ -561,9 +561,11 @@ const ProductInfo = ({
                         }}
                     >
                         <Button onClick={toggleDrawer('right', true)} variant="contained">
-                            Editar Categoría
+                            {intl.formatMessage({ id: 'edit_category' })}
                         </Button>
-                        <Typography variant="body2">Categoría Seleccionada: {searchCat}</Typography>
+                        <Typography variant="body2">
+                            {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
+                        </Typography>
                         <SwipeableDrawer
                             sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
                             anchor="right"
@@ -571,14 +573,6 @@ const ProductInfo = ({
                             onClose={toggleDrawer('right', false)}
                             onOpen={toggleDrawer('right', true)}
                         >
-                            {/* <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                label="Buscar Categoría"
-                                variant="outlined"
-                                name="categoryName"
-                                
-                            /> */}
                             <OutlinedInput
                                 sx={{ ml: 3, mt: 3, width: '90%' }}
                                 id="input-search-list-style1"
@@ -592,7 +586,6 @@ const ProductInfo = ({
                                 }
                                 size="small"
                                 value={searchCat}
-                                /* onClick={toggleDrawer('right', true)} */
                                 onChange={(e) => {
                                     setSearchCat(e.target.value);
                                 }}
@@ -619,7 +612,7 @@ const ProductInfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FormControl sx={{ m: 1, width: 300 }}>
-                        <InputLabel id="demo-multiple-checkbox-label">Trade Policies</InputLabel>
+                        <InputLabel id="demo-multiple-checkbox-label">{intl.formatMessage({ id: 'trade_policies' })}</InputLabel>
                         <Select
                             labelId="demo-multiple-checkbox-label"
                             id="demo-multiple-checkbox"
@@ -652,7 +645,7 @@ const ProductInfo = ({
                     </FormControl>
                 ) : (
                     <Typography variant="h5" sx={{ ml: 1 }}>
-                        Trade Policy:
+                        {intl.formatMessage({ id: 'trade_policy' })}:
                         {product?.tradePolicies?.map(
                             (trade: {
                                 isSelected: boolean | undefined;
@@ -670,7 +663,7 @@ const ProductInfo = ({
             </Grid>
 
             <Grid item xs={12}>
-                <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>Información del Sku</h2>
+                <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
                 <Grid container spacing={1}>
                     <Grid item xs={12} lg={10}>
                         <Table>
@@ -678,7 +671,7 @@ const ProductInfo = ({
                                 <TableRow>
                                     <TableCell>
                                         <Typography variant="body2">
-                                            Variantes{' '}
+                                            {intl.formatMessage({ id: 'variants' })}
                                             <Typography color="error" component="span">
                                                 *
                                             </Typography>
@@ -689,7 +682,7 @@ const ProductInfo = ({
                                             row
                                             value={valueSku}
                                             onChange={handleRadioChange}
-                                            name="sku"
+                                            name={intl.formatMessage({ id: 'sku' })}
                                             id="sku"
                                             sx={{ ml: 1 }}
                                             defaultValue={product?.skus[0].skuID}
@@ -724,7 +717,7 @@ const ProductInfo = ({
                                         fullWidth
                                         multiline
                                         id="outlined-basic"
-                                        label="Nombre Sku"
+                                        label={intl.formatMessage({ id: 'sku_name' })}
                                         variant="outlined"
                                         name="name"
                                         defaultValue={skuInfo?.name}
@@ -773,7 +766,7 @@ const ProductInfo = ({
                                     <TableRow>
                                         <TableCell>
                                             <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                Precios
+                                                {intl.formatMessage({ id: 'Pricing' })}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -802,7 +795,7 @@ const ProductInfo = ({
                                                                         fullWidth
                                                                         multiline
                                                                         id="outlined-basic"
-                                                                        label="Precio con Descuento"
+                                                                        label={intl.formatMessage({ id: 'discount_price' })}
                                                                         variant="outlined"
                                                                         name="priceDiscount"
                                                                         defaultValue={priceDiscount}
@@ -817,7 +810,7 @@ const ProductInfo = ({
                                                                         fullWidth
                                                                         multiline
                                                                         id="outlined-basic"
-                                                                        label="Precio"
+                                                                        label={intl.formatMessage({ id: 'price' })}
                                                                         variant="outlined"
                                                                         name="price"
                                                                         defaultValue={price}
@@ -850,13 +843,13 @@ const ProductInfo = ({
                                     <TableCell>
                                         <Stack>
                                             <Typography variant="body2">
-                                                Size{' '}
+                                                {intl.formatMessage({ id: 'size' })}
                                                 <Typography color="error" component="span">
                                                     *
                                                 </Typography>
                                             </Typography>
                                             <Typography variant="caption" color="primary" component={Link} to="#">
-                                                Size Chart?
+                                                {intl.formatMessage({ id: 'size_chart' })}?
                                             </Typography>
                                         </Stack>
                                     </TableCell>
@@ -889,7 +882,7 @@ const ProductInfo = ({
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body2">Dimensions</Typography>
+                                        <Typography variant="body2">{intl.formatMessage({ id: 'dimensions' })}</Typography>
                                     </TableCell>
                                     <TableCell>
                                         <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
@@ -898,7 +891,7 @@ const ProductInfo = ({
                                 <br />
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body2">Quantity</Typography>
+                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
                                     </TableCell>
                                     <TableCell align="left" />
                                 </TableRow>
@@ -925,12 +918,10 @@ type MainCategoryProps = {
 };
 const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlagCategory, setNewCategorySku }: MainCategoryProps) => {
     // hooks
-    /* const intl = useIntl(); */
+    const intl = useIntl();
 
     // vars
     const [open, setOpen] = useState(false);
-    /* const [buttonCat, setButtonCat] = useState(false);
-    const [displayCat, setDisplayCat] = useState(false); */
 
     const handleOpen = () => {
         setOpen(!open);
@@ -939,11 +930,7 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
         setSearchCat(value);
         setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
     };
-    /* const newCategory = (value: SetStateAction<string>, id: number | null) => {
-        setSearchCat(value);
-        setFlagCategory(true);
-        setNewCategorySku((prev: any) => ({ ...prev, name: value, title: value }));
-    }; */
+
     return (
         <>
             <ListItemButton sx={{ paddingY: 0, width: '600px' }}>
@@ -951,13 +938,13 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
                     {category.children?.length ? <ExpandCircleDownIcon /> : null}
                 </ListItemIcon>
                 <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
-                <Tooltip title="Seleccionar Categoría">
+                <Tooltip title={intl.formatMessage({ id: 'select_category' })}>
                     <IconButton>
                         <CheckCircleIcon onClick={() => customCategory(category.name, category.id)} />
                     </IconButton>
                 </Tooltip>
                 {/* CREATE */}
-                <Tooltip title="Crear subcategoria">
+                <Tooltip title={intl.formatMessage({ id: 'create_subcategory' })}>
                     <IconButton>
                         <AddBoxIcon />
                     </IconButton>
