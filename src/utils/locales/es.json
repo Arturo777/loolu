@@ -280,5 +280,9 @@
     "size": "Tamaño",
     "size_chart": "Guía de tamaño",
     "dimensions": "Medidas",
-    "quantity": "Cantidad"
+    "quantity": "Cantidad",
+    "review": "Reseña",
+    "reviews": "Reseñas",
+    "related_products": "Productos relacionados",
+    "short_description": "Descripción corta"
 }

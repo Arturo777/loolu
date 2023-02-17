@@ -277,9 +277,13 @@
     "trade_policies": "Trade policies",
     "sku_information": "SKU information",
     "sku_name": "SKU name",
-    "variants": "Variants", 
+    "variants": "Variants",
     "size": "Size",
     "size_chart": "Size chart",
     "dimensions": "Dimensions",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "review": "Review",
+    "reviews": "Reviews",
+    "related_products": "Related products",
+    "short_description": "Short description"
 }

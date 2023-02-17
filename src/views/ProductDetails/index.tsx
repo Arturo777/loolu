@@ -123,7 +123,7 @@ const ProductDetails = () => {
                     dispatch(
                         openSnackbar({
                             open: true,
-                            message: `Marca creada con exito`,
+                            message: `Successfully created brand`,
                             variant: 'alert',
                             alert: {
                                 color: 'success'
@@ -136,7 +136,7 @@ const ProductDetails = () => {
                     dispatch(
                         openSnackbar({
                             open: true,
-                            message: 'Error al guardar la Marca',
+                            message: 'Failed to create brand',
                             variant: 'alert',
                             alert: {
                                 color: 'error'
@@ -149,14 +149,14 @@ const ProductDetails = () => {
                 const prodsku = newBrandSku?.Id
                     ? { ...productInfo, sku: skuInfo, brandName: newBrandSku?.Name, brandId: newBrandSku?.Id }
                     : { ...productInfo, sku: skuInfo };
-                console.log('prod new', prodsku);
+                // console.log('prod new', prodsku);
                 await dispatch(saveProduct(prodsku))
                     .then(({ payload }) => {
-                        console.log(payload.response);
+                        // console.log(payload.response);
                         dispatch(
                             openSnackbar({
                                 open: true,
-                                message: `Producto actualizado correctamente`,
+                                message: `Successfully updated product`,
                                 variant: 'alert',
                                 alert: {
                                     color: 'success'
@@ -169,7 +169,7 @@ const ProductDetails = () => {
                         dispatch(
                             openSnackbar({
                                 open: true,
-                                message: 'Error al guardar el producto',
+                                message: 'Failed to save product',
                                 variant: 'alert',
                                 alert: {
                                     color: 'error'
@@ -181,7 +181,6 @@ const ProductDetails = () => {
             }
         }
     };
-    console.log('newBrand', newBrandSku, newCategorySku);
     /* console.log('primer prod', productInfo); */
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>
@@ -273,13 +272,18 @@ const ProductDetails = () => {
                                             aria-label="product description tabs example"
                                             variant="scrollable"
                                         >
-                                            <Tab component={Link} to="#" label="Description" {...a11yProps(0)} />
+                                            <Tab
+                                                component={Link}
+                                                to="#"
+                                                label={intl.formatMessage({ id: 'description' })}
+                                                {...a11yProps(0)}
+                                            />
                                             <Tab
                                                 component={Link}
                                                 to="#"
                                                 label={
                                                     <Stack direction="row" alignItems="center">
-                                                        Reviews{' '}
+                                                        {intl.formatMessage({ id: 'reviews' })}
                                                         <Chip
                                                             label={String(product?.salePrice)}
                                                             size="small"
@@ -308,7 +312,7 @@ const ProductDetails = () => {
                         </MainCard>
                     </Grid>
                     <Grid item xs={12} lg={10} sx={{ mt: 3 }}>
-                        <Typography variant="h2">Related Products</Typography>
+                        <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
                     </Grid>
                     <Grid item xs={11} lg={10}>
                         <RelatedProducts id={id} />
