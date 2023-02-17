@@ -106,6 +106,7 @@
     "code-verification": "Code Verification",
     "pricing": "Pricing",
     "price": "Price",
+    "discount_price": "Discount price",
     "maintenance": "Maintenance",
     "error-404": "Error 404",
     "coming-soon": "Coming Soon",
@@ -174,6 +175,7 @@
 
     "brands": "Brands",
     "create_brand": "Create brand",
+    "new_brand": "+ New brand",
     "edit_brand": "Edit brand",
 
     "name": "Name",
@@ -181,6 +183,7 @@
     "actions": "Actions",
     "image_url": "Image URL",
     "metatag_description": "Metatag description",
+    "product_url": "Product url",
 
     "suppliers": "Suppliers",
     "edit_supplier": "Edit supplier",
@@ -262,5 +265,25 @@
     "light_mode": "Light mode",
     "account": "Account",
     "product_id": "Product id",
-    "reference_code": "Reference code"
+    "reference_code": "Reference code",
+    "out_of_stock": "Out of stock",
+    "stock": "Stock",
+    "visible": "Visible",
+    "hidden": "Hidden",
+    "select_category": "Select category",
+    "selected_category": "Selected category",
+    "create_subcategory": "Create subcategory",
+    "trade_policy": "Trade policy",
+    "trade_policies": "Trade policies",
+    "sku_information": "SKU information",
+    "sku_name": "SKU name",
+    "variants": "Variants",
+    "size": "Size",
+    "size_chart": "Size chart",
+    "dimensions": "Dimensions",
+    "quantity": "Quantity",
+    "review": "Review",
+    "reviews": "Reviews",
+    "related_products": "Related products",
+    "short_description": "Short description"
 }
