@@ -1,4 +1,5 @@
 import { Grid, Typography, Box, TextField } from '@mui/material';
+import { useIntl } from 'react-intl';
 
 const Aditionalinfo = ({
     product,
@@ -11,6 +12,9 @@ const Aditionalinfo = ({
     productInfo: any;
     setProductInfo: any;
 }) => {
+    // hooks
+    const intl = useIntl();
+
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
@@ -27,7 +31,7 @@ const Aditionalinfo = ({
                             fullWidth
                             multiline
                             id="outlined-basic"
-                            label="Descripción Corta"
+                            label={intl.formatMessage({ id: 'short_description' })}
                             variant="outlined"
                             name="descriptionShort"
                             defaultValue={product?.descriptionShort}
@@ -37,7 +41,7 @@ const Aditionalinfo = ({
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">Descripción Corta:</Typography> {product?.descriptionShort}
+                        <Typography variant="h4">{intl.formatMessage({ id: 'short_description' })}:</Typography> {product?.descriptionShort}
                     </Typography>
                 )}
             </Grid>
@@ -52,7 +56,7 @@ const Aditionalinfo = ({
                             fullWidth
                             multiline
                             id="outlined-basic"
-                            label="Descripción De Metatag"
+                            label={intl.formatMessage({ id: 'metatag_description' })}
                             variant="outlined"
                             name="metaTagDescription"
                             defaultValue={product?.metaTagDescription}
@@ -62,7 +66,8 @@ const Aditionalinfo = ({
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">Descripción De Metatag:</Typography> {product?.metaTagDescription}
+                        <Typography variant="h4">{intl.formatMessage({ id: 'metatag_description' })}:</Typography>{' '}
+                        {product?.metaTagDescription}
                     </Typography>
                 )}
             </Grid>
