@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import axios from 'utils/axios';
+import { axiosServicesHC as axios } from 'utils/axios';
 
 import { STYRK_API_HEALTH_CONTENT } from 'config';
 
