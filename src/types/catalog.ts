@@ -124,3 +124,9 @@ export type SpecificationValueDataType = {
     specificationValueId: number;
     vtexValueId: number;
 };
+
+export type AdditionalFieldType = {
+    field: string;
+    value: string;
+    id: number;
+};

@@ -167,7 +167,7 @@ const AwsCognitoLogin = ({ loginProp }: { loginProp?: number }, { ...others }) =
                             <FormHelperText error>{errors.submit}</FormHelperText>
                         </Box>
                     )}
-                    <Box sx={{ mt: 2 }}>
+                    <Box sx={{ mt: 2, mb: 2 }}>
                         <AnimateButton>
                             <Button color="secondary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
                                 Sign In

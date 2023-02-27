@@ -67,6 +67,7 @@ const ProductDetails = () => {
 
     // info new Brands and Categories
     const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
 
     // flags brands and categories
