@@ -432,10 +432,7 @@ export const downloadMassiveFile = createAsyncThunk(
     `${slice.name}/uploadMassiveFile`,
     async ({ idMerchant, user }: { idMerchant?: number; user: string }) => {
         try {
-            // const bearerToken = localStorage.getItem("loo")
-
             const token = localStorage.getItem('looluToken');
-            // const token = localStorage.getItem('serviceToken');
 
             const response = await axios.post(
                 `/merchant/${idMerchant ?? 1}/user/${user}/contentRequest`,
@@ -454,3 +451,73 @@ export const downloadMassiveFile = createAsyncThunk(
         }
     }
 );
+
+export const getAdditionalFields = createAsyncThunk(
+    `${slice.name}/getAdditionalFields`,
+    async ({ idMerchant, productId }: { idMerchant: number; productId: number | string }) => {
+        try {
+            const response = await axios.get(`styrk/api/product/detail/productSkus`, {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant,
+                    idProd: productId
+                }
+            });
+            return response.data;
+        } catch (e: any) {
+            return e.response;
+        }
+    }
+);
+
+type createAdditionalFieldProps = {
+    data: {
+        merchantId: number;
+        productId: number;
+        keyName: string;
+        value: string;
+    };
+};
+
+export const createAdditionalField = createAsyncThunk(`${slice.name}/editAdditionalField`, async ({ data }: createAdditionalFieldProps) => {
+    try {
+        const response = await axios.post(`styrk/api/additionalFields/product`, data, {
+            baseURL: STYRK_API
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
+});
+
+type editAdditionalFieldProps = {
+    data: {
+        id: number;
+        merchantId: number;
+        productId: number;
+        keyName: string;
+        value: string;
+    };
+};
+
+export const editAdditionalField = createAsyncThunk(`${slice.name}/createAdditionalField`, async ({ data }: editAdditionalFieldProps) => {
+    try {
+        const response = await axios.put(`styrk/api/additionalFields/product`, data, {
+            baseURL: STYRK_API
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
+});
+
+export const deleteAdditionalField = createAsyncThunk(`${slice.name}/deleteAdditionalField`, async (fieldId: number) => {
+    try {
+        const response = await axios.delete(`styrk/api/additionalFields/product/${fieldId}`, {
+            baseURL: STYRK_API
+        });
+        return response.data;
+    } catch (e: any) {
+        return e.response;
+    }
+});

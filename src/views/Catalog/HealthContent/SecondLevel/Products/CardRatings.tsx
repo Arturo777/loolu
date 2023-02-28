@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { Card, Chip, Collapse, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography, Button } from '@mui/material';
+import { Card, Collapse, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography, Button } from '@mui/material';
 import { ResumenProducts } from 'types/health-content';
 
 const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenProducts; sumaValores: any; setTypeScore: any }) => {

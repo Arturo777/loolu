@@ -285,5 +285,9 @@
     "review": "Review",
     "reviews": "Reviews",
     "related_products": "Related products",
-    "short_description": "Short description"
+    "short_description": "Short description",
+    "additional_fields": "Additional Fields",
+    "add_field": "Add field",
+    "edit_field": "Edit field",
+    "update": "Update"
 }
