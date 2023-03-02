@@ -96,8 +96,6 @@ const ProductsList = () => {
         // console.log(queryObject);
     }, [location.search, dispatch]);
 
-    // useEffect(() => {}, []);
-
     useEffect(() => {
         // hide left drawer when email app opens
         // dispatch(openDrawer(false));

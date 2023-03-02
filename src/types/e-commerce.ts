@@ -71,6 +71,9 @@ export type Categories = {
 export type TradePolicies = {
     TradePolicies: Policy;
 };
+export type ApprovalStatus = {
+    StepApproval: Status;
+};
 export type Trade = {
     idPolicy: number;
     isSelected: boolean;
@@ -82,6 +85,12 @@ export type Policy = {
     idMerchant: number;
     idPolicy: number;
     name: string;
+};
+
+export type Status = {
+    estatus: string;
+    idEstatus: number;
+    isSaveButtonActive: boolean;
 };
 // checkout-cart billing address
 export type Address = {
@@ -155,6 +164,7 @@ export interface ProductStateProps {
     skus: Skus[];
     categories: Categories[];
     tradePolicies: TradePolicies[];
+    approvalStatus: ApprovalStatus[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;

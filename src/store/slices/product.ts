@@ -22,6 +22,7 @@ const initialState: DefaultRootStateProps['product'] = {
     skus: [],
     categories: [],
     tradePolicies: [],
+    approvalStatus: [],
     reviews: [],
     addresses: [],
     loadingProducts: true
@@ -134,6 +135,15 @@ const slice = createSlice({
             })
             .addCase(saveProduct.fulfilled, (state, action) => {
                 state.loadingProducts = false;
+            });
+
+        builder
+            .addCase(approvalStatus.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(approvalStatus.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.approvalStatus = action.payload.response;
             });
     }
     // extraReducers(builder) {}
@@ -286,6 +296,17 @@ export function getTradePolicies() {
         }
     };
 }
+
+export const approvalStatus = createAsyncThunk(`${slice.name}/lifecycleapproval`, async () => {
+    const response = await axios.get('/styrk/api/product/lifecycleapproval', {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: 1
+        }
+    });
+    return response.data;
+});
+
 export function getRelatedProducts(id: string | undefined) {
     return async () => {
         try {
