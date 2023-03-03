@@ -43,8 +43,6 @@ const ProductImages = ({
     const [modal, setModal] = useState(false);
     const images = imgprod[0]?.images?.map((item: any) => ({ source: item?.ImageURL })) || product?.skus[0]?.images?.map((item: any) => ({ source: item?.ImageURL }));
 
-    console.log("arrayIMGS", images);
-
     const settings = {
         dots: false,
         centerMode: true,

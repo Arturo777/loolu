@@ -70,8 +70,8 @@ const ApprovalCard = () => {
                                 <Grid item xs={12}>
                                     <Grid container spacing={2}>
                                         <Grid item>
-                                            <Avatar color="success" size="sm" sx={{ top: 10 }}>
-                                                <ThumbUpAltOutlinedIcon />
+                                            <Avatar color="primary" size="sm" sx={{ top: 10 }}>
+                                                <QueryBuilderOutlinedIcon />
                                             </Avatar>
                                         </Grid>
                                         <Grid item xs zeroMinWidth>

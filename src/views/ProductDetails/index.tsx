@@ -284,10 +284,16 @@ const ProductDetails = () => {
                 <>
                     <Grid item xs={12}>
                         <Box sx={{ display: 'flex' }}>
-                            <Main>
+                            <Main
+                                sx={
+                                    !open
+                                        ? { marginRight: '-320px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                        : { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                }
+                            >
                                 {originalData && originalData?.productID?.toString() === id && (
                                     <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                        <Grid item xs={open ? 5 : 6}>
+                                        <Grid item xs={12} md={6}>
                                             <ProductImages
                                                 skus={skus}
                                                 valueSku={valueSku}
@@ -296,7 +302,7 @@ const ProductDetails = () => {
                                                 active={active}
                                             />
                                         </Grid>
-                                        <Grid item xs={open ? 5 : 6}>
+                                        <Grid item xs={12} md={6}>
                                             <ProductInfo
                                                 product={originalData}
                                                 setValueSku={setValueSku}
@@ -431,10 +437,10 @@ const ProductDetails = () => {
                         </Box>
                     </Grid>
 
-                    <Grid item xs={12} lg={10} sx={{ mt: 3 }}>
+                    <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
                     </Grid>
-                    <Grid item xs={11} lg={10}>
+                    <Grid item xs={11}>
                         <RelatedProducts id={id} />
                     </Grid>
                 </>
