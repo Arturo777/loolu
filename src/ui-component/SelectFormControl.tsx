@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { SxProps } from '@mui/system';
 
 interface Option {
     value: string;
@@ -11,10 +12,11 @@ interface SelectFormControlProps {
     value: string;
     onChange: any;
     options: Option[];
+    sx?: SxProps;
 }
 
-const SelectFormControl: React.FC<SelectFormControlProps> = ({ label, value, onChange, options }) => (
-    <FormControl>
+const SelectFormControl: React.FC<SelectFormControlProps> = ({ label, value, onChange, options, sx }) => (
+    <FormControl sx={sx}>
         <InputLabel>{label}</InputLabel>
         <Select value={value} onChange={onChange}>
             {options.map((option) => (
