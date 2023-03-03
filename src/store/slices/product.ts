@@ -143,7 +143,7 @@ const slice = createSlice({
             })
             .addCase(approvalStatus.fulfilled, (state, action) => {
                 state.loadingProducts = false;
-                state.approvalStatus = action.payload.response;
+                state.approvalStatus = action.payload.response.skuApprovalStatus;
             });
     }
     // extraReducers(builder) {}
