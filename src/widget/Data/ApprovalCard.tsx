@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
@@ -18,27 +18,32 @@ import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
 // services
 import { approvalStatus } from 'store/slices/product';
 import { useDispatch, useSelector } from 'store';
-import { ApprovalStatus } from 'types/e-commerce';
+import { ApprovalStatus, Products, Skus } from 'types/e-commerce';
 
 // ==============================|| DATA WIDGET - TASKS CARD ||============================== //
 
-const ApprovalCard = () => {
+const ApprovalCard = ({ product, valueSku }: { product: Products | null; valueSku: string | null }) => {
     const [approval, setApproval] = useState<ApprovalStatus[] | null>(null);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
 
     const approvalState = useSelector((state) => state.product);
 
+    const statusSku = useMemo(() => {
+        const skucircle: any = product?.skus?.filter((status: Skus) => status.skuID === valueSku);
+        return skucircle[0].approvalStatus;
+    }, [product?.skus, valueSku]);
+
     useEffect(() => {
         dispatch(approvalStatus());
         setLoading(true);
     }, [dispatch]);
+    console.log(statusSku);
 
     useEffect(() => {
         setApproval(approvalState.approvalStatus);
         setLoading(false);
     }, [approvalState.approvalStatus]);
-    console.log(approval);
     return (
         <MainCard title="Approval Status" content={false}>
             <CardContent>
@@ -70,9 +75,15 @@ const ApprovalCard = () => {
                                 <Grid item xs={12}>
                                     <Grid container spacing={2}>
                                         <Grid item>
-                                            <Avatar color="primary" size="sm" sx={{ top: 10 }}>
-                                                <QueryBuilderOutlinedIcon />
-                                            </Avatar>
+                                            {estatus === statusSku.currentStatus.estatus ? (
+                                                <Avatar color="success" size="sm" sx={{ top: 10 }}>
+                                                    <ThumbUpAltOutlinedIcon />
+                                                </Avatar>
+                                            ) : (
+                                                <Avatar color="primary" size="sm" sx={{ top: 10 }}>
+                                                    <QueryBuilderOutlinedIcon />
+                                                </Avatar>
+                                            )}
                                         </Grid>
                                         <Grid item xs zeroMinWidth>
                                             <Grid container spacing={0}>

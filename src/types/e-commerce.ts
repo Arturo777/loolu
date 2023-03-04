@@ -31,6 +31,7 @@ export type Products = {
     brandId: number;
     productID: string | number;
     sku: any;
+    skus: Skus[];
 };
 
 export type Skus = {
@@ -57,6 +58,7 @@ export type Skus = {
     brandName?: string;
     brandId: number;
     productID: string | number;
+    approvalStatus: ApprovalStatus;
 };
 export type Categories = {
     id: string | number;

@@ -8,17 +8,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 // project imports
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import ProductFilter from '../Products/ProductFilter';
 import ProductImages from './ProductImages';
 import ProductInfo from './ProductInfo';
 import ProductDescription from './ProductDescription';
 import ProductReview from './ProductReview';
 import RelatedProducts from './RelatedProducts';
-import MainCard from 'ui-component/cards/MainCard';
 import Chip from 'ui-component/extended/Chip';
 import useConfig from 'hooks/useConfig';
 import { TabsProps } from 'types';
-import { Products, ProductsFilter, Skus } from 'types/e-commerce';
+import { Products, Skus } from 'types/e-commerce';
 import { appDrawerWidth, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
@@ -105,16 +103,6 @@ const ProductDetails = () => {
     const { product, skus, tradePolicies } = useSelector((state) => state.product);
     const { brands } = useSelector((state) => state.catalogue);
 
-    const initialState: ProductsFilter = {
-        search: '',
-        sort: 'low',
-        gender: [],
-        categories: ['all'],
-        colors: [],
-        price: '',
-        rating: 0
-    };
-    const [filter, setFilter] = useState(initialState);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -138,9 +126,11 @@ const ProductDetails = () => {
             setBrandsInfo(brands);
         }
     }, [brands]);
+
     useEffect(() => {
-        setOpen(!matchDownLG);
-    }, [matchDownLG]);
+        setOpen(false);
+    }, []);
+
     useEffect(() => {
         if (product !== null) {
             setOriginalData(product);
@@ -151,52 +141,7 @@ const ProductDetails = () => {
             setOriginalData(product);
         }
     }, [product, active]);
-    const handelFilter = (type: string, params: string, rating?: number) => {
-        setLoading(true);
-        switch (type) {
-            case 'gender':
-                if (filter.gender.some((item) => item === params)) {
-                    setFilter({ ...filter, gender: filter.gender.filter((item) => item !== params) });
-                } else {
-                    setFilter({ ...filter, gender: [...filter.gender, params] });
-                }
-                break;
-            case 'categories':
-                if (filter.categories.some((item) => item === params)) {
-                    setFilter({ ...filter, categories: filter.categories.filter((item) => item !== params) });
-                } else if (filter.categories.some((item) => item === 'all') || params === 'all') {
-                    setFilter({ ...filter, categories: [params] });
-                } else {
-                    setFilter({ ...filter, categories: [...filter.categories, params] });
-                }
 
-                break;
-            case 'colors':
-                if (filter.colors.some((item) => item === params)) {
-                    setFilter({ ...filter, colors: filter.colors.filter((item) => item !== params) });
-                } else {
-                    setFilter({ ...filter, colors: [...filter.colors, params] });
-                }
-                break;
-            case 'price':
-                setFilter({ ...filter, price: params });
-                break;
-            case 'search':
-                setFilter({ ...filter, search: params });
-                break;
-            case 'sort':
-                setFilter({ ...filter, sort: params });
-                break;
-            case 'rating':
-                setFilter({ ...filter, rating: rating! });
-                break;
-            case 'reset':
-                setFilter(initialState);
-                break;
-            default:
-            // no options
-        }
-    };
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);
     };
@@ -400,7 +345,7 @@ const ProductDetails = () => {
                                                 />
                                             </TabPanel>
                                             <TabPanel value={value} index={1}>
-                                                <ProductReview product={originalData} />
+                                                <ProductReview product={product} />
                                             </TabPanel>
                                         </Grid>
                                     </Grid>
@@ -430,7 +375,7 @@ const ProductDetails = () => {
                             >
                                 {open && (
                                     <PerfectScrollbar component="div">
-                                        <ApprovalCard />
+                                        <ApprovalCard product={product} valueSku={valueSku} />
                                     </PerfectScrollbar>
                                 )}
                             </Drawer>
