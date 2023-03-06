@@ -138,6 +138,10 @@ export default function MultiMerchant({
     };
 
     const filteredElementsToRender = useMemo<MerchantChipType[]>(() => {
+        if (justOne) {
+            return [...merchantsList.filter((item) => item.isSelected)];
+        }
+
         let elements: MerchantChipType[] = [];
 
         // add father as first element
@@ -154,7 +158,7 @@ export default function MultiMerchant({
         });
 
         return elements;
-    }, [merchantsList, maxShow]);
+    }, [justOne, merchantsList, maxShow]);
 
     const renderMore = useMemo<boolean>(() => merchantsList.length > maxShow, [maxShow, merchantsList.length]);
 
@@ -200,7 +204,7 @@ export default function MultiMerchant({
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                {!justOne && (
+                {!justOne && !readOnly && (
                     <MenuItem onClick={selectAll} selected={isAllSelected}>
                         <CheckCircleIcon color="success" />
                         <Typography variant="body1" sx={{ ml: 1, fontSize: 17 }}>
@@ -218,8 +222,9 @@ export default function MultiMerchant({
                             toggleItem(merchant);
                         }}
                         selected={merchant.isSelected}
+                        sx={{ cursor: readOnly ? 'initial' : 'pointer' }}
                     >
-                        <MerchantAvatar feedback={false} merchant={merchant} />
+                        <MerchantAvatar readOnly feedback={false} merchant={merchant} />
                         <Typography variant="body1" sx={{ ml: 1, fontSize: 17 }}>
                             {merchant.name}
                         </Typography>
@@ -229,6 +234,14 @@ export default function MultiMerchant({
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [anchorMenu, isAllSelected, merchantsList, open, renderMore]);
+
+    const moreText = useMemo(() => {
+        if (justOne) {
+            return merchantsList.length - 1;
+        }
+
+        return merchantsList.length - maxShow;
+    }, [justOne, maxShow, merchantsList.length]);
 
     return (
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
@@ -247,6 +260,7 @@ export default function MultiMerchant({
                 <>
                     {filteredElementsToRender.map((merchant) => (
                         <MerchantAvatar
+                            readOnly={readOnly}
                             key={`merchant-avatar-item-${merchant.merchantId}`}
                             merchant={merchant}
                             handleClick={() => toggleItem(merchant)}
@@ -259,15 +273,17 @@ export default function MultiMerchant({
 
             {renderMore && (
                 <Avatar
+                    onClick={handleOpenMenu}
                     sx={{
                         ...avatarCommonProps,
                         bgcolor: '#d3d3d3',
                         color: theme.palette.getContrastText('#d3d3d3'),
                         borderColor: '#d3d3d3',
-                        mr: 0
+                        mr: 0,
+                        cursor: 'pointer'
                     }}
                 >
-                    {merchantsList.length - maxShow}+
+                    {moreText}+
                 </Avatar>
             )}
 
@@ -285,10 +301,12 @@ export default function MultiMerchant({
 const MerchantAvatar = ({
     merchant,
     handleClick = () => {},
-    feedback = true
+    feedback = true,
+    readOnly = false
 }: {
     feedback?: boolean;
     merchant: MerchantChipType;
+    readOnly?: boolean;
     handleClick?: () => void;
 }) => {
     const theme = useTheme();
@@ -300,7 +318,7 @@ const MerchantAvatar = ({
     const borderColor = merchant.isSelected && feedback ? bColor : 'transparent';
 
     return (
-        <Box onClick={handleClick} sx={{ cursor: 'pointer', position: 'relative', zIndex: 2 }}>
+        <Box onClick={handleClick} sx={{ cursor: readOnly ? 'initial' : 'pointer', position: 'relative', zIndex: 2 }}>
             <Fade in={merchant.isSelected && feedback}>
                 <Box
                     component={CheckCircleIcon}
@@ -314,7 +332,7 @@ const MerchantAvatar = ({
                     }}
                 />
             </Fade>
-            <Avatar sx={{ ...sx, borderColor }}>{children}</Avatar>
+            <Avatar sx={{ ...sx, borderColor, cursor: readOnly ? 'initial' : 'pointer' }}>{children}</Avatar>
         </Box>
     );
 };
