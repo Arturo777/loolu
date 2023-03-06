@@ -16,9 +16,9 @@ interface SelectFormControlProps {
 }
 
 const SelectFormControl: React.FC<SelectFormControlProps> = ({ label, value, onChange, options, sx }) => (
-    <FormControl sx={sx}>
+    <FormControl sx={sx} size="small">
         <InputLabel>{label}</InputLabel>
-        <Select value={value} onChange={onChange}>
+        <Select value={value} onChange={onChange} label={label}>
             {options.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                     {option.label}
