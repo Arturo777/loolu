@@ -116,7 +116,7 @@ const ApprovalCard = ({ product, valueSku }: { product: Products | null; valueSk
                         </>
                     )}
 
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                         <Grid container spacing={2}>
                             <Grid item>
                                 <Avatar color="primary" size="sm" sx={{ top: 10 }}>
@@ -214,7 +214,7 @@ const ApprovalCard = ({ product, valueSku }: { product: Products | null; valueSk
                                 </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </CardContent>
             <Divider />
