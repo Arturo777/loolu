@@ -25,6 +25,7 @@ type MultiMerchantProps = {
     onChange?: (selectedMerchats: MerchantType[]) => void;
     readOnly?: boolean;
     maxShow?: number;
+    justOne?: boolean;
 };
 
 export default function MultiMerchant({
@@ -33,7 +34,8 @@ export default function MultiMerchant({
     merchants,
     onChange = () => {},
     readOnly = false,
-    maxShow = 5
+    maxShow = 5,
+    justOne = false
 }: MultiMerchantProps) {
     // hooks
     const theme = useTheme();
@@ -77,6 +79,19 @@ export default function MultiMerchant({
     // toggle buttons (external)
     const toggleItem = (merchant: MerchantChipType) => {
         if (readOnly) return;
+
+        // only select one
+        if (justOne) {
+            setMerchantsList((currentList) => [
+                ...currentList.map((item) => {
+                    if (item.merchantId === merchant.merchantId) {
+                        return { ...item, isSelected: true };
+                    }
+                    return { ...item, isSelected: false };
+                })
+            ]);
+            return;
+        }
 
         const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
 
@@ -132,7 +147,6 @@ export default function MultiMerchant({
             elements = [...elements, fatherElement];
         }
 
-        // add elements
         merchantsList.forEach((item) => {
             if (!item.isFather && elements.length < maxShow) {
                 elements = [...elements, item];
@@ -186,14 +200,16 @@ export default function MultiMerchant({
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem onClick={selectAll} selected={isAllSelected}>
-                    <CheckCircleIcon color="success" />
-                    <Typography variant="body1" sx={{ ml: 1, fontSize: 17 }}>
-                        {intl.formatMessage({
-                            id: 'select_all'
-                        })}
-                    </Typography>
-                </MenuItem>
+                {!justOne && (
+                    <MenuItem onClick={selectAll} selected={isAllSelected}>
+                        <CheckCircleIcon color="success" />
+                        <Typography variant="body1" sx={{ ml: 1, fontSize: 17 }}>
+                            {intl.formatMessage({
+                                id: 'select_all'
+                            })}
+                        </Typography>
+                    </MenuItem>
+                )}
 
                 {merchantsList.map((merchant) => (
                     <MenuItem

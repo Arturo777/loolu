@@ -208,9 +208,10 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
                     })}
                 </Typography>
                 <MultiMerchant
+                    // justOne
                     merchants={allMerchants}
                     onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
-                    maxShow={0}
+                    maxShow={5}
                     defaultSelected={[]}
                     // defaultSelected={[
                     //     {
