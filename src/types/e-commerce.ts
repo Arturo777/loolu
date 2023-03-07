@@ -76,6 +76,9 @@ export type TradePolicies = {
 export type ApprovalStatus = {
     StepApproval: Status;
 };
+export type RejectedStatus = {
+    Rejected: Rejected;
+};
 export type Trade = {
     idPolicy: number;
     isSelected: boolean;
@@ -93,6 +96,11 @@ export type Status = {
     estatus: string;
     idEstatus: number;
     isSaveButtonActive: boolean;
+};
+
+export type Rejected = {
+    rejectId: number;
+    rejectName: string;
 };
 // checkout-cart billing address
 export type Address = {
@@ -167,6 +175,7 @@ export interface ProductStateProps {
     categories: Categories[];
     tradePolicies: TradePolicies[];
     approvalStatus: ApprovalStatus[];
+    getRejectedStatus: RejectedStatus[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;

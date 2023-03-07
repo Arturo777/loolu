@@ -27,6 +27,7 @@ import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 import { useIntl } from 'react-intl';
 import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
 import ApprovalCard from 'widget/Data/ApprovalCard';
+import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -83,6 +84,7 @@ const ProductDetails = () => {
     const [skuInfo, setSkuInfo] = useState<Skus>();
     const [valueSku, setValueSku] = useState('');
     const [open, setOpen] = useState(false);
+    const [openTwo, setOpenTwo] = useState(false);
     const [loading, setLoading] = useState(true);
     // actice mode edit product
     const [active, setActive] = useState(false);
@@ -144,6 +146,11 @@ const ProductDetails = () => {
 
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);
+        setOpenTwo(false);
+    };
+    const handleDrawerOpenHistorial = () => {
+        setOpenTwo((prevState) => !prevState);
+        setOpen(false);
     };
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -231,9 +238,9 @@ const ProductDetails = () => {
                         <Box sx={{ display: 'flex' }}>
                             <Main
                                 sx={
-                                    !open
-                                        ? { marginRight: '-320px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
-                                        : { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                    open || openTwo
+                                        ? { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                        : { marginRight: '-320px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
                                 }
                             >
                                 {originalData && originalData?.productID?.toString() === id && (
@@ -351,34 +358,66 @@ const ProductDetails = () => {
                                     </Grid>
                                 )}
                             </Main>
-                            <Drawer
-                                sx={{
-                                    ml: open ? 3 : 0,
-                                    height: matchDownLG ? '100vh' : 'auto',
-                                    flexShrink: 0,
-                                    zIndex: { xs: 1200, lg: open ? 0 : -1 },
-                                    overflowX: 'hidden',
-                                    width: appDrawerWidth,
-                                    '& .MuiDrawer-paper': {
-                                        height: 'auto',
+                            {open ? (
+                                <Drawer
+                                    sx={{
+                                        ml: open ? 3 : 0,
+                                        height: matchDownLG ? '100vh' : 'auto',
+                                        flexShrink: 0,
+                                        zIndex: { xs: 1200, lg: open ? 0 : -1 },
+                                        overflowX: 'hidden',
                                         width: appDrawerWidth,
-                                        position: matchDownLG ? 'fixed' : 'relative',
-                                        border: 'none',
-                                        borderRadius: matchDownLG ? 0 : `${borderRadius}px`
-                                    }
-                                }}
-                                variant={matchDownLG ? 'temporary' : 'persistent'}
-                                anchor="right"
-                                open={open}
-                                ModalProps={{ keepMounted: true }}
-                                onClose={handleDrawerOpen}
-                            >
-                                {open && (
-                                    <PerfectScrollbar component="div">
-                                        <ApprovalCard product={product} valueSku={valueSku} />
-                                    </PerfectScrollbar>
-                                )}
-                            </Drawer>
+                                        '& .MuiDrawer-paper': {
+                                            height: 'auto',
+                                            width: appDrawerWidth,
+                                            position: matchDownLG ? 'fixed' : 'relative',
+                                            border: 'none',
+                                            borderRadius: matchDownLG ? 0 : `${borderRadius}px`
+                                        }
+                                    }}
+                                    variant={matchDownLG ? 'temporary' : 'persistent'}
+                                    anchor="right"
+                                    open={open}
+                                    ModalProps={{ keepMounted: true }}
+                                    onClose={handleDrawerOpen}
+                                >
+                                    {open && (
+                                        <PerfectScrollbar component="div">
+                                            <ApprovalCard product={product} valueSku={valueSku} />
+                                        </PerfectScrollbar>
+                                    )}
+                                </Drawer>
+                            ) : (
+                                <Drawer
+                                    sx={{
+                                        ml: openTwo ? 3 : 0,
+                                        height: matchDownLG ? '100vh' : 'auto',
+                                        flexShrink: 0,
+                                        zIndex: { xs: 1200, lg: openTwo ? 0 : -1 },
+                                        overflowX: 'hidden',
+                                        width: appDrawerWidth,
+                                        '& .MuiDrawer-paper': {
+                                            height: 'auto',
+                                            width: appDrawerWidth,
+                                            position: matchDownLG ? 'fixed' : 'relative',
+                                            border: 'none',
+                                            borderRadius: matchDownLG ? 0 : `${borderRadius}px`
+                                        }
+                                    }}
+                                    variant={matchDownLG ? 'temporary' : 'persistent'}
+                                    anchor="right"
+                                    open={openTwo}
+                                    ModalProps={{ keepMounted: true }}
+                                    onClose={handleDrawerOpenHistorial}
+                                >
+                                    {openTwo && (
+                                        <PerfectScrollbar component="div">
+                                            {/* <ApprovalCard product={product} valueSku={valueSku} /> */}
+                                            <Button>Hola</Button>
+                                        </PerfectScrollbar>
+                                    )}
+                                </Drawer>
+                            )}
                         </Box>
                     </Grid>
 
@@ -391,6 +430,7 @@ const ProductDetails = () => {
                 </>
             )}
             <FloatingApprovalButton handleDrawerOpen={handleDrawerOpen} />
+            <FloatingHistorialApproval handleDrawerOpenHistorial={handleDrawerOpenHistorial} />
         </Grid>
     );
 };
