@@ -26,6 +26,7 @@ type MultiMerchantProps = {
     readOnly?: boolean;
     maxShow?: number;
     justOne?: boolean;
+    size?: 'small' | 'medium' | 'large';
 };
 
 export default function MultiMerchant({
@@ -35,12 +36,12 @@ export default function MultiMerchant({
     onChange = () => {},
     readOnly = false,
     maxShow = 5,
-    justOne = false
+    justOne = false,
+    size = 'large'
 }: MultiMerchantProps) {
     // hooks
     const theme = useTheme();
     const intl = useIntl();
-
     const [merchantsList, setMerchantsList] = useState<MerchantChipType[]>([]);
 
     const isAllSelected = useMemo(() => merchantsList.every((item) => item.isSelected), [merchantsList]);
@@ -243,7 +244,7 @@ export default function MultiMerchant({
                         selected={merchant.isSelected}
                         sx={{ cursor: readOnly ? 'initial' : 'pointer' }}
                     >
-                        <MerchantAvatar readOnly feedback={false} merchant={merchant} />
+                        <MerchantAvatar readOnly feedback={false} merchant={merchant} size="medium" />
                         <Typography variant="body1" sx={{ ml: 1, fontSize: 17 }}>
                             {merchant.name}
                         </Typography>
@@ -275,6 +276,7 @@ export default function MultiMerchant({
                             key={`merchant-avatar-item-${merchant.merchantId}`}
                             merchant={merchant}
                             handleClick={() => toggleItem(merchant)}
+                            size={size}
                         />
                     ))}
 
@@ -287,6 +289,7 @@ export default function MultiMerchant({
                     onClick={handleOpenMenu}
                     sx={{
                         ...avatarCommonProps,
+                        ...getSizeProps(size),
                         bgcolor: '#d3d3d3',
                         color: theme.palette.getContrastText('#d3d3d3'),
                         borderColor: '#d3d3d3',
@@ -313,20 +316,28 @@ const MerchantAvatar = ({
     merchant,
     handleClick = () => {},
     feedback = true,
-    readOnly = false
+    readOnly = false,
+    size
 }: {
     feedback?: boolean;
     merchant: MerchantChipType;
     readOnly?: boolean;
+    size: 'small' | 'medium' | 'large';
     handleClick?: () => void;
 }) => {
     const theme = useTheme();
 
-    const { sx, children } = useStringAvatarProps({ merchant });
+    const { sx, children } = useStringAvatarProps({ merchant, size });
 
     const bColor = theme.palette.mode === 'dark' ? theme.palette.success.main : '#008724';
 
     const borderColor = merchant.isSelected && feedback ? bColor : 'transparent';
+
+    const font = {
+        small: 14,
+        medium: 16,
+        large: 17
+    };
 
     return (
         <Box onClick={handleClick} sx={{ cursor: readOnly ? 'initial' : 'pointer', position: 'relative', zIndex: 2 }}>
@@ -337,19 +348,21 @@ const MerchantAvatar = ({
                         position: 'absolute',
                         right: 2,
                         bottom: 0,
-                        fontSize: 17,
+                        fontSize: font[size],
                         color: bColor,
                         zIndex: 1
                     }}
                 />
             </Fade>
-            <Avatar sx={{ ...sx, borderColor, cursor: readOnly ? 'initial' : 'pointer' }}>{children}</Avatar>
+            <Avatar sx={{ ...sx, borderColor, cursor: readOnly ? 'initial' : 'pointer' }} title={merchant.name}>
+                {children}
+            </Avatar>
         </Box>
     );
 };
 
 //  borderColor: string; color: string
-const useStringAvatarProps = ({ merchant }: { merchant: MerchantChipType }) => {
+const useStringAvatarProps = ({ merchant, size }: { merchant: MerchantChipType; size: 'small' | 'medium' | 'large' }) => {
     const theme = useTheme();
 
     const bgcolor = stringToColor(merchant.name);
@@ -363,7 +376,8 @@ const useStringAvatarProps = ({ merchant }: { merchant: MerchantChipType }) => {
         sx: {
             bgcolor,
             color: theme.palette.getContrastText(bgcolor),
-            ...avatarCommonProps
+            ...avatarCommonProps,
+            ...getSizeProps(size)
         },
         children: shortName.toUpperCase()
     };
@@ -385,10 +399,26 @@ const customScrollBar = {
 const avatarCommonProps = {
     mr: 1,
     border: '2px solid #fff',
-    width: 40,
-    height: 40,
-    transitions: 'all 420ms linear',
-    fontSize: 16
+    transitions: 'all 420ms linear'
+    // width: 40,
+    // height: 40,
+    // fontSize: 16
+};
+
+const getSizeProps = (size: 'small' | 'medium' | 'large') => {
+    const sizes = {
+        small: 28,
+        medium: 30,
+        large: 35
+    };
+
+    const font = {
+        small: 13,
+        medium: 15,
+        large: 16
+    };
+
+    return { width: sizes[size], height: sizes[size], fontSize: font[size] };
 };
 
 //  npx browserslist@latest --update-db
