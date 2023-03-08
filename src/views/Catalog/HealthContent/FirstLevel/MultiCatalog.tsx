@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Box, Button, Card, CardContent, CircularProgress, Fade, Grid, Stack, Tab, Tabs, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Card, CardContent, CircularProgress, Fade, Grid, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
@@ -19,34 +19,10 @@ import { options } from 'widget/Chart/revenue-chart';
 import { getFirstLevel } from 'store/slices/healthContent';
 import { useDispatch, useSelector } from 'store';
 import TableUpdates from './TableUpdates';
-import MultiCatalog from './MultiCatalog';
 
-import MultiMerchant from 'ui-component/MultiMerchantButton';
-import { MerchantType } from 'types/security';
-import { TabsProps } from '../../../../types/index';
-
-function TabPanel({ children, value, index, ...other }: TabsProps) {
-    return (
-        <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
-            {value === index && <>{children}</>}
-        </div>
-    );
-}
-
-function a11yProps(index: number) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`
-    };
-}
-
-const FirstLevel = () => {
+const MultiCatalog = () => {
     const [firstLev, setFirstLevel] = useState<any>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
     const theme = useTheme();
     const matchDownXs = useMediaQuery(theme.breakpoints.down('sm'));
     const dispatch = useDispatch();
@@ -144,43 +120,9 @@ const FirstLevel = () => {
                 </Fade>
             ) : (
                 <>
-                    {firstLev && ( 
-                    <>
-                        <Tabs
-                        value={value}
-                        variant="scrollable"
-                        onChange={handleChange}
-                        textColor="secondary"
-                        indicatorColor="secondary"
-                        sx={{
-                            mb: 3,
-                            '& a': {
-                                minHeight: 'auto',
-                                minWidth: 10,
-                                py: 1.5,
-                                px: 1,
-                                mr: 2.2,
-                                color: theme.palette.grey[600],
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            },
-                            '& a.Mui-selected': {
-                                color: theme.palette.primary.main
-                            },
-                            '& a > svg': {
-                                mb: '0px !important',
-                                mr: 1.1
-                            }
-                        }}
-                    >
-                        <Tab component={Link} to="#" label="General" {...a11yProps(0)} />
-                        <Tab component={Link} to="#" label="Multi" {...a11yProps(1)} />
-                    </Tabs>
-                    <TabPanel value={value} index={0}>
-                    <Grid container spacing={2}>
-                            <Grid item xs={6}>
+                    {firstLev && (
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
                                 <SideIconCard
                                     iconPrimary={AccountCircleTwoTone}
                                     primary="2,672"
@@ -197,7 +139,7 @@ const FirstLevel = () => {
                                     metrics={firstLev}
                                 />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={12}>
                                 <MainCard
                                     content={false}
                                     sx={{
@@ -292,7 +234,7 @@ const FirstLevel = () => {
                                     </Grid>
                                 </MainCard>
                             </Grid>
-                            <Grid item xs={12}>
+                           {/*  <Grid item xs={12}>
                                 <Grid container alignItems="flex-start" justifyContent="space-between">
                                     <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between" spacing={2}>
                                         {firstLev?.metricRange?.map((metric: any) => (
@@ -363,49 +305,10 @@ const FirstLevel = () => {
                                         </Card>
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <MultiMerchant
-                            // justOne
-                            // readOnly
-                            merchants={allMerchants}
-                            onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
-                            maxShow={5}
-                            defaultSelected={[]}
-                            // defaultSelected={[
-                            //     {
-                            //         name: 'Vinneren',
-                            //         merchantId: 1,
-                            //         isFather: true
-                            //         // isSelected: true
-                            //     },
-                            //     {
-                            //         name: 'other',
-                            //         merchantId: 2,
-                            //         isFather: false
-                            //     },
-                            //     {
-                            //         name: 'other',
-                            //         merchantId: 5,
-                            //         isFather: false
-                            //     }
-                            // ]}
-                        />  
-                            <Grid container spacing={2} sx={{my: 2}}>
-                                <Grid item xs={12} sm={6} sx={blockSX}>
-                                    <MultiCatalog /> 
-                                </Grid>
-                                <Grid item xs={12} sm={6} sx={blockSX}>
-                                    <MultiCatalog /> 
-                                </Grid>
-                            </Grid>
-                    </TabPanel>
-                        
-                    </>
-                    )}
 
+                    )}
                 </>
             )
             }
@@ -414,39 +317,4 @@ const FirstLevel = () => {
     );
 };
 
-const allMerchants: MerchantType[] = [
-    {
-        name: 'Vinneren',
-        merchantId: 1,
-        isFather: true
-        // isSelected: true
-    },
-    {
-        name: 'Elektra',
-        merchantId: 2,
-        isFather: false
-    },
-    {
-        name: 'La Marina',
-        merchantId: 3,
-        isFather: false
-    },
-    {
-        name: 'Monstore',
-        merchantId: 4,
-        isFather: false
-    },
-    {
-        name: 'Plaza',
-        merchantId: 41,
-        isFather: false
-    },
-    {
-        name: 'HEB',
-        merchantId: 42,
-        isFather: false
-    }
-];
-
-
-export default FirstLevel;
+export default MultiCatalog;
