@@ -138,6 +138,10 @@ export default function MultiMerchant({
     };
 
     const filteredElementsToRender = useMemo<MerchantChipType[]>(() => {
+        if (justOne && merchantsList.length < maxShow) {
+            return [...merchantsList];
+        }
+
         if (justOne) {
             return [...merchantsList.filter((item) => item.isSelected)];
         }
@@ -160,7 +164,22 @@ export default function MultiMerchant({
         return elements;
     }, [justOne, merchantsList, maxShow]);
 
-    const renderMore = useMemo<boolean>(() => merchantsList.length > maxShow, [maxShow, merchantsList.length]);
+    const moreText = useMemo(() => {
+        if (justOne && merchantsList.length < maxShow) {
+            return 0;
+        }
+
+        if (justOne) {
+            return merchantsList.length - 1;
+        }
+
+        return merchantsList.length - maxShow;
+    }, [justOne, maxShow, merchantsList.length]);
+
+    const renderMore = useMemo<boolean>(
+        () => (merchantsList.length > maxShow || justOne) && moreText > 0,
+        [justOne, maxShow, merchantsList.length, moreText]
+    );
 
     const renderMenu = useMemo<React.ReactNode>(() => {
         if (!renderMore) return null;
@@ -234,14 +253,6 @@ export default function MultiMerchant({
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [anchorMenu, isAllSelected, merchantsList, open, renderMore]);
-
-    const moreText = useMemo(() => {
-        if (justOne) {
-            return merchantsList.length - 1;
-        }
-
-        return merchantsList.length - maxShow;
-    }, [justOne, maxShow, merchantsList.length]);
 
     return (
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
