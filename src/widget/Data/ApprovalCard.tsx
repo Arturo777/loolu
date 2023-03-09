@@ -1,5 +1,4 @@
 import { Key, useEffect, useMemo, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
 import {
@@ -31,8 +30,6 @@ import { gridSpacing } from 'store/constant';
 // assets
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
 import SendIcon from '@mui/icons-material/Send';
 
 // services
@@ -74,7 +71,6 @@ const ApprovalCard = ({ product, valueSku }: { product: Products | null; valueSk
         dispatch(getRejectedStatus());
         setLoading(true);
     }, [dispatch]);
-    console.log(rejected, 'catalogo');
 
     useEffect(() => {
         setApproval(approvalState.approvalStatus);
@@ -152,106 +148,6 @@ const ApprovalCard = ({ product, valueSku }: { product: Products | null; valueSk
                             </Fade>
                         </>
                     )}
-
-                    {/* <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                            <Grid item>
-                                <Avatar color="primary" size="sm" sx={{ top: 10 }}>
-                                    <QueryBuilderOutlinedIcon />
-                                </Avatar>
-                            </Grid>
-                            <Grid item xs zeroMinWidth>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="caption">
-                                            Sat, 5 Mar
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="body2">
-                                            Design mobile Application
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                            <Grid item>
-                                <Avatar color="error" size="sm" sx={{ top: 10 }}>
-                                    <BugReportOutlinedIcon />
-                                </Avatar>
-                            </Grid>
-                            <Grid item xs zeroMinWidth>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="caption">
-                                            Sun, 17 Feb
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="body2">
-                                            <Link component={RouterLink} to="#" underline="hover">
-                                                Jenny
-                                            </Link>{' '}
-                                            assign you a task{' '}
-                                            <Link component={RouterLink} to="#" underline="hover">
-                                                Mockup Design
-                                            </Link>
-                                            .
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                            <Grid item>
-                                <Avatar color="warning" size="sm" sx={{ top: 10 }}>
-                                    <ErrorOutlineOutlinedIcon />
-                                </Avatar>
-                            </Grid>
-                            <Grid item xs zeroMinWidth>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="caption">
-                                            Sat, 18 Mar
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="body2">
-                                            Design logo
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                            <Grid item>
-                                <Avatar color="success" size="sm" sx={{ top: 10 }}>
-                                    <ThumbUpAltOutlinedIcon />
-                                </Avatar>
-                            </Grid>
-                            <Grid item xs zeroMinWidth>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="caption">
-                                            Sat, 22 Mar
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography align="left" variant="body2">
-                                            Design mobile Application
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid> */}
                 </Grid>
             </CardContent>
             <Divider />

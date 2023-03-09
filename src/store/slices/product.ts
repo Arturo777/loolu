@@ -24,6 +24,7 @@ const initialState: DefaultRootStateProps['product'] = {
     tradePolicies: [],
     approvalStatus: [],
     getRejectedStatus: [],
+    approvalHistorial: [],
     reviews: [],
     addresses: [],
     loadingProducts: true
@@ -154,6 +155,14 @@ const slice = createSlice({
             .addCase(getRejectedStatus.fulfilled, (state, action) => {
                 state.loadingProducts = false;
                 state.getRejectedStatus = action.payload.response;
+            });
+        builder
+            .addCase(getApprovalHistorial.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(getApprovalHistorial.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.approvalHistorial = action.payload.response;
             });
     }
     // extraReducers(builder) {}
@@ -326,6 +335,21 @@ export const getRejectedStatus = createAsyncThunk(`${slice.name}/rejectedstatus`
     });
     return response.data;
 });
+
+export const getApprovalHistorial = createAsyncThunk(
+    `${slice.name}/approvalhistorial`,
+    async ({ valueSku, prodId }: { valueSku: string | null; prodId: string | number | undefined }) => {
+        const response = await axios.get('/styrk/api/product/approval', {
+            baseURL: STYRK_API,
+            params: {
+                skuId: valueSku,
+                prodId,
+                idMerchant: 1
+            }
+        });
+        return response.data;
+    }
+);
 
 export function getRelatedProducts(id: string | undefined) {
     return async () => {

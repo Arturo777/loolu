@@ -17,7 +17,7 @@ import Chip from 'ui-component/extended/Chip';
 import useConfig from 'hooks/useConfig';
 import { TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
-import { appDrawerWidth, gridSpacing } from 'store/constant';
+import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
 import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
 import { createBrand, getBrands } from 'store/slices/catalog';
@@ -28,6 +28,7 @@ import { useIntl } from 'react-intl';
 import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
+import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -395,10 +396,10 @@ const ProductDetails = () => {
                                         flexShrink: 0,
                                         zIndex: { xs: 1200, lg: openTwo ? 0 : -1 },
                                         overflowX: 'hidden',
-                                        width: appDrawerWidth,
+                                        width: appDrawerWidthHistorial,
                                         '& .MuiDrawer-paper': {
                                             height: 'auto',
-                                            width: appDrawerWidth,
+                                            width: appDrawerWidthHistorial,
                                             position: matchDownLG ? 'fixed' : 'relative',
                                             border: 'none',
                                             borderRadius: matchDownLG ? 0 : `${borderRadius}px`
@@ -413,7 +414,7 @@ const ProductDetails = () => {
                                     {openTwo && (
                                         <PerfectScrollbar component="div">
                                             {/* <ApprovalCard product={product} valueSku={valueSku} /> */}
-                                            <Button>Hola</Button>
+                                            <ApprovalHistorialCard product={product} valueSku={valueSku} />
                                         </PerfectScrollbar>
                                     )}
                                 </Drawer>

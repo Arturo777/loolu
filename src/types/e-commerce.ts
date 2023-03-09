@@ -79,6 +79,9 @@ export type ApprovalStatus = {
 export type RejectedStatus = {
     Rejected: Rejected;
 };
+export type ApprovalHistorial = {
+    Historial: Historial;
+};
 export type Trade = {
     idPolicy: number;
     isSelected: boolean;
@@ -101,6 +104,15 @@ export type Status = {
 export type Rejected = {
     rejectId: number;
     rejectName: string;
+};
+export type Historial = {
+    dateCreate: string;
+    rejectReason: string;
+    rejectName: string;
+    approvalStatusName: string;
+    name: string;
+    date: Date;
+    rejectId: number;
 };
 // checkout-cart billing address
 export type Address = {
@@ -176,6 +188,7 @@ export interface ProductStateProps {
     tradePolicies: TradePolicies[];
     approvalStatus: ApprovalStatus[];
     getRejectedStatus: RejectedStatus[];
+    approvalHistorial: ApprovalHistorial[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;
