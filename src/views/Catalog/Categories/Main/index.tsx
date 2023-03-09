@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // material-ui
-import { Button, Fade, Grid, InputAdornment, OutlinedInput, Typography } from '@mui/material';
+import { Button, Fade, Grid, InputAdornment, OutlinedInput, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 // project imports
@@ -19,6 +19,8 @@ import CreateCategoryPage from '../Create';
 import EditCategoryComponent from '../Edit';
 import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
 import { CategoryType } from 'types/catalog';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { MerchantType } from 'types/security';
 
 // ==============================|| FACETS LIST ||============================== //
 
@@ -173,12 +175,64 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
 
     return (
         <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item>
-                <Typography variant="h3">
+            {/* <Grid item xs={12} sx={{ mb: 2 }}>
+                <MultiMerchant
+                    merchants={allMerchants}
+                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                    maxShow={5}
+                    defaultSelected={[]}
+                    // defaultSelected={[
+                    //     {
+                    //         name: 'Vinneren',
+                    //         merchantId: 1,
+                    //         isFather: true
+                    //         // isSelected: true
+                    //     },
+                    //     {
+                    //         name: 'other',
+                    //         merchantId: 2,
+                    //         isFather: false
+                    //     },
+                    //     {
+                    //         name: 'other',
+                    //         merchantId: 5,
+                    //         isFather: false
+                    //     }
+                    // ]}
+                />
+            </Grid> */}
+            <Grid item component={Stack} alignItems="center" justifyContent="center">
+                <Typography variant="h3" sx={{ mr: 1 }}>
                     {intl.formatMessage({
                         id: 'categories'
                     })}
                 </Typography>
+                <MultiMerchant
+                    // justOne
+                    // readOnly
+                    merchants={allMerchants}
+                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                    maxShow={4}
+                    defaultSelected={[]}
+                    // defaultSelected={[
+                    //     {
+                    //         name: 'Vinneren',
+                    //         merchantId: 1,
+                    //         isFather: true
+                    //         // isSelected: true
+                    //     },
+                    //     {
+                    //         name: 'other',
+                    //         merchantId: 2,
+                    //         isFather: false
+                    //     },
+                    //     {
+                    //         name: 'other',
+                    //         merchantId: 5,
+                    //         isFather: false
+                    //     }
+                    // ]}
+                />
             </Grid>
             <Grid item>
                 <Fade in={!openCreate}>
@@ -207,3 +261,39 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
         </Grid>
     );
 };
+
+// EXAMPLE DATA MERCHATS
+
+const allMerchants: MerchantType[] = [
+    {
+        name: 'Vinneren',
+        merchantId: 1,
+        isFather: true
+        // isSelected: true
+    },
+    {
+        name: 'Elektra',
+        merchantId: 2,
+        isFather: false
+    },
+    {
+        name: 'La Marina',
+        merchantId: 3,
+        isFather: false
+    },
+    {
+        name: 'Monstore',
+        merchantId: 4,
+        isFather: false
+    },
+    {
+        name: 'Plaza',
+        merchantId: 41,
+        isFather: false
+    },
+    {
+        name: 'HEB',
+        merchantId: 42,
+        isFather: false
+    }
+];

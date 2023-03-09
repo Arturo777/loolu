@@ -31,6 +31,7 @@ export type Products = {
     brandId: number;
     productID: string | number;
     sku: any;
+    skus: Skus[];
 };
 
 export type Skus = {
@@ -57,6 +58,7 @@ export type Skus = {
     brandName?: string;
     brandId: number;
     productID: string | number;
+    approvalStatus: ApprovalStatus;
 };
 export type Categories = {
     id: string | number;
@@ -71,6 +73,15 @@ export type Categories = {
 export type TradePolicies = {
     TradePolicies: Policy;
 };
+export type ApprovalStatus = {
+    StepApproval: Status;
+};
+export type RejectedStatus = {
+    Rejected: Rejected;
+};
+export type ApprovalHistorial = {
+    Historial: Historial;
+};
 export type Trade = {
     idPolicy: number;
     isSelected: boolean;
@@ -82,6 +93,26 @@ export type Policy = {
     idMerchant: number;
     idPolicy: number;
     name: string;
+};
+
+export type Status = {
+    estatus: string;
+    idEstatus: number;
+    isSaveButtonActive: boolean;
+};
+
+export type Rejected = {
+    rejectId: number;
+    rejectName: string;
+};
+export type Historial = {
+    dateCreate: string;
+    rejectReason: string;
+    rejectName: string;
+    approvalStatusName: string;
+    name: string;
+    date: Date;
+    rejectId: number;
 };
 // checkout-cart billing address
 export type Address = {
@@ -155,6 +186,9 @@ export interface ProductStateProps {
     skus: Skus[];
     categories: Categories[];
     tradePolicies: TradePolicies[];
+    approvalStatus: ApprovalStatus[];
+    getRejectedStatus: RejectedStatus[];
+    approvalHistorial: ApprovalHistorial[];
     reviews: Reviews[];
     addresses: Address[];
     error: object | string | null;

@@ -289,5 +289,6 @@
     "additional_fields": "Additional Fields",
     "add_field": "Add field",
     "edit_field": "Edit field",
-    "update": "Update"
+    "update": "Update",
+    "select_all": "Select all"
 }
