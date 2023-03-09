@@ -288,5 +288,6 @@
     "additional_fields": "Campos adicionales",
     "add_field": "Agregar campo",
     "edit_field": "Editar campo",
-    "update": "Actualizar"
+    "update": "Actualizar",
+    "select_all": "Seleccionar todos"
 }

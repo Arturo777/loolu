@@ -61,3 +61,9 @@ export type NewProfileType = {
     menus: string[];
     idStatus?: boolean;
 };
+
+export type MerchantType = {
+    merchantId: number;
+    name: string;
+    isFather: boolean;
+};
