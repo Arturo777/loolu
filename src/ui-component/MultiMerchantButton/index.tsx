@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 // mui imports
 import { Avatar, Menu, Stack, MenuItem, IconButton, Paper, Box, Fade, Typography } from '@mui/material';
@@ -33,16 +33,17 @@ export default function MultiMerchant({
     blockDefaults = true,
     defaultSelected,
     merchants,
-    onChange = () => {},
-    readOnly = false,
-    maxShow = 5,
-    justOne = false,
+    onChange,
+    readOnly,
+    maxShow,
+    justOne,
     size = 'large'
 }: MultiMerchantProps) {
     // hooks
     const theme = useTheme();
     const intl = useIntl();
     const [merchantsList, setMerchantsList] = useState<MerchantChipType[]>([]);
+    const [firstRender, setFirstRender] = useState<boolean>(true);
 
     const isAllSelected = useMemo(() => merchantsList.every((item) => item.isSelected), [merchantsList]);
 
@@ -53,18 +54,26 @@ export default function MultiMerchant({
     // change event
     useEffect(() => {
         const selectedMerchants = merchantsList.filter((item) => item.isSelected);
-        onChange(selectedMerchants);
-    }, [merchantsList, onChange]);
+        if (onChange) {
+            onChange(selectedMerchants);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [merchantsList]);
 
     // create initial array
     useEffect(() => {
-        const initialList = merchants.map((item) => {
-            const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
+        if (firstRender) {
+            const initialList = merchants.map((item) => {
+                const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
 
-            return { ...item, isSelected: isDefaultSelected };
-        });
-
-        setMerchantsList(initialList);
+                return { ...item, isSelected: isDefaultSelected };
+            });
+            console.log('initialList');
+            setMerchantsList(initialList);
+            setFirstRender(false);
+            // handleChangeList(initialList);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [merchants, defaultSelected]);
 
     // menu actions - open
@@ -83,14 +92,15 @@ export default function MultiMerchant({
 
         // only select one
         if (justOne) {
-            setMerchantsList((currentList) => [
-                ...currentList.map((item) => {
-                    if (item.merchantId === merchant.merchantId) {
-                        return { ...item, isSelected: true };
-                    }
-                    return { ...item, isSelected: false };
-                })
-            ]);
+            const newList = merchantsList.map((item) => {
+                if (item.merchantId === merchant.merchantId) {
+                    return { ...item, isSelected: true };
+                }
+                return { ...item, isSelected: false };
+            });
+
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
             return;
         }
 
@@ -99,14 +109,22 @@ export default function MultiMerchant({
         const isBlocked = (isDefaultSelected && blockDefaults) || merchant.isFather;
 
         if (!isBlocked) {
-            setMerchantsList((currentList) => [
-                ...currentList.map((item) => {
-                    if (item.merchantId === merchant.merchantId) {
-                        return { ...item, isSelected: !item.isSelected };
-                    }
-                    return item;
-                })
-            ]);
+            // setMerchantsList((currentList) => [
+            //     ...currentList.map((item) => {
+            //         if (item.merchantId === merchant.merchantId) {
+            //             return { ...item, isSelected: !item.isSelected };
+            //         }
+            //         return item;
+            //     })
+            // ]);
+            const newList = merchantsList.map((item) => {
+                if (item.merchantId === merchant.merchantId) {
+                    return { ...item, isSelected: !item.isSelected };
+                }
+                return item;
+            });
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
         }
     };
 
@@ -121,30 +139,45 @@ export default function MultiMerchant({
 
         if (newVal) {
             // set all as selected
-            setMerchantsList((currentList) => [...currentList.map((item) => ({ ...item, isSelected: true }))]);
+            const newList = merchantsList.map((item) => ({ ...item, isSelected: true }));
+
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
         } else {
-            setMerchantsList((currentList) => [
-                ...currentList.map((merchant) => {
-                    const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
-                    const isBlocked = isDefaultSelected && blockDefaults;
+            const newList = merchantsList.map((merchant) => {
+                const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
+                const isBlocked = isDefaultSelected && blockDefaults;
 
-                    if (merchant.isFather || isBlocked) {
-                        return merchant;
-                    }
+                if (merchant.isFather || isBlocked) {
+                    return merchant;
+                }
 
-                    return { ...merchant, isSelected: false };
-                })
-            ]);
+                return { ...merchant, isSelected: false };
+            });
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
         }
     };
 
+    // const handleChangeList = (list: MerchantChipType[]) => {
+    //     const selectedMerchants = list.filter((item) => item.isSelected);
+    //     if (onChange) {
+    //         onChange(selectedMerchants);
+    //     }
+    // };
+
     const filteredElementsToRender = useMemo<MerchantChipType[]>(() => {
-        if (justOne && merchantsList.length < maxShow) {
+        if (justOne && merchantsList.length < maxShow!) {
             return [...merchantsList];
         }
 
         if (justOne) {
-            return [...merchantsList.filter((item) => item.isSelected)];
+            return [
+                ...merchantsList.filter((item) => {
+                    console.log(item);
+                    return item.isSelected;
+                })
+            ];
         }
 
         let elements: MerchantChipType[] = [];
@@ -157,7 +190,7 @@ export default function MultiMerchant({
         }
 
         merchantsList.forEach((item) => {
-            if (!item.isFather && elements.length < maxShow) {
+            if (!item.isFather && elements.length < maxShow!) {
                 elements = [...elements, item];
             }
         });
@@ -166,7 +199,7 @@ export default function MultiMerchant({
     }, [justOne, merchantsList, maxShow]);
 
     const moreText = useMemo(() => {
-        if (justOne && merchantsList.length < maxShow) {
+        if (justOne && merchantsList.length < maxShow!) {
             return 0;
         }
 
@@ -174,11 +207,11 @@ export default function MultiMerchant({
             return merchantsList.length - 1;
         }
 
-        return merchantsList.length - maxShow;
+        return merchantsList.length - maxShow!;
     }, [justOne, maxShow, merchantsList.length]);
 
     const renderMore = useMemo<boolean>(
-        () => (merchantsList.length > maxShow || justOne) && moreText > 0,
+        () => (merchantsList.length > maxShow! || justOne!) && moreText > 0,
         [justOne, maxShow, merchantsList.length, moreText]
     );
 
@@ -311,6 +344,16 @@ export default function MultiMerchant({
         </Stack>
     );
 }
+
+const multiDefaultProps = {
+    onChange: () => {},
+    readOnly: false,
+    maxShow: 5,
+    justOne: false,
+    size: 'large'
+};
+
+MultiMerchant.defaultProps = multiDefaultProps;
 
 const MerchantAvatar = ({
     merchant,
