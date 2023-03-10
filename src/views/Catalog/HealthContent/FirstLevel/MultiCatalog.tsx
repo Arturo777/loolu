@@ -20,7 +20,7 @@ import { getFirstLevel } from 'store/slices/healthContent';
 import { useDispatch, useSelector } from 'store';
 import TableUpdates from './TableUpdates';
 
-const MultiCatalog = () => {
+const MultiCatalog = ( { merchant }: any ) => {
     const [firstLev, setFirstLevel] = useState<any>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const theme = useTheme();
@@ -28,50 +28,7 @@ const MultiCatalog = () => {
     const dispatch = useDispatch();
     /* const { firstLevel } = useSelector((state) => state.healthContent); */
 
-    const firstLevel = {
-                "skuCatalog": [
-                    {
-                        "skuId": 6,
-                        "skuName": "Test unit 2",
-                        "skuReferenceCode": "123123123",
-                        "eanUpc": "123456789012",
-                        "dateInsert": "2023-02-28 05:53:31.0",
-                        "__typename": "dashboardskuCatalog"
-                    }
-                ],
-                "totalImages": 1,
-                "totalProducts": 4,
-                "totalSkus": 5,
-                "overallScore": 31.125,
-                "executionDate": "2023-02-24T08:19:04",
-                "metricRange": [
-                    {
-                        "metricConfigRangeId": 1,
-                        "metricTypeId": 1,
-                        "typeDescription": "Products",
-                        "percentage": 84,
-                        "description": "Good",
-                        "__typename": "dashboardmetrics"
-                    },
-                    {
-                        "metricConfigRangeId": 3,
-                        "metricTypeId": 3,
-                        "typeDescription": "Facets",
-                        "percentage": 0,
-                        "description": "Poor",
-                        "__typename": "dashboardmetrics"
-                    },
-                    {
-                        "metricConfigRangeId": 3,
-                        "metricTypeId": 2,
-                        "typeDescription": "Images",
-                        "percentage": 9.375,
-                        "description": "Poor",
-                        "__typename": "dashboardmetrics"
-                    }
-                ],
-                "__typename": "dashboardMessage"
-            }
+    
 
     const optionsBars = (metric: any) => {
         const newOpt: ApexOptions = {
@@ -98,7 +55,7 @@ const MultiCatalog = () => {
     }, []);
 
     useEffect(() => {
-        setFirstLevel(firstLevel);
+        setFirstLevel(merchant);
         setIsLoading(false)
     }, [/* firstLevel */]);
 
