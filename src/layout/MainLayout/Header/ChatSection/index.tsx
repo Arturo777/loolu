@@ -153,6 +153,7 @@ const ChatSection = () => {
                         }
                     ]
                 }}
+                sx={{ width: '400px' }}
             >
                 {({ TransitionProps }) => (
                     <ClickAwayListener onClickAway={handleClose}>
@@ -187,9 +188,9 @@ const ChatSection = () => {
                                                 <PerfectScrollbar
                                                     style={{ height: '100%', maxHeight: 'calc(100vh - 205px)', overflowX: 'hidden' }}
                                                 >
-                                                    <div className="bubble-container">
-                                                        <div className="bubble">Hola, ¿cómo estás?</div>
-                                                    </div>
+                                                    <Box className="chat-box">
+                                                        <p className="message">Hola, ¿cómo estás?</p>
+                                                    </Box>
                                                 </PerfectScrollbar>
                                             </Grid>
                                         </Grid>

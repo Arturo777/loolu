@@ -1,24 +1,36 @@
-.bubble-container {
-    display: flex;
-    justify-content: flex-start;
-  }
-  
-  .bubble {
-    position: relative;
-    padding: 10px;
-    border-radius: 20px;
-    background-color: #F3F3F3;
-    color: black;
-    max-width: 70%;
-  }
-  
-  .bubble::before {
-    content: "";
-    position: absolute;
-    border-style: solid;
-    border-width: 10px 10px 0 0;
-    border-color: #F3F3F3 transparent transparent transparent;
-    right: -7px;
-    bottom: 12px;
-  }
-  
+.chat-box {
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  padding: 10px;
+  margin: 20px;
+}
+
+.message {
+  background-color: #FFF;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  padding: 10px;
+  position: relative;
+}
+
+.message:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  border-width: 0 10px 10px 0;
+  border-color: transparent #FFF;
+  top: -10px;
+  left: 10px;
+}
+
+.message:before {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  border-width: 0 10px 10px 0;
+  border-color: transparent #F2F2F2;
+  top: -11px;
+  left: 10px;
+}
