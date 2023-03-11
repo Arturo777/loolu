@@ -114,7 +114,7 @@ const ChatSection = () => {
                         '&[aria-controls="menu-list-grow"],&:hover': {
                             background: theme.palette.mode === 'dark' ? '#00A67E' : '#00A67E',
                             color: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.secondary.light,
-                            transform: 'rotate(360deg)'
+                            transform: 'rotate(90deg)'
                         }
                     }}
                     ref={anchorRef}

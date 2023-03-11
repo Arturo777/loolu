@@ -30,6 +30,12 @@ import ApprovalCard from 'widget/Data/ApprovalCard';
 import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
 import MainCard from 'ui-component/cards/MainCard';
+import DragAndDrop from 'ui-component/DragAndDrop';
+
+interface Image {
+    file: File;
+    src: string;
+}
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -107,7 +113,7 @@ const ProductDetails = () => {
 
     const { product, skus, tradePolicies } = useSelector((state) => state.product);
     const { brands } = useSelector((state) => state.catalogue);
-
+    const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -431,6 +437,11 @@ const ProductDetails = () => {
                             )}
                         </Box>
                     </Grid>
+
+                    <DragAndDrop images={images} setImages={setImages} />
+                    {images.map((image, index) => (
+                        <img key={index} src={image.src} alt={`Image ${index}`} />
+                    ))}
 
                     <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
