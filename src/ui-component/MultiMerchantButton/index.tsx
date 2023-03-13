@@ -1,22 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // mui imports
-import { Avatar, Menu, Stack, MenuItem, IconButton, Paper, Box, Fade, Typography } from '@mui/material';
-import { useTheme } from '@mui/styles';
+import { Menu, Stack, MenuItem, IconButton, Paper, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
+// third party imports
 import { useIntl } from 'react-intl';
 
-// helpers
-import { stringToColor } from 'utils/helpers';
+import { customScrollBar, MerchantChipType, MerchantAvatar, ShowMoreButton } from './components';
 
 // types
 import { MerchantType } from 'types/security';
-
-interface MerchantChipType extends MerchantType {
-    isSelected: boolean;
-}
 
 type MultiMerchantProps = {
     blockDefaults?: boolean;
@@ -40,8 +35,8 @@ export default function MultiMerchant({
     size = 'large'
 }: MultiMerchantProps) {
     // hooks
-    const theme = useTheme();
     const intl = useIntl();
+
     const [merchantsList, setMerchantsList] = useState<MerchantChipType[]>([]);
     const [firstRender, setFirstRender] = useState<boolean>(true);
 
@@ -68,7 +63,6 @@ export default function MultiMerchant({
 
                 return { ...item, isSelected: isDefaultSelected };
             });
-            console.log('initialList');
             setMerchantsList(initialList);
             setFirstRender(false);
             // handleChangeList(initialList);
@@ -109,14 +103,6 @@ export default function MultiMerchant({
         const isBlocked = (isDefaultSelected && blockDefaults) || merchant.isFather;
 
         if (!isBlocked) {
-            // setMerchantsList((currentList) => [
-            //     ...currentList.map((item) => {
-            //         if (item.merchantId === merchant.merchantId) {
-            //             return { ...item, isSelected: !item.isSelected };
-            //         }
-            //         return item;
-            //     })
-            // ]);
             const newList = merchantsList.map((item) => {
                 if (item.merchantId === merchant.merchantId) {
                     return { ...item, isSelected: !item.isSelected };
@@ -158,13 +144,6 @@ export default function MultiMerchant({
             // handleChangeList(newList);
         }
     };
-
-    // const handleChangeList = (list: MerchantChipType[]) => {
-    //     const selectedMerchants = list.filter((item) => item.isSelected);
-    //     if (onChange) {
-    //         onChange(selectedMerchants);
-    //     }
-    // };
 
     const filteredElementsToRender = useMemo<MerchantChipType[]>(() => {
         if (justOne && merchantsList.length < maxShow!) {
@@ -305,6 +284,7 @@ export default function MultiMerchant({
                 <>
                     {filteredElementsToRender.map((merchant) => (
                         <MerchantAvatar
+                            containerStyles={{ mr: 1 }}
                             readOnly={readOnly}
                             key={`merchant-avatar-item-${merchant.merchantId}`}
                             merchant={merchant}
@@ -317,7 +297,9 @@ export default function MultiMerchant({
                 </>
             </Paper>
 
-            {renderMore && (
+            {renderMore && <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${merchants.length - maxShow!}`} />}
+
+            {/* {renderMore && (
                 <Avatar
                     onClick={handleOpenMenu}
                     sx={{
@@ -332,7 +314,7 @@ export default function MultiMerchant({
                 >
                     {moreText}+
                 </Avatar>
-            )}
+            )} */}
 
             {renderMore && (
                 <IconButton onClick={handleOpenMenu}>
@@ -354,115 +336,3 @@ const multiDefaultProps = {
 };
 
 MultiMerchant.defaultProps = multiDefaultProps;
-
-const MerchantAvatar = ({
-    merchant,
-    handleClick = () => {},
-    feedback = true,
-    readOnly = false,
-    size
-}: {
-    feedback?: boolean;
-    merchant: MerchantChipType;
-    readOnly?: boolean;
-    size: 'small' | 'medium' | 'large';
-    handleClick?: () => void;
-}) => {
-    const theme = useTheme();
-
-    const { sx, children } = useStringAvatarProps({ merchant, size });
-
-    const bColor = theme.palette.mode === 'dark' ? theme.palette.success.main : '#008724';
-
-    const borderColor = merchant.isSelected && feedback ? bColor : 'transparent';
-
-    const font = {
-        small: 14,
-        medium: 16,
-        large: 17
-    };
-
-    return (
-        <Box onClick={handleClick} sx={{ cursor: readOnly ? 'initial' : 'pointer', position: 'relative', zIndex: 2 }}>
-            <Fade in={merchant.isSelected && feedback}>
-                <Box
-                    component={CheckCircleIcon}
-                    sx={{
-                        position: 'absolute',
-                        right: 2,
-                        bottom: 0,
-                        fontSize: font[size],
-                        color: bColor,
-                        zIndex: 1
-                    }}
-                />
-            </Fade>
-            <Avatar sx={{ ...sx, borderColor, cursor: readOnly ? 'initial' : 'pointer' }} title={merchant.name}>
-                {children}
-            </Avatar>
-        </Box>
-    );
-};
-
-//  borderColor: string; color: string
-const useStringAvatarProps = ({ merchant, size }: { merchant: MerchantChipType; size: 'small' | 'medium' | 'large' }) => {
-    const theme = useTheme();
-
-    const bgcolor = stringToColor(merchant.name);
-
-    const shortName =
-        merchant.name.split(' ').length > 1
-            ? `${merchant.name.split(' ')[0][0]}${merchant.name.split(' ')[1][0]}`
-            : `${merchant.name.split('')[0]}`;
-
-    return {
-        sx: {
-            bgcolor,
-            color: theme.palette.getContrastText(bgcolor),
-            ...avatarCommonProps,
-            ...getSizeProps(size)
-        },
-        children: shortName.toUpperCase()
-    };
-};
-
-const customScrollBar = {
-    '&::-webkit-scrollbar': {
-        width: '5px'
-    },
-    '&::-webkit-scrollbar-track': {
-        background: 'transparent'
-    },
-    '&::-webkit-scrollbar-thumb': {
-        backgroundColor: '#c2c2c2',
-        borderRadius: '5px'
-    }
-};
-
-const avatarCommonProps = {
-    mr: 1,
-    border: '2px solid #fff',
-    transitions: 'all 420ms linear'
-    // width: 40,
-    // height: 40,
-    // fontSize: 16
-};
-
-const getSizeProps = (size: 'small' | 'medium' | 'large') => {
-    const sizes = {
-        small: 28,
-        medium: 30,
-        large: 35
-    };
-
-    const font = {
-        small: 13,
-        medium: 15,
-        large: 16
-    };
-
-    return { width: sizes[size], height: sizes[size], fontSize: font[size] };
-};
-
-//  npx browserslist@latest --update-db
-// Browserslist: caniuse-lite is outdated.
