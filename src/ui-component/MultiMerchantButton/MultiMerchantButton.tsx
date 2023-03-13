@@ -7,11 +7,9 @@ type MultiMerchantButtonProps = {
     size?: 'small' | 'medium' | 'large';
     merchants: MerchantType[];
     onAvatarClick: (merchant: MerchantType) => void;
-    maxShow?: number;
-    spacing?: number;
 };
 
-export default function MultiMerchantButtons({ merchants, onAvatarClick, size, maxShow, spacing }: MultiMerchantButtonProps) {
+export default function MultiMerchantButtons({ merchants, onAvatarClick, size }: MultiMerchantButtonProps) {
     // hooks
     const theme = useTheme();
 
@@ -137,7 +135,5 @@ export default function MultiMerchantButtons({ merchants, onAvatarClick, size, m
 }
 
 MultiMerchantButtons.defaultProps = {
-    maxShow: 5,
-    size: 'small',
-    spacing: 1
+    size: 'small'
 };
