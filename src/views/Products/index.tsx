@@ -1,12 +1,11 @@
 import { useEffect, useState, ReactElement } from 'react';
-
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, Button, Divider, Drawer, Grid, IconButton, Menu, MenuItem, Stack, Typography, useMediaQuery } from '@mui/material';
 
 // third party
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 // project imports
 import SortOptions from './SortOptions';
@@ -26,6 +25,7 @@ import { getProducts, filterProducts, SearchProductType } from 'store/slices/pro
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import AddIcon from '@mui/icons-material/Add';
 // import SearchIcon from '@mui/icons-material/Search';
 
 // types
@@ -262,6 +262,16 @@ const ProductsList = () => {
                     </Grid>
                     <Grid item>
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={matchDownSM ? 0.5 : spacingMD}>
+                            <Typography component={Link} to="/products/create-product" variant="subtitle2" sx={{ textDecoration: 'none' }}>
+                                <Button
+                                    disableRipple
+                                    onClick={handleDrawerOpen}
+                                    variant="contained"
+                                    startIcon={<AddIcon sx={{ fontWeight: 500, color: 'success' }} />}
+                                >
+                                    {intl.formatMessage({ id: 'create-product' })}
+                                </Button>
+                            </Typography>
                             <Button
                                 disableRipple
                                 onClick={handleDrawerOpen}

@@ -93,7 +93,7 @@ const ProductDetails = () => {
     const [valueSku, setValueSku] = useState('');
     const [open, setOpen] = useState(false);
     const [openTwo, setOpenTwo] = useState(false);
-    const [loading, setLoading] = useState(true);
+    /* const [loading, setLoading] = useState(true); */
     // actice mode edit product
     const [active, setActive] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -440,7 +440,7 @@ const ProductDetails = () => {
 
                     <DragAndDrop images={images} setImages={setImages} />
                     {images.map((image, index) => (
-                        <img key={index} src={image.src} alt={`Image ${index}`} />
+                        <img key={index} src={image.src} alt={`id${index}`} />
                     ))}
 
                     <Grid item xs={12} sx={{ mt: 3 }}>

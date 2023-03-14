@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {
     Avatar,
     Box,
@@ -21,49 +22,66 @@ import {
     useMediaQuery
 } from '@mui/material';
 import './style.css';
+
+// service providers
+import { useDispatch, useSelector } from 'store';
+
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
-import NotificationList from './NotificationList';
 
 // assets
 import chatGpt from 'assets/images/icons/chatgpt.png';
+import { sendMessage } from 'store/slices/chatgpt';
 
 // notification status options
-const status = [
-    {
-        value: 'all',
-        label: 'All Notification'
+const useStyles = makeStyles({
+    chatContainer: {
+        height: '100%'
     },
-    {
-        value: 'new',
-        label: 'New'
+    messageList: {
+        height: 'calc(100% - 68px)',
+        overflowY: 'auto',
+        padding: '16px'
     },
-    {
-        value: 'unread',
-        label: 'Unread'
+    messageItem: {
+        marginBottom: '16px',
+        borderRadius: '8px',
+        padding: '8px',
+        border: '.5px solid'
     },
-    {
-        value: 'other',
-        label: 'Other'
+    formContainer: {
+        padding: '16px'
+    },
+    inputField: {
+        marginRight: '16px'
     }
-];
+});
+
+interface Message {
+    id: number;
+    text: string;
+    createdAt: Date;
+}
 
 // ==============================|| NOTIFICATION ||============================== //
 
 const ChatSection = () => {
     const theme = useTheme();
     const matchesXs = useMediaQuery(theme.breakpoints.down('md'));
-
+    const classes = useStyles();
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState('');
-    /**
-     * anchorRef is used on different componets and specifying one type leads to other components throwing an error
-     * */
+    /* const [value, setValue] = useState(''); */
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>('');
+    const [messages, setMessages] = useState<Message[]>([]);
+
     const anchorRef = useRef<any>(null);
+    const { messageChat } = useSelector((state) => state.chatGpt);
 
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -77,6 +95,7 @@ const ChatSection = () => {
     };
 
     const prevOpen = useRef(open);
+
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
@@ -84,9 +103,31 @@ const ChatSection = () => {
         prevOpen.current = open;
     }, [open]);
 
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement> | undefined) => {
-        event?.target.value && setValue(event?.target.value);
+    useEffect(() => {
+        const storedMessages = localStorage.getItem('messages');
+        if (storedMessages) {
+            setMessages(JSON.parse(storedMessages));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('messages', JSON.stringify(messages));
+    }, [messages]);
+
+    const handleSendMessage = () => {
+        setIsLoading(true);
+        if (message !== '') {
+            dispatch(sendMessage(message));
+        }
+        const newMessage: Message = {
+            id: messages.length + 1,
+            text: message,
+            createdAt: new Date()
+        };
+        setMessages([...messages, newMessage]);
+        setMessage('');
     };
+    console.log(messageChat, isLoading, 'chat');
 
     return (
         <>
@@ -185,13 +226,37 @@ const ChatSection = () => {
                                                 </Grid>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <PerfectScrollbar
-                                                    style={{ height: '100%', maxHeight: 'calc(100vh - 205px)', overflowX: 'hidden' }}
-                                                >
-                                                    <Box className="chat-box">
-                                                        <p className="message">Hola, ¿cómo estás?</p>
-                                                    </Box>
-                                                </PerfectScrollbar>
+                                                <Grid container direction="column" className={classes.chatContainer}>
+                                                    <Grid item className={classes.messageList}>
+                                                        <PerfectScrollbar
+                                                            style={{
+                                                                height: '100%',
+                                                                maxHeight: 'calc(100vh - 505px)',
+                                                                overflowX: 'hidden'
+                                                            }}
+                                                        >
+                                                            {messages.map((mess) => (
+                                                                <div key={mess.id} className={classes.messageItem}>
+                                                                    <p>{mess.text}</p>
+                                                                    <small>{mess.createdAt.toLocaleString()}</small>
+                                                                </div>
+                                                            ))}
+                                                        </PerfectScrollbar>
+                                                    </Grid>
+                                                    <Grid item className={classes.formContainer}>
+                                                        <TextField
+                                                            label="Type your message"
+                                                            variant="outlined"
+                                                            size="small"
+                                                            className={classes.inputField}
+                                                            value={message}
+                                                            onChange={(e) => setMessage(e.target.value)}
+                                                        />
+                                                        <Button variant="contained" color="primary" onClick={handleSendMessage}>
+                                                            Send
+                                                        </Button>
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
                                         <Divider />
