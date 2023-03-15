@@ -65,7 +65,15 @@ export const getMerchantsList = createAsyncThunk(`${slice.name}/getMerchants`, a
     });
     return response.data;
 });
-
+export const getMerchants = createAsyncThunk(`${slice.name}/getMerchants`, async () => {
+    const response = await axios.get(`https://avyzymp6de.us-east-1.awsapprunner.com/styrk/api/profile/user-multicatalog`, {
+        params: {
+            user: 'ohuitron'
+        }
+    });
+    console.log(response.data);
+    return response.data;
+});
 export const { setAuthData } = slice.actions;
 
 // Reducer

@@ -14,7 +14,8 @@ import { BrandType } from 'types/catalog';
 import { useDispatch, useSelector } from 'store';
 
 // assets
-import { getBrands } from 'store/slices/catalog';
+import { getBrands, getBrands2 } from 'store/slices/catalog';
+import { getMerchants } from 'store/slices/auth';
 
 type BransListProps = {
     filterText: string;
@@ -26,14 +27,18 @@ const BrandsList = ({ filterText }: BransListProps) => {
     const dispatch = useDispatch();
 
     // store
-    const { brands, loading } = useSelector((state) => state.catalogue);
-
+    const { brands2, brands, loading } = useSelector((state) => state.catalogue);
+    console.log('brands1', brands);
+    console.log('brands2', brands2);
+    // merchants
     // state
     const [pageSize, setPageSize] = useState<number>(10);
     const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
 
     useEffect(() => {
         dispatch(getBrands());
+        dispatch(getMerchants());
+        dispatch(getBrands2());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

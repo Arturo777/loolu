@@ -15,8 +15,10 @@ import { gridSpacing } from 'store/constant';
 import { useSelector } from 'store';
 import Loader from 'ui-component/Loader';
 
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 // assets
 import BransList from './BrandsList';
+import { MerchantType } from 'types/security';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
@@ -30,6 +32,7 @@ const BrandsListPage = () => {
 
     // state
     const [filterText, setFilterText] = useState<string>('');
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[] | null>(null);
 
     useEffect(() => {
         const search = searchParams.get('search');
@@ -46,11 +49,20 @@ const BrandsListPage = () => {
     return (
         <MainCard
             title={
-                <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
+                <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
+                    <Grid container alignItems="center" item md={4}>
                         <Typography variant="h3">
-                            <FormattedMessage id="brands" />
+                            {intl.formatMessage({
+                                id: 'change_log'
+                            })}
                         </Typography>
+                        <MultiMerchant
+                            merchants={allMerchants}
+                            onChange={(merchants: MerchantType[]) => setSelectedMerchants(merchants)}
+                            maxShow={1}
+                            justOne
+                            defaultSelected={[]}
+                        />
                     </Grid>
                     <Grid item>
                         <Button component={Link} to="/brands/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
@@ -84,4 +96,39 @@ const BrandsListPage = () => {
     );
 };
 
+// EXAMPLE DATA MERCHATS
+
+const allMerchants: MerchantType[] = [
+    {
+        name: 'Vinneren',
+        merchantId: 1,
+        isFather: true
+        // isSelected: true
+    },
+    {
+        name: 'Elektra',
+        merchantId: 2,
+        isFather: false
+    },
+    {
+        name: 'La Marina',
+        merchantId: 3,
+        isFather: false
+    },
+    {
+        name: 'Monstore',
+        merchantId: 4,
+        isFather: false
+    },
+    {
+        name: 'Plaza',
+        merchantId: 41,
+        isFather: false
+    },
+    {
+        name: 'HEB',
+        merchantId: 42,
+        isFather: false
+    }
+];
 export default BrandsListPage;

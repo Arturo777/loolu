@@ -3,6 +3,7 @@ export type CatalogStateProps = {
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
+    brands2: BrandType[];
     suppliers: SupplierType[];
     facetsInfo: {
         facets: FacetType[];
