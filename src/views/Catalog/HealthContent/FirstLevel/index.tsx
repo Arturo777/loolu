@@ -25,6 +25,7 @@ import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { MerchantType } from 'types/security';
 import { TabsProps } from '../../../../types/index';
 import { HCHealthContent } from '../../../../types/health-content'
+import { FormattedMessage } from 'react-intl';
 
 import { gridSpacing } from 'store/constant';
 
@@ -305,9 +306,9 @@ const FirstLevel = () => {
                     overflow: 'initial'
                 }}
                 title={
-                    <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                        <Grid item xs={6}>
-                            <Typography variant="h3">Health Content</Typography>
+                    <Grid container alignItems="center" justifyContent="start" spacing={gridSpacing}>
+                        <Grid item xs={2}>
+                            <Typography variant="h3"> <FormattedMessage id='health-content' /> </Typography>
                         </Grid>
                         <Grid item>
                             <MultiMerchant
@@ -320,19 +321,19 @@ const FirstLevel = () => {
                                     }}
                                     maxShow={2}
                                     blockDefaults={false}
-                                    defaultSelected={[]}
-                                    // defaultSelected={[
-                                    //     {
-                                    //         name: 'Plaza',
-                                    //         merchantId: 4,
-                                    //         isFather: false
-                                    //     },
-                                    //     {
-                                    //         name: 'Elektra',
-                                    //         merchantId: 2,
-                                    //         isFather: false
-                                    //     }
-                                    // ]}
+                                    // defaultSelected={[]}
+                                    defaultSelected={[
+                                        {
+                                            name: 'Vinneren',
+                                            merchantId: 1,
+                                            isFather: false
+                                        },
+                                        {
+                                            name: 'Elektra',
+                                            merchantId: 2,
+                                            isFather: false
+                                        }
+                                    ]}
                                 />  
                         </Grid>
                         <Grid item xs={12}>
@@ -365,8 +366,8 @@ const FirstLevel = () => {
                                     }
                                 }}
                             >
-                                <Tab component={Link} to="#" label="General" {...a11yProps(0)} />
-                                <Tab component={Link} to="#" label="Multi" {...a11yProps(1)} />
+                                <Tab component={Link} to="#" label={<FormattedMessage id="general" />} {...a11yProps(0)} />
+                                <Tab component={Link} to="#" label={<FormattedMessage id="multi-catalogue" />} {...a11yProps(1)} />
                             </Tabs>
                         </Grid>
                     </Grid>
@@ -433,7 +434,7 @@ const FirstLevel = () => {
                                                                 {firstLev.totalImages}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
-                                                                Total Images
+                                                                <FormattedMessage id='total-images'/>
                                                             </Typography>
                                                         </Grid>
                                                     </Grid>
@@ -453,7 +454,7 @@ const FirstLevel = () => {
                                                                 {firstLev.totalProducts}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
-                                                                Total Products
+                                                                <FormattedMessage id='total-products'/>
                                                             </Typography>
                                                         </Grid>
                                                     </Grid>
@@ -475,7 +476,7 @@ const FirstLevel = () => {
                                                                 {firstLev.totalSkus}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
-                                                                Total Skus
+                                                                <FormattedMessage id='total-skus'/>
                                                             </Typography>
                                                         </Grid>
                                                     </Grid>
@@ -490,7 +491,7 @@ const FirstLevel = () => {
                                                                 {firstLev?.executionDate}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
-                                                                Last Update
+                                                                <FormattedMessage id='last-update'/>
                                                             </Typography>
                                                         </Grid>
                                                     </Grid>
@@ -500,10 +501,10 @@ const FirstLevel = () => {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Grid container alignItems="flex-start" justifyContent="space-between">
-                                            <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between" spacing={2}>
-                                                {firstLev?.metricRange?.map((metric: any) => (
+                                            <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between">
+                                                {firstLev?.metricRange?.map((metric: any, i: number) => (
 
-                                                    <Card sx={{ mb: 1 }}>
+                                                    <Card key={i} sx={{ mb: 1 }}>
                                                         <CardContent
                                                             sx={{
                                                                 padding: '0px !important',
@@ -562,7 +563,7 @@ const FirstLevel = () => {
                                                 <Card>
                                                     <CardContent >
                                                         <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
-                                                        Latest Updates
+                                                            <FormattedMessage id='latest-updates' />
                                                         </Typography>
                                                         <TableUpdates updates={firstLev?.skuCatalog} />
                                                     </CardContent>
@@ -573,11 +574,11 @@ const FirstLevel = () => {
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={value} index={1}>
-                                <Grid container spacing={2} sx={{my: 2}}>
+                                <Grid container sx={{mb: 2, pt: 0}}>
                                     {multiHealth
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((merchant : any) => (
-                                            <Grid item xs={12} sm={6} sx={blockSX}>
+                                            <Grid item xs={12} sm={6} sx={blockSX} key={merchant.merchantId}>
                                                 <MultiCatalog merchant={merchant}/> 
                                             </Grid>
                                         ))}

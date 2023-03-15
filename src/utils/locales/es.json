@@ -289,5 +289,17 @@
     "add_field": "Agregar campo",
     "edit_field": "Editar campo",
     "update": "Actualizar",
-    "select_all": "Seleccionar todos"
+    "select_all": "Seleccionar todos",
+
+    "general": "General",
+    "multi-catalogue": "Multi Catálogo",
+    "store-status": "Estado de la tienda",
+    "previous": "Previo",
+    "change-card": "Cambio",
+    "trend": "Tendencia",
+    "total-images": "Total de Imagenes",
+    "total-products": "Total de Productos",
+    "total-skus": "Total Skus",
+    "last-update": "Última Actualización",
+    "latest-updates": "Últimas Actualizaciones"
 }

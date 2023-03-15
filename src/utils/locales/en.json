@@ -228,7 +228,7 @@
     "save": "Save",
     "cancel": "Cancel",
 
-    "health-content": "Healt Content",
+    "health-content": "Health Content",
     "status-market": "Overall status",
     "massive_load": "Upload",
     "download": "Download",
@@ -290,5 +290,18 @@
     "add_field": "Add field",
     "edit_field": "Edit field",
     "update": "Update",
-    "select_all": "Select all"
+    "select_all": "Select all",
+
+    "general": "General",
+    "multi-catalogue": "Multi Catalogue",
+    "store-status": "Store Status",
+    "previous": "Previous",
+    "change-card": "Change",
+    "trend": "Trend",
+    "total-images": "Total Images",
+    "total-products": "Total Products",
+    "total-skus": "Total Skus",
+    "last-update": "Last Update",
+    "latest-updates": "Latest Updates"
+
 }

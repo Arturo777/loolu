@@ -191,85 +191,11 @@ const MultiCatalog = ( { merchant }: any ) => {
                                     </Grid>
                                 </MainCard>
                             </Grid>
-                           {/*  <Grid item xs={12}>
-                                <Grid container alignItems="flex-start" justifyContent="space-between">
-                                    <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between" spacing={2}>
-                                        {firstLev?.metricRange?.map((metric: any) => (
-
-                                            <Card sx={{ mb: 1 }}>
-                                                <CardContent
-                                                    sx={{
-                                                        padding: '0px !important',
-                                                        '& svg': {
-                                                            width: 180,
-                                                            height: 150
-                                                        }
-                                                    }}
-                                                >
-                                                    <Grid container alignItems="center" spacing={0}>
-                                                        <Grid item xs={6} sx={{ p: 3 }}>
-                                                            <Grid container justifyContent="space-between" direction="column" alignItems="center">
-                                                                <Grid item sm={12}>
-                                                                    <Typography variant="h3" color="inherit">
-                                                                        {metric.typeDescription}
-                                                                    </Typography>
-                                                                </Grid>
-                                                                <Grid item sm={11}>
-                                                                    <Stack direction="row" alignItems="center" spacing={0.5} sx={{ my: 1.75, mx: 'auto' }}>
-                                                                        <Typography sx={{
-                                                                            textAlign: 'center',
-                                                                            // eslint-disable-next-line no-nested-ternary
-                                                                            color: metric?.percentage <= 34 ? '#F44336' : metric.percentage >= 35 && metric.percentage <= 80 ? '#ffe923' : '#02f13a',
-                                                                            '& > svg': {
-                                                                                width: 30,
-                                                                                height: 30
-                                                                            }
-                                                                        }}>
-                                                                            {
-                                                                                // eslint-disable-next-line no-nested-ternary
-                                                                                metric?.percentage <= 34 ? <ArrowDownwardIcon /> : metric.percentage >= 35 && metric.percentage <= 80 ? <Brightness1Icon /> : <ArrowUpwardIcon />
-                                                                            }
-                                                                        </Typography>
-                                                                        <Typography variant="h3">{`${metric.percentage.toFixed(2)} %`}</Typography>
-                                                                    </Stack>
-                                                                </Grid>
-                                                                <Grid item sm={12}>
-                                                                    <Link to={metric?.typeDescription?.toLowerCase()}><Button variant="outlined">Details</Button></Link>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                        <Grid item xs={4} sx={{ bgcolor: 'light', p: 1 }}>
-                                                            <ReactApexChart
-                                                                options={optionsBars(metric)}
-                                                                series={[metric?.percentage.toFixed(1)]}
-                                                                type="radialBar"
-                                                                height={170}
-                                                            />
-                                                        </Grid>
-                                                    </Grid>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
-                                    </Grid>
-                                    <Grid item xs={7.9}>
-                                        <Card>
-                                            <CardContent >
-                                                <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
-                                                Latest Updates
-                                                </Typography>
-                                                <TableUpdates updates={firstLev?.skuCatalog} />
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                </Grid>
-                            </Grid> */}
                         </Grid>
 
                     )}
                 </>
-            )
-            }
-
+            )}
         </>
     );
 };
