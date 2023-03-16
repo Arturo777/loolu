@@ -26,6 +26,7 @@ import ProductImages from 'views/ProductDetails/ProductImages';
 import ProductInfoCreate from './ProductInfoCreate';
 import RelatedProducts from 'views/ProductDetails/RelatedProducts';
 import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
+import { Products, Skus } from 'types/e-commerce';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -72,12 +73,14 @@ const CreateProduct = () => {
     const intl = useIntl();
     const theme = useTheme();
     const dispatch = useDispatch();
-    const { skus, tradePolicies } = useSelector((state) => state.product);
+    const { tradePolicies } = useSelector((state) => state.product);
     const { brands } = useSelector((state) => state.catalogue);
 
     // ========= states =========
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [value, setValue] = useState(0);
+    const [productInfo, setProductInfo] = useState<Products>();
+    const [skuInfo, setSkuInfo] = useState<Skus>();
     // info new Brands and Categories
     const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
     const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
@@ -92,6 +95,12 @@ const CreateProduct = () => {
         dispatch(getCategories());
         dispatch(getTradePolicies());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (brands?.length) {
+            setBrandsInfo(brands);
+        }
+    }, [brands]);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -123,6 +132,10 @@ const CreateProduct = () => {
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <ProductInfoCreate
+                                            setProductInfo={setProductInfo}
+                                            productInfo={productInfo}
+                                            setSkuInfo={setSkuInfo}
+                                            skuInfo={skuInfo}
                                             brandsInfo={brandsInfo}
                                             setFlagBrand={setFlagBrand}
                                             flagBrand={flagBrand}
@@ -194,7 +207,7 @@ const CreateProduct = () => {
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
                     </Grid>
                     <Grid item xs={11}>
-                        <RelatedProducts id="1" />
+                        {/* <RelatedProducts id="1" /> */}
                     </Grid>
                 </>
             )}

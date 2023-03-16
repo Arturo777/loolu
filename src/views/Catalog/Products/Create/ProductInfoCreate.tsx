@@ -46,7 +46,7 @@ import formatUrl from 'utils/formatUrl';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { Skus } from 'types/e-commerce';
+import { Products, Skus } from 'types/e-commerce';
 import { useDispatch, useSelector } from 'store';
 
 // assets
@@ -172,6 +172,10 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
 const ProductInfoCreate = ({
+    setProductInfo,
+    productInfo,
+    setSkuInfo,
+    skuInfo,
     tradePolicies,
     brandsInfo,
     setFlagBrand,
@@ -181,6 +185,10 @@ const ProductInfoCreate = ({
     flagCategory,
     setNewCategorySku
 }: {
+    setProductInfo: any;
+    productInfo: any;
+    setSkuInfo: any;
+    skuInfo: any;
     tradePolicies: any;
     brandsInfo: BrandType[] | undefined;
     setFlagBrand: any;
@@ -225,6 +233,20 @@ const ProductInfoCreate = ({
             setDisplay(false);
         }
     };
+    const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.type === 'checkbox') {
+            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
+        } else {
+            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+    };
+    const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.type === 'checkbox') {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
+        } else {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+    };
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
     }, [dispatch]);
@@ -240,10 +262,7 @@ const ProductInfoCreate = ({
         const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
         return resultTrade[0]?.name;
     };
-    const formatterDolar = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    });
+
     const customBrand = (value: SetStateAction<string>, id: number) => {
         setSearch(value);
         setDisplay(false);
@@ -266,6 +285,7 @@ const ProductInfoCreate = ({
         }
     }, [flagBrand]); */
 
+    console.log(productInfo, skuInfo, tradePolicies, brandsInfo, flagBrand, flagCategory);
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -377,14 +397,14 @@ const ProductInfoCreate = ({
                             onChange={(e) => setSearch(e.target.value)}
                             onClick={() => setDisplay(true)}
                         />
-                        <BrandModal
+                        {/* <BrandModal
                             setModalBrands={setModalBrands}
                             modalBrands={modalBrands}
                             search={search}
                             setSearch={setSearch}
                             newBrand={newBrand}
                             setFlagBrand={setFlagBrand}
-                        />
+                        /> */}
                         {display && (
                             <div className={ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'}>
                                 <div className="btn-add">
@@ -408,7 +428,7 @@ const ProductInfoCreate = ({
                                         </IconButton>
                                     )}
                                 </div>
-                                {brandsInfo
+                                {/* {brandsInfo
                                     ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
                                     .map((v: BrandType, i: Key): any => (
                                         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -421,7 +441,7 @@ const ProductInfoCreate = ({
                                         >
                                             {v.name}
                                         </Typography>
-                                    ))}
+                                    ))} */}
                             </div>
                         )}
                     </FormControl>
@@ -495,7 +515,7 @@ const ProductInfoCreate = ({
                         renderValue={(selected: any) => selected.join(', ')}
                         MenuProps={MenuProps}
                     >
-                        {product?.tradePolicies?.map(
+                        {/* {product?.tradePolicies?.map(
                             (tr: {
                                 isSelected: boolean | undefined;
                                 idPolicy: Key | null | undefined;
@@ -506,7 +526,7 @@ const ProductInfoCreate = ({
                                     <ListItemText primary={tr.tradePolicyName} />
                                 </MenuItem>
                             )
-                        )}
+                        )} */}
                     </Select>
                 </FormControl>
             </Grid>
@@ -530,7 +550,7 @@ const ProductInfoCreate = ({
                                         </Typography>
                                     </TableCell>
                                     <TableCell align="left">
-                                        <RadioGroup
+                                        {/* <RadioGroup
                                             row
                                             onChange={handleRadioChange}
                                             name={intl.formatMessage({ id: 'sku' })}
@@ -547,7 +567,7 @@ const ProductInfoCreate = ({
                                                     disabled={active}
                                                 />
                                             ))}
-                                        </RadioGroup>
+                                        </RadioGroup> */}
                                         {/* {errors.color && (
                                                     <FormHelperText error id="standard-label-color">
                                                         {errors.color}
@@ -570,8 +590,6 @@ const ProductInfoCreate = ({
                                     label={intl.formatMessage({ id: 'sku_name' })}
                                     variant="outlined"
                                     name="name"
-                                    defaultValue={skuInfo?.name}
-                                    value={skuInfo?.name}
                                     onChange={handleChangeSku}
                                 />
                             </Box>
@@ -599,58 +617,41 @@ const ProductInfoCreate = ({
                                     <TableRow>
                                         <TableCell>
                                             <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                {intl.formatMessage({ id: 'Pricing' })}
+                                                {intl.formatMessage({ id: 'pricing' })}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {skuInfo?.prices?.map(
-                                                ({
-                                                    price,
-                                                    priceDiscount,
-                                                    tradePolicy
-                                                }: {
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    price: number;
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    priceDiscount: number;
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    tradePolicy: number;
-                                                }) => (
-                                                    <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
-                                                        <Box
-                                                            sx={{
-                                                                '& .MuiTextField-root': { mt: 2 }
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                fullWidth
-                                                                multiline
-                                                                id="outlined-basic"
-                                                                label={intl.formatMessage({ id: 'discount_price' })}
-                                                                variant="outlined"
-                                                                name="priceDiscount"
-                                                                defaultValue={priceDiscount}
-                                                            />
-                                                        </Box>
-                                                        <Box
-                                                            sx={{
-                                                                '& .MuiTextField-root': { mt: 2 }
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                fullWidth
-                                                                multiline
-                                                                id="outlined-basic"
-                                                                label={intl.formatMessage({ id: 'price' })}
-                                                                variant="outlined"
-                                                                name="price"
-                                                                defaultValue={price}
-                                                            />
-                                                        </Box>
-                                                        <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
-                                                    </Stack>
-                                                )
-                                            )}
+                                            <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
+                                                <Box
+                                                    sx={{
+                                                        '& .MuiTextField-root': { mt: 2 }
+                                                    }}
+                                                >
+                                                    <TextField
+                                                        fullWidth
+                                                        multiline
+                                                        id="outlined-basic"
+                                                        label={intl.formatMessage({ id: 'discount_price' })}
+                                                        variant="outlined"
+                                                        name="priceDiscount"
+                                                    />
+                                                </Box>
+                                                <Box
+                                                    sx={{
+                                                        '& .MuiTextField-root': { mt: 2 }
+                                                    }}
+                                                >
+                                                    <TextField
+                                                        fullWidth
+                                                        multiline
+                                                        id="outlined-basic"
+                                                        label={intl.formatMessage({ id: 'price' })}
+                                                        variant="outlined"
+                                                        name="price"
+                                                    />
+                                                </Box>
+                                                {/* <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography> */}
+                                            </Stack>
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
@@ -704,13 +705,13 @@ const ProductInfoCreate = ({
                                         <Typography variant="body2">{intl.formatMessage({ id: 'dimensions' })}</Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
+                                        {/* <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} /> */}
                                     </TableCell>
                                 </TableRow>
                                 <br />
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity' })}</Typography>
                                     </TableCell>
                                     <TableCell align="left" />
                                 </TableRow>

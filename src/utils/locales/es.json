@@ -289,5 +289,7 @@
     "add_field": "Agregar campo",
     "edit_field": "Editar campo",
     "update": "Actualizar",
-    "select_all": "Seleccionar todos"
+    "select_all": "Seleccionar todos",
+
+    "create-product": "Crear producto"
 }

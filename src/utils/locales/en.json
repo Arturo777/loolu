@@ -290,5 +290,7 @@
     "add_field": "Add field",
     "edit_field": "Edit field",
     "update": "Update",
-    "select_all": "Select all"
+    "select_all": "Select all",
+
+    "create-product": "Create product"
 }

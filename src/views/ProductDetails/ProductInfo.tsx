@@ -891,7 +891,7 @@ const ProductInfo = ({
                                 <br />
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity' })}</Typography>
                                     </TableCell>
                                     <TableCell align="left" />
                                 </TableRow>
