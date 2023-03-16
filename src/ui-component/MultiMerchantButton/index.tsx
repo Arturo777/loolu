@@ -55,7 +55,7 @@ export default function MultiMerchant({
     const open = Boolean(anchorMenu);
 
     useEffect(() => {
-        if (user && user.user && merchants?.length === 0) {
+        if (user && user.user) {
             dispatch(getMerchantsList(user?.user));
         }
     }, [dispatch, merchants?.length, user]);
