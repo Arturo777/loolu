@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from 'store';
 
 // assets
 import { getBrands, getBrands2 } from 'store/slices/catalog';
-import { getMerchants } from 'store/slices/auth';
 
 type BransListProps = {
     filterText: string;
@@ -32,12 +31,11 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
     // merchants
     // state
     const [pageSize, setPageSize] = useState<number>(10);
-    const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
+    const [filteredBrands, setFilteredBrands] = useState<BrandType[] | undefined>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
         setIsLoading(true);
         dispatch(getBrands());
-        dispatch(getMerchants());
         dispatch(getBrands2());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -58,9 +56,9 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
 
     useEffect(() => {
         if (filterText?.length === 0) {
-            setFilteredBrands(brands);
+            setFilteredBrands(marcas?.brands);
         } else {
-            const filtered = brands.filter(
+            const filtered = marcas?.brands.filter(
                 (brand: BrandType) =>
                     JSON.stringify(brand)
                         .toLowerCase()
@@ -70,7 +68,7 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             setFilteredBrands(filtered);
         }
         console.log('filteredBrands', filteredBrands);
-    }, [filterText, brands]);
+    }, [filterText, filteredBrands, marcas]);
     const columns: GridColDef[] = [
         { field: 'idBrand', headerName: 'ID', width: 80 },
         {
@@ -121,7 +119,7 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
                 {!isLoading && (
                     <DataGrid
                         loading={loading}
-                        rows={marcas?.brands ?? []}
+                        rows={filteredBrands ?? []}
                         // eslint-disable-next-line @typescript-eslint/no-shadow
                         getRowId={(row: any) => `${row.idBrand}`}
                         columns={columns}

@@ -20,7 +20,6 @@ import EditCategoryComponent from '../Edit';
 import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
 import { CategoryType } from 'types/catalog';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
-import { MerchantType } from 'types/security';
 
 // ==============================|| FACETS LIST ||============================== //
 
