@@ -542,7 +542,7 @@ const FirstLevel = () => {
                                                                             </Stack>
                                                                         </Grid>
                                                                         <Grid item sm={12}>
-                                                                            <Link to={metric?.typeDescription?.toLowerCase()}><Button variant="outlined">Details</Button></Link>
+                                                                            <Link to={metric?.typeDescription?.toLowerCase()}><Button variant="outlined"> <FormattedMessage id='details'/> </Button></Link>
                                                                         </Grid>
                                                                     </Grid>
                                                                 </Grid>

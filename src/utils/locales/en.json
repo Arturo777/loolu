@@ -302,6 +302,7 @@
     "total-products": "Total Products",
     "total-skus": "Total Skus",
     "last-update": "Last Update",
-    "latest-updates": "Latest Updates"
-
+    "latest-updates": "Latest Updates",
+    "details": "Details",
+    "date_insert": "Date Insert"
 }
