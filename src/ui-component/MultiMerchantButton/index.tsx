@@ -12,11 +12,14 @@ import { customScrollBar, MerchantChipType, MerchantAvatar, ShowMoreButton } fro
 
 // types
 import { MerchantType } from 'types/security';
+import { useDispatch, useSelector } from 'store';
+import { getMerchantsList } from 'store/slices/auth';
+import useAuth from 'hooks/useAuth';
 
 type MultiMerchantProps = {
     blockDefaults?: boolean;
     defaultSelected: MerchantType[];
-    merchants: MerchantType[];
+    // merchants: MerchantType[];
     onChange?: (selectedMerchats: MerchantType[]) => void;
     readOnly?: boolean;
     maxShow?: number;
@@ -27,7 +30,7 @@ type MultiMerchantProps = {
 export default function MultiMerchant({
     blockDefaults = true,
     defaultSelected,
-    merchants,
+    // merchants,
     onChange,
     readOnly,
     maxShow,
@@ -36,6 +39,11 @@ export default function MultiMerchant({
 }: MultiMerchantProps) {
     // hooks
     const intl = useIntl();
+    const dispatch = useDispatch();
+
+    // store
+    const { user } = useAuth();
+    const { merchants } = useSelector((state) => state.auth);
 
     const [merchantsList, setMerchantsList] = useState<MerchantChipType[]>([]);
     const [firstRender, setFirstRender] = useState<boolean>(true);
@@ -45,6 +53,12 @@ export default function MultiMerchant({
     // menu triggers
     const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorMenu);
+
+    useEffect(() => {
+        if (user && user.user && merchants?.length === 0) {
+            dispatch(getMerchantsList(user?.user));
+        }
+    }, [dispatch, merchants?.length, user]);
 
     // change event
     useEffect(() => {
@@ -57,12 +71,14 @@ export default function MultiMerchant({
 
     // create initial array
     useEffect(() => {
-        if (firstRender) {
-            const initialList = merchants.map((item) => {
-                const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
+        if (firstRender && merchants) {
+            const initialList =
+                merchants?.map((item) => {
+                    const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
 
-                return { ...item, isSelected: isDefaultSelected };
-            });
+                    return { ...item, isSelected: isDefaultSelected };
+                }) ?? [];
+
             setMerchantsList(initialList);
             setFirstRender(false);
             // handleChangeList(initialList);
@@ -151,12 +167,7 @@ export default function MultiMerchant({
         }
 
         if (justOne) {
-            return [
-                ...merchantsList.filter((item) => {
-                    console.log(item);
-                    return item.isSelected;
-                })
-            ];
+            return [...merchantsList.filter((item) => item.isSelected)];
         }
 
         let elements: MerchantChipType[] = [];
@@ -297,7 +308,7 @@ export default function MultiMerchant({
                 </>
             </Paper>
 
-            {renderMore && <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${merchants.length - maxShow!}`} />}
+            {renderMore && <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${(merchants?.length ?? 0) - maxShow!}`} />}
 
             {/* {renderMore && (
                 <Avatar
