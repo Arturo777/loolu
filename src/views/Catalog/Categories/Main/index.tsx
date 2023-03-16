@@ -210,7 +210,6 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
                 <MultiMerchant
                     // justOne
                     // readOnly
-                    merchants={allMerchants}
                     onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
                     maxShow={4}
                     defaultSelected={[]}
@@ -261,39 +260,3 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
         </Grid>
     );
 };
-
-// EXAMPLE DATA MERCHATS
-
-const allMerchants: MerchantType[] = [
-    {
-        name: 'Vinneren',
-        merchantId: 1,
-        isFather: true
-        // isSelected: true
-    },
-    {
-        name: 'Elektra',
-        merchantId: 2,
-        isFather: false
-    },
-    {
-        name: 'La Marina',
-        merchantId: 3,
-        isFather: false
-    },
-    {
-        name: 'Monstore',
-        merchantId: 4,
-        isFather: false
-    },
-    {
-        name: 'Plaza',
-        merchantId: 41,
-        isFather: false
-    },
-    {
-        name: 'HEB',
-        merchantId: 42,
-        isFather: false
-    }
-];

@@ -57,7 +57,6 @@ const BrandsListPage = () => {
                             })}
                         </Typography>
                         <MultiMerchant
-                            merchants={allMerchants}
                             onChange={(merchants: MerchantType[]) => setSelectedMerchants(merchants)}
                             maxShow={1}
                             justOne
@@ -95,40 +94,4 @@ const BrandsListPage = () => {
         </MainCard>
     );
 };
-
-// EXAMPLE DATA MERCHATS
-
-const allMerchants: MerchantType[] = [
-    {
-        name: 'Vinneren',
-        merchantId: 1,
-        isFather: true
-        // isSelected: true
-    },
-    {
-        name: 'Elektra',
-        merchantId: 2,
-        isFather: false
-    },
-    {
-        name: 'La Marina',
-        merchantId: 3,
-        isFather: false
-    },
-    {
-        name: 'Monstore',
-        merchantId: 4,
-        isFather: false
-    },
-    {
-        name: 'Plaza',
-        merchantId: 41,
-        isFather: false
-    },
-    {
-        name: 'HEB',
-        merchantId: 42,
-        isFather: false
-    }
-];
 export default BrandsListPage;

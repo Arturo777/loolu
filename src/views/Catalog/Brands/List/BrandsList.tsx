@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from 'store';
 // assets
 import { getBrands, getBrands2 } from 'store/slices/catalog';
 import { getMerchants } from 'store/slices/auth';
-import { number } from 'yup';
 
 type BransListProps = {
     filterText: string;
@@ -34,7 +33,6 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
     // state
     const [pageSize, setPageSize] = useState<number>(10);
     const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
-    const [marc, setMarca] = useState<BrandType2[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
         setIsLoading(true);
@@ -69,25 +67,6 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
         }
         console.log('filteredBrands', filteredBrands);
     }, [filterText, brands]);
-    // useEffect(() => {
-    //     const handleFilterBrants = () => {
-    //         console.log('marcas', marcas);
-    //         return marcas;
-    //     };
-    //     handleFilterBrants();
-    // }, [brands2, selectedMerchants]);
-    const row: any[] = [
-        {
-            id: 6911,
-            idBrand: 6911,
-            idMerchant: 1,
-            imageUrl: null,
-            isActive: true,
-            metaTagDescription: null,
-            name: 'BAJA BREWING',
-            title: 'BAJA BREWING'
-        }
-    ];
     const columns: GridColDef[] = [
         { field: 'idBrand', headerName: 'ID', width: 80 },
         {

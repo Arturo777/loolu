@@ -136,7 +136,6 @@ export default function ChangeLogPage() {
                             })}
                         </Typography>
                         <MultiMerchant
-                            merchants={allMerchants}
                             onChange={(merchants: MerchantType[]) => handleSelectedMerchant(merchants)}
                             maxShow={1}
                             justOne
@@ -259,36 +258,3 @@ const getDataFormatted = (data: string): { [key: string]: string } => {
 
     return newData;
 };
-const allMerchants: MerchantType[] = [
-    {
-        name: 'ohuitron',
-        merchantId: 1,
-        isFather: true
-        // isSelected: true
-    },
-    {
-        name: 'pablo_pacheco',
-        merchantId: 1004,
-        isFather: false
-    },
-    {
-        name: 'Catalogo 3',
-        merchantId: 3,
-        isFather: false
-    },
-    {
-        name: 'Catalogo 4',
-        merchantId: 4,
-        isFather: false
-    },
-    {
-        name: 'Catalogo 5',
-        merchantId: 41,
-        isFather: false
-    },
-    {
-        name: 'Catalogo 6',
-        merchantId: 42,
-        isFather: false
-    }
-];
