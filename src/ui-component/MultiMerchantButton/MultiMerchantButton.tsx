@@ -1,17 +1,23 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Menu, MenuItem, Typography, Box, useTheme, Stack } from '@mui/material';
 import { MerchantType } from 'types/security';
 import { customScrollBar, MerchantAvatar, MerchantChipType, ShowMoreButton } from './components';
+import { useSelector, useDispatch } from 'store';
+import { getMerchantsList } from 'store/slices/auth';
+import useAuth from 'hooks/useAuth';
 
 type MultiMerchantButtonProps = {
     size?: 'small' | 'medium' | 'large';
-    merchants: MerchantType[];
     onAvatarClick: (merchant: MerchantType) => void;
 };
 
-export default function MultiMerchantButtons({ merchants, onAvatarClick, size }: MultiMerchantButtonProps) {
+export default function MultiMerchantButtons({ onAvatarClick, size }: MultiMerchantButtonProps) {
     // hooks
     const theme = useTheme();
+    const dispatch = useDispatch();
+
+    const { user } = useAuth();
+    const { merchants } = useSelector((state) => state.auth);
 
     // menu triggers
     const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
@@ -27,10 +33,19 @@ export default function MultiMerchantButtons({ merchants, onAvatarClick, size }:
         setAnchorMenu(null);
     };
 
-    const transformedMerchants: MerchantChipType[] = useMemo(() => {
-        const tranformItem = (item: MerchantType): MerchantChipType => ({ ...item, isSelected: false });
+    useEffect(() => {
+        if (user && user.user) {
+            dispatch(getMerchantsList(user?.user));
+        }
+    }, [dispatch, merchants?.length, user]);
 
-        return [...merchants.map(tranformItem)];
+    const transformedMerchants: MerchantChipType[] = useMemo(() => {
+        if (merchants) {
+            const tranformItem = (item: MerchantType): MerchantChipType => ({ ...item, isSelected: false });
+
+            return [...merchants?.map(tranformItem)];
+        }
+        return [];
     }, [merchants]);
 
     const toRenderButtons = useMemo(() => {
@@ -50,7 +65,7 @@ export default function MultiMerchantButtons({ merchants, onAvatarClick, size }:
         return newList;
     }, [transformedMerchants]);
 
-    const showMore = useMemo(() => merchants.length > 2, [merchants]);
+    const showMore = useMemo(() => (merchants?.length ?? 0) > 0, [merchants]);
 
     const renderMenu = useMemo<React.ReactNode>(() => {
         if (!showMore) return null;
@@ -125,7 +140,7 @@ export default function MultiMerchantButtons({ merchants, onAvatarClick, size }:
 
             {showMore && (
                 <Box sx={{ zIndex: 2 }}>
-                    <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${merchants.length}`} />
+                    <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${merchants?.length ?? 0}`} />
                 </Box>
             )}
 
