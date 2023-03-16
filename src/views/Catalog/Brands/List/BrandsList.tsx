@@ -42,6 +42,10 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const marcas = useMemo(() => {
+        if (!selectedMerchants?.length) {
+            return null;
+        }
+
         console.log('selectedMerchants', selectedMerchants);
         console.log('brands2', brands2);
         const marcas2 = brands2.filter((marca: any) => marca?.merchantId === selectedMerchants[0]?.merchantId);
