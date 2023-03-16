@@ -17,7 +17,7 @@ import Loader from 'ui-component/Loader';
 
 import MultiMerchant from 'ui-component/MultiMerchantButton';
 // assets
-import BransList from './BrandsList';
+import BrandsList from './BrandsList';
 import { MerchantType } from 'types/security';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
@@ -91,7 +91,7 @@ const BrandsListPage = () => {
             content={false}
         >
             {loading && <Loader />}
-            <BransList filterText={filterText} />
+            <BrandsList selectedMerchants={selectedMerchants} filterText={filterText} />
         </MainCard>
     );
 };

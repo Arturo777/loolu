@@ -3,7 +3,7 @@ export type CatalogStateProps = {
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
-    brands2: BrandType[];
+    brands2: BrandType2[];
     suppliers: SupplierType[];
     facetsInfo: {
         facets: FacetType[];
@@ -23,7 +23,9 @@ export type BrandType = {
     metaTagDescription: string | null;
     idMerchant: number;
 };
-
+export type BrandType2 = {
+    brands: BrandType[];
+};
 export type NewBrandType = {
     Id?: number;
     idBrand?: number;

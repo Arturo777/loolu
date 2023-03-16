@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 // material-ui
 import { Box, Button, CircularProgress, Collapse, Stack } from '@mui/material';
@@ -10,37 +10,49 @@ import { Link } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 // project imports
-import { BrandType } from 'types/catalog';
+import { BrandType, BrandType2 } from 'types/catalog';
 import { useDispatch, useSelector } from 'store';
 
 // assets
 import { getBrands, getBrands2 } from 'store/slices/catalog';
 import { getMerchants } from 'store/slices/auth';
+import { number } from 'yup';
 
 type BransListProps = {
     filterText: string;
+    selectedMerchants: any;
 };
 
-const BrandsList = ({ filterText }: BransListProps) => {
+const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
 
     // store
     const { brands2, brands, loading } = useSelector((state) => state.catalogue);
-    console.log('brands1', brands);
-    console.log('brands2', brands2);
     // merchants
     // state
     const [pageSize, setPageSize] = useState<number>(10);
     const [filteredBrands, setFilteredBrands] = useState<BrandType[]>([]);
-
+    const [marc, setMarca] = useState<BrandType2[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
+        setIsLoading(true);
         dispatch(getBrands());
         dispatch(getMerchants());
         dispatch(getBrands2());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    const marcas = useMemo(() => {
+        console.log('selectedMerchants', selectedMerchants);
+        console.log('brands2', brands2);
+        const marcas2 = brands2.filter((marca: any) => marca?.merchantId === selectedMerchants[0]?.merchantId);
+        setIsLoading(false);
+        console.log('marcas2', marcas2);
+        return marcas2[0];
+    }, [brands2, selectedMerchants]);
+
+    console.log('marcas', marcas);
 
     useEffect(() => {
         if (filterText?.length === 0) {
@@ -55,10 +67,29 @@ const BrandsList = ({ filterText }: BransListProps) => {
 
             setFilteredBrands(filtered);
         }
+        console.log('filteredBrands', filteredBrands);
     }, [filterText, brands]);
-
+    // useEffect(() => {
+    //     const handleFilterBrants = () => {
+    //         console.log('marcas', marcas);
+    //         return marcas;
+    //     };
+    //     handleFilterBrants();
+    // }, [brands2, selectedMerchants]);
+    const row: any[] = [
+        {
+            id: 6911,
+            idBrand: 6911,
+            idMerchant: 1,
+            imageUrl: null,
+            isActive: true,
+            metaTagDescription: null,
+            name: 'BAJA BREWING',
+            title: 'BAJA BREWING'
+        }
+    ];
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 80 },
+        { field: 'idBrand', headerName: 'ID', width: 80 },
         {
             field: 'name',
             headerName: intl.formatMessage({
@@ -104,16 +135,20 @@ const BrandsList = ({ filterText }: BransListProps) => {
     return (
         <Box sx={{ width: '100%' }}>
             <Collapse in={!loading}>
-                <DataGrid
-                    loading={loading}
-                    rows={filteredBrands}
-                    columns={columns}
-                    pageSize={pageSize}
-                    rowsPerPageOptions={[10, 20, 50, 100]}
-                    onPageSizeChange={setPageSize}
-                    autoHeight
-                    disableSelectionOnClick
-                />
+                {!isLoading && (
+                    <DataGrid
+                        loading={loading}
+                        rows={marcas?.brands ?? []}
+                        // eslint-disable-next-line @typescript-eslint/no-shadow
+                        getRowId={(row: any) => `${row.idBrand}`}
+                        columns={columns}
+                        pageSize={pageSize}
+                        rowsPerPageOptions={[10, 20, 50, 100]}
+                        onPageSizeChange={setPageSize}
+                        autoHeight
+                        disableSelectionOnClick
+                    />
+                )}
             </Collapse>
             <Collapse in={loading}>
                 <Stack justifyContent="center" alignItems="center" p={5}>
