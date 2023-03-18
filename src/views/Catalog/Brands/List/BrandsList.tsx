@@ -68,9 +68,9 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             setFilteredBrands(filtered);
         }
         console.log('filteredBrands', filteredBrands);
-    }, [filterText, filteredBrands, marcas]);
+    }, [filterText, marcas]);
     const columns: GridColDef[] = [
-        { field: 'idBrand', headerName: 'ID', width: 80 },
+        // { field: 'idBrand', headerName: 'ID', width: 80 },
         {
             field: 'name',
             headerName: intl.formatMessage({

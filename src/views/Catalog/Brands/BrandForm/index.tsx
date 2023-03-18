@@ -4,7 +4,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 // third-party imports
 import { useIntl } from 'react-intl';
 
@@ -14,8 +14,10 @@ import { useSelector } from 'store';
 
 // types
 import { BrandType, NewBrandType } from 'types/catalog';
+import { MerchantType } from 'types/security';
 
 const initialBrandData: NewBrandType = {
+    idMerchant: 0,
     name: '',
     title: '',
     metaTagDescription: '',
@@ -36,10 +38,14 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
 
     // vars
     const [newBrandData, setNewBrandData] = useState<NewBrandType>(initialBrandData);
-
+    const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
+    useEffect(() => {
+        console.log({ loading });
+    }, [loading]);
     useEffect(() => {
         if (initialData) {
             const newData: NewBrandType = {
+                idMerchant: initialData.idMerchant,
                 name: initialData.name,
                 title: initialData.title,
                 metaTagDescription: initialData.metaTagDescription ?? '',
@@ -52,13 +58,21 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleSave(newBrandData);
+        changeMerchant?.map((merchant) => {
+            setNewBrandData({ ...newBrandData, idMerchant: merchant.merchantId });
+            // handleSave(newBrandData);
+            console.log({ newBrandData });
+        });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-
         setNewBrandData({ ...newBrandData, [name]: value });
+    };
+
+    const handleMerchants = (merchants: MerchantType[]) => {
+        setChangeMerchant(merchants);
+        console.log(merchants);
     };
 
     const handleDeleteImage = () => {
@@ -70,6 +84,9 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
             <Grid container spacing={gridSpacing}>
                 <Grid item xs={12} sm={4}>
                     <Grid container spacing={gridSpacing}>
+                        <Grid item xs={12}>
+                            <MultiMerchant onChange={handleMerchants} maxShow={5} defaultSelected={[]} />
+                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 value={newBrandData.name}

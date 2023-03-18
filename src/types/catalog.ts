@@ -29,6 +29,7 @@ export type BrandType2 = {
 export type NewBrandType = {
     Id?: number;
     idBrand?: number;
+    idMerchant?: number;
     name: string;
     Name?: string;
     title: string;
