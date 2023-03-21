@@ -51,6 +51,7 @@ const CreateProduct = () => {
         setValue(newValue);
     };
 
+
     useEffect(() => {
         // getProduct();
         /* dispatch(getProduct(id)); */
