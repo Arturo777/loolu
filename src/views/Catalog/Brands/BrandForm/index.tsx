@@ -13,23 +13,28 @@ import { gridSpacing } from 'store/constant';
 import { useSelector } from 'store';
 
 // types
-import { BrandType, NewBrandType } from 'types/catalog';
+import { BrandType, NewBrandType2 } from 'types/catalog';
 import { MerchantType } from 'types/security';
 
-const initialBrandData: NewBrandType = {
+const initialBrandData: NewBrandType2 = {
     idMerchant: 0,
-    name: '',
-    title: '',
-    metaTagDescription: '',
-    imageUrl: ''
+    fatherMerchant: false,
+    brandData: {
+        imageUrl: '',
+        isActive: true,
+        metaTagDescription: '',
+        name: '',
+        title: ''
+    }
 };
 
 type BrandFormProps = {
     initialData?: BrandType | null | undefined;
-    handleSave: (data: NewBrandType) => void;
+    handleSave: (data: NewBrandType2) => void;
 };
 
-export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
+export default function BrandForm({ initialData, handleSave }: any) {
+    // BrandFormProps
     // hooks
     const intl = useIntl();
 
@@ -37,19 +42,23 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
     const { loading } = useSelector((state) => state.catalogue);
 
     // vars
-    const [newBrandData, setNewBrandData] = useState<NewBrandType>(initialBrandData);
+    const [newBrandData, setNewBrandData] = useState<NewBrandType2>(initialBrandData);
     const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
     useEffect(() => {
         console.log({ loading });
     }, [loading]);
     useEffect(() => {
         if (initialData) {
-            const newData: NewBrandType = {
+            const newData: NewBrandType2 = {
                 idMerchant: initialData.idMerchant,
-                name: initialData.name,
-                title: initialData.title,
-                metaTagDescription: initialData.metaTagDescription ?? '',
-                imageUrl: initialData.imageUrl ?? ''
+                fatherMerchant: initialData.fatherMerchant,
+                brandData: {
+                    imageUrl: initialData.imageUrl ?? '',
+                    isActive: initialData.isActive,
+                    metaTagDescription: initialData.metaTagDescription ?? '',
+                    name: initialData.name,
+                    title: initialData.title
+                }
             };
 
             setNewBrandData(newData);
@@ -58,16 +67,23 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        changeMerchant?.map((merchant) => {
-            setNewBrandData({ ...newBrandData, idMerchant: merchant.merchantId });
-            // handleSave(newBrandData);
-            console.log({ newBrandData });
-        });
+        const listNewBrandData: NewBrandType2[] = [];
+        const dataChangeMerchant = changeMerchant?.map((merchant) =>
+            // setNewBrandData({ ...newBrandData, idMerchant: merchant.merchantId });
+            ({
+                idMerchant: merchant.merchantId,
+                fatherMerchant: true,
+                brandData: newBrandData.brandData
+            })
+        );
+        console.log(dataChangeMerchant);
+        handleSave(dataChangeMerchant);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setNewBrandData({ ...newBrandData, [name]: value });
+        setNewBrandData({ ...newBrandData, brandData: { ...newBrandData.brandData, [name]: value } });
+        console.log({ [name]: value });
     };
 
     const handleMerchants = (merchants: MerchantType[]) => {
@@ -76,7 +92,13 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
     };
 
     const handleDeleteImage = () => {
-        setNewBrandData({ ...newBrandData, imageUrl: '' });
+        setNewBrandData({
+            ...newBrandData,
+            brandData: {
+                ...newBrandData.brandData,
+                imageUrl: ''
+            }
+        });
     };
 
     return (
@@ -89,7 +111,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                value={newBrandData.name}
+                                value={newBrandData.brandData.name}
                                 onChange={handleChange}
                                 fullWidth
                                 label={intl.formatMessage({
@@ -101,7 +123,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                value={newBrandData.title}
+                                value={newBrandData.brandData.title}
                                 onChange={handleChange}
                                 fullWidth
                                 label={intl.formatMessage({
@@ -113,7 +135,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                value={newBrandData.metaTagDescription}
+                                value={newBrandData.brandData.metaTagDescription}
                                 onChange={handleChange}
                                 fullWidth
                                 label={intl.formatMessage({
@@ -131,7 +153,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <TextField
-                                value={newBrandData.imageUrl}
+                                value={newBrandData.brandData.imageUrl}
                                 onChange={handleChange}
                                 fullWidth
                                 label={intl.formatMessage({
@@ -140,7 +162,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                                 name="imageUrl"
                                 type="url"
                                 InputProps={{
-                                    endAdornment: newBrandData.imageUrl && (
+                                    endAdornment: newBrandData.brandData.imageUrl && (
                                         <InputAdornment position="end">
                                             <IconButton aria-label="delete image" edge="end" onClick={handleDeleteImage}>
                                                 <CloseIcon color="error" />
@@ -151,7 +173,7 @@ export default function BrandForm({ initialData, handleSave }: BrandFormProps) {
                             />
                         </Grid>
 
-                        <CustomCardMedia url={newBrandData.imageUrl} handleDelete={handleDeleteImage} />
+                        <CustomCardMedia url={newBrandData.brandData.imageUrl ?? ''} handleDelete={handleDeleteImage} />
                     </Grid>
                 </Grid>
 

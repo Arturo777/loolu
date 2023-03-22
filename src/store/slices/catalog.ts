@@ -8,7 +8,7 @@ import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, NewBrandType } from 'types/catalog';
+import { BrandType, NewBrandType, NewBrandType2 } from 'types/catalog';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
@@ -92,6 +92,13 @@ const slice = createSlice({
                 state.loading = false;
                 state.brands2 = action.payload.response;
             });
+        builder
+            .addCase(createBrandMultiCatalog.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createBrandMultiCatalog.fulfilled, (state) => {
+                state.loading = false;
+            });
         // CATEGORIES
         builder
             .addCase(getCategoriesService.pending, (state) => {
@@ -160,7 +167,7 @@ export const editBrand = createAsyncThunk(`${slice.name}/editBrand`, async (para
 });
 
 type createBrandParams = {
-    dataBrand: NewBrandType;
+    dataBrand: NewBrandType2;
     idMerchant?: number;
 };
 
@@ -175,10 +182,21 @@ export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (pa
     return response.data;
 });
 
+export const createBrandMultiCatalog = createAsyncThunk(`${slice.name}/createBrandMultiCatalog`, async (dataBrand: NewBrandType2) => {
+    const bodyData = dataBrand;
+    const response = await axios.post(`styrk/api/brand/save-multicatalog`, bodyData, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: 1
+        }
+    });
+    return response.data;
+});
+
 /* ============ SUPPLIERS ============ */
 
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
-    const response = await axios.get(`styrk/api/supplier/search`, {
+    const response = await axios.get(`styrk/api/brand/save-multicatalog`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1

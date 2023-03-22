@@ -15,6 +15,7 @@ export type CatalogStateProps = {
 };
 
 export type BrandType = {
+    fatherMerchant: boolean | undefined;
     idBrand: number;
     name: string;
     isActive: boolean;
@@ -36,6 +37,19 @@ export type NewBrandType = {
     metaTagDescription: string;
     imageUrl: string;
     isActive?: boolean;
+};
+export type NewBrandType2 = {
+    idMerchant?: number;
+    fatherMerchant?: boolean | undefined;
+    idBrand?: number;
+    brandData: {
+        imageUrl?: string | undefined;
+        masterBrandId?: number | undefined;
+        isActive: boolean | undefined;
+        metaTagDescription?: string | undefined;
+        name: string | undefined;
+        title: string | undefined;
+    };
 };
 
 export type SupplierType = {

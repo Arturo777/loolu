@@ -53,13 +53,13 @@ const EditBrandPage = () => {
     };
 
     const handleSave = async (data: NewBrandType) => {
-        const newData: BrandType = {
-            idBrand: Number(brandId ?? ''),
-            idMerchant: 1,
-            ...data,
-            isActive: brandStatus
-        };
-        await dispatch(editBrand({ dataBrand: newData }));
+        // const newData: BrandType = {
+        //     idBrand: Number(brandId ?? ''),
+        //     idMerchant: 1,
+        //     ...data,
+        //     isActive: brandStatus
+        // };
+        // await dispatch(editBrand({ dataBrand: newData }));
 
         navigate('/brands');
     };
@@ -86,7 +86,7 @@ const EditBrandPage = () => {
                 </FormGroup>
             }
         >
-            <BrandForm initialData={brandData} handleSave={handleSave} />
+            {/* <BrandForm initialData={brandData} handleSave={handleSave} /> */}
         </MainCard>
     );
 };

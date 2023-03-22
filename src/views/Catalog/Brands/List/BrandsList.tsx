@@ -44,15 +44,15 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             return null;
         }
 
-        console.log('selectedMerchants', selectedMerchants);
-        console.log('brands2', brands2);
+        // console.log('selectedMerchants', selectedMerchants);
+        // console.log('brands2', brands2);
         const marcas2 = brands2.filter((marca: any) => marca?.merchantId === selectedMerchants[0]?.merchantId);
         setIsLoading(false);
-        console.log('marcas2', marcas2);
+        // console.log('marcas2', marcas2);
         return marcas2[0];
     }, [brands2, selectedMerchants]);
 
-    console.log('marcas', marcas);
+    // console.log('marcas', marcas);
 
     useEffect(() => {
         if (filterText?.length === 0) {
@@ -67,7 +67,7 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
 
             setFilteredBrands(filtered);
         }
-        console.log('filteredBrands', filteredBrands);
+        // console.log('filteredBrands', filteredBrands);
     }, [filterText, marcas]);
     const columns: GridColDef[] = [
         // { field: 'idBrand', headerName: 'ID', width: 80 },
