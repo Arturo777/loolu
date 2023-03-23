@@ -8,7 +8,7 @@ import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, CategoryType, MerchantCategoryType, NewBrandType } from 'types/catalog';
+import { BrandType, CategoryType, CreateMerchantCategoryProps, MerchantCategoryType, NewBrandType } from 'types/catalog';
 import getCategoriesServiceMock from './mocks/getCategoriesServiceMock';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
@@ -376,14 +376,10 @@ export const createCategoryService = createAsyncThunk(`${slice.name}/createCateg
 });
 export const createMerchantCategoryService = createAsyncThunk(
     `${slice.name}/createMerchantCategory`,
-    async ({ idMerchant, data }: createCategoryProps) => {
-        const response = await axios.post(
-            `styrk/api/category/save-multicatalog?idMerchant=${idMerchant}`,
-            { ...data, isActive: true },
-            {
-                baseURL: STYRK_API
-            }
-        );
+    async ({ idMerchant, data }: CreateMerchantCategoryProps) => {
+        const response = await axios.post(`styrk/api/category/save-multicatalog?idMerchant=${idMerchant}`, data, {
+            baseURL: STYRK_API
+        });
         return response.data;
     }
 );

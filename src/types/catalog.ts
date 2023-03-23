@@ -1,3 +1,20 @@
+type CreateCategoryMerchantPayload = {
+    merchantId: number;
+    fatherMerchant: boolean;
+    categoryData: {
+        fatherCategoryId: number | string;
+        masterCategoryId: number;
+        isActive: boolean;
+        name: string;
+        title: string;
+    };
+};
+
+export type CreateMerchantCategoryProps = {
+    idMerchant: number;
+    data: CreateCategoryMerchantPayload[];
+};
+
 type CreateCategoryPropsData = {
     merchantId: number;
     name: string;

@@ -11,11 +11,17 @@ import { useIntl } from 'react-intl';
 // project imports
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { createCategoryService, getCategoriesService, getMerchantCategoriesService } from 'store/slices/catalog';
+import {
+    createCategoryService,
+    createMerchantCategoryService,
+    getCategoriesService,
+    getMerchantCategoriesService
+} from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import SelectCategoryComponent from '../components/SelectCategory';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { CreateCategoryPageProps } from 'types/catalog';
+import { MerchantType } from 'types/security';
 
 // services
 
@@ -31,7 +37,7 @@ const initialData: newCategoryType = {
     name: ''
 };
 
-const CreateCategoryPage = ({ handleClose, selectedCatId, show, selectedMerchant }: CreateCategoryPageProps) => {
+const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategoryPageProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -41,6 +47,7 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show, selectedMerchant
 
     // vars
     const [newCategory, setNewCategory] = useState<newCategoryType>(initialData);
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[]>([]);
 
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
@@ -60,14 +67,24 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show, selectedMerchant
         e.preventDefault();
 
         if (!newCategory.catId) return;
+        if (!selectedMerchants.length) return;
+
+        const createMerchantCategoryPayload = selectedMerchants.map((merchant: MerchantType) => ({
+            merchantId: merchant.merchantId,
+            fatherMerchant: !Number(newCategory.catId),
+            categoryData: {
+                fatherCategoryId: Number(newCategory.catId) ?? 1,
+                masterCategoryId: Number(newCategory.catId) ?? 1,
+                isActive: true,
+                name: newCategory.name,
+                title: newCategory.name
+            }
+        }));
 
         dispatch(
-            createCategoryService({
+            createMerchantCategoryService({
                 idMerchant: 1,
-                data: {
-                    name: newCategory.name,
-                    fatherCategoryId: Number(newCategory.catId) ?? 1
-                }
+                data: createMerchantCategoryPayload
             })
         )
             .then(({ payload }) => {
@@ -144,7 +161,7 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show, selectedMerchant
                                 <MultiMerchant
                                     // justOne
                                     // readOnly
-                                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                                    onChange={(merchants) => setSelectedMerchants(merchants)}
                                     maxShow={9}
                                     defaultSelected={[]}
                                 />
