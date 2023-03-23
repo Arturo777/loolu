@@ -210,7 +210,6 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
                 <MultiMerchant
                     // justOne
                     // readOnly
-                    merchants={allMerchants}
                     onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
                     maxShow={4}
                     defaultSelected={[]}

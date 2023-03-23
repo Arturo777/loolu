@@ -10,6 +10,7 @@ import ProductReview from './ProductReview';
 import RelatedProducts from './RelatedProducts'; */
 import MainCard from 'ui-component/cards/MainCard';
 import Chip from 'ui-component/extended/Chip';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
@@ -64,6 +65,13 @@ const CreateProduct = () => {
     return (
         <Grid container alignItems="center" justifyContent="center" spacing={gridSpacing}>
             <Grid item xs={12} lg={10}>
+                <MultiMerchant
+                    // justOne
+                    // readOnly
+                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                    maxShow={4}
+                    defaultSelected={[]}
+                />
                 <MainCard>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12} md={6}>
