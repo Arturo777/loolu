@@ -33,7 +33,7 @@ const EditBrandPage = () => {
     const { brands } = useSelector((state) => state.catalogue);
 
     useEffect(() => {
-        dispatch(getBrands());
+        // dispatch(getBrands());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

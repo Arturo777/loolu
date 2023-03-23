@@ -51,11 +51,7 @@ const BrandsListPage = () => {
             title={
                 <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid container alignItems="center" item md={4}>
-                        <Typography variant="h3">
-                            {intl.formatMessage({
-                                id: 'change_log'
-                            })}
-                        </Typography>
+                        <Typography variant="h3">Change Brand</Typography>
                         <MultiMerchant
                             onChange={(merchants: MerchantType[]) => setSelectedMerchants(merchants)}
                             maxShow={1}

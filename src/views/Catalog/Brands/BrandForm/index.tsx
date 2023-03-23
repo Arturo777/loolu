@@ -72,11 +72,10 @@ export default function BrandForm({ initialData, handleSave }: any) {
             // setNewBrandData({ ...newBrandData, idMerchant: merchant.merchantId });
             ({
                 idMerchant: merchant.merchantId,
-                fatherMerchant: true,
+                fatherMerchant: merchant.isFather,
                 brandData: newBrandData.brandData
             })
         );
-        console.log(dataChangeMerchant);
         handleSave(dataChangeMerchant);
     };
 
