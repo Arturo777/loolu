@@ -36,12 +36,15 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
     const [idMerchant, setIdMerchant] = useState<number>(0);
     // setIdMerchant(selectedMerchants[0].merchantId);
     useEffect(() => {
-        setIsLoading(true);
         // dispatch(getBrands());
-        dispatch(getBrands2(selectedMerchants[0].merchantId));
+        if (!selectedMerchants?.length) {
+            return;
+        }
+        setIsLoading(true);
+        selectedMerchants && dispatch(getBrands2(selectedMerchants[0].merchantId));
         // dispatch(getBrands2(1));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [selectedMerchants]);
     const marcas = useMemo(() => {
         if (!selectedMerchants?.length) {
             return null;
