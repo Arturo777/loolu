@@ -67,6 +67,11 @@ export const MerchantAvatar = ({
     );
 };
 
+MerchantAvatar.defaultProps = {
+    // eslint-disable-next-line react/default-props-match-prop-types
+    size: 'medium'
+};
+
 //  borderColor: string; color: string
 const useStringAvatarProps = ({ merchant, size }: { merchant: MerchantChipType; size: 'small' | 'medium' | 'large' }) => {
     const theme = useTheme();
