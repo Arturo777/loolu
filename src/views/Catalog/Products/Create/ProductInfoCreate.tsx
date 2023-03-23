@@ -1,3 +1,4 @@
+import { JSXElementConstructor, Key, ReactElement, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
@@ -27,12 +28,14 @@ import {
     TableCell,
     TableRow,
     TextField,
+    TextFieldProps,
     Tooltip,
     Typography
 } from '@mui/material';
 
-import { DatePicker, LocalizationProvider, LocalizationProviderProps } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 // third-party
 import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
@@ -42,7 +45,7 @@ import * as yup from 'yup';
 import Chip from 'ui-component/extended/Chip';
 import Avatar from 'ui-component/extended/Avatar';
 import ColorOptions from '../ColorOptions';
-import { ColorsOptionsProps, Products } from 'types/e-commerce';
+import { ColorsOptionsProps, Policy, Products } from 'types/e-commerce';
 import { openSnackbar } from 'store/slices/snackbar';
 import { useDispatch, useSelector } from 'store';
 import { addProduct } from 'store/slices/cart';
@@ -56,7 +59,9 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Key } from 'react';
+import { getCategoriesService, getSuppliers } from 'store/slices/catalog';
+import { SupplierType } from 'types/catalog';
+import { getTradePolicies } from 'store/slices/product';
 
 // product color select
 function getColor(color: string) {
@@ -169,10 +174,20 @@ interface Props {
 }
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfoCreate = () => {
+const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: any; productInfo: any }) => {
     const intl = useIntl();
     const dispatch = useDispatch();
     const history = useNavigate();
+
+    const { categories, suppliers } = useSelector((state) => state.catalogue);
+    const { tradePolicies } = useSelector((state) => state.product);
+
+    useEffect(() => {
+        dispatch(getCategoriesService({ idMerchant: 1 }));
+        dispatch(getSuppliers());
+        dispatch(getTradePolicies());
+    }, [dispatch]);
+    console.log(tradePolicies);
 
     /* const formik = useFormik({
         enableReinitialize: true,
@@ -222,11 +237,6 @@ const ProductInfoCreate = () => {
         );
     }; */
 
-    const datePickerProps: LocalizationProviderProps = {
-        dateAdapter: AdapterDateFns,
-        locale: 'es' // Puedes establecer el idioma que desees
-    };
-
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -272,16 +282,23 @@ const ProductInfoCreate = () => {
                                 variant="outlined"
                                 name="linkId"
                             />
+                            <TextField
+                                multiline
+                                id="outlined-basic"
+                                label={intl.formatMessage({ id: 'reference_code' })}
+                                variant="outlined"
+                                name="productRefID"
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <LocalizationProvider {...datePickerProps}>
-                                <DatePicker />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker label={intl.formatMessage({ id: 'create_Date' })} />
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker label={intl.formatMessage({ id: 'update_Date' })} />
                             </LocalizationProvider>
                         </Grid>
                     </Grid>
-                    <Avatar variant="rounded" sx={{ bgcolor: 'grey.200', color: 'grey.800' }}>
-                        <FavoriteBorderIcon />
-                    </Avatar>
                 </Stack>
             </Grid>
             <Grid item xs={12}>
@@ -295,15 +312,16 @@ const ProductInfoCreate = () => {
                 />
             </Grid>
             <Grid item xs={12}>
-                <TextField
-                    multiline
-                    id="outlined-basic"
-                    label={intl.formatMessage({ id: 'reference_code' })}
-                    variant="outlined"
-                    name="productRefID"
-                />
-            </Grid>
-            <Grid item xs={12}>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">
+                        <FormattedMessage id="select_vendor" />
+                    </InputLabel>
+                    <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Vendor" /* onChange={handleChangeVendor} */>
+                        {suppliers?.map((sup: SupplierType) => (
+                            <MenuItem value={sup?.idProvider}>{sup?.name}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 {/* <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="h2" color="primary">
                         ${product.offerPrice}
@@ -326,20 +344,39 @@ const ProductInfoCreate = () => {
                         renderValue={(selected: any) => selected.join(', ')}
                         MenuProps={MenuProps}
                     >
-                        {/* {product?.tradePolicies?.map(
-                            (tr: {
-                                isSelected: boolean | undefined;
-                                idPolicy: Key | null | undefined;
-                                tradePolicyName: string | number | readonly string[] | undefined;
-                            }) => (
-                                <MenuItem key={tr.idPolicy} value={tr.tradePolicyName}>
-                                    <Checkbox checked={tr.isSelected} />
-                                    <ListItemText primary={tr.tradePolicyName} />
-                                </MenuItem>
-                            )
-                        )} */}
+                        {/* {tradePolicies?.TradePolicies?.map((tr: Policy) => (
+                            <MenuItem key={tr.idPolicy} value={tr.idPolicy}>
+                                <Checkbox checked={productInfo.tradePolicies.idPolicy} />
+                                <ListItemText primary={tr.name} />
+                            </MenuItem>
+                        ))} */}
                     </Select>
                 </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+                {/* <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="demo-multiple-checkbox-label">{intl.formatMessage({ id: 'trade_policies' })}</InputLabel>
+                    <Select
+                        labelId="demo-multiple-checkbox-label"
+                        id="demo-multiple-checkbox"
+                        multiple
+                        value={filterTradePolicy(product.tradePolicies[0].idPolicy)}
+                        onChange={(event) => {
+                            setProductInfo(typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value);
+                        }}
+                        name="tradePolicy"
+                        input={<OutlinedInput label="Trade Policies" />}
+                        renderValue={(selected: any) => selected.join(', ')}
+                        MenuProps={MenuProps}
+                    >
+                        {tradePolicies?.TradePolicies?.map((tr: Policy) => (
+                            <MenuItem key={tr.idPolicy} value={tr.idPolicy}>
+                                <Checkbox checked={productInfo.tradePolicies} />
+                                <ListItemText primary={tr.name} />
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl> */}
             </Grid>
             <Grid item xs={12}>
                 <Divider />
@@ -404,8 +441,8 @@ const ProductInfoCreate = () => {
                     <Grid item xs={12}>
                         <Grid container spacing={1}>
                             <Grid item xs={6}>
-                                <Button fullWidth color="primary" variant="contained" size="large" startIcon={<ShoppingCartTwoToneIcon />}>
-                                    Add to Cart
+                                <Button fullWidth color="primary" variant="contained" size="large">
+                                    {intl.formatMessage({ id: 'save' })}
                                 </Button>
                             </Grid>
                             <Grid item xs={6}>

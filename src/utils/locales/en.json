@@ -292,5 +292,8 @@
     "update": "Update",
     "select_all": "Select all",
 
-    "create-product": "Create product"
+    "create-product": "Create product",
+    "create_Date": "Create date",
+    "update_Date": "Update date",
+    "select_vendor": "Select vendor"
 }

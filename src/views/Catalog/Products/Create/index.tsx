@@ -17,6 +17,7 @@ import { getProduct } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 import ProductImagesCreate from './ProductImagesCreate';
 import ProductInfoCreate from './ProductInfoCreate';
+import { Products } from 'types/e-commerce';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -46,11 +47,11 @@ const CreateProduct = () => {
 
     // product description tabs
     const [value, setValue] = useState(0);
+    const [productInfo, setProductInfo] = useState<Products>();
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
 
     useEffect(() => {
         // getProduct();
@@ -69,7 +70,7 @@ const CreateProduct = () => {
                             {/* <ProductImagesCreate product={product} /> */}
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <ProductInfoCreate />
+                            <ProductInfoCreate setProductInfo={setProductInfo} productInfo={productInfo} />
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs

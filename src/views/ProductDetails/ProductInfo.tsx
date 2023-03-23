@@ -234,7 +234,6 @@ const ProductInfo = ({
         if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
             return;
         }
-
         setStateDrawer({ ...stateDrawer, [anchor]: open });
     };
     const handleClickOutside = (event: { target: any }) => {
