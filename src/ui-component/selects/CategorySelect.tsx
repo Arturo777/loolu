@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'store';
 import { getCategoriesService } from 'store/slices/catalog';
 
 type OptionType = {
-    id: number;
+    id: number | string;
     label: string;
     level?: number;
 };

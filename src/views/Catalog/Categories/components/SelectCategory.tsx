@@ -23,11 +23,12 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange, re
     const intl = useIntl();
 
     // store
-    const { loading, flatCategories } = useSelector((state) => state.catalogue);
+    const { loading, flatMerchantCategories } = useSelector((state) => state.catalogue);
 
     const renderSelected = useCallback(
         (selected) => {
-            const selectedItem: FlatCategoryType | undefined = flatCategories.find((item) => Number(item.id) === Number(selected));
+            const selectedItem: any = flatMerchantCategories.find((item) => Number(item.id) === Number(selected));
+            // const selectedItem: FlatCategoryType | undefined = flatMerchantCategories.find((item) => Number(item.id) === Number(selected));
 
             if (!selectedItem) return <Box />;
 
@@ -37,7 +38,7 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange, re
                 </Box>
             );
         },
-        [flatCategories]
+        [flatMerchantCategories]
     );
     return (
         <>
@@ -66,7 +67,7 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange, re
                         renderValue={renderSelected}
                         required={required}
                     >
-                        {flatCategories.map((item) => (
+                        {flatMerchantCategories.map((item) => (
                             <MenuItem
                                 key={`selected-item-${item.id}`}
                                 value={item.id}

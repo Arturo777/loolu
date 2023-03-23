@@ -11,9 +11,11 @@ import { useIntl } from 'react-intl';
 // project imports
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { createCategoryService, getCategoriesService } from 'store/slices/catalog';
+import { createCategoryService, getCategoriesService, getMerchantCategoriesService } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import SelectCategoryComponent from '../components/SelectCategory';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { CreateCategoryPageProps } from 'types/catalog';
 
 // services
 
@@ -29,13 +31,7 @@ const initialData: newCategoryType = {
     name: ''
 };
 
-type CreateCategoryPageProps = {
-    handleClose: (e?: any) => void;
-    selectedCatId?: number;
-    show: boolean;
-};
-
-const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategoryPageProps) => {
+const CreateCategoryPage = ({ handleClose, selectedCatId, show, selectedMerchant }: CreateCategoryPageProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -45,6 +41,11 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
 
     // vars
     const [newCategory, setNewCategory] = useState<newCategoryType>(initialData);
+
+    useEffect(() => {
+        dispatch(getCategoriesService({ idMerchant: 1 }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (selectedCatId) {
@@ -133,11 +134,21 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
                 <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing}>
                     <Grid item xs={12} pt={4} pl={3}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                            <Typography variant="h4">
-                                {intl.formatMessage({
-                                    id: 'create_category'
-                                })}
-                            </Typography>
+                            <Grid item container alignItems="center">
+                                <Typography variant="h4" sx={{ mr: 1 }}>
+                                    {intl.formatMessage({
+                                        id: 'create_category'
+                                    })}
+                                </Typography>
+
+                                <MultiMerchant
+                                    // justOne
+                                    // readOnly
+                                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                                    maxShow={9}
+                                    defaultSelected={[]}
+                                />
+                            </Grid>
 
                             <IconButton onClick={handleCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
                                 <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />

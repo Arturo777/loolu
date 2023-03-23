@@ -1,3 +1,64 @@
+type CreateCategoryPropsData = {
+    merchantId: number;
+    name: string;
+    fatherCategoryId: number;
+    fatherMerchant: boolean;
+    categoryData: {
+        fatherCategoryId: number | null;
+        masterCategoryId: number;
+        isActive: boolean;
+        name: string;
+        title: string;
+    };
+};
+
+export type createCategoryProps = {
+    idMerchant: number;
+    data: CreateCategoryPropsData[];
+};
+
+export type CreateCategoryPageProps = {
+    handleClose: (e?: any) => void;
+    selectedCatId?: number | string;
+    show: boolean;
+    selectedMerchant: SelectedMerchant | null;
+};
+
+export type EditCategoryProps = {
+    selectedCategory?: number | string;
+    show: boolean;
+    onCancel: () => void;
+    openAssociate: (cat: CategoryType | undefined) => void;
+    selectedMerchant: SelectedMerchant | null;
+};
+
+export type CategoriesListProps = {
+    filterText: string;
+    openCreate: (catId: number | string) => void;
+    handleShowInfo: (cat?: number | string) => void;
+    openAssociate: (cat: CategoryType | undefined) => void;
+    selectedMerchant: SelectedMerchant | null;
+};
+
+export type SelectedMerchant = {
+    isFather: boolean;
+    isSelected: boolean;
+    merchantId: number;
+    name: string;
+    status: boolean;
+};
+
+export type MerchantCategoryType = {
+    categoryList: CategoryType[];
+    isFatherMerchat: boolean;
+    idMerchant: number;
+};
+export type FlatMerchantCategoryType = {
+    categoryList: FlatCategoryType[];
+    isFatherMerchat: boolean;
+    idMerchant: number;
+};
+
 export type CatalogStateProps = {
     error: object | string | null;
     loading: boolean;
@@ -11,6 +72,9 @@ export type CatalogStateProps = {
     categories: CategoryType[];
     flatCategories: FlatCategoryType[];
     filterCategories: FilterCategoryType[];
+    merchantCategories?: MerchantCategoryType[];
+    flatMerchantCategories: FlatCategoryType[];
+    filterMerchantCategories: FilterMerchantCategoryType[];
 };
 
 export type BrandType = {
@@ -47,7 +111,7 @@ export type FacetType = {
 };
 
 export type CategoryType = {
-    id: number;
+    id: number | string;
     numberChildren: number;
     name: string;
     title: string;
@@ -61,10 +125,12 @@ export type CategoryType = {
     score: number;
     description: string;
     stockKeepingUnitSelectionMode: '' | 'COMBO' | 'LIST' | 'RADIO' | 'SPECIFICATION';
+    masterCategoryId?: number;
 };
 
+export type FilterMerchantCategoryType = FilterCategoryType;
 export type FlatCategoryType = {
-    id: number;
+    id: number | string;
     name: string;
     title: string;
     description: string;
@@ -73,7 +139,7 @@ export type FlatCategoryType = {
 };
 
 export type FilterCategoryType = {
-    id: number;
+    id: number | string;
     name: string;
     fatherName?: string;
     grandFatherName?: string;
