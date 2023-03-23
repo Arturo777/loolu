@@ -62,7 +62,122 @@ const Products = () => {
     const [typeScore, setTypeScore] = useState('');
     const [products, setProducts] = useState([]);
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { secondLevelProducts } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+    // const { secondLevelProducts } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+
+    const secondLevelProducts = {
+        metricsGood: [
+            {
+                productId: 1,
+                completeness: 84,
+                metricConfigRangeId: 1,
+                categoryId: 11502005,
+                categoryName: 'Health & Beauty',
+                productName: 'Speed Stick Regular Deodorant',
+                eanUpc: ['23022021', '2302202301'],
+                productReferenceCode: 'SPD02',
+                brandName: 'Speed Stick',
+                __typename: 'metricsGoodProducts'
+            },
+            {
+                productId: 3,
+                completeness: 84,
+                metricConfigRangeId: 1,
+                categoryId: 11502005,
+                categoryName: 'Health & Beauty',
+                productName: 'Dove Nourishing Secrets Shampoo and Conditioner Coconut & Hydration',
+                eanUpc: ['200223230101'],
+                productReferenceCode: 'PDD0101',
+                brandName: 'Dove',
+                __typename: 'metricsGoodProducts'
+            },
+            {
+                productId: 4,
+                completeness: 84,
+                metricConfigRangeId: 1,
+                categoryId: 11502006,
+                categoryName: 'Health & Beauty',
+                productName: 'OGX Thick & Full + Biotin & Collagen Conditioner',
+                eanUpc: ['24022023010'],
+                productReferenceCode: 'OGX001',
+                brandName: 'Dove',
+                __typename: 'metricsGoodProducts'
+            },
+            {
+                productId: 5,
+                completeness: 84,
+                metricConfigRangeId: 1,
+                categoryId: 11502006,
+                categoryName: 'Health & Beauty',
+                productName: 'Garnier Fructis Sleek & Shine Smoothing Shampoo',
+                eanUpc: ['24022023338'],
+                productReferenceCode: 'GFSS0001',
+                brandName: 'Speed Stick',
+                __typename: 'metricsGoodProducts'
+            }
+        ],
+        metricsPoor: [],
+        metricsFair: [],
+        resumeProducts: [
+            {
+                metricConfigRangeId: 1,
+                description: 'Good',
+                productReferenceCodeScorePercentage: 100,
+                pageTitleScorePercentage: 100,
+                brandNameScorePercentage: 100,
+                categoryScorePercentage: 100,
+                textLinkScorePercentage: 100,
+                skuReferenceCodeScorePercentage: 100,
+                eanUpcScorePercentage: 100,
+                dimensionHeightScorePercentage: 0,
+                dimensionWidthScorePercentage: 0,
+                dimensionLargeScorePercentage: 0,
+                dimensionWeightScorePercentage: 0,
+                totalProducts: 4,
+                totalProductsPercentage: 100,
+                totalScore: 84,
+                __typename: 'resumeProducts'
+            },
+            {
+                metricConfigRangeId: 3,
+                description: 'Poor',
+                productReferenceCodeScorePercentage: 0,
+                pageTitleScorePercentage: 0,
+                brandNameScorePercentage: 0,
+                categoryScorePercentage: 0,
+                textLinkScorePercentage: 0,
+                skuReferenceCodeScorePercentage: 0,
+                eanUpcScorePercentage: 0,
+                dimensionHeightScorePercentage: 0,
+                dimensionWidthScorePercentage: 0,
+                dimensionLargeScorePercentage: 0,
+                dimensionWeightScorePercentage: 0,
+                totalProducts: 0,
+                totalProductsPercentage: 0,
+                totalScore: 0,
+                __typename: 'resumeProducts'
+            },
+            {
+                metricConfigRangeId: 2,
+                description: 'Fair',
+                productReferenceCodeScorePercentage: 0,
+                pageTitleScorePercentage: 0,
+                brandNameScorePercentage: 0,
+                categoryScorePercentage: 0,
+                textLinkScorePercentage: 0,
+                skuReferenceCodeScorePercentage: 0,
+                eanUpcScorePercentage: 0,
+                dimensionHeightScorePercentage: 0,
+                dimensionWidthScorePercentage: 0,
+                dimensionLargeScorePercentage: 0,
+                dimensionWeightScorePercentage: 0,
+                totalProducts: 0,
+                totalProductsPercentage: 0,
+                totalScore: 0,
+                __typename: 'resumeProducts'
+            }
+        ],
+        __typename: 'dashboardProducts'
+    };
 
     useEffect(() => {
         setIsLoading(true);

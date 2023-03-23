@@ -209,9 +209,9 @@ const FirstLevel = () => {
                     "__typename": "dashboardskuCatalog"
                 }
             ],
-            "totalImages": 1,
-            "totalProducts": 4,
-            "totalSkus": 5,
+            "totalImages": 4,
+            "totalProducts": 5,
+            "totalSkus": 7,
             "overallScore": 31.125,
             "executionDate": "2023-02-24T08:19:04",
             "metricRange": [
@@ -219,7 +219,7 @@ const FirstLevel = () => {
                     "metricConfigRangeId": 1,
                     "metricTypeId": 1,
                     "typeDescription": "Products",
-                    "percentage": 84,
+                    "percentage": 90,
                     "description": "Good",
                     "__typename": "dashboardmetrics"
                 },
@@ -227,7 +227,7 @@ const FirstLevel = () => {
                     "metricConfigRangeId": 3,
                     "metricTypeId": 3,
                     "typeDescription": "Facets",
-                    "percentage": 0,
+                    "percentage": 2,
                     "description": "Poor",
                     "__typename": "dashboardmetrics"
                 },
@@ -311,13 +311,12 @@ const FirstLevel = () => {
                             <Typography variant="h3"> <FormattedMessage id='health-content' /> </Typography>
                         </Grid>
                         <Grid item>
-                            <MultiMerchant
+                            { value === 1 &&(
+                                <MultiMerchant
                                     // justOne
                                     // readOnly
-                                    merchants={allMerchants}
                                     onChange={(merchants) => {
                                         setSelectedMerchant(merchants)
-                                        console.log('SELECTED MERCHANTS', merchants)
                                     }}
                                     maxShow={2}
                                     blockDefaults={false}
@@ -334,7 +333,21 @@ const FirstLevel = () => {
                                             isFather: false
                                         }
                                     ]}
-                                />  
+                                />
+                            ) }
+
+                            { value === 0 &&(
+                                <MultiMerchant
+                                    justOne
+                                    onChange={(merchants) => {
+                                        setSelectedMerchant(merchants)
+                                    }}
+                                    maxShow={1}
+                                    blockDefaults={false}
+                                    defaultSelected={[]}
+                                />
+                            ) }
+
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
@@ -383,7 +396,10 @@ const FirstLevel = () => {
                     </Fade>
                 ) : (
                     <>
-                        {firstLev && ( 
+                        {firstLev && 
+                        
+                        multiHealth.map((first:any) => 
+                        ( 
                             <>
                             <TabPanel value={value} index={0}>
                             <Grid container spacing={2}>
@@ -395,13 +411,13 @@ const FirstLevel = () => {
                                             secondarySub="users"
                                             color={
                                                 // eslint-disable-next-line no-nested-ternary
-                                                firstLev?.overallScore <= 34
+                                                first?.overallScore <= 34
                                                     ? theme.palette.secondary.main
-                                                    : firstLev.overallScore >= 35 && firstLev.overallScore <= 80
+                                                    : first.overallScore >= 35 && first.overallScore <= 80
                                                         ? theme.palette.warning.main
                                                         : theme.palette.success.main
                                             }
-                                            metrics={firstLev}
+                                            metrics={first}
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
@@ -431,7 +447,7 @@ const FirstLevel = () => {
                                                         </Grid>
                                                         <Grid item sm zeroMinWidth>
                                                             <Typography variant="h3" align="center">
-                                                                {firstLev.totalImages}
+                                                                {first.totalImages}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
                                                                 <FormattedMessage id='total-images'/>
@@ -451,7 +467,7 @@ const FirstLevel = () => {
                                                         </Grid>
                                                         <Grid item sm zeroMinWidth>
                                                             <Typography variant="h3" align="center">
-                                                                {firstLev.totalProducts}
+                                                                {first.totalProducts}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
                                                                 <FormattedMessage id='total-products'/>
@@ -473,7 +489,7 @@ const FirstLevel = () => {
                                                         </Grid>
                                                         <Grid item sm zeroMinWidth>
                                                             <Typography variant="h3" align="center">
-                                                                {firstLev.totalSkus}
+                                                                {first.totalSkus}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
                                                                 <FormattedMessage id='total-skus'/>
@@ -488,7 +504,7 @@ const FirstLevel = () => {
                                                         </Grid>
                                                         <Grid item sm zeroMinWidth>
                                                             <Typography variant="h3" align="center">
-                                                                {firstLev?.executionDate}
+                                                                {first?.executionDate}
                                                             </Typography>
                                                             <Typography variant="subtitle1" align="center">
                                                                 <FormattedMessage id='last-update'/>
@@ -502,7 +518,7 @@ const FirstLevel = () => {
                                     <Grid item xs={12}>
                                         <Grid container alignItems="flex-start" justifyContent="space-between">
                                             <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between">
-                                                {firstLev?.metricRange?.map((metric: any, i: number) => (
+                                                {first?.metricRange?.map((metric: any, i: number) => (
 
                                                     <Card key={i} sx={{ mb: 1 }}>
                                                         <CardContent
@@ -565,7 +581,7 @@ const FirstLevel = () => {
                                                         <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
                                                             <FormattedMessage id='latest-updates' />
                                                         </Typography>
-                                                        <TableUpdates updates={firstLev?.skuCatalog} />
+                                                        <TableUpdates updates={first?.skuCatalog} />
                                                     </CardContent>
                                                 </Card>
                                             </Grid>
@@ -595,6 +611,7 @@ const FirstLevel = () => {
                             </TabPanel>
                             
                         </>
+                        )
                         )}
 
                     </>
@@ -606,40 +623,5 @@ const FirstLevel = () => {
 
     );
 };
-
-const allMerchants: MerchantType[] = [
-    {
-        name: 'Vinneren',
-        merchantId: 1,
-        isFather: true
-        // isSelected: true
-    },
-    {
-        name: 'Elektra',
-        merchantId: 2,
-        isFather: false
-    },
-    {
-        name: 'La Marina',
-        merchantId: 3,
-        isFather: false
-    },
-    {
-        name: 'Monstore',
-        merchantId: 4,
-        isFather: false
-    },
-    {
-        name: 'Plaza',
-        merchantId: 41,
-        isFather: false
-    },
-    {
-        name: 'HEB',
-        merchantId: 42,
-        isFather: false
-    }
-];
-
 
 export default FirstLevel;

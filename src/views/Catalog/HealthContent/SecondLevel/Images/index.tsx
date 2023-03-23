@@ -62,7 +62,112 @@ const Images = () => {
     const [typeScore, setTypeScore] = useState('');
     const [products, setProducts] = useState([]);
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { secondLevelImages } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+    // const { secondLevelImages } = useSelector((state: DefaultRootStateProps) => state.healthContent);
+    const secondLevelImages = {
+        metricGood: [],
+        metricPoor: [
+            {
+                productId: 3,
+                completeness: 0,
+                metricConfigRangeId: 3,
+                categoryId: 11502005,
+                categoryName: 'Health & Beauty',
+                productName: 'Dove Nourishing Secrets Shampoo and Conditioner Coconut & Hydration',
+                eanUpc: ['200223230101'],
+                productReferenceCode: 'PDD0101',
+                brandName: 'Dove',
+                __typename: 'metricsPoorImages'
+            },
+            {
+                productId: 1,
+                completeness: 37.5,
+                metricConfigRangeId: 3,
+                categoryId: 11502005,
+                categoryName: 'Health & Beauty',
+                productName: 'Speed Stick Regular Deodorant',
+                eanUpc: ['23022021', '2302202301'],
+                productReferenceCode: 'SPD02',
+                brandName: 'Speed Stick',
+                __typename: 'metricsPoorImages'
+            },
+            {
+                productId: 5,
+                completeness: 0,
+                metricConfigRangeId: 3,
+                categoryId: 11502006,
+                categoryName: 'Health & Beauty',
+                productName: 'Garnier Fructis Sleek & Shine Smoothing Shampoo',
+                eanUpc: ['24022023338'],
+                productReferenceCode: 'GFSS0001',
+                brandName: 'Speed Stick',
+                __typename: 'metricsPoorImages'
+            },
+            {
+                productId: 4,
+                completeness: 0,
+                metricConfigRangeId: 3,
+                categoryId: 11502006,
+                categoryName: 'Health & Beauty',
+                productName: 'OGX Thick & Full + Biotin & Collagen Conditioner',
+                eanUpc: ['24022023010'],
+                productReferenceCode: 'OGX001',
+                brandName: 'Dove',
+                __typename: 'metricsPoorImages'
+            }
+        ],
+        metricFair: [],
+        resume: [
+            {
+                metricConfigRangeId: 1,
+                description: 'Good',
+                dimensionScorePercen: 0,
+                dimensionCount: 0,
+                qualityScorePercen: 0,
+                qualityCount: 0,
+                sizeScorePercen: 0,
+                sizeCount: 0,
+                quantityScorePerce: 0,
+                quantityCount: 0,
+                totalProducts: 0,
+                totalProductsPercentage: 0,
+                totalScore: 0,
+                __typename: 'resumeImages'
+            },
+            {
+                metricConfigRangeId: 3,
+                description: 'Poor',
+                dimensionScorePercen: 25,
+                dimensionCount: 1,
+                qualityScorePercen: 25,
+                qualityCount: 1,
+                sizeScorePercen: 25,
+                sizeCount: 1,
+                quantityScorePerce: 0,
+                quantityCount: 0,
+                totalProducts: 4,
+                totalProductsPercentage: 100,
+                totalScore: 9.375,
+                __typename: 'resumeImages'
+            },
+            {
+                metricConfigRangeId: 2,
+                description: 'Fair',
+                dimensionScorePercen: 0,
+                dimensionCount: 0,
+                qualityScorePercen: 0,
+                qualityCount: 0,
+                sizeScorePercen: 0,
+                sizeCount: 0,
+                quantityScorePerce: 0,
+                quantityCount: 0,
+                totalProducts: 0,
+                totalProductsPercentage: 0,
+                totalScore: 0,
+                __typename: 'resumeImages'
+            }
+        ],
+        __typename: 'dashboardImages'
+    };
 
     useEffect(() => {
         setIsLoading(true);
