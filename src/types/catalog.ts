@@ -15,7 +15,7 @@ export type CatalogStateProps = {
 };
 
 export type BrandType = {
-    fatherMerchant: boolean | undefined;
+    fatherMerchant?: boolean | undefined;
     idBrand: number;
     name: string;
     isActive: boolean;

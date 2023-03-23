@@ -33,16 +33,12 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
     const [pageSize, setPageSize] = useState<number>(10);
     const [filteredBrands, setFilteredBrands] = useState<BrandType[] | undefined>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [idMerchant, setIdMerchant] = useState<number>(0);
-    // setIdMerchant(selectedMerchants[0].merchantId);
     useEffect(() => {
-        // dispatch(getBrands());
         if (!selectedMerchants?.length) {
             return;
         }
         setIsLoading(true);
         selectedMerchants && dispatch(getBrands2(selectedMerchants[0].merchantId));
-        // dispatch(getBrands2(1));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedMerchants]);
     const marcas = useMemo(() => {
@@ -50,14 +46,10 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             return null;
         }
         console.log('selectedMerchants', selectedMerchants);
-        // console.log('brands2', brands2);
         const marcas2 = brands2.filter((marca: any) => marca?.merchantId === selectedMerchants[0]?.merchantId);
         setIsLoading(false);
-        // console.log('marcas2', marcas2);
         return marcas2[0];
     }, [brands2, selectedMerchants]);
-
-    // console.log('marcas', marcas);
 
     useEffect(() => {
         if (filterText?.length === 0) {
@@ -72,10 +64,8 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
 
             setFilteredBrands(filtered);
         }
-        // console.log('filteredBrands', filteredBrands);
     }, [filterText, marcas]);
     const columns: GridColDef[] = [
-        // { field: 'idBrand', headerName: 'ID', width: 80 },
         {
             field: 'name',
             headerName: intl.formatMessage({

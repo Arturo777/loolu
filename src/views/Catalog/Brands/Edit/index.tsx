@@ -33,7 +33,7 @@ const EditBrandPage = () => {
     const { brands } = useSelector((state) => state.catalogue);
 
     useEffect(() => {
-        // dispatch(getBrands());
+        dispatch(getBrands());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -52,7 +52,8 @@ const EditBrandPage = () => {
         setBrandStatus(event.target.checked);
     };
 
-    const handleSave = async (data: NewBrandType) => {
+    const handleSave = async (data: any) => {
+        // NewBrandType
         // const newData: BrandType = {
         //     idBrand: Number(brandId ?? ''),
         //     idMerchant: 1,
@@ -60,7 +61,41 @@ const EditBrandPage = () => {
         //     isActive: brandStatus
         // };
         // await dispatch(editBrand({ dataBrand: newData }));
+        // const newData: BrandType = {
+        //     ...data
+        // };
+        // navigate('/brands');
 
+        // {
+        //     "idMerchant": 1,
+        //     "fatherMerchant": true,
+        //     "brandData": {
+        //         "imageUrl": "",
+        //         "isActive": true,
+        //         "metaTagDescription": "",
+        //         "name": "1919",
+        //         "title": "1919"
+        //     }
+        // }
+
+        // {
+        //     "idBrand": "2000868",
+        //     "isActive": true,
+        //     "name": "1 Hora",
+        //     "title": "1 Hora",
+        //     "imageUrl": "",
+        //     "metaTagDescription": "",
+        //     "merchantId": "7"
+        // }
+        // const { title, name, imageUrl, metaTagDescription } = data[0].brandData;
+        const newData: BrandType = {
+            idBrand: Number(brandId ?? ''),
+            idMerchant: data.idMerchant,
+            ...data[0].brandData,
+            isActive: brandStatus
+        };
+
+        await dispatch(editBrand({ dataBrand: newData }));
         navigate('/brands');
     };
 
@@ -86,7 +121,7 @@ const EditBrandPage = () => {
                 </FormGroup>
             }
         >
-            {/* <BrandForm initialData={brandData} handleSave={handleSave} /> */}
+            <BrandForm initialData={brandData} handleSave={handleSave} />
         </MainCard>
     );
 };
