@@ -65,6 +65,8 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             setFilteredBrands(filtered);
         }
     }, [filterText, marcas]);
+
+    console.log(selectedMerchants);
     const columns: GridColDef[] = [
         {
             field: 'name',
@@ -99,7 +101,13 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             headerName: '',
             renderCell: (params) => (
                 <Box>
-                    <Button component={Link} to={`${params.row.idBrand}/edit`} size="small" startIcon={<EditIcon />} variant="outlined">
+                    <Button
+                        component={Link}
+                        to={`${params.row.idBrand}/edit/?idMerchant=${selectedMerchants[0].merchantId}`}
+                        size="small"
+                        startIcon={<EditIcon />}
+                        variant="outlined"
+                    >
                         {intl.formatMessage({ id: 'edit' })}
                     </Button>
                 </Box>
