@@ -1,27 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 // mui imports
-import { Avatar, Menu, Stack, MenuItem, IconButton, Paper, Box, Fade, Typography } from '@mui/material';
-import { useTheme } from '@mui/styles';
+import { Menu, Stack, MenuItem, IconButton, Paper, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
+// third party imports
 import { useIntl } from 'react-intl';
 
-// helpers
-import { stringToColor } from 'utils/helpers';
+import { customScrollBar, MerchantChipType, MerchantAvatar, ShowMoreButton } from './components';
 
 // types
 import { MerchantType } from 'types/security';
-
-interface MerchantChipType extends MerchantType {
-    isSelected: boolean;
-}
+import { useDispatch, useSelector } from 'store';
+import { getMerchantsList } from 'store/slices/auth';
+import useAuth from 'hooks/useAuth';
 
 type MultiMerchantProps = {
     blockDefaults?: boolean;
     defaultSelected: MerchantType[];
-    merchants: MerchantType[];
+    // merchants: MerchantType[];
     onChange?: (selectedMerchats: MerchantType[]) => void;
     readOnly?: boolean;
     maxShow?: number;
@@ -32,17 +30,23 @@ type MultiMerchantProps = {
 export default function MultiMerchant({
     blockDefaults = true,
     defaultSelected,
-    merchants,
-    onChange = () => {},
-    readOnly = false,
-    maxShow = 5,
-    justOne = false,
+    // merchants,
+    onChange,
+    readOnly,
+    maxShow,
+    justOne,
     size = 'large'
 }: MultiMerchantProps) {
     // hooks
-    const theme = useTheme();
     const intl = useIntl();
+    const dispatch = useDispatch();
+
+    // store
+    const { user } = useAuth();
+    const { merchants } = useSelector((state) => state.auth);
+
     const [merchantsList, setMerchantsList] = useState<MerchantChipType[]>([]);
+    const [firstRender, setFirstRender] = useState<boolean>(true);
 
     const isAllSelected = useMemo(() => merchantsList.every((item) => item.isSelected), [merchantsList]);
 
@@ -50,21 +54,36 @@ export default function MultiMerchant({
     const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorMenu);
 
+    useEffect(() => {
+        if (user && user.user) {
+            dispatch(getMerchantsList(user?.user));
+        }
+    }, [dispatch, merchants?.length, user]);
+
     // change event
     useEffect(() => {
         const selectedMerchants = merchantsList.filter((item) => item.isSelected);
-        onChange(selectedMerchants);
-    }, [merchantsList, onChange]);
+        if (onChange) {
+            onChange(selectedMerchants);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [merchantsList]);
 
     // create initial array
     useEffect(() => {
-        const initialList = merchants.map((item) => {
-            const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
+        if (firstRender && merchants) {
+            const initialList =
+                merchants?.map((item) => {
+                    const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
 
-            return { ...item, isSelected: isDefaultSelected };
-        });
+                    return { ...item, isSelected: isDefaultSelected };
+                }) ?? [];
 
-        setMerchantsList(initialList);
+            setMerchantsList(initialList);
+            setFirstRender(false);
+            // handleChangeList(initialList);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [merchants, defaultSelected]);
 
     // menu actions - open
@@ -83,14 +102,15 @@ export default function MultiMerchant({
 
         // only select one
         if (justOne) {
-            setMerchantsList((currentList) => [
-                ...currentList.map((item) => {
-                    if (item.merchantId === merchant.merchantId) {
-                        return { ...item, isSelected: true };
-                    }
-                    return { ...item, isSelected: false };
-                })
-            ]);
+            const newList = merchantsList.map((item) => {
+                if (item.merchantId === merchant.merchantId) {
+                    return { ...item, isSelected: true };
+                }
+                return { ...item, isSelected: false };
+            });
+
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
             return;
         }
 
@@ -99,14 +119,14 @@ export default function MultiMerchant({
         const isBlocked = (isDefaultSelected && blockDefaults) || merchant.isFather;
 
         if (!isBlocked) {
-            setMerchantsList((currentList) => [
-                ...currentList.map((item) => {
-                    if (item.merchantId === merchant.merchantId) {
-                        return { ...item, isSelected: !item.isSelected };
-                    }
-                    return item;
-                })
-            ]);
+            const newList = merchantsList.map((item) => {
+                if (item.merchantId === merchant.merchantId) {
+                    return { ...item, isSelected: !item.isSelected };
+                }
+                return item;
+            });
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
         }
     };
 
@@ -121,25 +141,28 @@ export default function MultiMerchant({
 
         if (newVal) {
             // set all as selected
-            setMerchantsList((currentList) => [...currentList.map((item) => ({ ...item, isSelected: true }))]);
+            const newList = merchantsList.map((item) => ({ ...item, isSelected: true }));
+
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
         } else {
-            setMerchantsList((currentList) => [
-                ...currentList.map((merchant) => {
-                    const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
-                    const isBlocked = isDefaultSelected && blockDefaults;
+            const newList = merchantsList.map((merchant) => {
+                const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
+                const isBlocked = isDefaultSelected && blockDefaults;
 
-                    if (merchant.isFather || isBlocked) {
-                        return merchant;
-                    }
+                if (merchant.isFather || isBlocked) {
+                    return merchant;
+                }
 
-                    return { ...merchant, isSelected: false };
-                })
-            ]);
+                return { ...merchant, isSelected: false };
+            });
+            setMerchantsList([...newList]);
+            // handleChangeList(newList);
         }
     };
 
     const filteredElementsToRender = useMemo<MerchantChipType[]>(() => {
-        if (justOne && merchantsList.length < maxShow) {
+        if (justOne && merchantsList.length < maxShow!) {
             return [...merchantsList];
         }
 
@@ -157,7 +180,7 @@ export default function MultiMerchant({
         }
 
         merchantsList.forEach((item) => {
-            if (!item.isFather && elements.length < maxShow) {
+            if (!item.isFather && elements.length < maxShow!) {
                 elements = [...elements, item];
             }
         });
@@ -166,7 +189,7 @@ export default function MultiMerchant({
     }, [justOne, merchantsList, maxShow]);
 
     const moreText = useMemo(() => {
-        if (justOne && merchantsList.length < maxShow) {
+        if (justOne && merchantsList.length < maxShow!) {
             return 0;
         }
 
@@ -174,11 +197,11 @@ export default function MultiMerchant({
             return merchantsList.length - 1;
         }
 
-        return merchantsList.length - maxShow;
+        return merchantsList.length - maxShow!;
     }, [justOne, maxShow, merchantsList.length]);
 
     const renderMore = useMemo<boolean>(
-        () => (merchantsList.length > maxShow || justOne) && moreText > 0,
+        () => (merchantsList.length > maxShow! || justOne!) && moreText > 0,
         [justOne, maxShow, merchantsList.length, moreText]
     );
 
@@ -272,6 +295,7 @@ export default function MultiMerchant({
                 <>
                     {filteredElementsToRender.map((merchant) => (
                         <MerchantAvatar
+                            containerStyles={{ mr: 1 }}
                             readOnly={readOnly}
                             key={`merchant-avatar-item-${merchant.merchantId}`}
                             merchant={merchant}
@@ -284,7 +308,9 @@ export default function MultiMerchant({
                 </>
             </Paper>
 
-            {renderMore && (
+            {renderMore && <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${(merchants?.length ?? 0) - maxShow!}`} />}
+
+            {/* {renderMore && (
                 <Avatar
                     onClick={handleOpenMenu}
                     sx={{
@@ -299,7 +325,7 @@ export default function MultiMerchant({
                 >
                     {moreText}+
                 </Avatar>
-            )}
+            )} */}
 
             {renderMore && (
                 <IconButton onClick={handleOpenMenu}>
@@ -312,114 +338,12 @@ export default function MultiMerchant({
     );
 }
 
-const MerchantAvatar = ({
-    merchant,
-    handleClick = () => {},
-    feedback = true,
-    readOnly = false,
-    size
-}: {
-    feedback?: boolean;
-    merchant: MerchantChipType;
-    readOnly?: boolean;
-    size: 'small' | 'medium' | 'large';
-    handleClick?: () => void;
-}) => {
-    const theme = useTheme();
-
-    const { sx, children } = useStringAvatarProps({ merchant, size });
-
-    const bColor = theme.palette.mode === 'dark' ? theme.palette.success.main : '#008724';
-
-    const borderColor = merchant.isSelected && feedback ? bColor : 'transparent';
-
-    const font = {
-        small: 14,
-        medium: 16,
-        large: 17
-    };
-
-    return (
-        <Box onClick={handleClick} sx={{ cursor: readOnly ? 'initial' : 'pointer', position: 'relative', zIndex: 2 }}>
-            <Fade in={merchant.isSelected && feedback}>
-                <Box
-                    component={CheckCircleIcon}
-                    sx={{
-                        position: 'absolute',
-                        right: 2,
-                        bottom: 0,
-                        fontSize: font[size],
-                        color: bColor,
-                        zIndex: 1
-                    }}
-                />
-            </Fade>
-            <Avatar sx={{ ...sx, borderColor, cursor: readOnly ? 'initial' : 'pointer' }} title={merchant.name}>
-                {children}
-            </Avatar>
-        </Box>
-    );
+const multiDefaultProps = {
+    onChange: () => {},
+    readOnly: false,
+    maxShow: 5,
+    justOne: false,
+    size: 'large'
 };
 
-//  borderColor: string; color: string
-const useStringAvatarProps = ({ merchant, size }: { merchant: MerchantChipType; size: 'small' | 'medium' | 'large' }) => {
-    const theme = useTheme();
-
-    const bgcolor = stringToColor(merchant.name);
-
-    const shortName =
-        merchant.name.split(' ').length > 1
-            ? `${merchant.name.split(' ')[0][0]}${merchant.name.split(' ')[1][0]}`
-            : `${merchant.name.split('')[0]}`;
-
-    return {
-        sx: {
-            bgcolor,
-            color: theme.palette.getContrastText(bgcolor),
-            ...avatarCommonProps,
-            ...getSizeProps(size)
-        },
-        children: shortName.toUpperCase()
-    };
-};
-
-const customScrollBar = {
-    '&::-webkit-scrollbar': {
-        width: '5px'
-    },
-    '&::-webkit-scrollbar-track': {
-        background: 'transparent'
-    },
-    '&::-webkit-scrollbar-thumb': {
-        backgroundColor: '#c2c2c2',
-        borderRadius: '5px'
-    }
-};
-
-const avatarCommonProps = {
-    mr: 1,
-    border: '2px solid #fff',
-    transitions: 'all 420ms linear'
-    // width: 40,
-    // height: 40,
-    // fontSize: 16
-};
-
-const getSizeProps = (size: 'small' | 'medium' | 'large') => {
-    const sizes = {
-        small: 28,
-        medium: 30,
-        large: 35
-    };
-
-    const font = {
-        small: 13,
-        medium: 15,
-        large: 16
-    };
-
-    return { width: sizes[size], height: sizes[size], fontSize: font[size] };
-};
-
-//  npx browserslist@latest --update-db
-// Browserslist: caniuse-lite is outdated.
+MultiMerchant.defaultProps = multiDefaultProps;

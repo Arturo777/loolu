@@ -37,6 +37,8 @@ import { getChangeLogList } from 'store/slices/reports';
 import { ChangeLog } from 'types/reports';
 import { compareAsc } from 'date-fns';
 import Loader from 'ui-component/Loader';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { MerchantType } from 'types/security';
 
 enum sortOptions {
     'prodId' = 'prodId',
@@ -44,7 +46,12 @@ enum sortOptions {
     'userLog' = 'userLog',
     'dateChange' = 'dateChange'
 }
-
+type merchant = {
+    isFather: boolean;
+    isSelected: boolean;
+    merchantId: number;
+    name: string;
+};
 export default function ChangeLogPage() {
     // hooks
     const intl = useIntl();
@@ -59,8 +66,9 @@ export default function ChangeLogPage() {
 
     const [selectedItem, setSelectedItem] = useState<ChangeLog | null>(null);
 
-    const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[] | null>(null);
 
+    const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
     useEffect(() => {
         setFormattedList(changeLog);
     }, [changeLog]);
@@ -82,6 +90,9 @@ export default function ChangeLogPage() {
         }, 200);
     };
 
+    const handleSelectedMerchant = (idMerchant: MerchantType[]) => {
+        console.log(idMerchant);
+    };
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
@@ -111,20 +122,25 @@ export default function ChangeLogPage() {
     const handleChange = (event: SelectChangeEvent) => {
         setSortBy(event.target.value as sortOptions);
     };
-
     return (
         <MainCard
             sx={{
                 overflow: 'initial'
             }}
             title={
-                <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
+                <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
+                    <Grid container alignItems="center" item md={4}>
                         <Typography variant="h3">
                             {intl.formatMessage({
                                 id: 'change_log'
                             })}
                         </Typography>
+                        <MultiMerchant
+                            onChange={(merchants: MerchantType[]) => handleSelectedMerchant(merchants)}
+                            maxShow={1}
+                            justOne
+                            defaultSelected={[]}
+                        />
                     </Grid>
                     <Grid item>
                         <Box component="form" onSubmit={handleFilter}>

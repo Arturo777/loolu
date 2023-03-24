@@ -3,6 +3,7 @@ export type CatalogStateProps = {
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
+    brands2: BrandType2[];
     suppliers: SupplierType[];
     facetsInfo: {
         facets: FacetType[];
@@ -14,6 +15,7 @@ export type CatalogStateProps = {
 };
 
 export type BrandType = {
+    fatherMerchant?: boolean | undefined;
     idBrand: number;
     name: string;
     isActive: boolean;
@@ -22,16 +24,32 @@ export type BrandType = {
     metaTagDescription: string | null;
     idMerchant: number;
 };
-
+export type BrandType2 = {
+    brands: BrandType[];
+};
 export type NewBrandType = {
     Id?: number;
     idBrand?: number;
+    idMerchant?: number;
     name: string;
     Name?: string;
     title: string;
     metaTagDescription: string;
     imageUrl: string;
     isActive?: boolean;
+};
+export type NewBrandType2 = {
+    idMerchant?: number;
+    fatherMerchant?: boolean | undefined;
+    idBrand?: number;
+    brandData: {
+        imageUrl?: string | undefined;
+        masterBrandId?: number | undefined;
+        isActive: boolean | undefined;
+        metaTagDescription?: string | undefined;
+        name: string | undefined;
+        title: string | undefined;
+    };
 };
 
 export type SupplierType = {

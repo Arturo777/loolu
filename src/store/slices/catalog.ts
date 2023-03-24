@@ -8,13 +8,14 @@ import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, NewBrandType } from 'types/catalog';
+import { BrandType, NewBrandType, NewBrandType2 } from 'types/catalog';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
     updating: false,
     error: null,
     brands: [],
+    brands2: [],
     suppliers: [],
     facetsInfo: {
         facets: [],
@@ -83,6 +84,21 @@ const slice = createSlice({
                     maxPage: action.payload.totalPages
                 };
             });
+        builder
+            .addCase(getBrands2.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getBrands2.fulfilled, (state, action) => {
+                state.loading = false;
+                state.brands2 = action.payload.response;
+            });
+        builder
+            .addCase(createBrandMultiCatalog.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createBrandMultiCatalog.fulfilled, (state) => {
+                state.loading = false;
+            });
         // CATEGORIES
         builder
             .addCase(getCategoriesService.pending, (state) => {
@@ -123,7 +139,17 @@ export const getBrands = createAsyncThunk(`${slice.name}/getBrands`, async (idMe
     );
     return response.data;
 });
-
+export const getBrands2 = createAsyncThunk(`${slice.name}/getBrands2`, async (idMerchant?: number) => {
+    const bodyMerchant = {
+        isActive: true
+    };
+    const response = await axios.post(`https://avyzymp6de.us-east-1.awsapprunner.com/styrk/api/brand/search-multicatalog`, bodyMerchant, {
+        params: {
+            idMerchant: idMerchant || 1
+        }
+    });
+    return response.data;
+});
 type editBrandParams = {
     dataBrand: BrandType;
     idMerchant?: number;
@@ -141,7 +167,7 @@ export const editBrand = createAsyncThunk(`${slice.name}/editBrand`, async (para
 });
 
 type createBrandParams = {
-    dataBrand: NewBrandType;
+    dataBrand: NewBrandType2;
     idMerchant?: number;
 };
 
@@ -156,10 +182,21 @@ export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (pa
     return response.data;
 });
 
+export const createBrandMultiCatalog = createAsyncThunk(`${slice.name}/createBrandMultiCatalog`, async (dataBrand: NewBrandType2) => {
+    const bodyData = dataBrand;
+    const response = await axios.post(`styrk/api/brand/save-multicatalog`, bodyData, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: 1
+        }
+    });
+    return response.data;
+});
+
 /* ============ SUPPLIERS ============ */
 
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
-    const response = await axios.get(`styrk/api/supplier/search`, {
+    const response = await axios.get(`styrk/api/brand/save-multicatalog`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1

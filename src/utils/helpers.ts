@@ -1,4 +1,5 @@
 import { CategoryType, FilterCategoryType, FlatCategoryType } from 'types/catalog';
+import { MerchantType } from 'types/security';
 
 export const queryToObject = (query: string): object => {
     const queryArray = query.replace('?', '').split('&');
@@ -123,4 +124,29 @@ export const generateRandomString = (num: number) => {
     }
 
     return result1;
+};
+
+export const createMerchantList = (data: { [key: string]: any }): MerchantType[] => {
+    let list: MerchantType[] = [];
+
+    // add father
+    const father: MerchantType = {
+        name: data.name,
+        status: data.status,
+        merchantId: data.merchantId,
+        isFather: true
+    };
+
+    data.multiCatalogMerchant.merchants.forEach((item: { [key: string]: any }) => {
+        const newMerch: MerchantType = {
+            name: item.name,
+            status: item.status,
+            merchantId: item.merchantId,
+            isFather: false
+        };
+
+        list = [...list, newMerch];
+    });
+
+    return [father, ...list];
 };

@@ -46,6 +46,7 @@ export type AuthStateProps = {
     loading: boolean;
     error: object | string | null;
     user: UserType | null;
+    merchants: MerchantType[] | null;
 };
 
 export type ProfileStateProps = {
@@ -66,4 +67,5 @@ export type MerchantType = {
     merchantId: number;
     name: string;
     isFather: boolean;
+    status?: boolean;
 };
