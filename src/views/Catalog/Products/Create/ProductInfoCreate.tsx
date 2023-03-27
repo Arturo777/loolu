@@ -182,6 +182,21 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
     const { categories, suppliers } = useSelector((state) => state.catalogue);
     const { tradePolicies } = useSelector((state) => state.product);
 
+    const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.type === 'checkbox') {
+            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
+        } else {
+            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+    };
+    /* const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.type === 'checkbox') {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
+        } else {
+            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+    }; */
+
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
         dispatch(getSuppliers());
