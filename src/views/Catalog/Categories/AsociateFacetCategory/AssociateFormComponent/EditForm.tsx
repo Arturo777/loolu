@@ -164,7 +164,7 @@ export default function EditFormComponent({
 type generateDataProps = {
     specificationData: SpecificationsType; // without changes
     specificationAttributes: SpecificationAttributesType;
-    categoryId: number;
+    categoryId: number | string;
     specificationGroupMode: SpecificationGroupMode;
     specificationValues: { isActive: boolean; name: string; specificationValueId: number }[];
 };

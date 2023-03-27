@@ -18,13 +18,19 @@ import CategoriesListComponent from '../List';
 import CreateCategoryPage from '../Create';
 import EditCategoryComponent from '../Edit';
 import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
-import { CategoryType } from 'types/catalog';
+import { CategoryType, MerchantCategoryType, SelectedMerchant } from 'types/catalog';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { MerchantType } from 'types/security';
+import MultiMerchantButtons from 'ui-component/MultiMerchantButton/MultiMerchantButton';
+import { useSelector } from 'store';
 
 // ==============================|| FACETS LIST ||============================== //
 
 const CategoriesListPage = () => {
+    const { merchants } = useSelector((state) => state.auth);
+
     // hooks
+    const [selectedMerchant, setSelectedMerchant] = useState<MerchantType | undefined>(undefined);
 
     // ===== vars
     const [searchParams, setSearchParams] = useSearchParams();
@@ -36,11 +42,18 @@ const CategoriesListPage = () => {
 
     // create
     const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
-    const [selectedCatId, setSelectedCatId] = useState<number>(); // short cut to select in create form
+    const [selectedCatId, setSelectedCatId] = useState<number | string>(); // short cut to select in create form
 
     // show info -- edit
-    const [selectedCategory, setSelectedCategory] = useState<number>(); // id to show info (right side)
+    const [selectedCategory, setSelectedCategory] = useState<number | string>(); // id to show info (right side)
     const [showInfo, setShowInfo] = useState<boolean>(false); // show or hide info (right side)
+
+    // set default merchant
+    useEffect(() => {
+        if (!merchants?.length) return;
+        const defaultMerchant = merchants.find((merchant: MerchantType) => merchant.isFather);
+        setSelectedMerchant(defaultMerchant);
+    }, [merchants]);
 
     // set route params
     useEffect(() => {
@@ -63,7 +76,7 @@ const CategoriesListPage = () => {
         setOpenCreate((prev) => !prev);
     };
 
-    const openCreateFormById = (catId?: number) => {
+    const openCreateFormById = (catId?: number | string) => {
         // open form from categories list
 
         setShowInfo(false);
@@ -81,7 +94,7 @@ const CategoriesListPage = () => {
         setFilterText(newString ?? '');
     };
 
-    const handleShowInfo = (cat?: number) => {
+    const handleShowInfo = (cat?: number | string) => {
         setShowInfo(false);
         if (cat) {
             setOpenCreate(false);
@@ -116,6 +129,7 @@ const CategoriesListPage = () => {
                     openCreate={openCreate}
                     toggleForm={handleCreateForm}
                     selectedCatId={selectedCatId}
+                    setSelectedMerchant={setSelectedMerchant}
                 />
             }
             content={false}
@@ -129,17 +143,26 @@ const CategoriesListPage = () => {
                         filterText={filterText}
                         openCreate={openCreateFormById}
                         handleShowInfo={handleShowInfo}
+                        selectedMerchant={selectedMerchant}
                     />
                 </Grid>
                 {/* INFO  */}
                 <Grid item xs={12} sm={4} md={8}>
-                    {openCreate && <CreateCategoryPage show={openCreate} handleClose={handleCreateForm} selectedCatId={selectedCatId} />}
+                    {openCreate && (
+                        <CreateCategoryPage
+                            show={openCreate}
+                            handleClose={handleCreateForm}
+                            selectedCatId={selectedCatId}
+                            selectedMerchant={selectedMerchant}
+                        />
+                    )}
                     {showInfo && (
                         <EditCategoryComponent
                             openAssociate={handleToggleAssociateDrawer}
                             selectedCategory={selectedCategory}
                             show={showInfo}
                             onCancel={handleCancelEdit}
+                            selectedMerchant={selectedMerchant}
                         />
                     )}
                 </Grid>
@@ -163,73 +186,47 @@ type CustomPageHeaderProps = {
     filterText: string;
     toggleForm: () => void;
     openCreate: boolean;
-    selectedCatId?: number;
+    selectedCatId?: number | string;
+    setSelectedMerchant?: any;
 };
 
 // Create form and header
 
-const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, selectedCatId }: CustomPageHeaderProps) => {
+const CustomPageHeader = ({
+    handleSearch,
+    filterText,
+    toggleForm,
+    openCreate,
+    setSelectedMerchant,
+    selectedCatId
+}: CustomPageHeaderProps) => {
     // hooks
     const intl = useIntl();
 
+    const handleMerchantChange = (merchants: MerchantType[]) => {
+        console.log({ merchants });
+
+        setSelectedMerchant(merchants[0]);
+    };
+
     return (
         <Grid container alignItems="center" justifyContent="space-between">
-            {/* <Grid item xs={12} sx={{ mb: 2 }}>
-                <MultiMerchant
-                    merchants={allMerchants}
-                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
-                    maxShow={5}
-                    defaultSelected={[]}
-                    // defaultSelected={[
-                    //     {
-                    //         name: 'Vinneren',
-                    //         merchantId: 1,
-                    //         isFather: true
-                    //         // isSelected: true
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 2,
-                    //         isFather: false
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 5,
-                    //         isFather: false
-                    //     }
-                    // ]}
-                />
-            </Grid> */}
             <Grid item component={Stack} alignItems="center" justifyContent="center">
                 <Typography variant="h3" sx={{ mr: 1 }}>
                     {intl.formatMessage({
                         id: 'categories'
                     })}
                 </Typography>
+
+                {/* <MultiMerchantButtons onAvatarClick={handleMerchantChange} /> */}
+
                 <MultiMerchant
-                    // justOne
+                    justOne
                     // readOnly
-                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
-                    maxShow={4}
+                    // onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                    onChange={handleMerchantChange}
+                    maxShow={3}
                     defaultSelected={[]}
-                    // defaultSelected={[
-                    //     {
-                    //         name: 'Vinneren',
-                    //         merchantId: 1,
-                    //         isFather: true
-                    //         // isSelected: true
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 2,
-                    //         isFather: false
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 5,
-                    //         isFather: false
-                    //     }
-                    // ]}
                 />
             </Grid>
             <Grid item>
@@ -259,3 +256,39 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
         </Grid>
     );
 };
+
+// EXAMPLE DATA MERCHATS
+
+export const allMerchants: MerchantType[] = [
+    {
+        name: 'Vinneren',
+        merchantId: 1,
+        isFather: true
+        // isSelected: true
+    },
+    {
+        name: 'Elektra',
+        merchantId: 2,
+        isFather: false
+    },
+    {
+        name: 'La Marina',
+        merchantId: 3,
+        isFather: false
+    },
+    {
+        name: 'Monstore',
+        merchantId: 4,
+        isFather: false
+    },
+    {
+        name: 'Plaza',
+        merchantId: 41,
+        isFather: false
+    },
+    {
+        name: 'HEB',
+        merchantId: 42,
+        isFather: false
+    }
+];

@@ -1,4 +1,4 @@
-import React, { FormEvent, useState, useEffect } from 'react';
+import React, { FormEvent, useState, useEffect, SetStateAction } from 'react';
 
 // mui imports
 import { Box, Button, Divider, Grid, SelectChangeEvent, TextField, Card, Typography, Stack, IconButton, Fade } from '@mui/material';
@@ -11,28 +11,26 @@ import { useIntl } from 'react-intl';
 // project imports
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { createCategoryService, getCategoriesService } from 'store/slices/catalog';
+import { createMerchantCategoryService, getMerchantCategoriesService } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 import SelectCategoryComponent from '../components/SelectCategory';
-
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { CreateCategoryPageProps, SelectedMerchant } from 'types/catalog';
+import { MerchantType } from 'types/security';
 // services
 
 // types
 
-type newCategoryType = {
-    catId?: string;
-    name: string;
-};
-
-const initialData: newCategoryType = {
-    catId: '',
-    name: ''
-};
-
-type CreateCategoryPageProps = {
-    handleClose: (e?: any) => void;
-    selectedCatId?: number;
-    show: boolean;
+type newCategoriesPayload = {
+    merchantId: number;
+    fatherMerchant: boolean;
+    categoryData: {
+        fatherCategoryId: number;
+        masterCategoryId: number;
+        isActive: boolean;
+        name: string;
+        title: string;
+    };
 };
 
 const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategoryPageProps) => {
@@ -44,29 +42,31 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
     const { updating } = useSelector((state) => state.catalogue);
 
     // vars
-    const [newCategory, setNewCategory] = useState<newCategoryType>(initialData);
-
-    useEffect(() => {
-        if (selectedCatId) {
-            setNewCategory({ ...newCategory, catId: `${selectedCatId}` });
-        } else {
-            setNewCategory({ ...newCategory, catId: '' });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCatId]);
+    const [newCategory, setNewCategory] = useState<newCategoriesPayload[]>([]);
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[]>([]);
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!newCategory.catId) return;
+        if (!selectedMerchants.length) return;
+
+        const createMerchantCategoryPayload = newCategory;
+        // const createMerchantCategoryPayload = selectedMerchants.map((merchant: MerchantType) => ({
+        //     merchantId: merchant.merchantId,
+        //     fatherMerchant: !Number(newCategory.catId),
+        //     categoryData: {
+        //         fatherCategoryId: Number(newCategory.catId) ?? 0,
+        //         masterCategoryId: Number(newCategory.catId) ?? 0,
+        //         isActive: true,
+        //         name: newCategory.name,
+        //         title: newCategory.name
+        //     }
+        // }));
 
         dispatch(
-            createCategoryService({
+            createMerchantCategoryService({
                 idMerchant: 1,
-                data: {
-                    name: newCategory.name,
-                    fatherCategoryId: Number(newCategory.catId) ?? 1
-                }
+                data: createMerchantCategoryPayload
             })
         )
             .then(({ payload }) => {
@@ -81,7 +81,7 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
                         close: false
                     })
                 );
-                dispatch(getCategoriesService({ idMerchant: 1 }));
+                dispatch(getMerchantCategoriesService({ idMerchant: 1 }));
             })
             .catch(() => {
                 dispatch(
@@ -102,21 +102,69 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
     };
 
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const { value } = e.target;
 
-        setNewCategory({ ...newCategory, [name]: value });
+        setNewCategory((prev: newCategoriesPayload[]) =>
+            prev.map((cat: newCategoriesPayload) => ({ ...cat, categoryData: { ...cat.categoryData, name: value, title: value } }))
+        );
     };
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setNewCategory({ ...newCategory, catId: event.target.value as string });
+    const handleChange = (event: SelectChangeEvent, category: SelectedMerchant) => {
+        const name = event.target.name;
+        const value = event.target.value;
+
+        console.log({ name, value, category });
+
+        setNewCategory((prev: any) =>
+            selectedMerchants.map((merchant: MerchantType) => {
+                const prevMerchant = prev.find((merch: newCategoriesPayload) => merch.merchantId === merchant.merchantId);
+                const categoryName = prev[0]?.categoryData?.name;
+                const isSelected = prevMerchant?.merchantId === category.merchantId;
+                return {
+                    merchantId: merchant.merchantId,
+                    fatherMerchant: merchant.isFather,
+                    categoryData: {
+                        fatherCategoryId: isSelected ? value ?? 0 : prevMerchant?.categoryData?.fatherCategoryId,
+                        masterCategoryId: isSelected ? value ?? 0 : prevMerchant?.categoryData?.masterCategoryId,
+                        isActive: true,
+                        name: categoryName ?? '',
+                        title: categoryName ?? ''
+                    }
+                };
+            })
+        );
     };
 
     const handleCancel = () => {
-        setNewCategory(initialData);
+        setNewCategory([]);
         if (handleClose) {
             handleClose();
         }
     };
+
+    useEffect(() => {
+        console.log({ newCategory });
+    }, [newCategory]);
+
+    useEffect(() => {
+        setNewCategory((prev: newCategoriesPayload[]) =>
+            selectedMerchants.map((merchant: MerchantType) => {
+                const prevMerchant = prev.find((merch: newCategoriesPayload) => merch.merchantId === merchant.merchantId);
+                const categoryName = prev[0]?.categoryData?.name;
+                return {
+                    merchantId: merchant.merchantId,
+                    fatherMerchant: merchant.isFather,
+                    categoryData: {
+                        fatherCategoryId: prevMerchant ? prevMerchant?.categoryData?.fatherCategoryId : 0,
+                        masterCategoryId: prevMerchant ? prevMerchant?.categoryData?.masterCategoryId : 0,
+                        isActive: true,
+                        name: categoryName ?? '',
+                        title: categoryName ?? ''
+                    }
+                };
+            })
+        );
+    }, [selectedMerchants]);
 
     return (
         <Fade in={show}>
@@ -133,11 +181,21 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
                 <Grid container component="form" onSubmit={handleSave} spacing={gridSpacing}>
                     <Grid item xs={12} pt={4} pl={3}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                            <Typography variant="h4">
-                                {intl.formatMessage({
-                                    id: 'create_category'
-                                })}
-                            </Typography>
+                            <Grid item container alignItems="center">
+                                <Typography variant="h4" sx={{ mr: 1 }}>
+                                    {intl.formatMessage({
+                                        id: 'create_category'
+                                    })}
+                                </Typography>
+
+                                <MultiMerchant
+                                    // justOne
+                                    // readOnly
+                                    onChange={(merchants) => setSelectedMerchants(merchants)}
+                                    maxShow={9}
+                                    defaultSelected={[]}
+                                />
+                            </Grid>
 
                             <IconButton onClick={handleCancel} size="small" sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }}>
                                 <CloseIcon sx={{ p: 0, color: '#d9d9d9', '&:hover': { color: 'grey' } }} />
@@ -150,20 +208,36 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
-                        <SelectCategoryComponent fatherCategoryId={newCategory.catId ?? ''} onChange={handleChange} />
+                        {selectedMerchants.map((selectedMerchant: any) => {
+                            const fatherCategoryId =
+                                newCategory?.find((cat: any) => cat.merchantId === selectedMerchant.merchantId)?.categoryData
+                                    .fatherCategoryId ?? 0;
+                            return (
+                                <Box sx={{ marginTop: '15px' }}>
+                                    <SelectCategoryComponent
+                                        selectedMerchant={selectedMerchant}
+                                        required={false}
+                                        fatherCategoryId={fatherCategoryId}
+                                        onChange={handleChange}
+                                    />
+                                </Box>
+                            );
+                        })}
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            value={newCategory.name}
-                            fullWidth
-                            label={intl.formatMessage({
-                                id: 'category_name'
-                            })}
-                            name="name"
-                            onChange={onchangeText}
-                            required
-                        />
+                        <Box sx={{ marginTop: '15px' }}>
+                            <TextField
+                                value={newCategory[0]?.categoryData.name}
+                                fullWidth
+                                label={intl.formatMessage({
+                                    id: 'category_name'
+                                })}
+                                name="name"
+                                onChange={onchangeText}
+                                required
+                            />
+                        </Box>
                     </Grid>
 
                     <Grid item xs={12} pt={4} pl={3}>
