@@ -58,9 +58,9 @@ const FirstLevel = () => {
     const theme = useTheme();
     const matchDownXs = useMediaQuery(theme.breakpoints.down('sm'));
     const dispatch = useDispatch();
-    /* const { firstLevel } = useSelector((state) => state.healthContent); */
+    const { firstLevel } = useSelector((state) => state.healthContent);
 
-    const firstLevel = {
+    /* const firstLevel = {
         "skuCatalog": [
             {
                 "skuId": 6,
@@ -74,7 +74,7 @@ const FirstLevel = () => {
         "totalImages": 1,
         "totalProducts": 4,
         "totalSkus": 5,
-        "overallScore": 31.125,
+        "overallScore": 20.125,
         "executionDate": "2023-02-24T08:19:04",
         "metricRange": [
             {
@@ -103,154 +103,160 @@ const FirstLevel = () => {
             }
         ],
         "__typename": "dashboardMessage"
-    }
+    } */
 
-    const merchantss = 
-    [
-        {
-            "merchantId": 1,
-            "skuCatalog": [
-                {
-                    "skuId": 6,
-                    "skuName": "Test unit 2",
-                    "skuReferenceCode": "123123123",
-                    "eanUpc": "123456789012",
-                    "dateInsert": "2023-02-28 05:53:31.0",
-                    "__typename": "dashboardskuCatalog"
-                }
-            ],
-            "totalImages": 1,
-            "totalProducts": 4,
-            "totalSkus": 5,
-            "overallScore": 31.125,
-            "executionDate": "2023-02-24T08:19:04",
-            "metricRange": [
-                {
-                    "metricConfigRangeId": 1,
-                    "metricTypeId": 1,
-                    "typeDescription": "Products",
-                    "percentage": 84,
-                    "description": "Good",
-                    "__typename": "dashboardmetrics"
-                },
-                {
-                    "metricConfigRangeId": 3,
-                    "metricTypeId": 3,
-                    "typeDescription": "Facets",
-                    "percentage": 0,
-                    "description": "Poor",
-                    "__typename": "dashboardmetrics"
-                },
-                {
-                    "metricConfigRangeId": 3,
-                    "metricTypeId": 2,
-                    "typeDescription": "Images",
-                    "percentage": 9.375,
-                    "description": "Poor",
-                    "__typename": "dashboardmetrics"
-                }
-            ],
-            "__typename": "dashboardMessage"
-        },
-        {
-            "merchantId": 3,
-            "skuCatalog": [
-                {
-                    "skuId": 6,
-                    "skuName": "Test unit 2",
-                    "skuReferenceCode": "123123123",
-                    "eanUpc": "123456789012",
-                    "dateInsert": "2023-02-28 05:53:31.0",
-                    "__typename": "dashboardskuCatalog"
-                }
-            ],
-            "totalImages": 1,
-            "totalProducts": 4,
-            "totalSkus": 5,
-            "overallScore": 31.125,
-            "executionDate": "2023-02-24T08:19:04",
-            "metricRange": [
-                {
-                    "metricConfigRangeId": 1,
-                    "metricTypeId": 1,
-                    "typeDescription": "Products",
-                    "percentage": 84,
-                    "description": "Good",
-                    "__typename": "dashboardmetrics"
-                },
-                {
-                    "metricConfigRangeId": 3,
-                    "metricTypeId": 3,
-                    "typeDescription": "Facets",
-                    "percentage": 0,
-                    "description": "Poor",
-                    "__typename": "dashboardmetrics"
-                },
-                {
-                    "metricConfigRangeId": 3,
-                    "metricTypeId": 2,
-                    "typeDescription": "Images",
-                    "percentage": 9.375,
-                    "description": "Poor",
-                    "__typename": "dashboardmetrics"
-                }
-            ],
-            "__typename": "dashboardMessage"
-        },
-        {
-            "merchantId": 2,
-            "skuCatalog": [
-                {
-                    "skuId": 6,
-                    "skuName": "Test unit 2",
-                    "skuReferenceCode": "123123123",
-                    "eanUpc": "123456789012",
-                    "dateInsert": "2023-02-28 05:53:31.0",
-                    "__typename": "dashboardskuCatalog"
-                }
-            ],
-            "totalImages": 4,
-            "totalProducts": 5,
-            "totalSkus": 7,
-            "overallScore": 31.125,
-            "executionDate": "2023-02-24T08:19:04",
-            "metricRange": [
-                {
-                    "metricConfigRangeId": 1,
-                    "metricTypeId": 1,
-                    "typeDescription": "Products",
-                    "percentage": 90,
-                    "description": "Good",
-                    "__typename": "dashboardmetrics"
-                },
-                {
-                    "metricConfigRangeId": 3,
-                    "metricTypeId": 3,
-                    "typeDescription": "Facets",
-                    "percentage": 2,
-                    "description": "Poor",
-                    "__typename": "dashboardmetrics"
-                },
-                {
-                    "metricConfigRangeId": 3,
-                    "metricTypeId": 2,
-                    "typeDescription": "Images",
-                    "percentage": 9.375,
-                    "description": "Poor",
-                    "__typename": "dashboardmetrics"
-                }
-            ],
-            "__typename": "dashboardMessage"
-        }
-    ]
+    // const merchantss = 
+    // [
+    //     {
+    //         "merchantId": 1,
+    //         "skuCatalog": [
+    //             {
+    //                 "skuId": 6,
+    //                 "skuName": "Test unit 2",
+    //                 "skuReferenceCode": "123123123",
+    //                 "eanUpc": "123456789012",
+    //                 "dateInsert": "2023-02-28 05:53:31.0",
+    //                 "__typename": "dashboardskuCatalog"
+    //             }
+    //         ],
+    //         "totalImages": 1,
+    //         "totalProducts": 4,
+    //         "totalSkus": 5,
+    //         "overallScore": 20.125,
+    //         "executionDate": "2023-02-24T08:19:04",
+    //         "metricRange": [
+    //             {
+    //                 "metricConfigRangeId": 1,
+    //                 "metricTypeId": 1,
+    //                 "typeDescription": "Products",
+    //                 "percentage": 84,
+    //                 "description": "Good",
+    //                 "__typename": "dashboardmetrics"
+    //             },
+    //             {
+    //                 "metricConfigRangeId": 3,
+    //                 "metricTypeId": 3,
+    //                 "typeDescription": "Facets",
+    //                 "percentage": 0,
+    //                 "description": "Poor",
+    //                 "__typename": "dashboardmetrics"
+    //             },
+    //             {
+    //                 "metricConfigRangeId": 3,
+    //                 "metricTypeId": 2,
+    //                 "typeDescription": "Images",
+    //                 "percentage": 9.375,
+    //                 "description": "Poor",
+    //                 "__typename": "dashboardmetrics"
+    //             }
+    //         ],
+    //         "__typename": "dashboardMessage"
+    //     },
+    //     {
+    //         "merchantId": 3,
+    //         "skuCatalog": [
+    //             {
+    //                 "skuId": 6,
+    //                 "skuName": "Test unit 2",
+    //                 "skuReferenceCode": "123123123",
+    //                 "eanUpc": "123456789012",
+    //                 "dateInsert": "2023-02-28 05:53:31.0",
+    //                 "__typename": "dashboardskuCatalog"
+    //             }
+    //         ],
+    //         "totalImages": 1,
+    //         "totalProducts": 4,
+    //         "totalSkus": 5,
+    //         "overallScore": 20.125,
+    //         "executionDate": "2023-02-24T08:19:04",
+    //         "metricRange": [
+    //             {
+    //                 "metricConfigRangeId": 1,
+    //                 "metricTypeId": 1,
+    //                 "typeDescription": "Products",
+    //                 "percentage": 84,
+    //                 "description": "Good",
+    //                 "__typename": "dashboardmetrics"
+    //             },
+    //             {
+    //                 "metricConfigRangeId": 3,
+    //                 "metricTypeId": 3,
+    //                 "typeDescription": "Facets",
+    //                 "percentage": 0,
+    //                 "description": "Poor",
+    //                 "__typename": "dashboardmetrics"
+    //             },
+    //             {
+    //                 "metricConfigRangeId": 3,
+    //                 "metricTypeId": 2,
+    //                 "typeDescription": "Images",
+    //                 "percentage": 9.375,
+    //                 "description": "Poor",
+    //                 "__typename": "dashboardmetrics"
+    //             }
+    //         ],
+    //         "__typename": "dashboardMessage"
+    //     },
+    //     {
+    //         "merchantId": 2,
+    //         "skuCatalog": [
+    //             {
+    //                 "skuId": 6,
+    //                 "skuName": "Test unit 2",
+    //                 "skuReferenceCode": "123123123",
+    //                 "eanUpc": "123456789012",
+    //                 "dateInsert": "2023-02-28 05:53:31.0",
+    //                 "__typename": "dashboardskuCatalog"
+    //             }
+    //         ],
+    //         "totalImages": 4,
+    //         "totalProducts": 5,
+    //         "totalSkus": 7,
+    //         "overallScore": 20.125,
+    //         "executionDate": "2023-02-24T08:19:04",
+    //         "metricRange": [
+    //             {
+    //                 "metricConfigRangeId": 1,
+    //                 "metricTypeId": 1,
+    //                 "typeDescription": "Products",
+    //                 "percentage": 90,
+    //                 "description": "Good",
+    //                 "__typename": "dashboardmetrics"
+    //             },
+    //             {
+    //                 "metricConfigRangeId": 3,
+    //                 "metricTypeId": 3,
+    //                 "typeDescription": "Facets",
+    //                 "percentage": 2,
+    //                 "description": "Poor",
+    //                 "__typename": "dashboardmetrics"
+    //             },
+    //             {
+    //                 "metricConfigRangeId": 3,
+    //                 "metricTypeId": 2,
+    //                 "typeDescription": "Images",
+    //                 "percentage": 9.375,
+    //                 "description": "Poor",
+    //                 "__typename": "dashboardmetrics"
+    //             }
+    //         ],
+    //         "__typename": "dashboardMessage"
+    //     }
+    // ]
 
     useEffect(() => {
-        const filteredMerchants = merchantss?.filter(merchant => 
-            selectedMerchant?.some((filter : any) => filter.merchantId === merchant.merchantId)
-          );          
-        console.log('filtered xd', filteredMerchants)
-        setMultiHealth(filteredMerchants)
-    }, [selectedMerchant])
+        if(firstLev){
+            if(typeof firstLev === 'object' ){
+                setMultiHealth([firstLev]); 
+                return;
+            }
+            const filteredMerchants = firstLev?.filter((merchant: any) => 
+                selectedMerchant?.some((filter : any) => filter.merchantId === merchant.merchantId)
+              );          
+            console.log('filtered xd', filteredMerchants)
+            setMultiHealth(filteredMerchants)
+        }
+    }, [selectedMerchant, firstLev])
     
 
     const optionsBars = (metric: any) => {
@@ -280,7 +286,7 @@ const FirstLevel = () => {
     useEffect(() => {
         setFirstLevel(firstLevel);
         setIsLoading(false)
-    }, [/* firstLevel */]);
+    }, [firstLevel]);
 
     const blockSX = {
         p: 2.5,
@@ -318,7 +324,7 @@ const FirstLevel = () => {
                                     onChange={(merchants) => {
                                         setSelectedMerchant(merchants)
                                     }}
-                                    maxShow={2}
+                                    maxShow={3}
                                     blockDefaults={false}
                                     // defaultSelected={[]}
                                     defaultSelected={[
@@ -342,7 +348,7 @@ const FirstLevel = () => {
                                     onChange={(merchants) => {
                                         setSelectedMerchant(merchants)
                                     }}
-                                    maxShow={1}
+                                    maxShow={3}
                                     blockDefaults={false}
                                     defaultSelected={[]}
                                 />
@@ -396,8 +402,7 @@ const FirstLevel = () => {
                     </Fade>
                 ) : (
                     <>
-                        {firstLev && 
-                        
+                        {multiHealth && 
                         multiHealth.map((first:any) => 
                         ( 
                             <>
@@ -602,7 +607,7 @@ const FirstLevel = () => {
                                 <TablePagination
                                     rowsPerPageOptions={[2, 4]}
                                     component="div"
-                                    count={merchantss.length}
+                                    count={firstLev?.length ?? 1}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     onPageChange={handleChangePage}
