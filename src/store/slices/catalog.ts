@@ -8,7 +8,8 @@ import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, NewBrandType } from 'types/catalog';
+import { BrandType, CategoryType, CreateMerchantCategoryProps, MerchantCategoryType, NewBrandType } from 'types/catalog';
+import getCategoriesServiceMock from './mocks/getCategoriesServiceMock';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
@@ -22,7 +23,10 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     },
     categories: [],
     flatCategories: [],
-    filterCategories: []
+    filterCategories: [],
+    merchantCategories: [],
+    flatMerchantCategories: [],
+    filterMerchantCategories: []
 };
 
 const slice = createSlice({
@@ -101,6 +105,34 @@ const slice = createSlice({
                 state.updating = true;
             })
             .addCase(createCategoryService.fulfilled, (state) => {
+                state.updating = false;
+            });
+        // MERCHANT CATEGORIES
+        builder
+            .addCase(getMerchantCategoriesService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getMerchantCategoriesService.fulfilled, (state, action) => {
+                const merchantCategories = action.payload.response;
+                state.loading = false;
+                if (merchantCategories) {
+                    state.merchantCategories = merchantCategories;
+
+                    state.flatMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
+                        ...merchantCategory,
+                        categoryList: getCategoriesFlat(merchantCategory.categoryList)
+                    }));
+
+                    state.filterMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
+                        ...merchantCategory,
+                        categoryList: categoriesFlat(merchantCategory.categoryList)
+                    }));
+                }
+            })
+            .addCase(createMerchantCategoryService.pending, (state) => {
+                state.updating = true;
+            })
+            .addCase(createMerchantCategoryService.fulfilled, (state) => {
                 state.updating = false;
             });
     }
@@ -283,8 +315,9 @@ export const editFacetService = createAsyncThunk(`${slice.name}/editFacet`, asyn
 /* ============ CATEGORIES ============ */
 
 type getCategoriesServiceProps = {
-    idMerchant: 1;
+    idMerchant: number;
 };
+type getMerchantCategoriesServiceProps = getCategoriesServiceProps;
 
 export const getCategoriesService = createAsyncThunk(`${slice.name}/getCategories`, async ({ idMerchant }: getCategoriesServiceProps) => {
     const response = await axios.get(`styrk/api/category/search`, {
@@ -295,6 +328,25 @@ export const getCategoriesService = createAsyncThunk(`${slice.name}/getCategorie
     });
     return response.data;
 });
+
+export const getMerchantCategoriesService = createAsyncThunk(
+    `${slice.name}/getMerchantCategories`,
+    async ({ idMerchant }: getMerchantCategoriesServiceProps) => {
+        let result;
+        try {
+            const response = await axios.get(`styrk/api/category/search-multicatalog`, {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant
+                }
+            });
+            result = response.data;
+        } catch (error) {
+            result = getCategoriesServiceMock;
+        }
+        return result;
+    }
+);
 
 type createCategoryProps = {
     idMerchant: number;
@@ -311,10 +363,19 @@ export const createCategoryService = createAsyncThunk(`${slice.name}/createCateg
     );
     return response.data;
 });
+export const createMerchantCategoryService = createAsyncThunk(
+    `${slice.name}/createMerchantCategory`,
+    async ({ idMerchant, data }: CreateMerchantCategoryProps) => {
+        const response = await axios.post(`styrk/api/category/save-multicatalog?idMerchant=${idMerchant}`, data, {
+            baseURL: STYRK_API
+        });
+        return response.data;
+    }
+);
 
 type getCategoryInfoServiceProps = {
     idMerchant: number;
-    categoryId: number;
+    categoryId: number | string;
 };
 
 export const getCategoryInfoService = createAsyncThunk(
@@ -339,7 +400,7 @@ type editCategoryServiceProps = {
         description: string;
         fatherCategoryId: number | null;
         hasChildren: boolean;
-        id: number;
+        id: number | string;
         isActive: boolean;
         name: string;
         numberChildren: number | string;
@@ -369,7 +430,7 @@ export const editCategoryService = createAsyncThunk(
 // facets/fv/merchant/${merchId}/category/${catId}
 
 type getFacetVariantProps = {
-    catId: number;
+    catId: number | string;
     idMerchant: number;
 };
 
