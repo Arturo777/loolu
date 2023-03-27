@@ -1,4 +1,4 @@
-import { CategoryType, FilterCategoryType, FlatCategoryType, FlatMerchantCategoryType, MerchantCategoryType } from 'types/catalog';
+import { CategoryType, FilterCategoryType, FlatCategoryType } from 'types/catalog';
 import { MerchantType } from 'types/security';
 
 export const queryToObject = (query: string): object => {

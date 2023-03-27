@@ -118,26 +118,15 @@ const slice = createSlice({
                 if (merchantCategories) {
                     state.merchantCategories = merchantCategories;
 
-                    const flatMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
+                    state.flatMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
                         ...merchantCategory,
-                        // categoryList: getCategoriesFlat(merchantCategory.categoryList)
-                        categoryList: getCategoriesFlat(
-                            merchantCategory.categoryList.map((category: CategoryType) => ({
-                                ...category,
-                                id: `${merchantCategory.idMerchant}-${category.id}`
-                            }))
-                        )
+                        categoryList: getCategoriesFlat(merchantCategory.categoryList)
                     }));
 
                     state.filterMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
                         ...merchantCategory,
                         categoryList: categoriesFlat(merchantCategory.categoryList)
                     }));
-
-                    state.flatMerchantCategories = flatMerchantCategories.reduce((acc: any, el: any) => {
-                        acc.push(...el.categoryList);
-                        return acc;
-                    }, []);
                 }
             })
             .addCase(createMerchantCategoryService.pending, (state) => {

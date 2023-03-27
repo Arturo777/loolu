@@ -38,7 +38,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/slices/snackbar';
 import { gridSpacing } from 'store/constant';
-import { editCategoryService, getCategoriesService, getCategoryInfoService } from 'store/slices/catalog';
+import { editCategoryService, getCategoryInfoService, getMerchantCategoriesService } from 'store/slices/catalog';
 
 // types
 import { CategoryType, EditCategoryProps } from 'types/catalog';
@@ -130,7 +130,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                             close: false
                         })
                     );
-                    dispatch(getCategoriesService({ idMerchant: selectedMerchant?.merchantId ?? 1 }));
+                    dispatch(getMerchantCategoriesService({ idMerchant: selectedMerchant?.merchantId ?? 1 }));
                 })
                 .catch(() => {
                     dispatch(

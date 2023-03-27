@@ -1,3 +1,5 @@
+import { MerchantType } from './security';
+
 type CreateCategoryMerchantPayload = {
     merchantId: number;
     fatherMerchant: boolean;
@@ -38,7 +40,7 @@ export type CreateCategoryPageProps = {
     handleClose: (e?: any) => void;
     selectedCatId?: number | string;
     show: boolean;
-    selectedMerchant: SelectedMerchant | null;
+    selectedMerchant: MerchantType | undefined;
 };
 
 export type EditCategoryProps = {
@@ -46,7 +48,7 @@ export type EditCategoryProps = {
     show: boolean;
     onCancel: () => void;
     openAssociate: (cat: CategoryType | undefined) => void;
-    selectedMerchant: SelectedMerchant | null;
+    selectedMerchant: MerchantType | undefined;
 };
 
 export type CategoriesListProps = {
@@ -54,7 +56,7 @@ export type CategoriesListProps = {
     openCreate: (catId: number | string) => void;
     handleShowInfo: (cat?: number | string) => void;
     openAssociate: (cat: CategoryType | undefined) => void;
-    selectedMerchant: SelectedMerchant | null;
+    selectedMerchant: MerchantType | undefined;
 };
 
 export type SelectedMerchant = {
@@ -70,7 +72,7 @@ export type MerchantCategoryType = {
     isFatherMerchat: boolean;
     idMerchant: number;
 };
-export type FlatMerchantCategoryType = {
+export type FlatMerchantCategoriesType = {
     categoryList: FlatCategoryType[];
     isFatherMerchat: boolean;
     idMerchant: number;
@@ -90,7 +92,7 @@ export type CatalogStateProps = {
     flatCategories: FlatCategoryType[];
     filterCategories: FilterCategoryType[];
     merchantCategories?: MerchantCategoryType[];
-    flatMerchantCategories: FlatCategoryType[];
+    flatMerchantCategories: FlatMerchantCategoriesType[];
     filterMerchantCategories: FilterMerchantCategoryType[];
 };
 

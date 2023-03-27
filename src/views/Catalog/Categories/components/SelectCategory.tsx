@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 // mui imports
 import { Box, Typography, LinearProgress, FormControl, Select, InputLabel, MenuItem, SelectChangeEvent } from '@mui/material';
@@ -10,25 +10,34 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'store';
 
 // types
-import { FlatCategoryType } from 'types/catalog';
+import { FlatCategoryType, FlatMerchantCategoriesType, SelectedMerchant } from 'types/catalog';
 
 type SelectCategoryComponentProps = {
-    fatherCategoryId: number | string;
-    onChange: (event: SelectChangeEvent) => void;
+    fatherCategoryId: (() => number) | number;
+    onChange: (event: SelectChangeEvent, category: any) => void;
     required?: boolean;
+    selectedMerchant?: SelectedMerchant;
 };
 
-export default function SelectCategoryComponent({ fatherCategoryId, onChange, required = true }: SelectCategoryComponentProps) {
+export default function SelectCategoryComponent({
+    selectedMerchant,
+    fatherCategoryId,
+    onChange,
+    required = true
+}: SelectCategoryComponentProps) {
     // hooks
     const intl = useIntl();
 
     // store
-    const { loading, flatMerchantCategories } = useSelector((state) => state.catalogue);
+    const { flatMerchantCategories, loading } = useSelector((state) => state.catalogue);
+
+    // vars
+    const [flatCategories, setFlatCategories] = useState<FlatCategoryType[]>([]);
 
     const renderSelected = useCallback(
         (selected) => {
-            const selectedItem: any = flatMerchantCategories.find((item) => Number(item.id) === Number(selected));
-            // const selectedItem: FlatCategoryType | undefined = flatMerchantCategories.find((item) => Number(item.id) === Number(selected));
+            const selectedItem: any = flatCategories?.find((item) => Number(item.id) === Number(selected));
+            // const selectedItem: FlatCategoryType | undefined = flatCategories.find((item) => Number(item.id) === Number(selected));
 
             if (!selectedItem) return <Box />;
 
@@ -38,8 +47,20 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange, re
                 </Box>
             );
         },
-        [flatMerchantCategories]
+        [flatCategories]
     );
+
+    useEffect(() => {
+        if (loading || !selectedMerchant) return;
+        console.log({ flatMerchantCategories });
+        const fCategories = flatMerchantCategories.find(
+            (categories: FlatMerchantCategoriesType) => categories.idMerchant === selectedMerchant.merchantId
+        );
+        if (!fCategories) return;
+
+        setFlatCategories(fCategories.categoryList);
+    }, [flatMerchantCategories, loading, selectedMerchant]);
+
     return (
         <>
             {loading && (
@@ -51,23 +72,19 @@ export default function SelectCategoryComponent({ fatherCategoryId, onChange, re
             {!loading && (
                 <FormControl fullWidth>
                     <InputLabel id="select-country-label">
-                        {intl.formatMessage({
-                            id: 'existing_categories'
-                        })}
+                        {`${intl.formatMessage({ id: 'existing_categories' })} - ${selectedMerchant?.name}`}
                     </InputLabel>
                     <Select
                         labelId="select-category-label"
                         id="select-category"
                         value={`${fatherCategoryId}`}
-                        label={intl.formatMessage({
-                            id: 'existing_categories'
-                        })}
-                        name="fatherCategoryId"
-                        onChange={onChange}
+                        label={`${intl.formatMessage({ id: 'existing_categories' })} - ${selectedMerchant?.name}`}
+                        name={selectedMerchant?.merchantId.toString()}
+                        onChange={(e) => onChange(e, selectedMerchant)}
                         renderValue={renderSelected}
                         required={required}
                     >
-                        {flatMerchantCategories.map((item) => (
+                        {flatCategories?.map((item) => (
                             <MenuItem
                                 key={`selected-item-${item.id}`}
                                 value={item.id}

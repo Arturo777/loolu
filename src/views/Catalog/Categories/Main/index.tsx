@@ -18,15 +18,19 @@ import CategoriesListComponent from '../List';
 import CreateCategoryPage from '../Create';
 import EditCategoryComponent from '../Edit';
 import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
-import { CategoryType } from 'types/catalog';
+import { CategoryType, MerchantCategoryType, SelectedMerchant } from 'types/catalog';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { MerchantType } from 'types/security';
+import MultiMerchantButtons from 'ui-component/MultiMerchantButton/MultiMerchantButton';
+import { useSelector } from 'store';
 
 // ==============================|| FACETS LIST ||============================== //
 
 const CategoriesListPage = () => {
+    const { merchants } = useSelector((state) => state.auth);
+
     // hooks
-    const [selectedMerchant, setSelectedMerchant] = useState(null);
+    const [selectedMerchant, setSelectedMerchant] = useState<MerchantType | undefined>(undefined);
 
     // ===== vars
     const [searchParams, setSearchParams] = useSearchParams();
@@ -43,6 +47,13 @@ const CategoriesListPage = () => {
     // show info -- edit
     const [selectedCategory, setSelectedCategory] = useState<number | string>(); // id to show info (right side)
     const [showInfo, setShowInfo] = useState<boolean>(false); // show or hide info (right side)
+
+    // set default merchant
+    useEffect(() => {
+        if (!merchants?.length) return;
+        const defaultMerchant = merchants.find((merchant: MerchantType) => merchant.isFather);
+        setSelectedMerchant(defaultMerchant);
+    }, [merchants]);
 
     // set route params
     useEffect(() => {
@@ -192,25 +203,10 @@ const CustomPageHeader = ({
     // hooks
     const intl = useIntl();
 
-    const handleMerchantChange = (merchants: any) => {
+    const handleMerchantChange = (merchants: MerchantType[]) => {
         console.log({ merchants });
-        const [selectedMerchant] = merchants;
-        setSelectedMerchant(selectedMerchant);
 
-        // const newParam = "newParam=newValue";
-        // const currentUrl = window.location.href;
-        // const newUrl;
-
-        // if (currentUrl.indexOf('?') > -1) {
-        //   // URL already has parameters
-        //   newUrl = currentUrl + '&' + newParam;
-        // } else {
-        //   // URL doesn't have parameters yet
-        //   newUrl = currentUrl + '?' + newParam;
-        // }
-
-        // // Update the browser's address bar with the new URL
-        // window.history.pushState({path:newUrl},'',newUrl);
+        setSelectedMerchant(merchants[0]);
     };
 
     return (
@@ -222,12 +218,14 @@ const CustomPageHeader = ({
                     })}
                 </Typography>
 
+                {/* <MultiMerchantButtons onAvatarClick={handleMerchantChange} /> */}
+
                 <MultiMerchant
                     justOne
                     // readOnly
                     // onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
                     onChange={handleMerchantChange}
-                    maxShow={1}
+                    maxShow={3}
                     defaultSelected={[]}
                 />
             </Grid>
