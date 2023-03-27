@@ -106,7 +106,7 @@ export default function BrandForm({ initialData, handleSave }: any) {
                 <Grid item xs={12} sm={4}>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
-                            <MultiMerchant onChange={handleMerchants} maxShow={5} defaultSelected={[]} />
+                            <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField

@@ -54,7 +54,7 @@ const BrandsListPage = () => {
                         <Typography variant="h3">Change Brand</Typography>
                         <MultiMerchant
                             onChange={(merchants: MerchantType[]) => setSelectedMerchants(merchants)}
-                            maxShow={1}
+                            maxShow={3}
                             justOne
                             defaultSelected={[]}
                         />
