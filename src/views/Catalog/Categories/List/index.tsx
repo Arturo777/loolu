@@ -24,36 +24,41 @@ import MergeTypeIcon from '@mui/icons-material/MergeType';
 import { useIntl } from 'react-intl';
 
 // project imports
-import { getCategoriesService } from 'store/slices/catalog';
+import { getMerchantCategoriesService } from 'store/slices/catalog';
 import { useDispatch, useSelector } from 'store';
 
 // types
-import { CategoryType } from 'types/catalog';
+import { CategoriesListProps, CategoryType } from 'types/catalog';
 import { gridSpacing } from 'store/constant';
 
-type CategoriesListProps = {
-    filterText: string;
-    openCreate: (catId: number) => void;
-    handleShowInfo: (cat?: number) => void;
-    openAssociate: (cat: CategoryType | undefined) => void;
-};
-
-export default function CategoriesListComponent({ filterText, openCreate, handleShowInfo, openAssociate }: CategoriesListProps) {
+export default function CategoriesListComponent({
+    filterText,
+    openCreate,
+    handleShowInfo,
+    openAssociate,
+    selectedMerchant
+}: CategoriesListProps) {
     // hooks
     const dispatch = useDispatch();
     // store
-    const { categories, loading } = useSelector((state) => state.catalogue);
+    const { merchantCategories, loading } = useSelector((state) => state.catalogue);
     // vars
-    const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>();
+    const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>([]);
+    const [categories, setCategories] = useState<CategoryType[]>([]);
 
     useEffect(() => {
-        dispatch(getCategoriesService({ idMerchant: 1 }));
+        dispatch(getMerchantCategoriesService({ idMerchant: 1 }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        setFilteredCategories(categories);
-    }, [categories]);
+        if (!merchantCategories?.length || !selectedMerchant) return;
+
+        const merchant = merchantCategories.find((cat: any) => cat.idMerchant === selectedMerchant.merchantId);
+
+        setFilteredCategories(merchant?.categoryList || []);
+        setCategories(merchant?.categoryList || []);
+    }, [merchantCategories, selectedMerchant]);
 
     useEffect(() => {
         const filtered =
@@ -98,8 +103,8 @@ export default function CategoriesListComponent({ filterText, openCreate, handle
 
 type MainCategoryProps = {
     category: CategoryType;
-    openCreate: (catId: number) => void;
-    handleShowInfo: (cat?: number) => void;
+    openCreate: (catId: number | string) => void;
+    handleShowInfo: (cat?: number | string) => void;
     openAssociate: () => void;
 };
 

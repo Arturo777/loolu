@@ -207,7 +207,7 @@ export default function AddFormComponent({
 }
 
 type generateDataProps = {
-    categoryId: number;
+    categoryId: number | string;
     groupInfo: groupInfoType;
     specificationAttributes: SpecificationAttributesType;
     facetData: FacetType;
