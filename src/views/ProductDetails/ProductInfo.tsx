@@ -234,7 +234,6 @@ const ProductInfo = ({
         if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
             return;
         }
-
         setStateDrawer({ ...stateDrawer, [anchor]: open });
     };
     const handleClickOutside = (event: { target: any }) => {
@@ -891,7 +890,7 @@ const ProductInfo = ({
                                 <br />
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity' })}</Typography>
                                     </TableCell>
                                     <TableCell align="left" />
                                 </TableRow>
@@ -926,7 +925,7 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
     const handleOpen = () => {
         setOpen(!open);
     };
-    const customCategory = (value: string, id: number) => {
+    const customCategory = (value: string, id: number | string) => {
         setSearchCat(value);
         setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
     };

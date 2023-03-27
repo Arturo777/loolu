@@ -68,4 +68,5 @@ export type MerchantType = {
     name: string;
     isFather: boolean;
     status?: boolean;
+    isSelected?: boolean;
 };

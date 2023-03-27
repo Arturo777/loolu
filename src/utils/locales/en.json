@@ -304,5 +304,9 @@
     "last-update": "Last Update",
     "latest-updates": "Latest Updates",
     "details": "Details",
-    "date_insert": "Date Insert"
+    "date_insert": "Date Insert",
+    "create-product": "Create product",
+    "create_Date": "Create date",
+    "update_Date": "Update date",
+    "select_vendor": "Select vendor"
 }

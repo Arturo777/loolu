@@ -38,18 +38,11 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/slices/snackbar';
 import { gridSpacing } from 'store/constant';
-import { editCategoryService, getCategoriesService, getCategoryInfoService } from 'store/slices/catalog';
+import { editCategoryService, getCategoryInfoService, getMerchantCategoriesService } from 'store/slices/catalog';
 
 // types
-import { CategoryType } from 'types/catalog';
+import { CategoryType, EditCategoryProps } from 'types/catalog';
 import SelectCategoryComponent from '../components/SelectCategory';
-
-type EditCategoryProps = {
-    selectedCategory?: number;
-    show: boolean;
-    onCancel: () => void;
-    openAssociate: (cat: CategoryType | undefined) => void;
-};
 
 type NewCategoryType = Omit<CategoryType, 'id' | 'numberChildren' | 'hasChildren' | 'children'>;
 
@@ -63,10 +56,11 @@ const initialData: NewCategoryType = {
     activeStoreFrontLink: true,
     fatherCategoryId: 0,
     score: 0,
-    stockKeepingUnitSelectionMode: ''
+    stockKeepingUnitSelectionMode: '',
+    masterCategoryId: 0
 };
 
-export default function EditCategoryComponent({ selectedCategory, show, onCancel, openAssociate }: EditCategoryProps) {
+export default function EditCategoryComponent({ selectedCategory, show, onCancel, openAssociate, selectedMerchant }: EditCategoryProps) {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -84,7 +78,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
     useEffect(() => {
         if (selectedCategory) {
             setIsLoading(true);
-            dispatch(getCategoryInfoService({ idMerchant: 1, categoryId: selectedCategory }))
+            dispatch(getCategoryInfoService({ idMerchant: selectedMerchant?.merchantId ?? 1, categoryId: selectedCategory }))
                 .then(({ payload }) => {
                     setNewData({
                         ...payload.response,
@@ -110,7 +104,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCategory]);
+    }, [selectedCategory, selectedMerchant]);
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -120,7 +114,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
 
             dispatch(
                 editCategoryService({
-                    idMerchant: 1,
+                    idMerchant: selectedMerchant?.merchantId ?? 1,
                     category: categoryData
                 })
             )
@@ -136,7 +130,7 @@ export default function EditCategoryComponent({ selectedCategory, show, onCancel
                             close: false
                         })
                     );
-                    dispatch(getCategoriesService({ idMerchant: 1 }));
+                    dispatch(getMerchantCategoriesService({ idMerchant: selectedMerchant?.merchantId ?? 1 }));
                 })
                 .catch(() => {
                     dispatch(
@@ -410,7 +404,7 @@ const modalStyle = {
     borderRadius: 2
 };
 
-const createNewCategoryData = (newData: NewCategoryType, originalData: CategoryType, selectedCategory: number) => ({
+const createNewCategoryData = (newData: NewCategoryType, originalData: CategoryType, selectedCategory: number | string) => ({
     activeStoreFrontLink: newData.activeStoreFrontLink,
     adWordsRemarketingCode: null,
     description: newData.description,

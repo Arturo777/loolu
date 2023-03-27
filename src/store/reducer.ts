@@ -15,7 +15,7 @@ import profilesReducer from './slices/profiles';
 import catalogueReducer from './slices/catalog';
 import healthContentReducer from './slices/healthContent';
 import reportsReducer from './slices/reports';
-
+import chatGptReducer from './slices/chatgpt';
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -36,7 +36,8 @@ const reducer = combineReducers({
     snackbar: snackbarReducer,
     profile: profilesReducer,
     catalogue: catalogueReducer,
-    reports: reportsReducer
+    reports: reportsReducer,
+    chatGpt: chatGptReducer
 });
 
 export default reducer;
