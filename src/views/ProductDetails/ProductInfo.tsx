@@ -486,6 +486,7 @@ const ProductInfo = ({
                             '& .MuiTextField-root': { mt: 2 }
                         }}
                     >
+                        {/* TODO: copiar  */}
                         <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
                             <TextField
                                 fullWidth
@@ -559,6 +560,7 @@ const ProductInfo = ({
                             position: 'relative'
                         }}
                     >
+                        {/* TODO cOPIAR */}
                         <Button onClick={toggleDrawer('right', true)} variant="contained">
                             {intl.formatMessage({ id: 'edit_category' })}
                         </Button>
