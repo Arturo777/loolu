@@ -18,14 +18,19 @@ import CategoriesListComponent from '../List';
 import CreateCategoryPage from '../Create';
 import EditCategoryComponent from '../Edit';
 import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
-import { CategoryType } from 'types/catalog';
+import { CategoryType, MerchantCategoryType, SelectedMerchant } from 'types/catalog';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { MerchantType } from 'types/security';
+import MultiMerchantButtons from 'ui-component/MultiMerchantButton/MultiMerchantButton';
+import { useSelector } from 'store';
 
 // ==============================|| FACETS LIST ||============================== //
 
 const CategoriesListPage = () => {
+    const { merchants } = useSelector((state) => state.auth);
+
     // hooks
+    const [selectedMerchant, setSelectedMerchant] = useState<MerchantType | undefined>(undefined);
 
     // ===== vars
     const [searchParams, setSearchParams] = useSearchParams();
@@ -37,11 +42,18 @@ const CategoriesListPage = () => {
 
     // create
     const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
-    const [selectedCatId, setSelectedCatId] = useState<number>(); // short cut to select in create form
+    const [selectedCatId, setSelectedCatId] = useState<number | undefined>(); // short cut to select in create form
 
     // show info -- edit
     const [selectedCategory, setSelectedCategory] = useState<number>(); // id to show info (right side)
     const [showInfo, setShowInfo] = useState<boolean>(false); // show or hide info (right side)
+
+    // set default merchant
+    useEffect(() => {
+        if (!merchants?.length) return;
+        const defaultMerchant = merchants.find((merchant: MerchantType) => merchant.isFather);
+        setSelectedMerchant(defaultMerchant);
+    }, [merchants]);
 
     // set route params
     useEffect(() => {
@@ -117,6 +129,7 @@ const CategoriesListPage = () => {
                     openCreate={openCreate}
                     toggleForm={handleCreateForm}
                     selectedCatId={selectedCatId}
+                    setSelectedMerchant={setSelectedMerchant}
                 />
             }
             content={false}
@@ -130,17 +143,26 @@ const CategoriesListPage = () => {
                         filterText={filterText}
                         openCreate={openCreateFormById}
                         handleShowInfo={handleShowInfo}
+                        selectedMerchant={selectedMerchant}
                     />
                 </Grid>
                 {/* INFO  */}
                 <Grid item xs={12} sm={4} md={8}>
-                    {openCreate && <CreateCategoryPage show={openCreate} handleClose={handleCreateForm} selectedCatId={selectedCatId} />}
+                    {openCreate && (
+                        <CreateCategoryPage
+                            show={openCreate}
+                            handleClose={handleCreateForm}
+                            selectedCatId={selectedCatId}
+                            selectedMerchant={selectedMerchant}
+                        />
+                    )}
                     {showInfo && (
                         <EditCategoryComponent
                             openAssociate={handleToggleAssociateDrawer}
                             selectedCategory={selectedCategory}
                             show={showInfo}
                             onCancel={handleCancelEdit}
+                            selectedMerchant={selectedMerchant}
                         />
                     )}
                 </Grid>
@@ -165,72 +187,46 @@ type CustomPageHeaderProps = {
     toggleForm: () => void;
     openCreate: boolean;
     selectedCatId?: number;
+    setSelectedMerchant?: any;
 };
 
 // Create form and header
 
-const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, selectedCatId }: CustomPageHeaderProps) => {
+const CustomPageHeader = ({
+    handleSearch,
+    filterText,
+    toggleForm,
+    openCreate,
+    setSelectedMerchant,
+    selectedCatId
+}: CustomPageHeaderProps) => {
     // hooks
     const intl = useIntl();
 
+    const handleMerchantChange = (merchants: MerchantType[]) => {
+        console.log({ merchants });
+
+        setSelectedMerchant(merchants[0]);
+    };
+
     return (
         <Grid container alignItems="center" justifyContent="space-between">
-            {/* <Grid item xs={12} sx={{ mb: 2 }}>
-                <MultiMerchant
-                    merchants={allMerchants}
-                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
-                    maxShow={5}
-                    defaultSelected={[]}
-                    // defaultSelected={[
-                    //     {
-                    //         name: 'Vinneren',
-                    //         merchantId: 1,
-                    //         isFather: true
-                    //         // isSelected: true
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 2,
-                    //         isFather: false
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 5,
-                    //         isFather: false
-                    //     }
-                    // ]}
-                />
-            </Grid> */}
             <Grid item component={Stack} alignItems="center" justifyContent="center">
                 <Typography variant="h3" sx={{ mr: 1 }}>
                     {intl.formatMessage({
                         id: 'categories'
                     })}
                 </Typography>
+
+                {/* <MultiMerchantButtons onAvatarClick={handleMerchantChange} /> */}
+
                 <MultiMerchant
-                    // justOne
+                    justOne
                     // readOnly
-                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
-                    maxShow={4}
+                    // onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                    onChange={handleMerchantChange}
+                    maxShow={3}
                     defaultSelected={[]}
-                    // defaultSelected={[
-                    //     {
-                    //         name: 'Vinneren',
-                    //         merchantId: 1,
-                    //         isFather: true
-                    //         // isSelected: true
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 2,
-                    //         isFather: false
-                    //     },
-                    //     {
-                    //         name: 'other',
-                    //         merchantId: 5,
-                    //         isFather: false
-                    //     }
-                    // ]}
                 />
             </Grid>
             <Grid item>
@@ -263,7 +259,7 @@ const CustomPageHeader = ({ handleSearch, filterText, toggleForm, openCreate, se
 
 // EXAMPLE DATA MERCHATS
 
-const allMerchants: MerchantType[] = [
+export const allMerchants: MerchantType[] = [
     {
         name: 'Vinneren',
         merchantId: 1,
