@@ -65,7 +65,7 @@ const ApprovalCard = ({ product, valueSku }: { product: Products | null; valueSk
     const handleChangeSelect = (event: SelectChangeEvent) => {
         setReason(event.target.value);
     };
-
+    console.log(reason);
     useEffect(() => {
         dispatch(approvalStatus());
         dispatch(getRejectedStatus());

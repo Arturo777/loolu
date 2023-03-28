@@ -4,8 +4,6 @@ import { lazy } from 'react';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
-import ProductList from 'views/Products';
-import ProductDetails from 'views/ProductDetails';
 import FirstLevel from 'views/Catalog/HealthContent/FirstLevel';
 import Products from 'views/Catalog/HealthContent/SecondLevel/Products/Products';
 import Images from 'views/Catalog/HealthContent/SecondLevel/Images';
@@ -14,6 +12,11 @@ import Facets from 'views/Catalog/HealthContent/SecondLevel/Facets';
 //  ========= users =========
 const UsersList = Loadable(lazy(() => import('views/Security/Users')));
 const UserProfile = Loadable(lazy(() => import('views/Security/UserProfile')));
+
+// ========= products =========
+const ProductList = Loadable(lazy(() => import('views/Products')));
+const ProductDetails = Loadable(lazy(() => import('views/ProductDetails')));
+const CreateProduct = Loadable(lazy(() => import('views/Catalog/Products/Create')));
 
 // ========= profiles =========
 const ProfilesMainPage = Loadable(lazy(() => import('views/Security/Profiles')));
@@ -63,11 +66,15 @@ const MainRoutes = {
             path: '/products',
             element: <ProductList />
         },
-        // ========= users =========
         {
             path: '/products/detail-product/:id',
             element: <ProductDetails />
         },
+        {
+            path: '/products/create-product',
+            element: <CreateProduct />
+        },
+        // ========= users =========
         {
             path: '/users',
             element: <UsersList />

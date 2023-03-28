@@ -17,6 +17,7 @@ import { SnackbarProps } from './snackbar';
 import { CatalogStateProps } from './catalog';
 import { HealthContentStateProps } from './health-content';
 import { ReportsStateProps } from './reports';
+import { MessageChatProps } from './chat-gpt';
 
 declare module '@mui/styles/defaultTheme' {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -119,6 +120,7 @@ export interface DefaultRootStateProps {
     profile: ProfileStateProps;
     catalogue: CatalogStateProps;
     reports: ReportsStateProps;
+    chatGpt: MessageChatProps;
 }
 
 export interface ColorProps {

@@ -29,6 +29,13 @@ import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
+import MainCard from 'ui-component/cards/MainCard';
+import DragAndDrop from 'ui-component/DragAndDrop';
+
+interface Image {
+    file: File;
+    src: string;
+}
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -86,7 +93,7 @@ const ProductDetails = () => {
     const [valueSku, setValueSku] = useState('');
     const [open, setOpen] = useState(false);
     const [openTwo, setOpenTwo] = useState(false);
-    const [loading, setLoading] = useState(true);
+    /* const [loading, setLoading] = useState(true); */
     // actice mode edit product
     const [active, setActive] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -106,7 +113,7 @@ const ProductDetails = () => {
 
     const { product, skus, tradePolicies } = useSelector((state) => state.product);
     const { brands } = useSelector((state) => state.catalogue);
-
+    const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -251,123 +258,131 @@ const ProductDetails = () => {
                                 sx={
                                     open || openTwo
                                         ? { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
-                                        : { marginRight: '-320px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                        : { marginRight: '-420px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
                                 }
                             >
-                                {originalData && originalData?.productID?.toString() === id && (
-                                    <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                        <Grid item xs={12} md={6}>
-                                            <ProductImages
-                                                skus={skus}
-                                                valueSku={valueSku}
-                                                product={product}
-                                                setActive={setActive}
-                                                active={active}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} md={6}>
-                                            <ProductInfo
-                                                product={originalData}
-                                                setValueSku={setValueSku}
-                                                valueSku={valueSku}
-                                                setActive={setActive}
-                                                active={active}
-                                                setProductInfo={setProductInfo}
-                                                productInfo={productInfo}
-                                                setSkuInfo={setSkuInfo}
-                                                skuInfo={skuInfo}
-                                                brandsInfo={brandsInfo}
-                                                setFlagBrand={setFlagBrand}
-                                                flagBrand={flagBrand}
-                                                setNewBrandSku={setNewBrandSku}
-                                                setFlagCategory={setFlagCategory}
-                                                flagCategory={flagCategory}
-                                                setNewCategorySku={setNewCategorySku}
-                                                tradePolicies={tradePolicies}
-                                            />
-                                            <Grid item xs={12}>
-                                                <Grid container spacing={1}>
-                                                    <Grid item xs={6}>
-                                                        {active ? (
-                                                            <Button
-                                                                fullWidth
-                                                                variant="outlined"
-                                                                color="error"
-                                                                size="large"
-                                                                startIcon={<DeleteIcon />}
-                                                                onClick={() => setActive(false)}
-                                                                disabled={valueSku === ''}
-                                                            >
-                                                                {intl.formatMessage({ id: 'cancel' })}
-                                                            </Button>
-                                                        ) : (
-                                                            <Button
-                                                                fullWidth
-                                                                color="primary"
-                                                                variant="contained"
-                                                                size="large"
-                                                                startIcon={<EditIcon />}
-                                                                onClick={() => setActive(true)}
-                                                                disabled={valueSku === ''}
-                                                            >
-                                                                {intl.formatMessage({ id: 'edit' })}
-                                                            </Button>
-                                                        )}
-                                                    </Grid>
-                                                    <Grid item xs={6}>
-                                                        <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
-                                                            {intl.formatMessage({ id: 'save' })}
-                                                        </Button>
-                                                    </Grid>
-                                                </Grid>
+                                <MainCard>
+                                    {originalData && originalData?.productID?.toString() === id && (
+                                        <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                            <Grid item xs={12} md={6}>
+                                                <ProductImages
+                                                    skus={skus}
+                                                    valueSku={valueSku}
+                                                    product={product}
+                                                    setActive={setActive}
+                                                    active={active}
+                                                />
                                             </Grid>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Tabs
-                                                value={value}
-                                                indicatorColor="primary"
-                                                onChange={handleChange}
-                                                sx={{}}
-                                                aria-label="product description tabs example"
-                                                variant="scrollable"
-                                            >
-                                                <Tab
-                                                    component={Link}
-                                                    to="#"
-                                                    label={intl.formatMessage({ id: 'description' })}
-                                                    {...a11yProps(0)}
-                                                />
-                                                <Tab
-                                                    component={Link}
-                                                    to="#"
-                                                    label={
-                                                        <Stack direction="row" alignItems="center">
-                                                            {intl.formatMessage({ id: 'reviews' })}
-                                                            <Chip
-                                                                label={String(product?.salePrice)}
-                                                                size="small"
-                                                                chipcolor="secondary"
-                                                                sx={{ ml: 1.5 }}
-                                                            />
-                                                        </Stack>
-                                                    }
-                                                    {...a11yProps(1)}
-                                                />
-                                            </Tabs>
-                                            <TabPanel value={value} index={0}>
-                                                <ProductDescription
+                                            <Grid item xs={12} md={6}>
+                                                <ProductInfo
                                                     product={originalData}
+                                                    setValueSku={setValueSku}
+                                                    valueSku={valueSku}
+                                                    setActive={setActive}
                                                     active={active}
                                                     setProductInfo={setProductInfo}
                                                     productInfo={productInfo}
+                                                    setSkuInfo={setSkuInfo}
+                                                    skuInfo={skuInfo}
+                                                    brandsInfo={brandsInfo}
+                                                    setFlagBrand={setFlagBrand}
+                                                    flagBrand={flagBrand}
+                                                    setNewBrandSku={setNewBrandSku}
+                                                    setFlagCategory={setFlagCategory}
+                                                    flagCategory={flagCategory}
+                                                    setNewCategorySku={setNewCategorySku}
+                                                    tradePolicies={tradePolicies}
                                                 />
-                                            </TabPanel>
-                                            <TabPanel value={value} index={1}>
-                                                <ProductReview product={product} />
-                                            </TabPanel>
+                                                <Grid item xs={12}>
+                                                    <Grid container spacing={1}>
+                                                        <Grid item xs={6}>
+                                                            {active ? (
+                                                                <Button
+                                                                    fullWidth
+                                                                    variant="outlined"
+                                                                    color="error"
+                                                                    size="large"
+                                                                    startIcon={<DeleteIcon />}
+                                                                    onClick={() => setActive(false)}
+                                                                    disabled={valueSku === ''}
+                                                                >
+                                                                    {intl.formatMessage({ id: 'cancel' })}
+                                                                </Button>
+                                                            ) : (
+                                                                <Button
+                                                                    fullWidth
+                                                                    color="primary"
+                                                                    variant="contained"
+                                                                    size="large"
+                                                                    startIcon={<EditIcon />}
+                                                                    onClick={() => setActive(true)}
+                                                                    disabled={valueSku === ''}
+                                                                >
+                                                                    {intl.formatMessage({ id: 'edit' })}
+                                                                </Button>
+                                                            )}
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <Button
+                                                                type="submit"
+                                                                fullWidth
+                                                                color="secondary"
+                                                                variant="contained"
+                                                                size="large"
+                                                            >
+                                                                {intl.formatMessage({ id: 'save' })}
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Tabs
+                                                    value={value}
+                                                    indicatorColor="primary"
+                                                    onChange={handleChange}
+                                                    sx={{}}
+                                                    aria-label="product description tabs example"
+                                                    variant="scrollable"
+                                                >
+                                                    <Tab
+                                                        component={Link}
+                                                        to="#"
+                                                        label={intl.formatMessage({ id: 'description' })}
+                                                        {...a11yProps(0)}
+                                                    />
+                                                    <Tab
+                                                        component={Link}
+                                                        to="#"
+                                                        label={
+                                                            <Stack direction="row" alignItems="center">
+                                                                {intl.formatMessage({ id: 'reviews' })}
+                                                                <Chip
+                                                                    label={String(product?.salePrice)}
+                                                                    size="small"
+                                                                    chipcolor="secondary"
+                                                                    sx={{ ml: 1.5 }}
+                                                                />
+                                                            </Stack>
+                                                        }
+                                                        {...a11yProps(1)}
+                                                    />
+                                                </Tabs>
+                                                <TabPanel value={value} index={0}>
+                                                    <ProductDescription
+                                                        product={originalData}
+                                                        active={active}
+                                                        setProductInfo={setProductInfo}
+                                                        productInfo={productInfo}
+                                                    />
+                                                </TabPanel>
+                                                <TabPanel value={value} index={1}>
+                                                    <ProductReview product={product} />
+                                                </TabPanel>
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                )}
+                                    )}
+                                </MainCard>
                             </Main>
                             {open ? (
                                 <Drawer
@@ -431,6 +446,11 @@ const ProductDetails = () => {
                             )}
                         </Box>
                     </Grid>
+
+                    <DragAndDrop images={images} setImages={setImages} />
+                    {images.map((image, index) => (
+                        <img key={index} src={image.src} alt={`id${index}`} />
+                    ))}
 
                     <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>

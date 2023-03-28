@@ -23,10 +23,10 @@ const StepApproval = ({ iconPrimary, primary, secondary, secondarySub, color, bg
 
     const formateoFecha = (date: string) => {
         let fecha = [];
-        let hora = [];
+        /* let hora = []; */
         fecha = date.split('T');
         const fecha2 = fecha[0].split('-').reverse().join('/');
-        hora = fecha[1].split('.');
+        /* hora = fecha[1].split('.'); */
         return fecha2;
     };
 
