@@ -66,7 +66,7 @@ export default function ChangeLogPage() {
 
     const [selectedItem, setSelectedItem] = useState<ChangeLog | null>(null);
 
-    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[] | null>(null);
+    const [selectedMerchant, setSelectedMerchant] = useState<number | null>(null);
 
     const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
     useEffect(() => {
@@ -91,15 +91,17 @@ export default function ChangeLogPage() {
     };
 
     const handleSelectedMerchant = (idMerchant: MerchantType[]) => {
-        console.log(idMerchant);
+        if (idMerchant.length) {
+            setSelectedMerchant(idMerchant[0].merchantId);
+        }
     };
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
         const filteredList =
             filterText !== '' ? changeLog.filter((item) => JSON.stringify(item).toLowerCase().indexOf(filterText) > -1) : [...changeLog];
-
-        const sortList = filteredList.sort((a, b) => {
+        const filteredListMerchants = filteredList.filter((item) => item.idMerchant === selectedMerchant);
+        const sortList = filteredListMerchants.sort((a, b) => {
             if (sortBy === sortOptions.userLog) {
                 return a.userLog < b.userLog ? -1 : 1;
             }
