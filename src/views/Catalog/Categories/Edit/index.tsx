@@ -404,7 +404,7 @@ const modalStyle = {
     borderRadius: 2
 };
 
-const createNewCategoryData = (newData: NewCategoryType, originalData: CategoryType, selectedCategory: number | string) => ({
+const createNewCategoryData = (newData: NewCategoryType, originalData: CategoryType, selectedCategory: number) => ({
     activeStoreFrontLink: newData.activeStoreFrontLink,
     adWordsRemarketingCode: null,
     description: newData.description,
