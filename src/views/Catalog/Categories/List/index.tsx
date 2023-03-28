@@ -103,8 +103,8 @@ export default function CategoriesListComponent({
 
 type MainCategoryProps = {
     category: CategoryType;
-    openCreate: (catId: number | string) => void;
-    handleShowInfo: (cat?: number | string) => void;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
     openAssociate: () => void;
 };
 

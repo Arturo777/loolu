@@ -927,7 +927,7 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
     const handleOpen = () => {
         setOpen(!open);
     };
-    const customCategory = (value: string, id: number | string) => {
+    const customCategory = (value: string, id: number) => {
         setSearchCat(value);
         setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
     };

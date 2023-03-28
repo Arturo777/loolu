@@ -42,10 +42,10 @@ const CategoriesListPage = () => {
 
     // create
     const [openCreate, setOpenCreate] = useState<boolean>(false); // show or hide create form
-    const [selectedCatId, setSelectedCatId] = useState<number | string>(); // short cut to select in create form
+    const [selectedCatId, setSelectedCatId] = useState<number | undefined>(); // short cut to select in create form
 
     // show info -- edit
-    const [selectedCategory, setSelectedCategory] = useState<number | string>(); // id to show info (right side)
+    const [selectedCategory, setSelectedCategory] = useState<number>(); // id to show info (right side)
     const [showInfo, setShowInfo] = useState<boolean>(false); // show or hide info (right side)
 
     // set default merchant
@@ -76,7 +76,7 @@ const CategoriesListPage = () => {
         setOpenCreate((prev) => !prev);
     };
 
-    const openCreateFormById = (catId?: number | string) => {
+    const openCreateFormById = (catId?: number) => {
         // open form from categories list
 
         setShowInfo(false);
@@ -94,7 +94,7 @@ const CategoriesListPage = () => {
         setFilterText(newString ?? '');
     };
 
-    const handleShowInfo = (cat?: number | string) => {
+    const handleShowInfo = (cat?: number) => {
         setShowInfo(false);
         if (cat) {
             setOpenCreate(false);
@@ -186,7 +186,7 @@ type CustomPageHeaderProps = {
     filterText: string;
     toggleForm: () => void;
     openCreate: boolean;
-    selectedCatId?: number | string;
+    selectedCatId?: number;
     setSelectedMerchant?: any;
 };
 

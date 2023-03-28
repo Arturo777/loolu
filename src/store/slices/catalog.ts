@@ -375,7 +375,7 @@ export const createMerchantCategoryService = createAsyncThunk(
 
 type getCategoryInfoServiceProps = {
     idMerchant: number;
-    categoryId: number | string;
+    categoryId: number;
 };
 
 export const getCategoryInfoService = createAsyncThunk(
@@ -400,7 +400,7 @@ type editCategoryServiceProps = {
         description: string;
         fatherCategoryId: number | null;
         hasChildren: boolean;
-        id: number | string;
+        id: number;
         isActive: boolean;
         name: string;
         numberChildren: number | string;
@@ -430,7 +430,7 @@ export const editCategoryService = createAsyncThunk(
 // facets/fv/merchant/${merchId}/category/${catId}
 
 type getFacetVariantProps = {
-    catId: number | string;
+    catId: number;
     idMerchant: number;
 };
 
