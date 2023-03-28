@@ -18,6 +18,7 @@ import { getProduct } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 import ProductImagesCreate from './ProductImagesCreate';
 import ProductInfoCreate from './ProductInfoCreate';
+import ProductDescriptionCreate from './ProductDescriptionCreate';
 import { Products } from 'types/e-commerce';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
@@ -103,7 +104,7 @@ const CreateProduct = () => {
                                 />
                             </Tabs>
                             <TabPanel value={value} index={0}>
-                                {/* <ProductDescription /> */}
+                                <ProductDescriptionCreate setProductInfo={setProductInfo} />
                             </TabPanel>
                             <TabPanel value={value} index={1}>
                                 {/* <ProductReview product={product} /> */}
