@@ -26,6 +26,7 @@ type CreateFacetComponentProps = {
 
 const CreateFacetComponent = ({ show, handleCancel }: CreateFacetComponentProps) => {
     const [merchs, setMerchs] = useState<any>([{}]);
+    const [merchantFacets, setMerchantFacets] = useState<any>([]);
 
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -35,7 +36,12 @@ const CreateFacetComponent = ({ show, handleCancel }: CreateFacetComponentProps)
     const facetList = facets;
 
     const handleSave = (data: FacetType) => {
-        const filteredFacets = merchs.map((merch: any) => {});
+        const filteredFacets = facetList.facets.map((facet: any) => {
+            merchs.map((merch: any) => {
+                if (facet.merchantId === merch.merchantId) facet.facets.push(data);
+            });
+        });
+
         // dispatch(
         //     createFacetService({
         //         idMerchant: 1,
