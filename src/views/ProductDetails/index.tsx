@@ -1,5 +1,5 @@
 import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -111,11 +111,17 @@ const ProductDetails = () => {
         setValue(newValue);
     };
 
+    // idMerchant url get
+
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const idMerchant = searchParams.get('idMerchant');
+    const isFather = searchParams.get('isFather');
+
     useEffect(() => {
         // getProduct();
         setIsLoading(true);
-        dispatch(getProduct(id));
-        dispatch(getBrands());
+        dispatch(getProduct({ id, idMerchant }));
         dispatch(getCategories());
         dispatch(getTradePolicies());
         // clear cart if complete order
@@ -134,6 +140,7 @@ const ProductDetails = () => {
     useEffect(() => {
         setOpen(false);
     }, []);
+    console.log(idMerchant, isFather);
 
     useEffect(() => {
         if (product !== null) {
@@ -154,6 +161,8 @@ const ProductDetails = () => {
         setOpenTwo((prevState) => !prevState);
         setOpen(false);
     };
+
+    console.log(product);
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (flagBrand) {

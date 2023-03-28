@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // mui imports
 import { Card, Fade, Typography, Stack, Divider, Box, useTheme, useMediaQuery, Modal } from '@mui/material';
@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 // project imports
 import FacetFormComponent from '../FacetForm';
 import { useDispatch } from 'store';
+import facets from '../List/facetlist';
 
 // services
 import { createFacetService } from 'store/slices/catalog';
@@ -16,6 +17,7 @@ import { createFacetService } from 'store/slices/catalog';
 // types
 import { FacetType } from 'types/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 
 type CreateFacetComponentProps = {
     show: boolean;
@@ -23,61 +25,74 @@ type CreateFacetComponentProps = {
 };
 
 const CreateFacetComponent = ({ show, handleCancel }: CreateFacetComponentProps) => {
+    const [merchs, setMerchs] = useState<any>([{}]);
+
     const intl = useIntl();
     const dispatch = useDispatch();
     const theme = useTheme();
     const onlyMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+    const facetList = facets;
+
     const handleSave = (data: FacetType) => {
-        dispatch(
-            createFacetService({
-                idMerchant: 1,
-                data: {
-                    name: data.name,
-                    nameSap: data.nameSap
-                }
-            })
-        )
-            .then(({ payload }) => {
-                if (payload.status === 500) throw new Error();
-                dispatch(
-                    openSnackbar({
-                        open: true,
-                        message: `Facet creado correctamente`,
-                        variant: 'alert',
-                        alert: {
-                            color: 'success'
-                        },
-                        close: false
-                    })
-                );
-            })
-            .catch(() => {
-                dispatch(
-                    openSnackbar({
-                        open: true,
-                        message: `Error al crear el facet`,
-                        variant: 'alert',
-                        alert: {
-                            color: 'error'
-                        },
-                        close: false
-                    })
-                );
-            })
-            .finally(() => {
-                handleCancel();
-            });
+        const filteredFacets = merchs.map((merch: any) => {});
+        // dispatch(
+        //     createFacetService({
+        //         idMerchant: 1,
+        //         data: {
+        //             name: data.name,
+        //             nameSap: data.nameSap
+        //         }
+        //     })
+        // )
+        //     .then(({ payload }) => {
+        //         if (payload.status === 500) throw new Error();
+        //         dispatch(
+        //             openSnackbar({
+        //                 open: true,
+        //                 message: `Facet creado correctamente`,
+        //                 variant: 'alert',
+        //                 alert: {
+        //                     color: 'success'
+        //                 },
+        //                 close: false
+        //             })
+        //         );
+        //     })
+        //     .catch(() => {
+        //         dispatch(
+        //             openSnackbar({
+        //                 open: true,
+        //                 message: `Error al crear el facet`,
+        //                 variant: 'alert',
+        //                 alert: {
+        //                     color: 'error'
+        //                 },
+        //                 close: false
+        //             })
+        //         );
+        //     })
+        //     .finally(() => {
+        //         handleCancel();
+        //     });
     };
 
     const content = () => (
         <>
-            <Stack sx={{ mb: 3 }}>
-                <Typography variant="h4">
+            <Stack sx={{ mb: 3 }} direction="row" alignItems="center">
+                <Typography variant="h4" sx={{ mr: 1 }}>
                     {intl.formatMessage({
                         id: 'create_facet'
                     })}
                 </Typography>
+                <MultiMerchant
+                    onChange={(merchants) => {
+                        console.log('SELECTED MERCHANTS', merchants);
+                        setMerchs(merchants);
+                    }}
+                    maxShow={4}
+                    defaultSelected={[]}
+                />
             </Stack>
             <Divider sx={{ mb: 3 }} />
             <FacetFormComponent handleSave={handleSave} handleCancel={handleCancel} />
