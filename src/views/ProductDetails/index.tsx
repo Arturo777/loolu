@@ -1,5 +1,5 @@
-import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState, SyntheticEvent, FormEvent, useMemo } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -19,16 +19,17 @@ import { TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
 import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
+import { getCategories, getTradePolicies, saveProduct, getProductDetails } from 'store/slices/product';
 import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
-import { resetCart } from 'store/slices/cart';
+// import { resetCart } from 'store/slices/cart';
 import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 import { useIntl } from 'react-intl';
 import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
+import { MerchantProductType } from 'types/product';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -72,21 +73,28 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ 
 }));
 
 const ProductDetails = () => {
+    // hooks
     const intl = useIntl();
     const theme = useTheme();
+    const dispatch = useDispatch();
+    const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
     const { borderRadius } = useConfig();
     const { id } = useParams();
-    const dispatch = useDispatch();
-    const cart = useSelector((state) => state.cart);
-    const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
+    const [searchParams] = useSearchParams();
+
+    // const cart = useSelector((state) => state.cart);
     // information product and sku
-    const [productInfo, setProductInfo] = useState<Products>();
+    // product info according to selected merchant
     const [originalData, setOriginalData] = useState<Products>();
+    const [productInfo, setProductInfo] = useState<Products>();
+
     const [skuInfo, setSkuInfo] = useState<Skus>();
     const [valueSku, setValueSku] = useState('');
     const [open, setOpen] = useState(false);
     const [openTwo, setOpenTwo] = useState(false);
-    const [loading, setLoading] = useState(true);
+
+    // const [loading, setLoading] = useState(true);
+
     // actice mode edit product
     const [active, setActive] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -105,25 +113,55 @@ const ProductDetails = () => {
     const [flagCategory, setFlagCategory] = useState(false);
 
     const { product, skus, tradePolicies } = useSelector((state) => state.product);
+
     const { brands } = useSelector((state) => state.catalogue);
+
+    // params
+    const idMerchant = useMemo(() => searchParams.get('idMerchant'), []);
+
+    // console.log('product', product);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
     useEffect(() => {
+        console.log('productInfo', productInfo);
+    }, [productInfo]);
+
+    // useEffect(() => {
+    //     const searchText = searchParams.get('search');
+    //     setSearch(searchText ?? '');
+    // }, [searchParams]);
+
+    useEffect(() => {
         // getProduct();
         setIsLoading(true);
-        dispatch(getProduct(id));
-        dispatch(getBrands());
-        dispatch(getCategories());
-        dispatch(getTradePolicies());
+        if (id && idMerchant) {
+            dispatch(
+                getProductDetails({
+                    idProd: id,
+                    idMerchant
+                })
+            ).then(({ payload }) => {
+                const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
+
+                if (merchantProduct) {
+                    setOriginalData(merchantProduct.detailProduct);
+                    setProductInfo(merchantProduct.detailProduct);
+                    setIsLoading(false);
+                }
+            });
+            dispatch(getBrands());
+            dispatch(getCategories());
+            dispatch(getTradePolicies());
+        }
         // clear cart if complete order
         /*  if (valueSku === 0) setValueSku(product?.skus[0]?.sku?.skuID); */
-        if (cart.checkout.step > 2) {
-            dispatch(resetCart());
-        }
-    }, [cart.checkout.step, dispatch, id]);
+        // if (cart.checkout.step > 2) {
+        //     dispatch(resetCart());
+        // }
+    }, [dispatch, id, idMerchant, product]);
 
     useEffect(() => {
         if (brands?.length) {
@@ -135,16 +173,17 @@ const ProductDetails = () => {
         setOpen(false);
     }, []);
 
-    useEffect(() => {
-        if (product !== null) {
-            setOriginalData(product);
-            setProductInfo(product);
-            setIsLoading(false);
-        }
-        if (!active && product !== null) {
-            setOriginalData(product);
-        }
-    }, [product, active]);
+    // useEffect(() => {
+    //     if (product !== null) {
+    //         console.log('SET PRO');
+    //         setOriginalData(product);
+    //         setProductInfo(product);
+    //         setIsLoading(false);
+    //     }
+    //     if (!active && product !== null) {
+    //         setOriginalData(product);
+    //     }
+    // }, [product, active]);
 
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);
@@ -247,35 +286,37 @@ const ProductDetails = () => {
                             >
                                 {originalData && originalData?.productID?.toString() === id && (
                                     <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                        <Grid item xs={12} md={6}>
+                                        {/* <Grid item xs={12} md={6}>
                                             <ProductImages
                                                 skus={skus}
                                                 valueSku={valueSku}
-                                                product={product}
+                                                product={productInfo}
                                                 setActive={setActive}
                                                 active={active}
                                             />
-                                        </Grid>
+                                        </Grid> */}
                                         <Grid item xs={12} md={6}>
-                                            <ProductInfo
-                                                product={originalData}
-                                                setValueSku={setValueSku}
-                                                valueSku={valueSku}
-                                                setActive={setActive}
-                                                active={active}
-                                                setProductInfo={setProductInfo}
-                                                productInfo={productInfo}
-                                                setSkuInfo={setSkuInfo}
-                                                skuInfo={skuInfo}
-                                                brandsInfo={brandsInfo}
-                                                setFlagBrand={setFlagBrand}
-                                                flagBrand={flagBrand}
-                                                setNewBrandSku={setNewBrandSku}
-                                                setFlagCategory={setFlagCategory}
-                                                flagCategory={flagCategory}
-                                                setNewCategorySku={setNewCategorySku}
-                                                tradePolicies={tradePolicies}
-                                            />
+                                            {productInfo && (
+                                                <ProductInfo
+                                                    product={originalData}
+                                                    setValueSku={setValueSku}
+                                                    valueSku={valueSku}
+                                                    setActive={setActive}
+                                                    active={active}
+                                                    setProductInfo={setProductInfo}
+                                                    productInfo={productInfo}
+                                                    setSkuInfo={setSkuInfo}
+                                                    skuInfo={skuInfo}
+                                                    brandsInfo={brandsInfo}
+                                                    setFlagBrand={setFlagBrand}
+                                                    flagBrand={flagBrand}
+                                                    setNewBrandSku={setNewBrandSku}
+                                                    setFlagCategory={setFlagCategory}
+                                                    flagCategory={flagCategory}
+                                                    setNewCategorySku={setNewCategorySku}
+                                                    tradePolicies={tradePolicies}
+                                                />
+                                            )}
                                             <Grid item xs={12}>
                                                 <Grid container spacing={1}>
                                                     <Grid item xs={6}>

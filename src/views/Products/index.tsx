@@ -346,13 +346,39 @@ const ProductsList = () => {
                         </Grid>
                     </Main>
                     <MultiMerchantForm
-                        type={InputType.textField}
+                        type={InputType.checkbox}
+                        isOpen={multiForm}
+                        toggleDrawer={() => setMultiForm((val) => !val)}
+                        accessor="isActive"
+                        data={mockData}
+                        inputLabel="Is active"
+                        options={[
+                            {
+                                label: 'Categoria 1',
+                                value: 1
+                            },
+                            {
+                                label: 'Categoria 10',
+                                value: 10
+                            },
+                            {
+                                label: 'Categoria 9',
+                                value: 9
+                            },
+                            {
+                                label: 'Categoria 11',
+                                value: 11
+                            }
+                        ]}
+                    />
+                    {/* <MultiMerchantForm
+                        type={InputType.textarea}
                         isOpen
                         toggleDrawer={() => {}}
                         accessor="description"
                         data={mockData}
                         inputLabel="Product description"
-                    />
+                    /> */}
                     <Drawer
                         sx={{
                             ml: open ? 3 : 0,
@@ -400,7 +426,8 @@ const mockData = [
         data: {
             name: 'Nombre del producto',
             description: 'Descripción del producto en Vinneren',
-            isActive: true,
+            isActive: false,
+            category: 10,
             combo: {
                 visible: false,
                 name: 'Nombre A',
@@ -424,6 +451,7 @@ const mockData = [
             name: '',
             description: '',
             isActive: false,
+            category: 9,
             combo: {
                 visible: false,
                 name: '',
@@ -447,6 +475,7 @@ const mockData = [
             name: 'Producto - Elektra',
             description: 'Sin descripción',
             isActive: true,
+            category: 10,
             combo: {
                 visible: false,
                 name: '',

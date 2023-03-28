@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 // mui materials
 import { Divider, Drawer, IconButton, Stack, Typography, Box, Card } from '@mui/material';
@@ -64,7 +64,7 @@ export default function LooluDrawer({
             </ScrollBar>
             {/* FOOTER */}
             {footer && (
-                <Card elevation={3} sx={{ borderRadius: 0, paddingX: 1, paddingY: 1.5 }}>
+                <Card elevation={5} sx={{ borderRadius: 0, paddingX: 1, paddingY: 1.5 }}>
                     {footer}
                 </Card>
             )}

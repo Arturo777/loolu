@@ -27,7 +27,9 @@ const initialState: DefaultRootStateProps['product'] = {
     approvalHistorial: [],
     reviews: [],
     addresses: [],
-    loadingProducts: true
+    loadingProducts: true,
+    loadingProduct: true,
+    merchantProducts: []
 };
 
 const slice = createSlice({
@@ -85,21 +87,6 @@ const slice = createSlice({
         // GET PRODUCT REVIEWS
         getProductReviewsSuccess(state, action) {
             state.reviews = action.payload;
-        },
-
-        // GET ADDRESSES
-        getAddressesSuccess(state, action) {
-            state.addresses = action.payload;
-        },
-
-        // ADD ADDRESS
-        addAddressSuccess(state, action) {
-            state.addresses = action.payload;
-        },
-
-        // EDIT ADDRESS
-        editAddressSuccess(state, action) {
-            state.addresses = action.payload;
         }
     },
     extraReducers(builder) {
@@ -126,6 +113,7 @@ const slice = createSlice({
             })
             .addCase(getProduct.fulfilled, (state, action) => {
                 state.loadingProducts = false;
+
                 action.payload.response.departmentId = action.payload.response.categoryId;
 
                 state.product = action.payload.response;
@@ -163,6 +151,17 @@ const slice = createSlice({
             .addCase(getApprovalHistorial.fulfilled, (state, action) => {
                 state.loadingProducts = false;
                 state.approvalHistorial = action.payload.response;
+            });
+        /* ------------------------------------------- */
+        /* --------- MULTI MERCHANT SERVICES --------- */
+        /* ------------------------------------------- */
+        builder
+            .addCase(getProductDetails.pending, (state) => {
+                state.loadingProduct = true;
+            })
+            .addCase(getProductDetails.fulfilled, (state, action) => {
+                state.loadingProduct = false;
+                state.merchantProducts = action.payload;
             });
     }
     // extraReducers(builder) {}
@@ -249,14 +248,27 @@ export function filterProducts(filter: ProductsFilter) {
 }
 
 export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async (id: string | undefined) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // const responseA = await axios.get('styrk/api/product/detail/productSkus', {
+    //     baseURL: STYRK_API,
+    //     params: {
+    //         idMerchant: 1,
+    //         idProd: id,
+    //         page: 0
+    //     }
+    // });
+
+    // console.log(responseA);
+
     const response = await axios.get('styrk/api/product/detail/productSkus', {
-        baseURL: STYRK_API,
+        baseURL: 'https://hxkc5n7z5z.us-east-1.awsapprunner.com/',
         params: {
             idMerchant: 1,
-            idProd: id,
+            idProd: 68,
             page: 0
         }
     });
+    // return mockProductResponse;
     return response.data;
 });
 
@@ -373,35 +385,20 @@ export function getProductReviews() {
     };
 }
 
-export function getAddresses() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/address/list');
-            dispatch(slice.actions.getAddressesSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+/* ------------------------------------------- */
+/* --------- MULTI MERCHANT SERVICES --------- */
+/* ------------------------------------------- */
 
-export function addAddress(address: Address) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/address/new', address);
-            dispatch(slice.actions.addAddressSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
-
-export function editAddress(address: Address) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/address/edit', address);
-            dispatch(slice.actions.editAddressSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+export const getProductDetails = createAsyncThunk(
+    `${slice.name}/getMultiMerchantProduct`,
+    async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
+        const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
+            baseURL: STYRK_API,
+            params: {
+                idProd,
+                idMerchant
+            }
+        });
+        return response.data.response;
+    }
+);

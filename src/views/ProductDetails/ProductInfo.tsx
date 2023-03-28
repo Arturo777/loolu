@@ -13,7 +13,6 @@ import {
     MenuItem,
     Radio,
     RadioGroup,
-    /* Rating, */
     Select,
     Stack,
     Table,
@@ -46,7 +45,7 @@ import formatUrl from 'utils/formatUrl';
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { Skus } from 'types/e-commerce';
+import { Products, Skus } from 'types/e-commerce';
 import { useDispatch, useSelector } from 'store';
 
 // assets
@@ -195,7 +194,7 @@ const ProductInfo = ({
     valueSku: any;
     setActive: any;
     active: boolean;
-    productInfo: any;
+    productInfo: Products;
     setProductInfo: any;
     tradePolicies: any;
     skuInfo: Skus | undefined;
@@ -217,9 +216,11 @@ const ProductInfo = ({
         bottom: false,
         right: false
     });
+
     /* const [selectedCatId, setSelectedCatId] = useState<number>(); */
     /* const dispatch = useDispatch(); */
     /* const history = useNavigate(); */
+
     // info Brands
     const [button, setButton] = useState(false);
     const [display, setDisplay] = useState(false);
@@ -243,6 +244,11 @@ const ProductInfo = ({
             setDisplay(false);
         }
     };
+
+    useEffect(() => {
+        console.log('productInfo', productInfo);
+    }, [productInfo]);
+
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
     }, [dispatch]);
@@ -253,6 +259,7 @@ const ProductInfo = ({
             window.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
     useEffect(() => {
         const skuprod: Skus[] = product?.skus
             ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
@@ -267,6 +274,7 @@ const ProductInfo = ({
     const handleRadioChange = (event: { target: { value: any } }) => {
         setValueSku(event.target.value);
     };
+
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
             setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
@@ -274,6 +282,7 @@ const ProductInfo = ({
             setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
         }
     };
+
     const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
             setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
@@ -281,36 +290,29 @@ const ProductInfo = ({
             setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
         }
     };
+
     const filterTradePolicy = (trade: number) => {
         const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
         return resultTrade[0]?.name;
     };
+
     const formatterDolar = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
     });
+
     const customBrand = (value: SetStateAction<string>, id: number) => {
         setSearch(value);
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
+
     const newBrand = (value: string) => {
-        /*  setModalBrands(true); */
         setSearch(value);
         setFlagBrand(true);
         setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
         setDisplay(false);
     };
-    /* const selectTradePolicy =(idPolicy)=> {
-        const res = product?.tradePolicies?.filter((tr: any) =>{
-            tr
-        })
-    } */
-    /* useEffect(() => {
-        if (flagBrand) {
-            setModalBrands(true);
-        }
-    }, [flagBrand]); */
 
     return (
         <Grid container spacing={2}>
@@ -662,247 +664,253 @@ const ProductInfo = ({
                 <Divider sx={{ mt: 2 }} />
             </Grid>
 
-            <Grid item xs={12}>
-                <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
-                <Grid container spacing={1}>
-                    <Grid item xs={12} lg={10}>
-                        <Table>
-                            <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="body2">
-                                            {intl.formatMessage({ id: 'variants' })}
-                                            <Typography color="error" component="span">
-                                                *
-                                            </Typography>
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <RadioGroup
-                                            row
-                                            value={valueSku}
-                                            onChange={handleRadioChange}
-                                            name={intl.formatMessage({ id: 'sku' })}
-                                            id="sku"
-                                            sx={{ ml: 1 }}
-                                            defaultValue={product?.skus[0].skuID}
-                                        >
-                                            {product?.skus.map((sku: any, index: Key | null | undefined) => (
-                                                <FormControlLabel
-                                                    key={index}
-                                                    value={sku?.skuID}
-                                                    control={<Radio />}
-                                                    label={sku?.skuID}
-                                                    disabled={active}
-                                                />
-                                            ))}
-                                        </RadioGroup>
-                                        {/* {errors.color && (
-                                                    <FormHelperText error id="standard-label-color">
-                                                        {errors.color}
-                                                    </FormHelperText>
-                                                )} */}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                        <Grid item xs={12}>
-                            {active ? (
-                                <Box
-                                    sx={{
-                                        '& .MuiTextField-root': { mt: 2 }
-                                    }}
-                                >
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        id="outlined-basic"
-                                        label={intl.formatMessage({ id: 'sku_name' })}
-                                        variant="outlined"
-                                        name="name"
-                                        defaultValue={skuInfo?.name}
-                                        value={skuInfo?.name}
-                                        onChange={handleChangeSku}
-                                    />
-                                </Box>
-                            ) : (
-                                skuInfo !== undefined && (
-                                    <Typography variant="h3" sx={{ ml: 2 }}>
-                                        {skuInfo?.name}
-                                    </Typography>
-                                )
-                            )}
-                        </Grid>
-                        <Grid item xs={12}>
-                            {active ? (
-                                <Box
-                                    sx={{
-                                        '& .MuiTextField-root': { mt: 2 }
-                                    }}
-                                >
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        id="outlined-basic"
-                                        label="EAN/UPC"
-                                        variant="outlined"
-                                        name="ean"
-                                        defaultValue={skuInfo?.ean}
-                                        value={skuInfo?.ean}
-                                        onChange={handleChangeSku}
-                                    />
-                                </Box>
-                            ) : (
-                                skuInfo !== undefined && (
-                                    <Typography variant="body2" sx={{ ml: 2 }}>
-                                        EAN/UPC: {skuInfo?.ean}
-                                    </Typography>
-                                )
-                            )}
-                        </Grid>
-                        <Grid item xs={12}>
+            {productInfo.sku && (
+                <Grid item xs={12}>
+                    <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} lg={10}>
                             <Table>
                                 <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                     <TableRow>
                                         <TableCell>
-                                            <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                {intl.formatMessage({ id: 'Pricing' })}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            {skuInfo?.prices?.map(
-                                                ({
-                                                    price,
-                                                    priceDiscount,
-                                                    tradePolicy
-                                                }: {
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    price: number;
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    priceDiscount: number;
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    tradePolicy: number;
-                                                }) => (
-                                                    <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
-                                                        {active ? (
-                                                            <>
-                                                                <Box
-                                                                    sx={{
-                                                                        '& .MuiTextField-root': { mt: 2 }
-                                                                    }}
-                                                                >
-                                                                    <TextField
-                                                                        fullWidth
-                                                                        multiline
-                                                                        id="outlined-basic"
-                                                                        label={intl.formatMessage({ id: 'discount_price' })}
-                                                                        variant="outlined"
-                                                                        name="priceDiscount"
-                                                                        defaultValue={priceDiscount}
-                                                                    />
-                                                                </Box>
-                                                                <Box
-                                                                    sx={{
-                                                                        '& .MuiTextField-root': { mt: 2 }
-                                                                    }}
-                                                                >
-                                                                    <TextField
-                                                                        fullWidth
-                                                                        multiline
-                                                                        id="outlined-basic"
-                                                                        label={intl.formatMessage({ id: 'price' })}
-                                                                        variant="outlined"
-                                                                        name="price"
-                                                                        defaultValue={price}
-                                                                    />
-                                                                </Box>
-                                                                <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Typography variant="h2" color="primary">
-                                                                    {formatterDolar.format(priceDiscount)}
-                                                                </Typography>
-                                                                <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
-                                                                    {formatterDolar.format(price)}
-                                                                </Typography>
-                                                                <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
-                                                            </>
-                                                        )}
-                                                    </Stack>
-                                                )
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </Grid>
-                        <Table>
-                            <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
-                                <TableRow>
-                                    <TableCell>
-                                        <Stack>
                                             <Typography variant="body2">
-                                                {intl.formatMessage({ id: 'size' })}
+                                                {intl.formatMessage({ id: 'variants' })}
                                                 <Typography color="error" component="span">
                                                     *
                                                 </Typography>
                                             </Typography>
-                                            <Typography variant="caption" color="primary" component={Link} to="#">
-                                                {intl.formatMessage({ id: 'size_chart' })}?
-                                            </Typography>
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <FormControl sx={{ minWidth: 120 }}>
-                                            <Select
-                                                id="size"
-                                                name="size"
-                                                /* value={values.size}
-                                                    onChange={handleChange} */
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <RadioGroup
+                                                row
+                                                value={valueSku}
+                                                onChange={handleRadioChange}
+                                                name={intl.formatMessage({ id: 'sku' })}
+                                                id="sku"
+                                                sx={{ ml: 1 }}
+                                                defaultValue={product?.skus[0].skuID}
                                             >
-                                                <MenuItem value="">
-                                                    <em>None</em>
-                                                </MenuItem>
-                                                {sizeOptions.map((option, index) => (
-                                                    <MenuItem sx={{ p: 1.25 }} key={index} value={option}>
-                                                        {option}
-                                                    </MenuItem>
+                                                {product?.skus.map((sku: any, index: Key | null | undefined) => (
+                                                    <FormControlLabel
+                                                        key={index}
+                                                        value={sku?.skuID}
+                                                        control={<Radio />}
+                                                        label={sku?.skuID}
+                                                        disabled={active}
+                                                    />
                                                 ))}
-                                            </Select>
-                                        </FormControl>
-                                        {/* {errors.size && (
+                                            </RadioGroup>
+                                            {/* {errors.color && (
+                                                    <FormHelperText error id="standard-label-color">
+                                                        {errors.color}
+                                                    </FormHelperText>
+                                                )} */}
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                            <Grid item xs={12}>
+                                {active ? (
+                                    <Box
+                                        sx={{
+                                            '& .MuiTextField-root': { mt: 2 }
+                                        }}
+                                    >
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            id="outlined-basic"
+                                            label={intl.formatMessage({ id: 'sku_name' })}
+                                            variant="outlined"
+                                            name="name"
+                                            defaultValue={skuInfo?.name}
+                                            value={skuInfo?.name}
+                                            onChange={handleChangeSku}
+                                        />
+                                    </Box>
+                                ) : (
+                                    skuInfo !== undefined && (
+                                        <Typography variant="h3" sx={{ ml: 2 }}>
+                                            {skuInfo?.name}
+                                        </Typography>
+                                    )
+                                )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                {active ? (
+                                    <Box
+                                        sx={{
+                                            '& .MuiTextField-root': { mt: 2 }
+                                        }}
+                                    >
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            id="outlined-basic"
+                                            label="EAN/UPC"
+                                            variant="outlined"
+                                            name="ean"
+                                            defaultValue={skuInfo?.ean}
+                                            value={skuInfo?.ean}
+                                            onChange={handleChangeSku}
+                                        />
+                                    </Box>
+                                ) : (
+                                    skuInfo !== undefined && (
+                                        <Typography variant="body2" sx={{ ml: 2 }}>
+                                            EAN/UPC: {skuInfo?.ean}
+                                        </Typography>
+                                    )
+                                )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Table>
+                                    <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
+                                                    {intl.formatMessage({ id: 'Pricing' })}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                {skuInfo?.prices?.map(
+                                                    ({
+                                                        price,
+                                                        priceDiscount,
+                                                        tradePolicy
+                                                    }: {
+                                                        // eslint-disable-next-line react/no-unused-prop-types
+                                                        price: number;
+                                                        // eslint-disable-next-line react/no-unused-prop-types
+                                                        priceDiscount: number;
+                                                        // eslint-disable-next-line react/no-unused-prop-types
+                                                        tradePolicy: number;
+                                                    }) => (
+                                                        <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
+                                                            {active ? (
+                                                                <>
+                                                                    <Box
+                                                                        sx={{
+                                                                            '& .MuiTextField-root': { mt: 2 }
+                                                                        }}
+                                                                    >
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            multiline
+                                                                            id="outlined-basic"
+                                                                            label={intl.formatMessage({ id: 'discount_price' })}
+                                                                            variant="outlined"
+                                                                            name="priceDiscount"
+                                                                            defaultValue={priceDiscount}
+                                                                        />
+                                                                    </Box>
+                                                                    <Box
+                                                                        sx={{
+                                                                            '& .MuiTextField-root': { mt: 2 }
+                                                                        }}
+                                                                    >
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            multiline
+                                                                            id="outlined-basic"
+                                                                            label={intl.formatMessage({ id: 'price' })}
+                                                                            variant="outlined"
+                                                                            name="price"
+                                                                            defaultValue={price}
+                                                                        />
+                                                                    </Box>
+                                                                    <Typography variant="caption">
+                                                                        {filterTradePolicy(tradePolicy)}
+                                                                    </Typography>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Typography variant="h2" color="primary">
+                                                                        {formatterDolar.format(priceDiscount)}
+                                                                    </Typography>
+                                                                    <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                                                                        {formatterDolar.format(price)}
+                                                                    </Typography>
+                                                                    <Typography variant="caption">
+                                                                        {filterTradePolicy(tradePolicy)}
+                                                                    </Typography>
+                                                                </>
+                                                            )}
+                                                        </Stack>
+                                                    )
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Grid>
+                            <Table>
+                                <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Stack>
+                                                <Typography variant="body2">
+                                                    {intl.formatMessage({ id: 'size' })}
+                                                    <Typography color="error" component="span">
+                                                        *
+                                                    </Typography>
+                                                </Typography>
+                                                <Typography variant="caption" color="primary" component={Link} to="#">
+                                                    {intl.formatMessage({ id: 'size_chart' })}?
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <FormControl sx={{ minWidth: 120 }}>
+                                                <Select
+                                                    id="size"
+                                                    name="size"
+                                                    /* value={values.size}
+                                                    onChange={handleChange} */
+                                                    displayEmpty
+                                                    inputProps={{ 'aria-label': 'Without label' }}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>None</em>
+                                                    </MenuItem>
+                                                    {sizeOptions.map((option, index) => (
+                                                        <MenuItem sx={{ p: 1.25 }} key={index} value={option}>
+                                                            {option}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                            {/* {errors.size && (
                                                     <FormHelperText error id="standard-label-size">
                                                         {errors.size}
                                                     </FormHelperText>
                                                 )} */}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'dimensions' })}</Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
-                                    </TableCell>
-                                </TableRow>
-                                <br />
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
-                                    </TableCell>
-                                    <TableCell align="left" />
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider />
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography variant="body2">{intl.formatMessage({ id: 'dimensions' })}</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
+                                        </TableCell>
+                                    </TableRow>
+                                    <br />
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                        </TableCell>
+                                        <TableCell align="left" />
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
+            )}
         </Grid>
     );
 };

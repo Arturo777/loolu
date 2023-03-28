@@ -1,3 +1,5 @@
+import { MerchantProductType } from './product';
+
 // product shop list
 export type Products = {
     tradePolicies: Trade[];
@@ -193,4 +195,6 @@ export interface ProductStateProps {
     addresses: Address[];
     error: object | string | null;
     loadingProducts?: boolean;
+    loadingProduct: boolean;
+    merchantProducts: MerchantProductType[];
 }

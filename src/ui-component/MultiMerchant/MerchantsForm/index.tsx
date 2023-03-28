@@ -12,25 +12,21 @@ import { getMerchantsList } from 'store/slices/auth';
 import RestoreIcon from '@mui/icons-material/Restore';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 import UndoIcon from '@mui/icons-material/Undo';
-import RenderInputComponent, { InputType } from './InputComponent';
+import RenderInputComponent, { InputType, SelectOptionType } from './InputComponent';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import { useIntl } from 'react-intl';
 
-export default function MultiMerchantForm({
-    accessor,
-    data,
-    inputLabel,
-    isOpen,
-    toggleDrawer,
-    type
-}: {
+export type MultiMerchantFormProps = {
     accessor: string;
     data: { [key: string]: any }[];
     inputLabel: string;
     isOpen: boolean;
     toggleDrawer: (e: boolean) => void;
     type: InputType;
-}) {
+    options?: null | SelectOptionType[];
+};
+
+export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, toggleDrawer, type, options }: MultiMerchantFormProps) {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -48,6 +44,7 @@ export default function MultiMerchantForm({
 
     useEffect(() => {
         const transformedData = getData({ data, accessor });
+
         if (transformedData === null) {
             console.error('The accessor cannot reference to an object');
         } else {
@@ -191,6 +188,7 @@ export default function MultiMerchantForm({
                                     value={item.value}
                                     label={inputLabel}
                                     updateValue={updateValue(item.merchantId)}
+                                    options={options}
                                 />
                                 {/* <TextField label="Description" fullWidth value={item.value} /> */}
                             </Box>
