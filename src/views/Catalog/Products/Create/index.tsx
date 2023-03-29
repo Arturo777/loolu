@@ -69,7 +69,7 @@ const CreateProduct = () => {
                 <MultiMerchant
                     // justOne
                     // readOnly
-                    onChange={(merchants) => console.log('SELECTED MERCHANTS', merchants)}
+                    onChange={(merchants) => console.log(merchants)}
                     maxShow={4}
                     defaultSelected={[]}
                 />

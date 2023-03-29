@@ -8,7 +8,7 @@ import Accordion from 'ui-component/extended/Accordion';
 
 // ==============================|| PRODUCT DETAILS - DESCRIPTION ||============================== //
 
-const ProductDescriptionCreate = ({ setProductInfo }: { setProductInfo: any }) => {
+const ProductDescriptionCreate = ({ setProductInfo, productInfo }: { setProductInfo: any; productInfo: any }) => {
     // hooks
     const intl = useIntl();
 
@@ -23,7 +23,7 @@ const ProductDescriptionCreate = ({ setProductInfo }: { setProductInfo: any }) =
         {
             id: 'basic2',
             title: 'Specifications',
-            content: <Specification productInfo={{}} setProductInfo={setProductInfo} active={false} />
+            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={false} />
         }
         /* {
             id: 'basic3',

@@ -1,5 +1,5 @@
 // material-ui
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Button, Box, TextField } from '@mui/material';
 
 function createData(key: string, value: string) {
@@ -24,7 +24,24 @@ interface Specifi {
 }
 // ==============================|| PRODUCT DETAILS - SPECIFICATION ||============================== //
 
-const Specification = ({ productInfo, setProductInfo, active }: { productInfo: any; setProductInfo: any; active: boolean }) => {
+const Specification = ({
+    productInfo,
+    setProductInfo,
+    active,
+    merchantMulti
+}: {
+    productInfo: any;
+    setProductInfo: any;
+    active: boolean;
+    merchantMulti: number;
+}) => {
+    useEffect(() => {
+        if (productInfo.hasOwnProperty('categoryId')) {
+            const infoFacets = { categoryId: productInfo?.categoryId };
+            dispatch(facetsToProduct());
+        }
+    }, []);
+
     const [tam, setTam] = useState<Specifi[]>([]);
     const [spectObj, setSpectObj] = useState<Specifi[]>([]);
 
