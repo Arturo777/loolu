@@ -486,6 +486,7 @@ const ProductInfo = ({
                             '& .MuiTextField-root': { mt: 2 }
                         }}
                     >
+                        {/* TODO: copiar  */}
                         <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
                             <TextField
                                 fullWidth
@@ -559,6 +560,7 @@ const ProductInfo = ({
                             position: 'relative'
                         }}
                     >
+                        {/* TODO cOPIAR */}
                         <Button onClick={toggleDrawer('right', true)} variant="contained">
                             {intl.formatMessage({ id: 'edit_category' })}
                         </Button>
@@ -925,7 +927,7 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
     const handleOpen = () => {
         setOpen(!open);
     };
-    const customCategory = (value: string, id: number | string) => {
+    const customCategory = (value: string, id: number) => {
         setSearchCat(value);
         setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
     };

@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // project imports
-import { axiosServicesHC as axios } from 'utils/axios';
+import axios from 'utils/axios';
 
 import { STYRK_API_HEALTH_CONTENT } from 'config';
 
@@ -93,27 +93,27 @@ const slice = createSlice({
 export default slice.reducer;
 
 export const getFirstLevel = createAsyncThunk(`${slice.name}/fisrt-level`, async () => {
-    const response = await axios.get(`styrk/api/health-content/metrics/first-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
+    const response = await axios.get(`/styrk/health-content/metrics/first-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });
 
 export const getSecondLevelProducts = createAsyncThunk(`${slice.name}/second-level/products`, async () => {
-    const response = await axios.get(`styrk/api/health-content/metrics/products/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
+    const response = await axios.get(`/styrk/health-content/metrics/products/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });
 
 export const getSecondLevelImages = createAsyncThunk(`${slice.name}/second-level/img`, async () => {
-    const response = await axios.get(`styrk/api/health-content/metrics/images/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
+    const response = await axios.get(`/styrk/health-content/metrics/images/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });
 
 export const getSecondLevelFacets = createAsyncThunk(`${slice.name}/second-level/facets`, async () => {
-    const response = await axios.get(`styrk/api/health-content/metrics/specifications/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
+    const response = await axios.get(`/styrk/health-content/metrics/specifications/second-level`, { baseURL: STYRK_API_HEALTH_CONTENT });
     return response.data;
 });
 
 export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level/products`, async (id: number | null) => {
-    const response = await axios.get(`styrk/api/health-content/metrics/products/third-level`, {
+    const response = await axios.get(`/styrk/health-content/metrics/products/third-level`, {
         baseURL: STYRK_API_HEALTH_CONTENT,
         params: { productId: id }
     });
@@ -121,7 +121,7 @@ export const getThirdLevelProducts = createAsyncThunk(`${slice.name}/third-level
 });
 
 export const getThirdLevelImages = createAsyncThunk(`${slice.name}/third-level/images`, async (id: number | null) => {
-    const response = await axios.get(`styrk/api/health-content/metrics/images/third-level`, {
+    const response = await axios.get(`/styrk/health-content/metrics/images/third-level`, {
         baseURL: STYRK_API_HEALTH_CONTENT,
         params: { productId: id }
     });
@@ -129,7 +129,7 @@ export const getThirdLevelImages = createAsyncThunk(`${slice.name}/third-level/i
 });
 
 export const getThirdLevelFacets = createAsyncThunk(`${slice.name}/third-level/facets`, async (id: number | null) => {
-    const response = await axios.get(`styrk/api/health-content/metrics/specifications/third-level`, {
+    const response = await axios.get(`/styrk/health-content/metrics/specifications/third-level`, {
         baseURL: STYRK_API_HEALTH_CONTENT,
         params: { productId: id }
     });

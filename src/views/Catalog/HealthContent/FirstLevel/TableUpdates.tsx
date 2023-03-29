@@ -1,5 +1,6 @@
 // material-ui
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { FormattedMessage } from 'react-intl';
 import { SkuHC } from 'types/health-content';
 
 // project imports
@@ -14,11 +15,15 @@ const TableUpdates = ({ updates }: { updates: SkuHC[] }) => (
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ pl: 3 }}>Sku Name</TableCell>
-                            <TableCell>Reference Code</TableCell>
+                            <TableCell sx={{ pl: 3 }}>
+                                <FormattedMessage id="sku_name" />
+                            </TableCell>
+                            <TableCell>
+                                <FormattedMessage id="reference_code" />
+                            </TableCell>
                             <TableCell>EAN / UPC</TableCell>
                             <TableCell align="right" sx={{ pr: 3 }}>
-                                Date Insert
+                                <FormattedMessage id="date_insert" />
                             </TableCell>
                         </TableRow>
                     </TableHead>

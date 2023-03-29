@@ -4,7 +4,7 @@ type CreateCategoryMerchantPayload = {
     merchantId: number;
     fatherMerchant: boolean;
     categoryData: {
-        fatherCategoryId: number | string;
+        fatherCategoryId: number;
         masterCategoryId: number;
         isActive: boolean;
         name: string;
@@ -38,13 +38,13 @@ export type createCategoryProps = {
 
 export type CreateCategoryPageProps = {
     handleClose: (e?: any) => void;
-    selectedCatId?: number | string;
+    selectedCatId?: number;
     show: boolean;
     selectedMerchant: MerchantType | undefined;
 };
 
 export type EditCategoryProps = {
-    selectedCategory?: number | string;
+    selectedCategory?: number;
     show: boolean;
     onCancel: () => void;
     openAssociate: (cat: CategoryType | undefined) => void;
@@ -53,8 +53,8 @@ export type EditCategoryProps = {
 
 export type CategoriesListProps = {
     filterText: string;
-    openCreate: (catId: number | string) => void;
-    handleShowInfo: (cat?: number | string) => void;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
     openAssociate: (cat: CategoryType | undefined) => void;
     selectedMerchant: MerchantType | undefined;
 };
@@ -83,6 +83,7 @@ export type CatalogStateProps = {
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
+    brands2: BrandType2[];
     suppliers: SupplierType[];
     facetsInfo: {
         facets: FacetType[];
@@ -97,6 +98,7 @@ export type CatalogStateProps = {
 };
 
 export type BrandType = {
+    fatherMerchant?: boolean | undefined;
     idBrand: number;
     name: string;
     isActive: boolean;
@@ -105,16 +107,32 @@ export type BrandType = {
     metaTagDescription: string | null;
     idMerchant: number;
 };
-
+export type BrandType2 = {
+    brands: BrandType[];
+};
 export type NewBrandType = {
     Id?: number;
     idBrand?: number;
+    idMerchant?: number;
     name: string;
     Name?: string;
     title: string;
     metaTagDescription: string;
     imageUrl: string;
     isActive?: boolean;
+};
+export type NewBrandType2 = {
+    idMerchant?: number;
+    fatherMerchant?: boolean | undefined;
+    idBrand?: number;
+    brandData: {
+        imageUrl?: string | undefined;
+        masterBrandId?: number | undefined;
+        isActive: boolean | undefined;
+        metaTagDescription?: string | undefined;
+        name: string | undefined;
+        title: string | undefined;
+    };
 };
 
 export type SupplierType = {
@@ -130,7 +148,7 @@ export type FacetType = {
 };
 
 export type CategoryType = {
-    id: number | string;
+    id: number;
     numberChildren: number;
     name: string;
     title: string;
@@ -149,7 +167,7 @@ export type CategoryType = {
 
 export type FilterMerchantCategoryType = FilterCategoryType;
 export type FlatCategoryType = {
-    id: number | string;
+    id: number;
     name: string;
     title: string;
     description: string;
@@ -158,7 +176,7 @@ export type FlatCategoryType = {
 };
 
 export type FilterCategoryType = {
-    id: number | string;
+    id: number;
     name: string;
     fatherName?: string;
     grandFatherName?: string;
