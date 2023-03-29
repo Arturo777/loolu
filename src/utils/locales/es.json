@@ -289,5 +289,23 @@
     "add_field": "Agregar campo",
     "edit_field": "Editar campo",
     "update": "Actualizar",
-    "select_all": "Seleccionar todos"
+    "select_all": "Seleccionar todos",
+
+    "general": "General",
+    "multi-catalogue": "Multi Catálogo",
+    "store-status": "Estado de la tienda",
+    "previous": "Previo",
+    "change-card": "Cambio",
+    "trend": "Tendencia",
+    "total-images": "Total de Imagenes",
+    "total-products": "Total de Productos",
+    "total-skus": "Total Skus",
+    "last-update": "Última Actualización",
+    "latest-updates": "Últimas Actualizaciones",
+    "details": "Detalles",
+    "date_insert": "Fecha insertada",
+    "create-product": "Crear producto",
+    "create_Date": "Fecha lanzamiento",
+    "update_Date": "Fecha de actualización",
+    "select_vendor": "Proveedores"
 }

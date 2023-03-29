@@ -18,6 +18,7 @@ import { IconSearch } from '@tabler/icons';
 import FacetsListComponent from '../List';
 import CreateFacetComponent from '../Create';
 import EditFacetComponent from '../Edit';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 
 // ==============================|| FACETS LIST ||============================== //
 
@@ -26,6 +27,7 @@ const FacetsMainPage = () => {
     const intl = useIntl();
 
     // variables
+    const [merchs, setMerchs] = useState<any>([{}]);
     const [rightSide, setRightSide] = useState<'CREATE' | 'EDIT' | null>(null);
     const [selectedFacetId, setSelectedFacetId] = useState<number | null>(null);
 
@@ -61,8 +63,19 @@ const FacetsMainPage = () => {
             }}
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
-                        <Typography variant="h3">FACETS</Typography>
+                    <Grid item display="flex" alignItems="center">
+                        <Typography variant="h3" sx={{ mr: 1 }}>
+                            FACETS
+                        </Typography>
+                        <MultiMerchant
+                            onChange={(merchants) => {
+                                console.log('SELECTED MERCHANTS', merchants);
+                                setMerchs(merchants);
+                            }}
+                            justOne
+                            maxShow={4}
+                            defaultSelected={[]}
+                        />
                     </Grid>
                     <Grid item>
                         <Fade in={rightSide !== 'CREATE'}>
@@ -102,6 +115,7 @@ const FacetsMainPage = () => {
             <Grid container spacing={gridSpacing} p={2}>
                 <Grid item xs={12} sm={8} md={4}>
                     <FacetsListComponent
+                        merchs={merchs}
                         handleEdit={handleClickEdit}
                         filterText={filterText}
                         setFilterText={setFilterText}
@@ -113,6 +127,7 @@ const FacetsMainPage = () => {
                 <Grid item xs={12} sm={4} md={8}>
                     {rightSide === 'EDIT' && (
                         <EditFacetComponent
+                            merchs={merchs}
                             show={rightSide === 'EDIT'}
                             handleCancel={() => {
                                 setRightSide(null);

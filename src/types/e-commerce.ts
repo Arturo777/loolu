@@ -72,8 +72,8 @@ export type Categories = {
     name: string;
     children: Categories[];
 };
-export type TradePolicies = {
-    TradePolicies: Policy;
+export type Policies = {
+    TradePolicies: Policy[];
 };
 export type ApprovalStatus = {
     StepApproval: Status;
@@ -90,7 +90,6 @@ export type Trade = {
     tradePolicyName: string;
 };
 export type Policy = {
-    filter(arg0: (tra: any) => boolean): unknown;
     isActive: boolean;
     idMerchant: number;
     idPolicy: number;
@@ -187,7 +186,7 @@ export interface ProductStateProps {
     relatedProducts: Products[];
     skus: Skus[];
     categories: Categories[];
-    tradePolicies: TradePolicies[];
+    tradePolicies: any;
     approvalStatus: ApprovalStatus[];
     getRejectedStatus: RejectedStatus[];
     approvalHistorial: ApprovalHistorial[];

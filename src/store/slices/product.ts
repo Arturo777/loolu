@@ -116,7 +116,7 @@ const slice = createSlice({
 
                 action.payload.response.departmentId = action.payload.response.categoryId;
 
-                state.product = action.payload.response;
+                state.product = action.payload.response[0] /* .detailProduct */;
             });
 
         builder
@@ -223,7 +223,7 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             searchParams.idProd ||
             searchParams.idApprovalStatus
     );
-    const response = await axios.get(`styrk/api/product/search`, {
+    const response = await axios.get(`/styrk/api/product/search-multicatalog`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: searchParams.idMerchant || 1,
@@ -247,24 +247,17 @@ export function filterProducts(filter: ProductsFilter) {
     };
 }
 
-export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async (id: string | undefined) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const responseA = await axios.get('styrk/api/product/detail/productSkus', {
-    //     baseURL: STYRK_API,
-    //     params: {
-    //         idMerchant: 1,
-    //         idProd: id,
-    //         page: 0
-    //     }
-    // });
+interface ProductArgs {
+    id: string | undefined;
+    idMerchant: any;
+}
 
-    // console.log(responseA);
-
-    const response = await axios.get('styrk/api/product/detail/productSkus', {
-        baseURL: 'https://hxkc5n7z5z.us-east-1.awsapprunner.com/',
+export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async ({ id, idMerchant }: ProductArgs) => {
+    const response = await axios.get('styrk/api/product/detail/product-multicatalog', {
+        baseURL: STYRK_API,
         params: {
-            idMerchant: 1,
-            idProd: 68,
+            idMerchant,
+            idProd: id,
             page: 0
         }
     });

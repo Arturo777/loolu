@@ -1,8 +1,89 @@
+import { MerchantType } from './security';
+
+type CreateCategoryMerchantPayload = {
+    merchantId: number;
+    fatherMerchant: boolean;
+    categoryData: {
+        fatherCategoryId: number;
+        masterCategoryId: number;
+        isActive: boolean;
+        name: string;
+        title: string;
+    };
+};
+
+export type CreateMerchantCategoryProps = {
+    idMerchant: number;
+    data: CreateCategoryMerchantPayload[];
+};
+
+type CreateCategoryPropsData = {
+    merchantId: number;
+    name: string;
+    fatherCategoryId: number;
+    fatherMerchant: boolean;
+    categoryData: {
+        fatherCategoryId: number | null;
+        masterCategoryId: number;
+        isActive: boolean;
+        name: string;
+        title: string;
+    };
+};
+
+export type createCategoryProps = {
+    idMerchant: number;
+    data: CreateCategoryPropsData[];
+};
+
+export type CreateCategoryPageProps = {
+    handleClose: (e?: any) => void;
+    selectedCatId?: number;
+    show: boolean;
+    selectedMerchant: MerchantType | undefined;
+};
+
+export type EditCategoryProps = {
+    selectedCategory?: number;
+    show: boolean;
+    onCancel: () => void;
+    openAssociate: (cat: CategoryType | undefined) => void;
+    selectedMerchant: MerchantType | undefined;
+};
+
+export type CategoriesListProps = {
+    filterText: string;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
+    openAssociate: (cat: CategoryType | undefined) => void;
+    selectedMerchant: MerchantType | undefined;
+};
+
+export type SelectedMerchant = {
+    isFather: boolean;
+    isSelected: boolean;
+    merchantId: number;
+    name: string;
+    status: boolean;
+};
+
+export type MerchantCategoryType = {
+    categoryList: CategoryType[];
+    isFatherMerchat: boolean;
+    idMerchant: number;
+};
+export type FlatMerchantCategoriesType = {
+    categoryList: FlatCategoryType[];
+    isFatherMerchat: boolean;
+    idMerchant: number;
+};
+
 export type CatalogStateProps = {
     error: object | string | null;
     loading: boolean;
     updating: boolean;
     brands: BrandType[];
+    brands2: BrandType2[];
     suppliers: SupplierType[];
     facetsInfo: {
         facets: FacetType[];
@@ -11,9 +92,13 @@ export type CatalogStateProps = {
     categories: CategoryType[];
     flatCategories: FlatCategoryType[];
     filterCategories: FilterCategoryType[];
+    merchantCategories?: MerchantCategoryType[];
+    flatMerchantCategories: FlatMerchantCategoriesType[];
+    filterMerchantCategories: FilterMerchantCategoryType[];
 };
 
 export type BrandType = {
+    fatherMerchant?: boolean | undefined;
     idBrand: number;
     name: string;
     isActive: boolean;
@@ -22,16 +107,32 @@ export type BrandType = {
     metaTagDescription: string | null;
     idMerchant: number;
 };
-
+export type BrandType2 = {
+    brands: BrandType[];
+};
 export type NewBrandType = {
     Id?: number;
     idBrand?: number;
+    idMerchant?: number;
     name: string;
     Name?: string;
     title: string;
     metaTagDescription: string;
     imageUrl: string;
     isActive?: boolean;
+};
+export type NewBrandType2 = {
+    idMerchant?: number;
+    fatherMerchant?: boolean | undefined;
+    idBrand?: number;
+    brandData: {
+        imageUrl?: string | undefined;
+        masterBrandId?: number | undefined;
+        isActive: boolean | undefined;
+        metaTagDescription?: string | undefined;
+        name: string | undefined;
+        title: string | undefined;
+    };
 };
 
 export type SupplierType = {
@@ -61,8 +162,10 @@ export type CategoryType = {
     score: number;
     description: string;
     stockKeepingUnitSelectionMode: '' | 'COMBO' | 'LIST' | 'RADIO' | 'SPECIFICATION';
+    masterCategoryId?: number;
 };
 
+export type FilterMerchantCategoryType = FilterCategoryType;
 export type FlatCategoryType = {
     id: number;
     name: string;

@@ -37,6 +37,8 @@ import { getChangeLogList } from 'store/slices/reports';
 import { ChangeLog } from 'types/reports';
 import { compareAsc } from 'date-fns';
 import Loader from 'ui-component/Loader';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { MerchantType } from 'types/security';
 
 enum sortOptions {
     'prodId' = 'prodId',
@@ -44,7 +46,12 @@ enum sortOptions {
     'userLog' = 'userLog',
     'dateChange' = 'dateChange'
 }
-
+type merchant = {
+    isFather: boolean;
+    isSelected: boolean;
+    merchantId: number;
+    name: string;
+};
 export default function ChangeLogPage() {
     // hooks
     const intl = useIntl();
@@ -59,8 +66,9 @@ export default function ChangeLogPage() {
 
     const [selectedItem, setSelectedItem] = useState<ChangeLog | null>(null);
 
-    const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
+    const [selectedMerchant, setSelectedMerchant] = useState<number | null>(null);
 
+    const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
     useEffect(() => {
         setFormattedList(changeLog);
     }, [changeLog]);
@@ -82,13 +90,18 @@ export default function ChangeLogPage() {
         }, 200);
     };
 
+    const handleSelectedMerchant = (idMerchant: MerchantType[]) => {
+        if (idMerchant.length) {
+            setSelectedMerchant(idMerchant[0].merchantId);
+        }
+    };
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
         const filteredList =
             filterText !== '' ? changeLog.filter((item) => JSON.stringify(item).toLowerCase().indexOf(filterText) > -1) : [...changeLog];
-
-        const sortList = filteredList.sort((a, b) => {
+        const filteredListMerchants = filteredList.filter((item) => item.idMerchant === selectedMerchant);
+        const sortList = filteredListMerchants.sort((a, b) => {
             if (sortBy === sortOptions.userLog) {
                 return a.userLog < b.userLog ? -1 : 1;
             }
@@ -111,20 +124,25 @@ export default function ChangeLogPage() {
     const handleChange = (event: SelectChangeEvent) => {
         setSortBy(event.target.value as sortOptions);
     };
-
     return (
         <MainCard
             sx={{
                 overflow: 'initial'
             }}
             title={
-                <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
+                <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
+                    <Grid container alignItems="center" item md={4}>
                         <Typography variant="h3">
                             {intl.formatMessage({
                                 id: 'change_log'
                             })}
                         </Typography>
+                        <MultiMerchant
+                            onChange={(merchants: MerchantType[]) => handleSelectedMerchant(merchants)}
+                            maxShow={1}
+                            justOne
+                            defaultSelected={[]}
+                        />
                     </Grid>
                     <Grid item>
                         <Box component="form" onSubmit={handleFilter}>

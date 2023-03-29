@@ -8,13 +8,15 @@ import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, NewBrandType } from 'types/catalog';
+import { BrandType, CategoryType, CreateMerchantCategoryProps, MerchantCategoryType, NewBrandType2 } from 'types/catalog';
+import getCategoriesServiceMock from './mocks/getCategoriesServiceMock';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
     updating: false,
     error: null,
     brands: [],
+    brands2: [],
     suppliers: [],
     facetsInfo: {
         facets: [],
@@ -22,7 +24,10 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     },
     categories: [],
     flatCategories: [],
-    filterCategories: []
+    filterCategories: [],
+    merchantCategories: [],
+    flatMerchantCategories: [],
+    filterMerchantCategories: []
 };
 
 const slice = createSlice({
@@ -83,6 +88,21 @@ const slice = createSlice({
                     maxPage: action.payload.totalPages
                 };
             });
+        builder
+            .addCase(getBrands2.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getBrands2.fulfilled, (state, action) => {
+                state.loading = false;
+                state.brands2 = action.payload.response;
+            });
+        builder
+            .addCase(createBrandMultiCatalog.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createBrandMultiCatalog.fulfilled, (state) => {
+                state.loading = false;
+            });
         // CATEGORIES
         builder
             .addCase(getCategoriesService.pending, (state) => {
@@ -101,6 +121,34 @@ const slice = createSlice({
                 state.updating = true;
             })
             .addCase(createCategoryService.fulfilled, (state) => {
+                state.updating = false;
+            });
+        // MERCHANT CATEGORIES
+        builder
+            .addCase(getMerchantCategoriesService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getMerchantCategoriesService.fulfilled, (state, action) => {
+                const merchantCategories = action.payload.response;
+                state.loading = false;
+                if (merchantCategories) {
+                    state.merchantCategories = merchantCategories;
+
+                    state.flatMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
+                        ...merchantCategory,
+                        categoryList: getCategoriesFlat(merchantCategory.categoryList)
+                    }));
+
+                    state.filterMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
+                        ...merchantCategory,
+                        categoryList: categoriesFlat(merchantCategory.categoryList)
+                    }));
+                }
+            })
+            .addCase(createMerchantCategoryService.pending, (state) => {
+                state.updating = true;
+            })
+            .addCase(createMerchantCategoryService.fulfilled, (state) => {
                 state.updating = false;
             });
     }
@@ -123,7 +171,17 @@ export const getBrands = createAsyncThunk(`${slice.name}/getBrands`, async (idMe
     );
     return response.data;
 });
-
+export const getBrands2 = createAsyncThunk(`${slice.name}/getBrands2`, async (idMerchant?: number) => {
+    const bodyMerchant = {
+        isActive: true
+    };
+    const response = await axios.post(`https://avyzymp6de.us-east-1.awsapprunner.com/styrk/api/brand/search-multicatalog`, bodyMerchant, {
+        params: {
+            idMerchant: idMerchant || 1
+        }
+    });
+    return response.data;
+});
 type editBrandParams = {
     dataBrand: BrandType;
     idMerchant?: number;
@@ -141,7 +199,7 @@ export const editBrand = createAsyncThunk(`${slice.name}/editBrand`, async (para
 });
 
 type createBrandParams = {
-    dataBrand: NewBrandType;
+    dataBrand: NewBrandType2;
     idMerchant?: number;
 };
 
@@ -156,10 +214,21 @@ export const createBrand = createAsyncThunk(`${slice.name}/editBrand`, async (pa
     return response.data;
 });
 
+export const createBrandMultiCatalog = createAsyncThunk(`${slice.name}/createBrandMultiCatalog`, async (dataBrand: NewBrandType2) => {
+    const bodyData = dataBrand;
+    const response = await axios.post(`styrk/api/brand/save-multicatalog`, bodyData, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: 1
+        }
+    });
+    return response.data;
+});
+
 /* ============ SUPPLIERS ============ */
 
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
-    const response = await axios.get(`styrk/api/supplier/search`, {
+    const response = await axios.get(`styrk/api/brand/save-multicatalog`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1
@@ -283,8 +352,9 @@ export const editFacetService = createAsyncThunk(`${slice.name}/editFacet`, asyn
 /* ============ CATEGORIES ============ */
 
 type getCategoriesServiceProps = {
-    idMerchant: 1;
+    idMerchant: number;
 };
+type getMerchantCategoriesServiceProps = getCategoriesServiceProps;
 
 export const getCategoriesService = createAsyncThunk(`${slice.name}/getCategories`, async ({ idMerchant }: getCategoriesServiceProps) => {
     const response = await axios.get(`styrk/api/category/search`, {
@@ -295,6 +365,25 @@ export const getCategoriesService = createAsyncThunk(`${slice.name}/getCategorie
     });
     return response.data;
 });
+
+export const getMerchantCategoriesService = createAsyncThunk(
+    `${slice.name}/getMerchantCategories`,
+    async ({ idMerchant }: getMerchantCategoriesServiceProps) => {
+        let result;
+        try {
+            const response = await axios.get(`styrk/api/category/search-multicatalog`, {
+                baseURL: STYRK_API,
+                params: {
+                    idMerchant
+                }
+            });
+            result = response.data;
+        } catch (error) {
+            result = getCategoriesServiceMock;
+        }
+        return result;
+    }
+);
 
 type createCategoryProps = {
     idMerchant: number;
@@ -311,6 +400,15 @@ export const createCategoryService = createAsyncThunk(`${slice.name}/createCateg
     );
     return response.data;
 });
+export const createMerchantCategoryService = createAsyncThunk(
+    `${slice.name}/createMerchantCategory`,
+    async ({ idMerchant, data }: CreateMerchantCategoryProps) => {
+        const response = await axios.post(`styrk/api/category/save-multicatalog?idMerchant=${idMerchant}`, data, {
+            baseURL: STYRK_API
+        });
+        return response.data;
+    }
+);
 
 type getCategoryInfoServiceProps = {
     idMerchant: number;

@@ -16,20 +16,23 @@ import BrandForm from '../BrandForm';
 // services
 
 // types
-import { NewBrandType } from 'types/catalog';
-import { createBrand } from 'store/slices/catalog';
+import { NewBrandType2 } from 'types/catalog';
+import { createBrandMultiCatalog } from 'store/slices/catalog';
 
 const CreateBrandPage = () => {
     const intl = useIntl();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleSave = async (data: NewBrandType) => {
-        const dataBrand: NewBrandType = {
-            ...data,
-            isActive: true
-        };
-        await dispatch(createBrand({ dataBrand }));
+    const handleSave = async (data: NewBrandType2) => {
+        // const dataBrand: NewBrandType2 = {
+        //     ...data,
+        //     brandData: {
+        //         imageUrl: '',
+        //         ...data.brandData
+        //     }
+        // };
+        await dispatch(createBrandMultiCatalog(data));
 
         navigate('/brands');
     };

@@ -25,7 +25,7 @@ const SideIconCard = ({ iconPrimary, primary, secondary, secondarySub, color, bg
                     variant="h5"
                     sx={{
                         textAlign: 'center',
-                        color: '#7c4dff',
+                        color: '#a483ff',
                         '& > svg': {
                             width: 60,
                             height: 60

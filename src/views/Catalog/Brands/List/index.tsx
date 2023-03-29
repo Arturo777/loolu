@@ -15,8 +15,10 @@ import { gridSpacing } from 'store/constant';
 import { useSelector } from 'store';
 import Loader from 'ui-component/Loader';
 
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 // assets
-import BransList from './BrandsList';
+import BrandsList from './BrandsList';
+import { MerchantType } from 'types/security';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
@@ -30,6 +32,7 @@ const BrandsListPage = () => {
 
     // state
     const [filterText, setFilterText] = useState<string>('');
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[] | null>(null);
 
     useEffect(() => {
         const search = searchParams.get('search');
@@ -46,11 +49,15 @@ const BrandsListPage = () => {
     return (
         <MainCard
             title={
-                <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
-                        <Typography variant="h3">
-                            <FormattedMessage id="brands" />
-                        </Typography>
+                <Grid container direction="row" alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
+                    <Grid container alignItems="center" item md={4}>
+                        <Typography variant="h3">Brand</Typography>
+                        <MultiMerchant
+                            onChange={(merchants: MerchantType[]) => setSelectedMerchants(merchants)}
+                            maxShow={3}
+                            justOne
+                            defaultSelected={[]}
+                        />
                     </Grid>
                     <Grid item>
                         <Button component={Link} to="/brands/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
@@ -79,9 +86,8 @@ const BrandsListPage = () => {
             content={false}
         >
             {loading && <Loader />}
-            <BransList filterText={filterText} />
+            <BrandsList selectedMerchants={selectedMerchants} filterText={filterText} />
         </MainCard>
     );
 };
-
 export default BrandsListPage;

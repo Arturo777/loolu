@@ -12,6 +12,7 @@ import { openDrawer } from 'store/slices/menu';
 
 // assets
 import { IconMenu2 } from '@tabler/icons';
+import ChatSection from './ChatSection';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -66,9 +67,9 @@ const Header = () => {
             {/* DELETED: Consult the original repository */}
 
             {/* live customization & localization */}
+            <ChatSection />
             <LocalizationSection />
 
-            {/* <NotificationSection /> */}
             {/* DELETED: Consult the original repository */}
 
             {/* Profile */}

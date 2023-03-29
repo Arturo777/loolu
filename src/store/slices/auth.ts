@@ -65,7 +65,6 @@ export const getMerchantsList = createAsyncThunk(`${slice.name}/getMerchants`, a
     });
     return response.data;
 });
-
 export const { setAuthData } = slice.actions;
 
 // Reducer
