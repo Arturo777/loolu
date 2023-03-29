@@ -261,9 +261,10 @@ const ProductInfo = ({
     }, []);
 
     useEffect(() => {
-        const skuprod: Skus[] = product?.skus
-            ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
-            .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }]);
+        const skuprod: Skus[] =
+            product?.skus
+                ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
+                .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }]) ?? [];
         if (skuprod.length > 0) {
             const skufFiltUnit: any = skuprod[0];
             console.log('unitmeas', skufFiltUnit[0]);
@@ -592,19 +593,20 @@ const ProductInfo = ({
                                     setSearchCat(e.target.value);
                                 }}
                             />
-                            {categories
-                                ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
-                                .map((category) => (
-                                    <Grid item xs={12} key={`main-category-${category.id}`}>
-                                        <MainCategoryComponent
-                                            category={category}
-                                            setSearchCat={setSearchCat}
-                                            setProductInfo={setProductInfo}
-                                            setFlagCategory={setFlagCategory}
-                                            setNewCategorySku={setNewCategorySku}
-                                        />
-                                    </Grid>
-                                ))}
+                            {Boolean(categories && categories.length) &&
+                                categories
+                                    ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat?.toLowerCase()) > -1)
+                                    .map((category) => (
+                                        <Grid item xs={12} key={`main-category-${category.id}`}>
+                                            <MainCategoryComponent
+                                                category={category}
+                                                setSearchCat={setSearchCat}
+                                                setProductInfo={setProductInfo}
+                                                setFlagCategory={setFlagCategory}
+                                                setNewCategorySku={setNewCategorySku}
+                                            />
+                                        </Grid>
+                                    ))}
                         </SwipeableDrawer>
                     </Box>
                 ) : (

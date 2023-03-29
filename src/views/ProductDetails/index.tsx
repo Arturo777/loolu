@@ -96,7 +96,7 @@ const ProductDetails = () => {
     // const [loading, setLoading] = useState(true);
 
     // actice mode edit product
-    const [active, setActive] = useState(false);
+    const [active, setActive] = useState(true);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // product description tabs
@@ -137,6 +137,7 @@ const ProductDetails = () => {
     useEffect(() => {
         // getProduct();
         setIsLoading(true);
+        console.log(id, idMerchant);
         if (id && idMerchant) {
             dispatch(
                 getProductDetails({
@@ -146,7 +147,10 @@ const ProductDetails = () => {
             ).then(({ payload }) => {
                 const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
 
+                console.log(merchantProduct);
+
                 if (merchantProduct) {
+                    console.log('SET FALSE merchantProduct');
                     setOriginalData(merchantProduct.detailProduct);
                     setProductInfo(merchantProduct.detailProduct);
                     setIsLoading(false);
@@ -286,15 +290,17 @@ const ProductDetails = () => {
                             >
                                 {originalData && originalData?.productID?.toString() === id && (
                                     <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                        {/* <Grid item xs={12} md={6}>
-                                            <ProductImages
-                                                skus={skus}
-                                                valueSku={valueSku}
-                                                product={productInfo}
-                                                setActive={setActive}
-                                                active={active}
-                                            />
-                                        </Grid> */}
+                                        <Grid item xs={12} md={6}>
+                                            {Boolean(skus && skus.length) && (
+                                                <ProductImages
+                                                    skus={skus}
+                                                    valueSku={valueSku}
+                                                    product={productInfo}
+                                                    setActive={setActive}
+                                                    active={active}
+                                                />
+                                            )}
+                                        </Grid>
                                         <Grid item xs={12} md={6}>
                                             {productInfo && (
                                                 <ProductInfo
