@@ -34,7 +34,7 @@ const ProductDescription = ({
         {
             id: 'basic2',
             title: 'Specifications',
-            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={active} />
+            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={active} merchantMulti={null} />
         },
         {
             id: 'basic3',

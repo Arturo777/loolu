@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Button, Box, TextField } from '@mui/material';
 
+import { useDispatch, useSelector } from 'store';
+import { facetsToProduct } from 'store/slices/product';
+
 function createData(key: string, value: string) {
     return { key, value };
 }
@@ -33,17 +36,17 @@ const Specification = ({
     productInfo: any;
     setProductInfo: any;
     active: boolean;
-    merchantMulti: number;
+    merchantMulti: any;
 }) => {
-    useEffect(() => {
-        if (productInfo.hasOwnProperty('categoryId')) {
-            const infoFacets = { categoryId: productInfo?.categoryId };
-            dispatch(facetsToProduct());
-        }
-    }, []);
-
+    const dispatch = useDispatch();
     const [tam, setTam] = useState<Specifi[]>([]);
     const [spectObj, setSpectObj] = useState<Specifi[]>([]);
+    useEffect(() => {
+        if (productInfo) {
+            const infoFacets = { categoryId: productInfo?.categoryId, merchantId: merchantMulti };
+            dispatch(facetsToProduct(infoFacets));
+        }
+    }, [dispatch, merchantMulti, productInfo]);
 
     const handleClick = () => {
         setTam((prev: any) => [

@@ -48,6 +48,7 @@ const CreateProduct = () => {
     const dispatch = useDispatch();
 
     // product description tabs
+    const [merchs, setMerchs] = useState<any>([{}]);
     const [value, setValue] = useState(0);
     const [productInfo, setProductInfo] = useState<Products>();
 
@@ -69,7 +70,7 @@ const CreateProduct = () => {
                 <MultiMerchant
                     // justOne
                     // readOnly
-                    onChange={(merchants) => console.log(merchants)}
+                    onChange={(merchants) => setMerchs(merchants)}
                     maxShow={4}
                     defaultSelected={[]}
                 />
@@ -104,7 +105,11 @@ const CreateProduct = () => {
                                 />
                             </Tabs>
                             <TabPanel value={value} index={0}>
-                                <ProductDescriptionCreate setProductInfo={setProductInfo} />
+                                <ProductDescriptionCreate
+                                    setProductInfo={setProductInfo}
+                                    merchantMulti={merchs}
+                                    productInfo={productInfo}
+                                />
                             </TabPanel>
                             <TabPanel value={value} index={1}>
                                 {/* <ProductReview product={product} /> */}
