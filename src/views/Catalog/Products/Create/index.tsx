@@ -48,7 +48,61 @@ const CreateProduct = () => {
 
     // product description tabs
     const [value, setValue] = useState(0);
-    const [productInfo, setProductInfo] = useState<Products>();
+    const [productInfo, setProductInfo] = useState<Products>({
+        image: '',
+        id: '',
+        created: new Date(),
+        productID: '',
+        departmentId: 0,
+        categoryId: 0,
+        productGlobalCategoryID: null,
+        nameComplete: '',
+        merchantId: 0,
+        releaseDate: '',
+        lastDateUpdate: new Date(),
+        brandId: '',
+        productStatus: false,
+        syncStatusVTEX: false,
+        skuName: '',
+        cscIdentification: null,
+        informationSource: null,
+        kit: false,
+        transported: false,
+        inventoried: false,
+        giftCardRecharge: false,
+        productName: '',
+        title: '',
+        linkId: '',
+        productRefID: '',
+        taxCode: '',
+        name: '',
+        tradePolicies: [
+            {
+                idPolicy: 0,
+                name: '',
+                isSelected: false,
+                __typename: ''
+            }
+        ],
+        provider: '',
+        categoryName: '',
+        brandName: '',
+        descriptionShort: '',
+        description: '',
+        metaTagDescription: '',
+        keyWords: '',
+        isEcommerce: true,
+        isActive: false,
+        isVisible: true,
+        showWithoutStock: true,
+        preventa: {
+            Isactive: false
+        },
+        sobrePedido: {
+            Isactive: false
+        },
+        groupName: ''
+    });
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);

@@ -1,27 +1,36 @@
-import { JSXElementConstructor, Key, ReactElement, useEffect } from 'react';
+import { JSXElementConstructor, Key, ReactElement, SetStateAction, useEffect, useState } from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import {
+    Box,
     Button,
     ButtonBase,
     ButtonGroup,
     Checkbox,
+    Collapse,
     Divider,
     FormControl,
     FormControlLabel,
     FormHelperText,
     Grid,
+    IconButton,
+    InputAdornment,
     InputLabel,
+    ListItemButton,
+    ListItemIcon,
     ListItemText,
     MenuItem,
+    Modal,
     OutlinedInput,
     Radio,
     RadioGroup,
     Rating,
     Select,
     Stack,
+    SwipeableDrawer,
     Switch,
     Table,
     TableBody,
@@ -51,6 +60,10 @@ import { useDispatch, useSelector } from 'store';
 import { addProduct } from 'store/slices/cart';
 
 // assets
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
+import { IconSearch } from '@tabler/icons';
 import CircleIcon from '@mui/icons-material/Circle';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
@@ -59,9 +72,11 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { getCategoriesService, getSuppliers } from 'store/slices/catalog';
-import { SupplierType } from 'types/catalog';
+import { getCategoriesService, getSuppliers, getBrands } from 'store/slices/catalog';
+import { BrandType, CategoryType, SupplierType } from 'types/catalog';
 import { getTradePolicies } from 'store/slices/product';
+
+import ConfigProvider from 'config';
 
 // product color select
 function getColor(color: string) {
@@ -172,6 +187,136 @@ const Colors = ({ checked, colorsData }: { checked?: boolean; colorsData: Colors
 interface Props {
     label: string;
 }
+
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3
+};
+
+function BrandModal({
+    setModalBrands,
+    modalBrands,
+    search,
+    setSearch,
+    newBrand,
+    setFlagBrand
+}: {
+    setModalBrands: any;
+    modalBrands: boolean;
+    search: string;
+    setSearch: any;
+    newBrand: any;
+    setFlagBrand: any;
+}) {
+    const handleClose = (value: string) => {
+        newBrand(value);
+        setModalBrands(false);
+    };
+    const handleReject = () => {
+        setFlagBrand(false);
+        setModalBrands(false);
+        setSearch('');
+    };
+
+    return (
+        <>
+            <Modal
+                hideBackdrop
+                open={modalBrands}
+                onClose={handleClose}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box sx={{ ...style, width: 500 }}>
+                    <h2 id="child-modal-title">Confirmar Creación de Marca</h2>
+                    <p id="child-modal-description">
+                        Por favor, confirma que el nombre <span style={{ fontWeight: 'bold' }}>{search}</span> asignado a tu Marca es
+                        correcto.
+                    </p>
+                    <Button onClick={handleReject} variant="outlined" sx={{ mr: 2 }}>
+                        Revisar
+                    </Button>
+                    <Button onClick={() => handleClose(search)} variant="contained">
+                        Confirmar
+                    </Button>
+                </Box>
+            </Modal>
+        </>
+    );
+}
+
+type MainCategoryProps = {
+    category: CategoryType;
+    setSearchCat: any;
+    setProductInfo: any;
+    setFlagCategory: any;
+    setNewCategorySku: any;
+    /* openCreate: (catId: number) => void; */
+};
+
+const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlagCategory, setNewCategorySku }: MainCategoryProps) => {
+    // hooks
+    const intl = useIntl();
+
+    // vars
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => {
+        setOpen(!open);
+    };
+    const customCategory = (value: string, id: number) => {
+        setSearchCat(value);
+        setProductInfo((prev: any) => ({ ...prev, categoryId: id, categoryName: value, departmentId: id }));
+    };
+
+    return (
+        <>
+            <ListItemButton sx={{ paddingY: 0, width: '600px' }}>
+                <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
+                    {category.children?.length ? <ExpandCircleDownIcon /> : null}
+                </ListItemIcon>
+                <ListItemText sx={{ p: 1 }} onClick={handleOpen} primary={category.name} secondary={category.title} />
+                <Tooltip title={intl.formatMessage({ id: 'select_category' })}>
+                    <IconButton>
+                        <CheckCircleIcon onClick={() => customCategory(category.name, category.id)} />
+                    </IconButton>
+                </Tooltip>
+                {/* CREATE */}
+                <Tooltip title={intl.formatMessage({ id: 'create_subcategory' })}>
+                    <IconButton>
+                        <AddBoxIcon />
+                    </IconButton>
+                </Tooltip>
+            </ListItemButton>
+
+            {Boolean(category.children?.length) && (
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    {category.children.map((itemA) => (
+                        <Box key={`category-child-${itemA.id}`} sx={{ ml: 1 }}>
+                            <MainCategoryComponent
+                                category={itemA}
+                                setSearchCat={setSearchCat}
+                                /* openCreate={openCreate} */ setProductInfo={setProductInfo}
+                                setFlagCategory={setFlagCategory}
+                                setNewCategorySku={setNewCategorySku}
+                            />
+                        </Box>
+                    ))}
+                </Collapse>
+            )}
+        </>
+    );
+};
+
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
 const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: any; productInfo: any }) => {
@@ -179,8 +324,26 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
     const dispatch = useDispatch();
     const history = useNavigate();
 
-    const { categories, suppliers } = useSelector((state) => state.catalogue);
+    console.log(productInfo);
+    console.log(typeof productInfo.created);
+
+    const { categories, suppliers, brands } = useSelector((state) => state.catalogue);
+    const { product } = useSelector((state) => state.product);
     const { tradePolicies } = useSelector((state) => state.product);
+    const [search, setSearch] = useState('');
+    const [display, setDisplay] = useState(false);
+    const [button, setButton] = useState(false);
+    const [modalBrands, setModalBrands] = useState(false);
+    const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
+    const [stateDrawer, setStateDrawer] = useState({
+        top: false,
+        left: false,
+        bottom: false,
+        right: false
+    });
+    const [searchCat, setSearchCat] = useState(product?.categoryName ?? '');
+    const [flagCategory, setFlagCategory] = useState(false);
+    const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
 
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
@@ -197,12 +360,25 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
         }
     }; */
 
+    const newBrand = (value: string) => {
+        /*  setModalBrands(true); */
+        setSearch(value);
+        setDisplay(false);
+    };
+
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
         dispatch(getSuppliers());
         dispatch(getTradePolicies());
+        dispatch(getBrands());
     }, [dispatch]);
     console.log(tradePolicies);
+
+    useEffect(() => {
+        if (brands?.length) {
+            setBrandsInfo(brands);
+        }
+    }, [brands]);
 
     /* const formik = useFormik({
         enableReinitialize: true,
@@ -252,6 +428,33 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
         );
     }; */
 
+    const handleChange = (event: any) => {
+        setProductInfo({ ...productInfo, [event.target.name]: event.target.value });
+    };
+    const generateLinkId = (str: string) => {
+        setProductInfo({ ...productInfo, linkId: str.replace(/\s+/g, '-') });
+    };
+
+    const changeDate = (date: any) => {
+        const newDate = new Date(date);
+        setProductInfo({ ...productInfo, created: newDate });
+    };
+
+    const customBrand = (value: SetStateAction<string>, id: number) => {
+        setSearch(value);
+        setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
+        setDisplay(false);
+    };
+
+    type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
+    const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+            return;
+        }
+        setStateDrawer({ ...stateDrawer, [anchor]: open });
+    };
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -282,6 +485,9 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                 label={intl.formatMessage({ id: 'product_name' })}
                                 variant="outlined"
                                 name="productName"
+                                onChange={handleChange}
+                                onBlur={(event) => generateLinkId(event.target.value)}
+                                value={productInfo.productName}
                             />
                             <TextField
                                 fullWidth
@@ -289,6 +495,8 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                 label={intl.formatMessage({ id: 'title' })}
                                 variant="outlined"
                                 name="title"
+                                onChange={handleChange}
+                                value={productInfo.title}
                             />
                             <TextField
                                 fullWidth
@@ -296,6 +504,8 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                 label={intl.formatMessage({ id: 'product_url' })}
                                 variant="outlined"
                                 name="linkId"
+                                disabled
+                                value={productInfo.linkId}
                             />
                             <TextField
                                 multiline
@@ -303,20 +513,124 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                 label={intl.formatMessage({ id: 'reference_code' })}
                                 variant="outlined"
                                 name="productRefID"
+                                onChange={handleChange}
+                                value={productInfo.productRefID}
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                id="outlined-basic"
+                                label={intl.formatMessage({ id: 'brand' })}
+                                variant="outlined"
+                                name="brandName"
+                                /* defaultValue={product?.brandName} */
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                onClick={() => setDisplay(true)}
+                            />
+                            {/* <BrandModal
+                                setModalBrands={setModalBrands}
+                                modalBrands={modalBrands}
+                                search={search}
+                                setSearch={setSearch}
+                                newBrand={newBrand}
+                                setFlagBrand={setFlagBrand}
+                            /> */}
+                            {display && (
+                                <Box boxShadow={2} sx={{ height: '200px' }}>
+                                    <PerfectScrollbar>
+                                        <div
+                                            className={
+                                                ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'
+                                            }
+                                        >
+                                            {brandsInfo
+                                                ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+                                                .map((v: BrandType, i: Key): any => (
+                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                                                    <Typography
+                                                        variant="body2"
+                                                        className="brandsOption"
+                                                        sx={{ pl: 2, pt: 1, pb: 1 }}
+                                                        key={i}
+                                                        onClick={() => customBrand(v.name, v.idBrand)}
+                                                    >
+                                                        {v.name}
+                                                    </Typography>
+                                                ))}
+                                        </div>
+                                    </PerfectScrollbar>
+                                </Box>
+                            )}
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Box
+                                sx={{
+                                    '& .MuiTextField-root': { mt: 2 },
+                                    position: 'relative'
+                                }}
+                            >
+                                <Button onClick={toggleDrawer('right', true)} variant="contained">
+                                    {intl.formatMessage({ id: 'select_category' })}
+                                </Button>
+                                <Typography variant="body2">
+                                    {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
+                                </Typography>
+                                <SwipeableDrawer
+                                    sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
+                                    anchor="right"
+                                    open={stateDrawer.right}
+                                    onClose={toggleDrawer('right', false)}
+                                    onOpen={toggleDrawer('right', true)}
+                                >
+                                    <OutlinedInput
+                                        sx={{ ml: 3, mt: 3, width: '90%' }}
+                                        id="input-search-list-style1"
+                                        placeholder={intl.formatMessage({
+                                            id: 'search'
+                                        })}
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <IconSearch stroke={1.5} size="16px" />
+                                            </InputAdornment>
+                                        }
+                                        size="small"
+                                        value={searchCat}
+                                        onChange={(e) => {
+                                            setSearchCat(e.target.value);
+                                        }}
+                                    />
+                                    {categories
+                                        ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
+                                        .map((category) => (
+                                            <Grid item xs={12} key={`main-category-${category.id}`}>
+                                                <MainCategoryComponent
+                                                    category={category}
+                                                    setSearchCat={setSearchCat}
+                                                    setProductInfo={setProductInfo}
+                                                    setFlagCategory={setFlagCategory}
+                                                    setNewCategorySku={setNewCategorySku}
+                                                />
+                                            </Grid>
+                                        ))}
+                                </SwipeableDrawer>
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker label={intl.formatMessage({ id: 'create_Date' })} />
+                                <DatePicker label={intl.formatMessage({ id: 'create_Date' })} onChange={changeDate} />
                             </LocalizationProvider>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker label={intl.formatMessage({ id: 'update_Date' })} />
-                            </LocalizationProvider>
+                            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker disabled label={intl.formatMessage({ id: 'update_Date' })} />
+                            </LocalizationProvider> */}
                         </Grid>
                     </Grid>
                 </Stack>
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
                 <TextField
                     fullWidth
                     multiline
@@ -325,7 +639,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                     variant="outlined"
                     name="description"
                 />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
                 <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
