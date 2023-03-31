@@ -128,6 +128,69 @@ export type Address = {
     isDefault: boolean;
 };
 
+export type ProductFacet = {
+    detail: Specification[];
+};
+export type Specification = {
+    groupId: number;
+    groupName: string;
+    categoryId: number;
+    categoryName: string;
+    specificationId: number;
+    specificationName: string;
+    isText: boolean;
+    fieldTypeName: string;
+    fieldTypeId: number;
+    facetList: FacetList[];
+};
+
+export type FacetList = {
+    facetId: number;
+    facetValue: string | number;
+    linkVtexId: number;
+};
+export type CreateFacetProduct = {
+    categoryId: number;
+    specificationGroups: SpecificationsGroups[];
+};
+export type SpecificationsGroups = {
+    prodSpecs: Specs[];
+    skuSpecs: Specs[];
+    groupId: number;
+    name: string;
+};
+
+export type Specs = {
+    specificationValues: SpecsValues[];
+    categoryId: number;
+    specificationId: number;
+    rawSpecId: number;
+    name: string;
+    fieldTypeId: number;
+    fieldTypeName: string;
+    groupId: number;
+    groupName: string;
+    description: string;
+    position: number;
+    isFilter: boolean;
+    isRequired: boolean;
+    isOnProductDetails: boolean;
+    isStockKeepingUnit: boolean;
+    isActive: boolean;
+    isTopMenuLinkActive: boolean;
+    isSideMenuLinkActive: boolean;
+    vtexFieldId: number;
+    isVtexSync: boolean;
+};
+
+export type SpecsValues = {
+    specificationValueId: number;
+    name: string;
+    isActive: boolean;
+    position: number;
+    vtexValueId: number;
+    isVtexSync: boolean;
+};
 // product reviews list
 export type Reviews = {
     id: string | number | undefined;
@@ -190,6 +253,8 @@ export interface ProductStateProps {
     approvalHistorial: ApprovalHistorial[];
     reviews: Reviews[];
     addresses: Address[];
+    productFacet: ProductFacet[];
+    createProductFacet: CreateFacetProduct[];
     error: object | string | null;
     loadingProducts?: boolean;
 }
