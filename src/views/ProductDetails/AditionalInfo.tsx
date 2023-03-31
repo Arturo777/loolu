@@ -1,16 +1,26 @@
 import { Grid, Typography, Box, TextField } from '@mui/material';
 import { useIntl } from 'react-intl';
+import { FieldEditingHolder } from 'ui-component/MultiMerchant/drawer';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 
 const Aditionalinfo = ({
     product,
     active,
     productInfo,
-    setProductInfo
+    setProductInfo,
+    handleDrawer
 }: {
     product: any;
     active: boolean;
     productInfo: any;
     setProductInfo: any;
+    handleDrawer: (options: {
+        accessor: string;
+        intlLabel: string;
+        data?: { [key: string]: any }[];
+        options?: null | SelectOptionType[];
+        type: InputType;
+    }) => void;
 }) => {
     // hooks
     const intl = useIntl();
@@ -22,10 +32,10 @@ const Aditionalinfo = ({
         <Grid container>
             <Grid item xs={12}>
                 {active ? (
-                    <Box
-                        sx={{
-                            '& .MuiTextField-root': { mt: 2 }
-                        }}
+                    <FieldEditingHolder
+                        onEditClick={() =>
+                            handleDrawer({ accessor: 'descriptionShort', intlLabel: 'short_description', type: InputType.textarea })
+                        }
                     >
                         <TextField
                             fullWidth
@@ -38,7 +48,7 @@ const Aditionalinfo = ({
                             value={productInfo?.descriptionShort}
                             onChange={handleChangeProd}
                         />
-                    </Box>
+                    </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
                         <Typography variant="h4">{intl.formatMessage({ id: 'short_description' })}:</Typography> {product?.descriptionShort}
@@ -47,10 +57,11 @@ const Aditionalinfo = ({
             </Grid>
             <Grid item xs={12}>
                 {active ? (
-                    <Box
-                        sx={{
-                            '& .MuiTextField-root': { mt: 2 }
-                        }}
+                    <FieldEditingHolder
+                        sx={{ mt: 3 }}
+                        onEditClick={() =>
+                            handleDrawer({ accessor: 'metaTagDescription', intlLabel: 'metatag_description', type: InputType.textarea })
+                        }
                     >
                         <TextField
                             fullWidth
@@ -63,7 +74,7 @@ const Aditionalinfo = ({
                             value={productInfo?.metaTagDescription}
                             onChange={handleChangeProd}
                         />
-                    </Box>
+                    </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
                         <Typography variant="h4" component="span">
@@ -75,10 +86,9 @@ const Aditionalinfo = ({
             </Grid>
             <Grid item xs={12}>
                 {active ? (
-                    <Box
-                        sx={{
-                            '& .MuiTextField-root': { mt: 2 }
-                        }}
+                    <FieldEditingHolder
+                        sx={{ mt: 3 }}
+                        onEditClick={() => handleDrawer({ accessor: 'keyWords', intlLabel: 'key_words', type: InputType.textarea })}
                     >
                         <TextField
                             fullWidth
@@ -91,7 +101,7 @@ const Aditionalinfo = ({
                             value={productInfo?.keyWords}
                             onChange={handleChangeProd}
                         />
-                    </Box>
+                    </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
                         <Typography variant="h4" component="span">

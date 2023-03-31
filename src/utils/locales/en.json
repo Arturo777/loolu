@@ -309,5 +309,7 @@
     "create_Date": "Create date",
     "update_Date": "Update date",
     "select_vendor": "Select vendor",
-    "label": "Label"
+    "label": "Label",
+    "update_multi_data_title": "Update multiple merchants",
+    "key_words": "Key words"
 }

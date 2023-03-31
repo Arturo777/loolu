@@ -6,6 +6,7 @@ import Specification from './Specification';
 import Aditionalinfo from './AditionalInfo';
 import Accordion from 'ui-component/extended/Accordion';
 import AdditionalFields from './AdditionalFields';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 
 // ==============================|| PRODUCT DETAILS - DESCRIPTION ||============================== //
 
@@ -13,12 +14,20 @@ const ProductDescription = ({
     product,
     active,
     productInfo,
-    setProductInfo
+    setProductInfo,
+    handleDrawer
 }: {
     product: any;
     active: boolean;
     productInfo: any;
     setProductInfo: any;
+    handleDrawer: (options: {
+        accessor: string;
+        intlLabel: string;
+        data?: { [key: string]: any }[];
+        options?: null | SelectOptionType[];
+        type: InputType;
+    }) => void;
 }) => {
     // hooks
     const intl = useIntl();
@@ -29,7 +38,15 @@ const ProductDescription = ({
             id: 'basic1',
             defaultExpand: true,
             title: 'Product Aditional Info',
-            content: <Aditionalinfo product={product} productInfo={productInfo} setProductInfo={setProductInfo} active={active} />
+            content: (
+                <Aditionalinfo
+                    handleDrawer={handleDrawer}
+                    product={product}
+                    productInfo={productInfo}
+                    setProductInfo={setProductInfo}
+                    active={active}
+                />
+            )
         },
         {
             id: 'basic2',

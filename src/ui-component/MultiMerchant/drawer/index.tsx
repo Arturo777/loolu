@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 // mui materials
 import { Divider, Drawer, IconButton, Stack, Typography, Box, Card } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import { SxProps, Theme } from '@mui/system';
+
+// third-party
 import ScrollBar from 'react-perfect-scrollbar';
 
 export default function LooluDrawer({
@@ -72,4 +77,44 @@ export default function LooluDrawer({
     );
 }
 
-//  sx={{ width: { xs: 1, sm: 0.6, md: 0.3 }, minWidth: { xs: 200, sm: 300 }, maxWidth: { xs: 280, sm: 400, lg: 450 } }}
+// type RowStackProps = SystemProps & {
+//     displayValue?: 'flex' | 'inline-flex';
+// };
+
+// export const RowStack = styled(Stack)<RowStackProps>(({ displayValue }) => ({
+//     flexDirection: 'row',
+//     display: displayValue || 'flex',
+//     alignItems: 'flex-start',
+//     '& > :last-child': {
+//         marginTop: 10,
+//         marginLeft: 10
+//     }
+// }));
+
+export const RowStack = styled(Stack)<{ displayValue?: string }>((props) => ({
+    flexDirection: 'row',
+    // display: props.displayValue || 'inline-flex',
+    '& > :last-child': {
+        marginTop: 10,
+        marginLeft: 10
+    }
+}));
+
+export const FieldEditingHolder = ({
+    children,
+    displayValue = 'flex',
+    onEditClick,
+    sx
+}: {
+    children: ReactNode;
+    displayValue?: 'flex' | 'inline-flex';
+    onEditClick: (e: any) => void;
+    sx?: SxProps<Theme>;
+}) => (
+    <Stack sx={{ flexDirection: 'row', display: displayValue || 'inline-flex', ...sx }}>
+        {children}
+        <IconButton sx={{ ml: 1 }} color="inherit" aria-label="Open drawer" edge="start" size="small" onClick={onEditClick}>
+            <EditIcon fontSize="small" />
+        </IconButton>
+    </Stack>
+);

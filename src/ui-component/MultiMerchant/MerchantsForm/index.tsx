@@ -161,7 +161,12 @@ export default function MultiMerchantForm({
     };
 
     return (
-        <LooluDrawer title="Change: Description" isOpen={isOpen} toggleDrawer={toggleDrawer} footer={drawerFooter}>
+        <LooluDrawer
+            title={intl.formatMessage({ id: 'update_multi_data_title' })}
+            isOpen={isOpen}
+            toggleDrawer={toggleDrawer}
+            footer={drawerFooter}
+        >
             <Stack sx={{ mt: 1, paddingX: 2 }} direction="row" alignItems="center" justifyContent="flex-end">
                 <Typography>Actions:</Typography>
 

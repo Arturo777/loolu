@@ -29,13 +29,16 @@ import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
-import DragAndDrop from 'ui-component/DragAndDrop';
-import { MerchantProductType } from 'types/product';
+// import DragAndDrop from 'ui-component/DragAndDrop';
 
-interface Image {
-    file: File;
-    src: string;
-}
+import { MerchantProductType } from 'types/product';
+import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+
+// interface Image {
+//     file: File;
+//     src: string;
+// }
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -77,6 +80,20 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ 
         marginRight: 0
     })
 }));
+
+const defaultMerchantProps: MultiMerchantFormProps = {
+    isOpen: false,
+    data: [],
+    accessor: '',
+    // data: { [key: string]: any }[];
+    inputLabel: 'label',
+    toggleDrawer: (e) => {
+        console.log(e);
+    },
+    onSave: (data: any) => console.log(data),
+    type: InputType.textField
+    // options?: null | SelectOptionType[];
+};
 
 const ProductDetails = () => {
     // hooks
@@ -123,14 +140,15 @@ const ProductDetails = () => {
     // params
     const idMerchant = searchParams.get('idMerchant');
     // const idMerchant = useMemo(() => searchParams.get('idMerchant'), []);
-    const isFather = searchParams.get('isFather');
+    // const isFather = searchParams.get('isFather');
 
-    const [images, setImages] = useState<Image[]>([]);
+    // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
     const [allMerchantsProductData, setAllMerchantsProductData] = useState<{ [key: string]: any }[]>([]);
+    const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
     useEffect(() => {
         // update product info on merchants array
@@ -282,6 +300,40 @@ const ProductDetails = () => {
         }
     };
 
+    const handleDrawerMultiEdit = ({
+        accessor,
+        intlLabel,
+        data = undefined,
+        options = null,
+        type
+    }: {
+        accessor: string;
+        intlLabel: string;
+        data?: { [key: string]: any }[];
+        options?: null | SelectOptionType[];
+        type: InputType;
+    }) => {
+        const newMultiFormProps: MultiMerchantFormProps = {
+            accessor,
+            data: data || allMerchantsProductData,
+            isOpen: true,
+            inputLabel: intlLabel,
+            options,
+            toggleDrawer: (e) => {
+                // console.log('TOGLLE');
+                setMultiFormProps({ ...defaultMerchantProps, isOpen: e });
+                // resetDrawer();
+            },
+            onSave: (newData) => {
+                setMultiFormProps({ ...defaultMerchantProps, isOpen: false });
+                saveMultiChange(newData);
+            },
+            type
+        };
+
+        setMultiFormProps(newMultiFormProps);
+    };
+
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>
             {isLoading && (
@@ -293,6 +345,7 @@ const ProductDetails = () => {
             )}
             {!isLoading && (
                 <>
+                    <MultiMerchantForm {...multiFormProps} />
                     <Grid item xs={12}>
                         <Box sx={{ display: 'flex' }}>
                             <Main
@@ -318,6 +371,7 @@ const ProductDetails = () => {
                                         <Grid item xs={12} md={6}>
                                             {productInfo && (
                                                 <ProductInfo
+                                                    handleDrawer={handleDrawerMultiEdit}
                                                     active={active}
                                                     allMerchantsProductData={allMerchantsProductData}
                                                     brandsInfo={brandsInfo}
@@ -410,6 +464,7 @@ const ProductDetails = () => {
                                             </Tabs>
                                             <TabPanel value={value} index={0}>
                                                 <ProductDescription
+                                                    handleDrawer={handleDrawerMultiEdit}
                                                     product={originalData}
                                                     active={active}
                                                     setProductInfo={setProductInfo}

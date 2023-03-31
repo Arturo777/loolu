@@ -308,5 +308,7 @@
     "create_Date": "Fecha lanzamiento",
     "update_Date": "Fecha de actualización",
     "select_vendor": "Proveedores",
-    "label": "Etiqueta"
+    "label": "Etiqueta",
+    "update_multi_data_title": "Actualizar varios catalogos",
+    "key_words": "Palabras clave"
 }
