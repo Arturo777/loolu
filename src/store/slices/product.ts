@@ -27,6 +27,8 @@ const initialState: DefaultRootStateProps['product'] = {
     approvalHistorial: [],
     reviews: [],
     addresses: [],
+    productFacet: [],
+    createProductFacet: [],
     loadingProducts: true
 };
 
@@ -128,7 +130,7 @@ const slice = createSlice({
                 state.loadingProducts = false;
                 action.payload.response.departmentId = action.payload.response.categoryId;
 
-                state.product = action.payload.response;
+                state.product = action.payload.response[0] /* .detailProduct */;
             });
 
         builder
@@ -163,6 +165,22 @@ const slice = createSlice({
             .addCase(getApprovalHistorial.fulfilled, (state, action) => {
                 state.loadingProducts = false;
                 state.approvalHistorial = action.payload.response;
+            });
+        builder
+            .addCase(productFacetService.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(productFacetService.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.productFacet = action.payload.response.detail;
+            });
+        builder
+            .addCase(facetsToProduct.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(facetsToProduct.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.createProductFacet = action.payload.response;
             });
     }
     // extraReducers(builder) {}
@@ -224,7 +242,7 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             searchParams.idProd ||
             searchParams.idApprovalStatus
     );
-    const response = await axios.get(`styrk/api/product/search`, {
+    const response = await axios.get(`/styrk/api/product/search-multicatalog`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: searchParams.idMerchant || 1,
@@ -248,11 +266,16 @@ export function filterProducts(filter: ProductsFilter) {
     };
 }
 
-export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async (id: string | undefined) => {
-    const response = await axios.get('styrk/api/product/detail/productSkus', {
+interface ProductArgs {
+    id: string | undefined;
+    idMerchant: any;
+}
+
+export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async ({ id, idMerchant }: ProductArgs) => {
+    const response = await axios.get('styrk/api/product/detail/product-multicatalog', {
         baseURL: STYRK_API,
         params: {
-            idMerchant: 1,
+            idMerchant,
             idProd: id,
             page: 0
         }
@@ -315,6 +338,35 @@ export function getTradePolicies() {
         }
     };
 }
+
+type FacetProduct = {
+    merchantId: number | string;
+    productID: number | string;
+};
+export const productFacetService = createAsyncThunk(`${slice.name}/facetProduct`, async ({ merchantId, productID }: FacetProduct) => {
+    const response = await axios.get(`styrk/api/linkvariant/getProductFacetAsociation`, {
+        baseURL: STYRK_API,
+        params: {
+            merchantId,
+            productID
+        }
+    });
+    return response.data;
+});
+type FacetToProduct = {
+    merchantId: number | string;
+    categoryId: number | string;
+};
+export const facetsToProduct = createAsyncThunk(`${slice.name}/facetsToProduct`, async ({ merchantId, categoryId }: FacetToProduct) => {
+    const response = await axios.get(`styrk/api/linkvariant/getProductFacetAsociation`, {
+        baseURL: STYRK_API,
+        params: {
+            merchantId,
+            categoryId
+        }
+    });
+    return response.data;
+});
 
 export const approvalStatus = createAsyncThunk(`${slice.name}/lifecycleapproval`, async () => {
     const response = await axios.get('/styrk/api/product/lifecycleapproval', {

@@ -26,19 +26,22 @@ const EditBrandPage = () => {
     const intl = useIntl();
     const [brandStatus, setBrandStatus] = useState<boolean>(false);
     const { brandId } = useParams();
+    const urlParams = new URLSearchParams(window.location.search);
+    const idMerchant = urlParams.get('idMerchant');
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [brandData, setBrandData] = useState<BrandType>();
     const { brands } = useSelector((state) => state.catalogue);
-
     useEffect(() => {
-        dispatch(getBrands());
+        dispatch(getBrands(Number(idMerchant)));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     useEffect(() => {
-        if (brands && brands.length) {
+        if (brands && brands.length && idMerchant) {
+            console.log('brandId', brandId);
+            console.log('idMerchant', idMerchant);
             const brandInfo = brands.find((item) => item.idBrand === Number(brandId));
             if (!brandInfo) {
                 navigate('/brands');
@@ -52,15 +55,15 @@ const EditBrandPage = () => {
         setBrandStatus(event.target.checked);
     };
 
-    const handleSave = async (data: NewBrandType) => {
+    const handleSave = async (data: any) => {
         const newData: BrandType = {
             idBrand: Number(brandId ?? ''),
-            idMerchant: 1,
-            ...data,
+            idMerchant: data.idMerchant || idMerchant,
+            ...data[0].brandData,
             isActive: brandStatus
         };
-        await dispatch(editBrand({ dataBrand: newData }));
 
+        await dispatch(editBrand({ dataBrand: newData }));
         navigate('/brands');
     };
 

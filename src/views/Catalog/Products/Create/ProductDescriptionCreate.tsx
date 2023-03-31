@@ -2,23 +2,20 @@
 import { useIntl } from 'react-intl';
 
 // project imports
-import Specification from '../../ui-component/Specification';
-import Aditionalinfo from './AditionalInfo';
+import Specification from 'ui-component/Specification';
+import AditionalInfoCreate from './AditionalinfoCreate';
 import Accordion from 'ui-component/extended/Accordion';
-import AdditionalFields from './AdditionalFields';
 
 // ==============================|| PRODUCT DETAILS - DESCRIPTION ||============================== //
 
-const ProductDescription = ({
-    product,
-    active,
+const ProductDescriptionCreate = ({
+    setProductInfo,
     productInfo,
-    setProductInfo
+    merchantMulti
 }: {
-    product: any;
-    active: boolean;
-    productInfo: any;
     setProductInfo: any;
+    productInfo: any;
+    merchantMulti: any;
 }) => {
     // hooks
     const intl = useIntl();
@@ -29,22 +26,22 @@ const ProductDescription = ({
             id: 'basic1',
             defaultExpand: true,
             title: 'Product Aditional Info',
-            content: <Aditionalinfo product={product} productInfo={productInfo} setProductInfo={setProductInfo} active={active} />
+            content: <AditionalInfoCreate setProductInfo={setProductInfo} />
         },
         {
             id: 'basic2',
             title: 'Specifications',
-            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={active} merchantMulti={null} />
-        },
-        {
+            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={false} merchantMulti={1} />
+        }
+        /* {
             id: 'basic3',
             title: intl.formatMessage({
                 id: 'additional_fields'
             }),
             content: <AdditionalFields />
-        }
+        } */
     ];
     return <Accordion data={descriptionData} />;
 };
 
-export default ProductDescription;
+export default ProductDescriptionCreate;

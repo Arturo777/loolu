@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // material-ui
-import { Button, CardContent, Grid, Stack, Typography } from '@mui/material';
+import { Button, CardContent, Grid, IconButton, Popover, Stack, Typography } from '@mui/material';
 
 // third-party
 import CurrencyFormat from 'react-currency-format';
@@ -14,10 +14,13 @@ import SkeletonProductPlaceholder from 'ui-component/cards/Skeleton/ProductPlace
 import { ProductCardProps } from 'types/cart';
 
 // assets
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
 import LinkIcon from '@mui/icons-material/Link';
 import placeholderImage from 'assets/images/placeholder.png';
 import { Box } from '@mui/system';
+import MultiMerchantButtons from 'ui-component/MultiMerchantButton/MultiMerchantButton';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
 
 // const prodImage = require.context('assets/images/e-commerce', true);
 
@@ -29,6 +32,9 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
     // const [productRating] = useState<number | undefined>(rating);
 
     const [isLoading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
     useEffect(() => {
         setLoading(false);
     }, []);
@@ -53,16 +59,40 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                     <CardContent sx={{ p: 2 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
-                                <Grid item xs={12}>
-                                    <Typography
-                                        component={Link}
-                                        to={`/brands/${brandId}`}
-                                        variant="subtitle2"
-                                        sx={{ textDecoration: 'none' }}
-                                    >
-                                        {brandName}
-                                    </Typography>
-                                </Grid>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Grid item xs={6}>
+                                        <Typography
+                                            component={Link}
+                                            to={`/brands/${brandId}`}
+                                            variant="subtitle2"
+                                            sx={{ textDecoration: 'none' }}
+                                        >
+                                            {brandName}
+                                        </Typography>
+                                    </Grid>
+
+                                    {/* <Button
+                                            onClick={(event) => {
+                                                handleClick(event);
+                                            }}
+                                            variant="contained"
+                                            sx={{ px: '2px', py: '4px', minWidth: '30px' }}
+                                        >
+                                            <MoreHorizIcon fontSize="small" />
+                                        </Button> */}
+
+                                    <Box sx={{ pl: '6px', pb: '2px' }}>
+                                        <MultiMerchantButtons
+                                            size="medium"
+                                            onAvatarClick={(e) => {
+                                                console.log(e);
+                                                navigate(
+                                                    `/products/detail-product/${productID}?idMerchant=${e.merchantId}&&isFather=${e.isFather}`
+                                                );
+                                            }}
+                                        />
+                                    </Box>
+                                </Stack>
                                 <Typography
                                     component={Link}
                                     to={`/products/${productID}/edit`}
