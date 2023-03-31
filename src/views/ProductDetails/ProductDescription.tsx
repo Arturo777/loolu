@@ -2,7 +2,7 @@
 import { useIntl } from 'react-intl';
 
 // project imports
-import Specification from './Specification';
+import Specification from '../../ui-component/Specification';
 import Aditionalinfo from './AditionalInfo';
 import Accordion from 'ui-component/extended/Accordion';
 import AdditionalFields from './AdditionalFields';
@@ -51,7 +51,7 @@ const ProductDescription = ({
         {
             id: 'basic2',
             title: 'Specifications',
-            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={active} />
+            content: <Specification productInfo={productInfo} setProductInfo={setProductInfo} active={active} merchantMulti={null} />
         },
         {
             id: 'basic3',
