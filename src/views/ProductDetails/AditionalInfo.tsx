@@ -34,7 +34,7 @@ const Aditionalinfo = ({
                             label={intl.formatMessage({ id: 'short_description' })}
                             variant="outlined"
                             name="descriptionShort"
-                            defaultValue={product?.descriptionShort}
+                            // defaultValue={product?.descriptionShort}
                             value={productInfo?.descriptionShort}
                             onChange={handleChangeProd}
                         />
@@ -59,14 +59,16 @@ const Aditionalinfo = ({
                             label={intl.formatMessage({ id: 'metatag_description' })}
                             variant="outlined"
                             name="metaTagDescription"
-                            defaultValue={product?.metaTagDescription}
+                            // defaultValue={product?.metaTagDescription}
                             value={productInfo?.metaTagDescription}
                             onChange={handleChangeProd}
                         />
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">{intl.formatMessage({ id: 'metatag_description' })}:</Typography>{' '}
+                        <Typography variant="h4" component="span">
+                            {intl.formatMessage({ id: 'metatag_description' })}:
+                        </Typography>{' '}
                         {product?.metaTagDescription}
                     </Typography>
                 )}
@@ -85,14 +87,17 @@ const Aditionalinfo = ({
                             label="Keywords"
                             variant="outlined"
                             name="keyWords"
-                            defaultValue={product?.keyWords}
+                            // defaultValue={product?.keyWords}
                             value={productInfo?.keyWords}
                             onChange={handleChangeProd}
                         />
                     </Box>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">Keywords:</Typography> {product?.keyWords}
+                        <Typography variant="h4" component="span">
+                            Keywords:
+                        </Typography>{' '}
+                        {product?.keyWords}
                     </Typography>
                 )}
             </Grid>

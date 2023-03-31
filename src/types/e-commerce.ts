@@ -34,6 +34,7 @@ export type Products = {
     productID: string | number;
     sku: any;
     skus: Skus[];
+    showWithoutStock: boolean;
 };
 
 export type Skus = {

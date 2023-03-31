@@ -31,7 +31,7 @@ const FloatingHistorialApproval = ({ handleDrawerOpenHistorial }: { handleDrawer
                 }
             }}
         >
-            <IconButton disableRipple aria-label="cart" sx={{ '&:hover': { bgcolor: 'secondary' } }} size="large">
+            <IconButton component="div" disableRipple aria-label="cart" sx={{ '&:hover': { bgcolor: 'secondary' } }} size="large">
                 <WorkHistoryIcon sx={{ color: 'grey.800' }} />
             </IconButton>
         </Fab>

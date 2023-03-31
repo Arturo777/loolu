@@ -35,6 +35,7 @@ import {
     InputAdornment,
     Modal
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
@@ -57,6 +58,12 @@ import { BrandType, CategoryType } from 'types/catalog';
 import { getCategoriesService } from 'store/slices/catalog';
 import ConfigProvider from 'config';
 import filterUnitM from 'utils/unitMeasurement';
+
+import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+
+// types
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -170,6 +177,20 @@ function BrandModal({
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
+const defaultMerchantProps: MultiMerchantFormProps = {
+    isOpen: false,
+    data: [],
+    accessor: '',
+    // data: { [key: string]: any }[];
+    inputLabel: 'label',
+    toggleDrawer: (e) => {
+        console.log(e);
+    },
+    onSave: (data: any) => console.log(data),
+    type: InputType.textField
+    // options?: null | SelectOptionType[];
+};
+
 const ProductInfo = ({
     product,
     setValueSku,
@@ -187,25 +208,29 @@ const ProductInfo = ({
     setNewBrandSku,
     setFlagCategory,
     flagCategory,
-    setNewCategorySku
+    setNewCategorySku,
+    allMerchantsProductData,
+    saveMultiChange
 }: {
-    product: any;
-    setValueSku: any;
-    valueSku: any;
-    setActive: any;
     active: boolean;
-    productInfo: Products;
-    setProductInfo: any;
-    tradePolicies: any;
-    skuInfo: Skus | undefined;
-    setSkuInfo: any;
+    allMerchantsProductData: { [key: string]: any }[];
     brandsInfo: BrandType[] | undefined;
-    setFlagBrand: any;
     flagBrand: boolean;
-    setNewBrandSku: any;
-    setFlagCategory: any;
     flagCategory: boolean;
+    product: any;
+    productInfo: Products;
+    saveMultiChange: (newData: { [key: string]: any }[]) => void;
+    setActive: any;
+    setFlagBrand: any;
+    setFlagCategory: any;
+    setNewBrandSku: any;
     setNewCategorySku: any;
+    setProductInfo: any;
+    setSkuInfo: any;
+    setValueSku: any;
+    skuInfo: Skus | undefined;
+    tradePolicies: any;
+    valueSku: any;
 }) => {
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -217,9 +242,7 @@ const ProductInfo = ({
         right: false
     });
 
-    /* const [selectedCatId, setSelectedCatId] = useState<number>(); */
-    /* const dispatch = useDispatch(); */
-    /* const history = useNavigate(); */
+    const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
     // info Brands
     const [button, setButton] = useState(false);
@@ -243,10 +266,6 @@ const ProductInfo = ({
             setDisplay(false);
         }
     };
-
-    useEffect(() => {
-        console.log('productInfo', productInfo);
-    }, [productInfo]);
 
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
@@ -314,6 +333,40 @@ const ProductInfo = ({
         setDisplay(false);
     };
 
+    const handleDrawer = ({
+        accessor,
+        intlLabel,
+        data = undefined,
+        options = null,
+        type
+    }: {
+        accessor: string;
+        intlLabel: string;
+        data?: { [key: string]: any }[];
+        options?: null | SelectOptionType[];
+        type: InputType;
+    }) => {
+        const newMultiFormProps: MultiMerchantFormProps = {
+            accessor,
+            data: data || allMerchantsProductData,
+            isOpen: true,
+            inputLabel: intlLabel,
+            options,
+            toggleDrawer: (e) => {
+                // console.log('TOGLLE');
+                setMultiFormProps({ ...defaultMerchantProps, isOpen: e });
+                // resetDrawer();
+            },
+            onSave: (newData) => {
+                setMultiFormProps({ ...defaultMerchantProps, isOpen: false });
+                saveMultiChange(newData);
+            },
+            type
+        };
+
+        setMultiFormProps(newMultiFormProps);
+    };
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -321,26 +374,76 @@ const ProductInfo = ({
                     <FormattedMessage id="product-detail-title" />
                 </h2>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <MultiMerchantForm {...multiFormProps} />
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
                             {active ? (
                                 <>
-                                    <FormControlLabel
-                                        sx={{ ml: 1 }}
-                                        control={<Android12Switch defaultChecked={product?.isActive} />}
-                                        label={<FormattedMessage id="active" />}
-                                    />
-                                    <FormControlLabel
+                                    <RowStack>
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            checked={productInfo?.isActive}
+                                            control={
+                                                <Android12Switch
+                                                    checked={productInfo?.isActive}
+                                                    onChange={handleChangeProd}
+                                                    name="isActive"
+                                                />
+                                            }
+                                            label={<FormattedMessage id="active" />}
+                                        />
+                                        <IconButton
+                                            color="inherit"
+                                            aria-label="Open drawer"
+                                            edge="start"
+                                            size="small"
+                                            onClick={() =>
+                                                handleDrawer({ accessor: 'isActive', intlLabel: 'active', type: InputType.switch })
+                                            }
+                                        >
+                                            <EditIcon fontSize="small" />
+                                        </IconButton>
+                                    </RowStack>
+                                    {/* <FormControlLabel
                                         sx={{ ml: 1 }}
                                         control={<Android12Switch defaultChecked={product?.isVisible} />}
                                         label="Visible"
-                                    />
-                                    <FormControlLabel
+                                    /> */}
+                                    {/* <FormControlLabel
                                         sx={{ ml: 1 }}
                                         control={<Android12Switch defaultChecked={product?.isEcommerce} />}
                                         label={<FormattedMessage id="e-commerce" />}
-                                    />
-                                    <FormControlLabel
+                                    /> */}
+                                    <RowStack>
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            checked={productInfo?.isEcommerce}
+                                            control={
+                                                <Android12Switch
+                                                    checked={productInfo?.isEcommerce}
+                                                    onChange={handleChangeProd}
+                                                    name="isEcommerce"
+                                                />
+                                            }
+                                            label={<FormattedMessage id="e-commerce" />}
+                                        />
+                                        <IconButton
+                                            color="inherit"
+                                            aria-label="Open drawer"
+                                            edge="start"
+                                            size="small"
+                                            onClick={() =>
+                                                handleDrawer({
+                                                    accessor: 'isEcommerce',
+                                                    intlLabel: 'e-commerce',
+                                                    type: InputType.switch
+                                                })
+                                            }
+                                        >
+                                            <EditIcon fontSize="small" />
+                                        </IconButton>
+                                    </RowStack>
+                                    {/* <FormControlLabel
                                         sx={{ ml: 1 }}
                                         control={
                                             <Android12Switch
@@ -350,7 +453,37 @@ const ProductInfo = ({
                                             />
                                         }
                                         label={<FormattedMessage id="out_of_stock" />}
-                                    />
+                                    /> */}
+
+                                    <RowStack>
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            checked={productInfo?.showWithoutStock}
+                                            control={
+                                                <Android12Switch
+                                                    checked={productInfo?.showWithoutStock}
+                                                    onChange={handleChangeProd}
+                                                    name="showWithoutStock"
+                                                />
+                                            }
+                                            label={<FormattedMessage id="out_of_stock" />}
+                                        />
+                                        <IconButton
+                                            color="inherit"
+                                            aria-label="Open drawer"
+                                            edge="start"
+                                            size="small"
+                                            onClick={() =>
+                                                handleDrawer({
+                                                    accessor: 'showWithoutStock',
+                                                    intlLabel: 'out_of_stock',
+                                                    type: InputType.switch
+                                                })
+                                            }
+                                        >
+                                            <EditIcon fontSize="small" />
+                                        </IconButton>
+                                    </RowStack>
                                 </>
                             ) : (
                                 <>
@@ -398,7 +531,7 @@ const ProductInfo = ({
                                             label={intl.formatMessage({ id: 'product_name' })}
                                             variant="outlined"
                                             name="productName"
-                                            defaultValue={product?.productName}
+                                            // defaultValue={product?.productName}
                                             value={productInfo?.productName}
                                             onChange={handleChangeProd}
                                         />
@@ -408,7 +541,7 @@ const ProductInfo = ({
                                             label={intl.formatMessage({ id: 'title' })}
                                             variant="outlined"
                                             name="title"
-                                            defaultValue={product?.title}
+                                            // defaultValue={product?.title}
                                             value={productInfo?.title}
                                             onChange={handleChangeProd}
                                         />
@@ -418,7 +551,7 @@ const ProductInfo = ({
                                             label={intl.formatMessage({ id: 'product_url' })}
                                             variant="outlined"
                                             name="linkId"
-                                            defaultValue={formatUrl(product?.linkId)}
+                                            // defaultValue={formatUrl(product?.linkId)}
                                             value={productInfo?.linkId}
                                             onChange={handleChangeProd}
                                         />
@@ -436,11 +569,7 @@ const ProductInfo = ({
             </Grid>
             <Grid item xs={12} sx={{ ml: 1 }}>
                 {active ? (
-                    <Box
-                        sx={{
-                            '& .MuiTextField-root': { mt: 2 }
-                        }}
-                    >
+                    <RowStack>
                         <TextField
                             fullWidth
                             multiline
@@ -448,18 +577,30 @@ const ProductInfo = ({
                             label={intl.formatMessage({ id: 'description' })}
                             variant="outlined"
                             name="description"
-                            defaultValue={product?.description}
+                            // defaultValue={product?.description}
                             value={productInfo?.description}
                             onChange={handleChangeProd}
                         />
-                    </Box>
+
+                        <IconButton
+                            color="inherit"
+                            aria-label="Open drawer"
+                            edge="start"
+                            size="small"
+                            onClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
+                        >
+                            <EditIcon fontSize="small" />
+                        </IconButton>
+                    </RowStack>
                 ) : (
                     <Typography variant="body2">{product?.description}</Typography>
                 )}
             </Grid>
             <Grid item xs={12}>
-                <Typography variant="body1" sx={{ ml: 1 }}>
-                    ID: {product?.productID}{' '}
+                <RowStack>
+                    <Typography variant="body1" sx={{ ml: 1 }}>
+                        ID: {product?.productID}{' '}
+                    </Typography>
                     {active ? (
                         <Box
                             sx={{
@@ -472,7 +613,7 @@ const ProductInfo = ({
                                 label={intl.formatMessage({ id: 'reference_code' })}
                                 variant="outlined"
                                 name="productRefID"
-                                defaultValue={product?.productRefID}
+                                // defaultValue={product?.productRefID}
                                 value={productInfo?.productRefID}
                                 onChange={handleChangeProd}
                             />
@@ -480,7 +621,7 @@ const ProductInfo = ({
                     ) : (
                         <Typography variant="body2">RefID: {product?.productRefID}</Typography>
                     )}
-                </Typography>
+                </RowStack>
             </Grid>
             <Grid item xs={12} sx={{ ml: 1 }}>
                 {active ? (
@@ -570,7 +711,7 @@ const ProductInfo = ({
                         <Typography variant="body2">
                             {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
                         </Typography>
-                        <SwipeableDrawer
+                        {/* <SwipeableDrawer
                             sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
                             anchor="right"
                             open={stateDrawer.right}
@@ -608,7 +749,7 @@ const ProductInfo = ({
                                             />
                                         </Grid>
                                     ))}
-                        </SwipeableDrawer>
+                        </SwipeableDrawer> */}
                     </Box>
                 ) : (
                     <Typography variant="h4">{product?.categoryName}</Typography>
@@ -726,7 +867,7 @@ const ProductInfo = ({
                                             label={intl.formatMessage({ id: 'sku_name' })}
                                             variant="outlined"
                                             name="name"
-                                            defaultValue={skuInfo?.name}
+                                            // defaultValue={skuInfo?.name}
                                             value={skuInfo?.name}
                                             onChange={handleChangeSku}
                                         />
@@ -753,7 +894,7 @@ const ProductInfo = ({
                                             label="EAN/UPC"
                                             variant="outlined"
                                             name="ean"
-                                            defaultValue={skuInfo?.ean}
+                                            // defaultValue={skuInfo?.ean}
                                             value={skuInfo?.ean}
                                             onChange={handleChangeSku}
                                         />
@@ -980,3 +1121,8 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
         </>
     );
 };
+
+const RowStack = styled(Stack)({
+    flexDirection: 'row',
+    display: 'inline-flex'
+});

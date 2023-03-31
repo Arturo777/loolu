@@ -34,9 +34,6 @@ import Loader from 'ui-component/Loader';
 import { queryToObject } from 'utils/helpers';
 import { useIntl } from 'react-intl';
 
-import MultiMerchantForm from 'ui-component/MultiMerchant/MerchantsForm';
-import { InputType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
-
 // product list container
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
     flexGrow: 1,
@@ -76,9 +73,10 @@ const ProductsList = () => {
     const location = useLocation();
 
     const [isLoading, setLoading] = useState(true);
-    useEffect(() => {
-        setLoading(false);
-    }, []);
+
+    // useEffect(() => {
+    //     setLoading(false);
+    // }, []);
 
     // drawer
     const [open, setOpen] = useState(isLoading);
@@ -355,32 +353,7 @@ const ProductsList = () => {
                                 : productResult}
                         </Grid>
                     </Main>
-                    <MultiMerchantForm
-                        type={InputType.checkbox}
-                        isOpen={multiForm}
-                        toggleDrawer={() => setMultiForm((val) => !val)}
-                        accessor="isActive"
-                        data={mockData}
-                        inputLabel="Is active"
-                        options={[
-                            {
-                                label: 'Categoria 1',
-                                value: 1
-                            },
-                            {
-                                label: 'Categoria 10',
-                                value: 10
-                            },
-                            {
-                                label: 'Categoria 9',
-                                value: 9
-                            },
-                            {
-                                label: 'Categoria 11',
-                                value: 11
-                            }
-                        ]}
-                    />
+
                     {/* <MultiMerchantForm
                         type={InputType.textarea}
                         isOpen

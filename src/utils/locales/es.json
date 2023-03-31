@@ -307,5 +307,6 @@
     "create-product": "Crear producto",
     "create_Date": "Fecha lanzamiento",
     "update_Date": "Fecha de actualización",
-    "select_vendor": "Proveedores"
+    "select_vendor": "Proveedores",
+    "label": "Etiqueta"
 }

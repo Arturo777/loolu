@@ -1,3 +1,5 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-prototype-builtins */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -21,12 +23,22 @@ export type MultiMerchantFormProps = {
     data: { [key: string]: any }[];
     inputLabel: string;
     isOpen: boolean;
+    onSave: (newData: { [key: string]: any }[]) => void;
+    options?: null | SelectOptionType[];
     toggleDrawer: (e: boolean) => void;
     type: InputType;
-    options?: null | SelectOptionType[];
 };
 
-export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, toggleDrawer, type, options }: MultiMerchantFormProps) {
+export default function MultiMerchantForm({
+    accessor,
+    data,
+    inputLabel,
+    isOpen,
+    toggleDrawer,
+    type,
+    options,
+    onSave
+}: MultiMerchantFormProps) {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -46,7 +58,7 @@ export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, 
         const transformedData = getData({ data, accessor });
 
         if (transformedData === null) {
-            console.error('The accessor cannot reference to an object');
+            throw Error('The accessor cannot reference to an object');
         } else {
             setNewData(transformedData);
             setOriginalData(transformedData);
@@ -116,7 +128,14 @@ export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, 
     const drawerFooter = useMemo(
         () => (
             <Stack direction="row" justifyContent="flex-end">
-                <Button variant="contained" startIcon={<CloseIcon />} color="error" sx={{ mr: 2 }} type="submit">
+                <Button
+                    type="button"
+                    onClick={() => toggleDrawer(false)}
+                    variant="contained"
+                    startIcon={<CloseIcon />}
+                    color="error"
+                    sx={{ mr: 2 }}
+                >
                     {intl.formatMessage({ id: 'cancel' })}
                 </Button>
                 <Button onClick={() => formRef.current?.requestSubmit()} variant="contained" startIcon={<SaveIcon />} type="submit">
@@ -124,13 +143,21 @@ export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, 
                 </Button>
             </Stack>
         ),
-        [intl]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [intl, toggleDrawer]
     );
 
     const handleSave = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
-        console.log('FORMAT DATA');
+        // const updateData = updateNestedData({ data: data[0].detailProduct, key: accessor, value: newData[0].value });
+        const updatedData = generateNewData({
+            originalData: data,
+            newData,
+            accessor
+        });
+
+        onSave(updatedData);
     };
 
     return (
@@ -158,14 +185,14 @@ export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, 
                                 <MerchantAvatar
                                     size="large"
                                     merchant={{
-                                        name: item.name,
+                                        name: item.merchantName,
                                         merchantId: item.merchantId,
                                         isFather: false,
                                         isSelected: false
                                     }}
                                 />
                                 <Typography sx={{ ml: 1, mr: 1, userSelect: 'none' }} variant="subtitle1">
-                                    {item.name}
+                                    {item.merchantName}
                                 </Typography>
 
                                 {item.hasChanges && (
@@ -186,11 +213,10 @@ export default function MultiMerchantForm({ accessor, data, inputLabel, isOpen, 
                                 <RenderInputComponent
                                     type={type}
                                     value={item.value}
-                                    label={inputLabel}
+                                    label={intl.formatMessage({ id: inputLabel })}
                                     updateValue={updateValue(item.merchantId)}
                                     options={options}
                                 />
-                                {/* <TextField label="Description" fullWidth value={item.value} /> */}
                             </Box>
                             <Divider sx={{ mt: 2, mb: 0 }} />
                         </Stack>
@@ -204,12 +230,10 @@ const getData = ({ data, accessor }: { data: { [key: string]: any }[]; accessor:
     // split accesor
     const splitedAccessor = accessor.split('.');
 
-    // console.log(splitedAccessor);
-
     let nData: { [key: string]: any }[] = [];
 
     data.forEach((dataItem) => {
-        let newVal = dataItem.data;
+        let newVal = dataItem.detailProduct;
 
         const max = splitedAccessor.length - 1;
         let i = 0;
@@ -219,16 +243,56 @@ const getData = ({ data, accessor }: { data: { [key: string]: any }[]; accessor:
             i += 1;
         } while (max >= i);
 
-        nData = [...nData, { ...dataItem.merchant, value: newVal ?? '', hasChanges: false }];
+        nData = [
+            ...nData,
+            { merchantId: dataItem.merchantId, merchantName: dataItem.merchantName, value: newVal ?? '', hasChanges: false }
+        ];
     });
 
     if (nData && nData[0] && nData[0].value && typeof nData[0].value === 'object') {
-        console.log('Cannot render objects');
-        return null;
+        throw Error('Cannot render objects');
+        // return null;
     }
 
     return nData;
 };
 
-// const createReturnData = () => {};
-//
+const generateNewData = ({
+    originalData,
+    newData,
+    accessor
+}: {
+    originalData: { [key: string]: any }[];
+    newData: { [key: string]: any }[];
+    accessor: string;
+}) => {
+    const newObj = originalData.map((dataItem) => {
+        const findValue = newData.find((item) => item.merchantId === dataItem.merchantId);
+
+        const updateValue = updateNestedData({
+            data: dataItem.detailProduct,
+            key: accessor,
+            value: findValue?.value
+        });
+
+        return { ...dataItem, detailProduct: { ...updateValue } };
+    });
+
+    return newObj;
+};
+
+const updateNestedData = ({ data, key, value }: { data: { [key: string]: any }; key: string; value: any }): any => {
+    if (!data || typeof data !== 'object') {
+        return data;
+    }
+    const [currentKey, ...remainingKeys] = key.split('.');
+    if (remainingKeys.length === 0) {
+        // Base case: update the value of the current key
+        return { ...data, [currentKey]: value };
+    }
+
+    // Recursive case: update the nested object
+    const updatedChild = updateNestedData({ data: data[currentKey], key: remainingKeys.join('.'), value });
+
+    return { ...data, [currentKey]: updatedChild };
+};

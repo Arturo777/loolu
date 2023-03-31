@@ -308,5 +308,6 @@
     "create-product": "Create product",
     "create_Date": "Create date",
     "update_Date": "Update date",
-    "select_vendor": "Select vendor"
+    "select_vendor": "Select vendor",
+    "label": "Label"
 }

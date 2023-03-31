@@ -31,7 +31,7 @@ const FloatingApprovalButton = ({ handleDrawerOpen }: { handleDrawerOpen: any })
                 }
             }}
         >
-            <IconButton disableRipple aria-label="cart" sx={{ '&:hover': { bgcolor: 'transparent' } }} size="large">
+            <IconButton component="div" disableRipple aria-label="cart" sx={{ '&:hover': { bgcolor: 'transparent' } }} size="large">
                 <GroupsIcon sx={{ color: 'grey.800' }} />
             </IconButton>
         </Fab>
