@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
     Box,
@@ -8,6 +8,7 @@ import {
     FormLabel,
     Grid,
     InputLabel,
+    LinearProgress,
     MenuItem,
     Radio,
     RadioGroup,
@@ -16,6 +17,10 @@ import {
     Switch,
     TextField
 } from '@mui/material';
+import { useDispatch, useSelector } from 'store';
+import { getBrands2 } from 'store/slices/catalog';
+import { BrandType } from 'types/catalog';
+import { MultiBrandSelect } from 'ui-component/selects/BrandSelect';
 
 export type AddOptionsProps<T, U, K extends string> = U extends Record<K, any> ? T & U : T & { [P in K]?: never };
 
@@ -25,7 +30,8 @@ export enum InputType {
     radio = 'radio',
     checkbox = 'checkbox',
     switch = 'switch',
-    select = 'select'
+    select = 'select',
+    brandSelect = 'brandSelect'
 }
 
 export type SelectOptionType = {
@@ -42,6 +48,15 @@ type RenderInputComponentProps = {
 };
 
 const RenderInputComponent = ({ label, value, updateValue, type, options }: RenderInputComponentProps) => {
+    // hooks
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (type === InputType.brandSelect) {
+            dispatch(getBrands2());
+        }
+    }, [dispatch, type]);
+
     if (type === InputType.select && !options) {
         throw new Error(
             '"options" property is required when "type" is set to "InputType.select". Please provide the "options" property to continue.'
@@ -144,45 +159,56 @@ const RenderInputComponent = ({ label, value, updateValue, type, options }: Rend
         );
     }
 
+    if (type === InputType.brandSelect) {
+        return <RenderBrandSelect merchantId={1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
+    }
+
     return <Box />;
 };
 
 export default RenderInputComponent;
 
-// type BaseRenderInputComponentProps<T> = {
-//     type: T;
-//     label: string;
-//     options?: null | SelectOptionType[];
-// };
+const RenderBrandSelect = ({
+    merchantId,
+    value,
+    updateValue
+}: {
+    merchantId: number;
+    value?: number | null;
+    updateValue: (e: any) => void;
+}) => {
+    // store
+    const { brands2, loading } = useSelector((state) => state.catalogue);
 
-// type TextFieldProps = BaseRenderInputComponentProps<InputType.textField> & {
-//     value: string;
-//     updateValue: (value: string) => void;
-// };
+    const brandsList: BrandType[] = useMemo(() => {
+        const filteredByMerchant = brands2.find((item: any) => item.merchantId === Number(merchantId));
 
-// type TextAreaProps = BaseRenderInputComponentProps<InputType.textarea> & {
-//     value: string;
-//     updateValue: (value: string) => void;
-// };
+        return filteredByMerchant?.brands ?? [];
+    }, [merchantId, brands2]);
 
-// type RadioProps = BaseRenderInputComponentProps<InputType.radio> & {
-//     value: string;
-//     updateValue: (value: string) => void;
-// };
+    if (loading) {
+        return (
+            <Box>
+                <LinearProgress />
+            </Box>
+        );
+    }
 
-// type CheckboxProps = BaseRenderInputComponentProps<InputType.checkbox> & {
-//     value: boolean;
-//     updateValue: (value: boolean) => void;
-// };
+    if (brandsList.length === 0) {
+        return <Box />;
+    }
 
-// type SwitchProps = BaseRenderInputComponentProps<InputType.switch> & {
-//     value: boolean;
-//     updateValue: (value: boolean) => void;
-// };
+    return <SearchAndCreateBrandSelect updateValue={updateValue} brandsList={brandsList} value={value} />;
+};
 
-// type SelectProps = BaseRenderInputComponentProps<InputType.select> & {
-//     value: string | number;
-//     updateValue: (value: string | number) => void;
-// };
+// const options = ['Option 1', 'Option 2'];
 
-// type RenderInputComponentProps = TextFieldProps | TextAreaProps | RadioProps | CheckboxProps | SwitchProps | SelectProps;
+const SearchAndCreateBrandSelect = ({
+    brandsList,
+    value,
+    updateValue
+}: {
+    updateValue: (e: any) => void;
+    brandsList: BrandType[];
+    value?: number | null;
+}) => <MultiBrandSelect brandsList={brandsList} loading={false} onChange={updateValue} initialValue={value ?? undefined} />;

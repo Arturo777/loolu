@@ -394,13 +394,19 @@ export function getProductReviews() {
 export const getProductDetails = createAsyncThunk(
     `${slice.name}/getMultiMerchantProduct`,
     async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
-        const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
+        const response = await axios.get('/styrk/api/product/detail/sku-multicatalog', {
+            // const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
             baseURL: STYRK_API,
             params: {
-                idProd,
+                idSKU: 0,
+                // idProd,
                 idMerchant
             }
         });
-        return response.data.response;
+
+        console.log();
+
+        const changeResponse = response.data.response.map((item: any) => ({ ...item, detailProduct: item.detail }));
+        return changeResponse;
     }
 );

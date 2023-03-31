@@ -94,6 +94,7 @@ const slice = createSlice({
             })
             .addCase(getBrands2.fulfilled, (state, action) => {
                 state.loading = false;
+
                 state.brands2 = action.payload.response;
             });
         builder

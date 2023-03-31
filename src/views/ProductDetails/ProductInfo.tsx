@@ -614,17 +614,27 @@ const ProductInfo = ({
                     >
                         {/* TODO: copiar  */}
                         <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
-                            <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                label={intl.formatMessage({ id: 'brand' })}
-                                variant="outlined"
-                                name="brandName"
-                                /* defaultValue={product?.brandName} */
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                onClick={() => setDisplay(true)}
-                            />
+                            <FieldEditingHolder
+                                onEditClick={() =>
+                                    handleDrawer({
+                                        accessor: 'brandId',
+                                        intlLabel: 'brand',
+                                        type: InputType.brandSelect
+                                    })
+                                }
+                            >
+                                <TextField
+                                    fullWidth
+                                    id="outlined-basic"
+                                    label={intl.formatMessage({ id: 'brand' })}
+                                    variant="outlined"
+                                    name="brandName"
+                                    /* defaultValue={product?.brandName} */
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onClick={() => setDisplay(true)}
+                                />
+                            </FieldEditingHolder>
                             <BrandModal
                                 setModalBrands={setModalBrands}
                                 modalBrands={modalBrands}
@@ -790,7 +800,7 @@ const ProductInfo = ({
                 <Divider sx={{ mt: 2 }} />
             </Grid>
 
-            {productInfo.sku && (
+            {productInfo.sku && product?.skus && (
                 <Grid item xs={12}>
                     <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
                     <Grid container spacing={1}>

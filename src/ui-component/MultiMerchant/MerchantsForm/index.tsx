@@ -55,6 +55,10 @@ export default function MultiMerchantForm({
     // const [accesorError, setAccesorError] = useState<boolean>(false);
 
     useEffect(() => {
+        console.log('-- data --', data);
+    }, [data]);
+
+    useEffect(() => {
         const transformedData = getData({ data, accessor });
 
         if (transformedData === null) {
