@@ -173,6 +173,7 @@ const ProductDetails = () => {
                     idMerchant
                 })
             ).then(({ payload }) => {
+                console.log('payload', payload);
                 const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
 
                 setAllMerchantsProductData(payload);
@@ -198,18 +199,6 @@ const ProductDetails = () => {
     useEffect(() => {
         setOpen(false);
     }, []);
-
-    // useEffect(() => {
-    //     if (product !== null) {
-    //         console.log('SET PRO');
-    //         setOriginalData(product);
-    //         setProductInfo(product);
-    //         setIsLoading(false);
-    //     }
-    //     if (!active && product !== null) {
-    //         setOriginalData(product);
-    //     }
-    // }, [product, active]);
 
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);

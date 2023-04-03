@@ -164,13 +164,22 @@ const slice = createSlice({
         /* --------- MULTI MERCHANT SERVICES --------- */
         /* ------------------------------------------- */
         builder
+            // PRODUCT
             .addCase(getProductDetails.pending, (state) => {
                 state.loadingProduct = true;
             })
             .addCase(getProductDetails.fulfilled, (state, action) => {
                 state.loadingProduct = false;
+                console.log(action.payload);
                 state.merchantProducts = action.payload;
             });
+        // SKUs
+        builder.addCase(getProductSkuList.pending, (state) => {
+            state.loadingProduct = true;
+        });
+        // builder.addCase(getProductSkuList.pending, (state) => {
+        //     state.loadingProduct = true;
+        // });
         builder
             .addCase(productFacetService.pending, (state) => {
                 state.loadingProducts = true;
@@ -441,19 +450,30 @@ export function getProductReviews() {
 export const getProductDetails = createAsyncThunk(
     `${slice.name}/getMultiMerchantProduct`,
     async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
-        const response = await axios.get('/styrk/api/product/detail/sku-multicatalog', {
-            // const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
+        // const response = await axios.get('/styrk/api/product/detail/sku-multicatalog', {
+        const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
             baseURL: STYRK_API,
             params: {
-                idSKU: 0,
-                // idProd,
+                idProd,
                 idMerchant
             }
         });
 
-        console.log();
+        return response.data.response;
+    }
+);
 
-        const changeResponse = response.data.response.map((item: any) => ({ ...item, detailProduct: item.detail }));
-        return changeResponse;
+export const getProductSkuList = createAsyncThunk(
+    `${slice.name}/getMultiMerchantProductSKUs`,
+    async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
+        const response = await axios.get('/styrk/api/product/detail/productSkus', {
+            baseURL: STYRK_API,
+            params: {
+                idProd,
+                idMerchant
+            }
+        });
+
+        return response.data.response;
     }
 );
