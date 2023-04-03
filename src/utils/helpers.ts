@@ -29,6 +29,24 @@ export const getSearchParamsFromObject = (data: { [key: string]: any }): string 
 
 export const other = () => {};
 
+export const filterCategories = (categories: CategoryType[], searchText: string): CategoryType[] => {
+    if (!searchText) return categories;
+    let filteredCategories: CategoryType[] = [];
+
+    categories.forEach((item) => {
+        const { hasChildren, children, ...rest } = item;
+        if (JSON.stringify(rest).includes(searchText)) {
+            filteredCategories.push(item);
+        }
+
+        if (hasChildren && children.length) {
+            const filteredChildren = filterCategories(item.children, searchText);
+            filteredCategories = filteredCategories.concat(filteredChildren);
+        }
+    });
+    return filteredCategories;
+};
+
 export const getCategoriesFlat = (categories: CategoryType[]): FlatCategoryType[] => {
     let toReturn: FlatCategoryType[] = [];
 

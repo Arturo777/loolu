@@ -94,7 +94,7 @@ export type CatalogStateProps = {
     filterCategories: FilterCategoryType[];
     merchantCategories?: MerchantCategoryType[];
     flatMerchantCategories: FlatMerchantCategoriesType[];
-    filterMerchantCategories: FilterMerchantCategoryType[];
+    filterMerchantCategories: (categories: CategoryType[], searchText: string) => CategoryType[];
 };
 
 export type BrandType = {
