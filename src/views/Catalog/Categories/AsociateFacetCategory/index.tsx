@@ -28,14 +28,21 @@ import { useDispatch } from 'store';
 // type
 import { CategoryType, FacetType, SpecificationGroupType, SpecificationsType, SpecificationGroupMode } from 'types/catalog';
 import AssociateFormComponent from './AssociateFormComponent';
+import { MerchantType } from 'types/security';
 
 type AsociateFacetCategoryComponentProps = {
     open: boolean;
     toggleDrawer: () => void;
     category: CategoryType | null;
+    selectedMerchant: MerchantType | undefined;
 };
 
-export default function AsociateFacetCategoryComponent({ open, toggleDrawer, category }: AsociateFacetCategoryComponentProps) {
+export default function AsociateFacetCategoryComponent({
+    open,
+    toggleDrawer,
+    category,
+    selectedMerchant
+}: AsociateFacetCategoryComponentProps) {
     // hooks
     const dispatch = useDispatch();
     const intl = useIntl();
@@ -78,14 +85,15 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
     }, [open]);
 
     const getCategory = () => {
+        if (!selectedMerchant) return;
         if (category) {
             setIsLoading(true);
-            dispatch(getFacetVariant({ idMerchant: 1, catId: category.id }))
+            dispatch(getFacetVariant({ idMerchant: selectedMerchant.merchantId, catId: category.id }))
                 .then(({ payload }) => {
                     const dataElement = payload.response[0];
                     const newSpecs: SpecificationGroupType[] = dataElement?.specificationGroups ?? [];
                     setSpecificationsGroups(newSpecs);
-                    if (newSpecs.length === 0) {
+                    if (!newSpecs.length) {
                         setEditingForm({
                             specification: null,
                             facet: null,
@@ -179,6 +187,7 @@ export default function AsociateFacetCategoryComponent({ open, toggleDrawer, cat
             </Collapse>
             {/* FORM */}
             <AssociateFormComponent
+                selectedMerchant={selectedMerchant}
                 show={editingForm.show}
                 handleCancel={handleCloseForm}
                 handleSuccesFetch={handleSuccesFetch}

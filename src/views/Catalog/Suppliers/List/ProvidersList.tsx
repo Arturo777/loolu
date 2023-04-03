@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -16,6 +16,7 @@ import { getSuppliers } from 'store/slices/catalog';
 // types
 
 import { SupplierType } from 'types/catalog';
+import { MerchantType } from 'types/security';
 // assets
 
 // flags
@@ -24,9 +25,10 @@ import flagUS from 'assets/images/countries/us.png';
 
 type ProvidersListProps = {
     filterText: string;
+    selectedMerchants: MerchantType[];
 };
 
-const ProvidersList = ({ filterText }: ProvidersListProps) => {
+const ProvidersList = ({ selectedMerchants, filterText }: ProvidersListProps) => {
     // hooks
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -37,17 +39,44 @@ const ProvidersList = ({ filterText }: ProvidersListProps) => {
 
     // vars
     const [filteredSuppliers, setFilteredSuppliers] = useState<SupplierType[]>([]);
-
+    const [suppliers2, setSuppliers2] = useState<any[]>([
+        {
+            idProvider: 790,
+            name: 'vvv32',
+            countryId: 'MX',
+            merchantId: 1
+        },
+        {
+            idProvider: 791,
+            name: 'Pfizer',
+            countryId: 'MX',
+            merchantId: 2
+        },
+        {
+            idProvider: 792,
+            name: 'Pablo SA de CV',
+            countryId: 'MX',
+            merchantId: 1
+        }
+    ]);
     useEffect(() => {
         dispatch(getSuppliers());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    const provider = useMemo(() => {
+        if (selectedMerchants.length) {
+            const providers = suppliers2.filter((item: any) => item?.merchantId === selectedMerchants[0]?.merchantId);
+            console.log(providers);
+            return providers;
+        }
+        return [];
+    }, [suppliers2, selectedMerchants]);
     useEffect(() => {
+        console.log('provider', provider);
         if (filterText?.length === 0) {
-            setFilteredSuppliers(suppliers);
+            setFilteredSuppliers(provider);
         } else {
-            const filtered = suppliers.filter(
+            const filtered = provider.filter(
                 (profile: SupplierType) =>
                     JSON.stringify(profile)
                         .toLowerCase()
@@ -56,7 +85,7 @@ const ProvidersList = ({ filterText }: ProvidersListProps) => {
 
             setFilteredSuppliers(filtered);
         }
-    }, [filterText, suppliers]);
+    }, [filterText, suppliers, selectedMerchants]);
 
     return (
         <>

@@ -1,3 +1,5 @@
+import { MerchantProductType } from './product';
+
 // product shop list
 export type Products = {
     tradePolicies: Trade[];
@@ -60,7 +62,7 @@ export type Products = {
 
 
 export type Skus = {
-    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
+    // map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     ean: string | number | undefined;
     name: string;
     skuID: string | number | undefined;
@@ -284,4 +286,6 @@ export interface ProductStateProps {
     createProductFacet: CreateFacetProduct[];
     error: object | string | null;
     loadingProducts?: boolean;
+    loadingProduct: boolean;
+    merchantProducts: MerchantProductType[];
 }

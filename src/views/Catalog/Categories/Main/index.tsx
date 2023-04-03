@@ -18,10 +18,9 @@ import CategoriesListComponent from '../List';
 import CreateCategoryPage from '../Create';
 import EditCategoryComponent from '../Edit';
 import AsociateFacetCategoryComponent from '../AsociateFacetCategory';
-import { CategoryType, MerchantCategoryType, SelectedMerchant } from 'types/catalog';
+import { CategoryType } from 'types/catalog';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { MerchantType } from 'types/security';
-import MultiMerchantButtons from 'ui-component/MultiMerchantButton/MultiMerchantButton';
 import { useSelector } from 'store';
 
 // ==============================|| FACETS LIST ||============================== //
@@ -168,6 +167,7 @@ const CategoriesListPage = () => {
                 </Grid>
             </Grid>
             <AsociateFacetCategoryComponent
+                selectedMerchant={selectedMerchant}
                 open={openAssociateDrawer}
                 toggleDrawer={() => {
                     setOpenAssociateDrawer((prev) => !prev);

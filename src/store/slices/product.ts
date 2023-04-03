@@ -8,7 +8,7 @@ import { STYRK_API } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { ProductsFilter, Address, Products } from 'types/e-commerce';
+import { ProductsFilter, Products } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 import { getSearchParamsFromObject } from 'utils/helpers';
 
@@ -27,6 +27,8 @@ const initialState: DefaultRootStateProps['product'] = {
     approvalHistorial: [],
     reviews: [],
     addresses: [],
+    loadingProduct: true,
+    merchantProducts: [],
     productFacet: [],
     createProductFacet: [],
     loadingProducts: true
@@ -87,21 +89,6 @@ const slice = createSlice({
         // GET PRODUCT REVIEWS
         getProductReviewsSuccess(state, action) {
             state.reviews = action.payload;
-        },
-
-        // GET ADDRESSES
-        getAddressesSuccess(state, action) {
-            state.addresses = action.payload;
-        },
-
-        // ADD ADDRESS
-        addAddressSuccess(state, action) {
-            state.addresses = action.payload;
-        },
-
-        // EDIT ADDRESS
-        editAddressSuccess(state, action) {
-            state.addresses = action.payload;
         }
     },
     extraReducers(builder) {
@@ -111,6 +98,9 @@ const slice = createSlice({
             })
             .addCase(getProducts.fulfilled, (state, action) => {
                 state.loadingProducts = false;
+
+                console.log(action.payload.response);
+
                 const products = action.payload.response.map((item: ProductCardProps) => ({
                     ...item,
                     date: item.releaseDate,
@@ -119,6 +109,9 @@ const slice = createSlice({
                     offerPrice: 1000,
                     salePrice: 1300
                 }));
+
+                console.log(action.payload.response);
+
                 state.products = products;
             });
 
@@ -128,6 +121,7 @@ const slice = createSlice({
             })
             .addCase(getProduct.fulfilled, (state, action) => {
                 state.loadingProducts = false;
+
                 action.payload.response.departmentId = action.payload.response.categoryId;
 
                 state.product = action.payload.response[0] /* .detailProduct */;
@@ -166,6 +160,26 @@ const slice = createSlice({
                 state.loadingProducts = false;
                 state.approvalHistorial = action.payload.response;
             });
+        /* ------------------------------------------- */
+        /* --------- MULTI MERCHANT SERVICES --------- */
+        /* ------------------------------------------- */
+        builder
+            // PRODUCT
+            .addCase(getProductDetails.pending, (state) => {
+                state.loadingProduct = true;
+            })
+            .addCase(getProductDetails.fulfilled, (state, action) => {
+                state.loadingProduct = false;
+                console.log(action.payload);
+                state.merchantProducts = action.payload;
+            });
+        // SKUs
+        builder.addCase(getProductSkuList.pending, (state) => {
+            state.loadingProduct = true;
+        });
+        // builder.addCase(getProductSkuList.pending, (state) => {
+        //     state.loadingProduct = true;
+        // });
         builder
             .addCase(productFacetService.pending, (state) => {
                 state.loadingProducts = true;
@@ -252,6 +266,9 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             idProd: searchParams.idProd
         }
     });
+
+    console.log(response);
+
     return response.data;
 });
 
@@ -280,6 +297,7 @@ export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async ({ 
             page: 0
         }
     });
+    // return mockProductResponse;
     return response.data;
 });
 
@@ -425,35 +443,37 @@ export function getProductReviews() {
     };
 }
 
-export function getAddresses() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/address/list');
-            dispatch(slice.actions.getAddressesSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+/* ------------------------------------------- */
+/* --------- MULTI MERCHANT SERVICES --------- */
+/* ------------------------------------------- */
 
-export function addAddress(address: Address) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/address/new', address);
-            dispatch(slice.actions.addAddressSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+export const getProductDetails = createAsyncThunk(
+    `${slice.name}/getMultiMerchantProduct`,
+    async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
+        // const response = await axios.get('/styrk/api/product/detail/sku-multicatalog', {
+        const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
+            baseURL: STYRK_API,
+            params: {
+                idProd,
+                idMerchant
+            }
+        });
 
-export function editAddress(address: Address) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/address/edit', address);
-            dispatch(slice.actions.editAddressSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+        return response.data.response;
+    }
+);
+
+export const getProductSkuList = createAsyncThunk(
+    `${slice.name}/getMultiMerchantProductSKUs`,
+    async ({ idProd, merchantId }: { idProd: number | string; merchantId: number | string }) => {
+        const response = await axios.get('/styrk/api/product/detail/productSkus', {
+            baseURL: STYRK_API,
+            params: {
+                idProd,
+                merchantId
+            }
+        });
+
+        return response.data.response;
+    }
+);

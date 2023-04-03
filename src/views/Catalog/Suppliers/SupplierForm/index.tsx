@@ -27,6 +27,8 @@ import { SupplierType } from 'types/catalog';
 // flags
 import flagMX from 'assets/images/countries/mx.png';
 import flagUS from 'assets/images/countries/us.png';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { MerchantType } from 'types/security';
 
 type newSupplierType = {
     id?: number;
@@ -47,6 +49,7 @@ type SupplierFormProps = {
 export default function SupplierForm({ initialData, handleSave }: SupplierFormProps) {
     const intl = useIntl();
     const [newData, setNewData] = useState<newSupplierType>(initialDataState);
+    const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
     const { updating } = useSelector((state) => state.catalogue);
 
     useEffect(() => {
@@ -61,7 +64,9 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
     const handleChange = (event: SelectChangeEvent) => {
         setNewData({ ...newData, countryId: event.target.value as string });
     };
-
+    const onChangeMerchant = (merchant: MerchantType[]) => {
+        setChangeMerchant(merchant);
+    };
     const onchangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
@@ -70,13 +75,20 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        handleSave(newData);
+        const merchandsData = changeMerchant?.map((merchant) => ({
+            merchantId: merchant.merchantId,
+            isFather: merchant.isFather
+        }));
+        console.log(merchandsData);
+        // handleSave(newData);
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <Grid container spacing={gridSpacing}>
+                <Grid item xs={12} sm={6} md={3} lg={2}>
+                    <MultiMerchant onChange={onChangeMerchant} maxShow={3} defaultSelected={[]} />
+                </Grid>
                 <Grid item xs={12} sm={6} md={3} lg={3}>
                     <TextField
                         value={newData.name}

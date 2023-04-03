@@ -1,5 +1,6 @@
 import React from 'react';
 import { CategoryType, SpecificationGroupMode, SpecificationGroupType, SpecificationsType } from 'types/catalog';
+import { MerchantType } from 'types/security';
 
 // mui imports
 
@@ -19,6 +20,7 @@ type AssociateFormComponentProps = {
     specificationData?: SpecificationsType;
     specificationGroupMode: SpecificationGroupMode;
     canCancel: boolean;
+    selectedMerchant: MerchantType | undefined;
 };
 
 export default function AssociateFormComponent({
@@ -30,7 +32,8 @@ export default function AssociateFormComponent({
     category,
     specificationData,
     specificationGroupMode,
-    canCancel
+    canCancel,
+    selectedMerchant
 }: AssociateFormComponentProps) {
     if (!show) {
         return null;
@@ -39,6 +42,7 @@ export default function AssociateFormComponent({
     if (mode === 'EDIT') {
         return (
             <EditFormComponent
+                selectedMerchant={selectedMerchant}
                 category={category}
                 handleCancel={handleCancel}
                 specificationData={specificationData!}
@@ -50,6 +54,7 @@ export default function AssociateFormComponent({
 
     return (
         <AddFormComponent
+            selectedMerchant={selectedMerchant}
             category={category}
             specificationGroups={specificationGroups ?? []}
             handleCancel={handleCancel}
