@@ -228,8 +228,17 @@ export const createBrandMultiCatalog = createAsyncThunk(`${slice.name}/createBra
 
 /* ============ SUPPLIERS ============ */
 
+// export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
+//     const response = await axios.get(`styrk/api/brand/save-multicatalog`, {
+//         baseURL: STYRK_API,
+//         params: {
+//             idMerchant: idMerchant || 1
+//         }
+//     });
+//     return response.data;
+// });
 export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async (idMerchant?: number) => {
-    const response = await axios.get(`styrk/api/brand/save-multicatalog`, {
+    const response = await axios.get(`styrk/api/supplier/search`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: idMerchant || 1

@@ -17,6 +17,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import ProvidersList from './ProvidersList';
 import { useSelector } from 'store';
 import Loader from 'ui-component/Loader';
+import MultiMerchant from 'ui-component/MultiMerchantButton';
+import { MerchantType } from 'types/security';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
@@ -30,12 +32,11 @@ const ProvidersListPage = () => {
 
     // vars
     const [filterText, setFilterText] = useState<string>('');
-
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[] | null>([]);
     useEffect(() => {
         const search = searchParams.get('search');
         setFilterText(search ?? '');
     }, [searchParams]);
-
     const handleSearch = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined) => {
         const newString = event?.target.value;
 
@@ -47,10 +48,16 @@ const ProvidersListPage = () => {
         <MainCard
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
+                    <Grid container alignItems="center" item md={4}>
                         <Typography variant="h3">
                             <FormattedMessage id="suppliers" />
                         </Typography>
+                        <MultiMerchant
+                            onChange={(merchants: MerchantType[]) => setSelectedMerchants(merchants)}
+                            maxShow={3}
+                            justOne
+                            defaultSelected={[]}
+                        />
                     </Grid>
                     <Grid item>
                         <Button component={Link} to="/suppliers/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
@@ -79,7 +86,7 @@ const ProvidersListPage = () => {
             content={false}
         >
             {loading && <Loader />}
-            <ProvidersList filterText={filterText} />
+            {selectedMerchants && <ProvidersList selectedMerchants={selectedMerchants} filterText={filterText} />}
         </MainCard>
     );
 };
