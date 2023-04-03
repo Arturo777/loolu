@@ -44,7 +44,7 @@ const Specification = ({
     useEffect(() => {
         if (productInfo) {
             const infoFacets = { categoryId: productInfo?.categoryId, merchantId: merchantMulti };
-            dispatch(facetsToProduct(infoFacets));
+            // dispatch(facetsToProduct(infoFacets));
         }
     }, [dispatch, merchantMulti, productInfo]);
 

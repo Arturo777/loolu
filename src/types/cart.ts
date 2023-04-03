@@ -58,7 +58,7 @@ export interface ProductCardProps extends KeyedObject {
     offerPrice?: number;
     salePrice?: number;
     rating?: number;
-    brandId: number;
+    brandId: number | string;
     skus?: ProductCardSku[];
 }
 
