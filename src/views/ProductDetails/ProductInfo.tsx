@@ -194,7 +194,8 @@ const ProductInfo = ({
     setNewCategorySku,
     allMerchantsProductData,
     saveMultiChange,
-    handleDrawer
+    handleDrawer,
+    productSkus
 }: {
     active: boolean;
     allMerchantsProductData: { [key: string]: any }[];
@@ -215,6 +216,7 @@ const ProductInfo = ({
     skuInfo: Skus | undefined;
     tradePolicies: any;
     valueSku: any;
+    productSkus: Skus[] | null;
     handleDrawer: (options: {
         accessor: string;
         intlLabel: string;
@@ -270,15 +272,24 @@ const ProductInfo = ({
     }, []);
 
     useEffect(() => {
-        const skuprod: Skus[] =
-            product?.skus
-                ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
-                .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }]) ?? [];
-        if (skuprod.length > 0) {
-            const skufFiltUnit: any = skuprod[0];
-            console.log('unitmeas', skufFiltUnit[0]);
-            setSkuInfo(skufFiltUnit[0]);
+        // const skuprod: Skus[] = productSkus
+        //     ? productSkus
+        //           ?.filter((sku: Skus) => sku.skuID === valueSku)
+        //           .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }])
+        //     : [];
+
+        let filterSku: Skus[] = productSkus ? productSkus.filter((itemSku) => Number(itemSku.skuID) === Number(valueSku)) : [];
+
+        filterSku = filterSku.map((itemSku: Skus) => ({ ...itemSku, measurementUnit: filterUnitM(itemSku?.measurementUnit) }));
+
+        if (filterSku.length > 0) {
+            const skufFiltUnit: Skus = filterSku[0];
+
+            console.log('skufFiltUnit', skufFiltUnit);
+            // console.log('unitmeas', skufFiltUnit[0]);
+            setSkuInfo(skufFiltUnit);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [product?.skus, setSkuInfo, valueSku]);
 
     const handleRadioChange = (event: { target: { value: any } }) => {
@@ -800,7 +811,7 @@ const ProductInfo = ({
                 <Divider sx={{ mt: 2 }} />
             </Grid>
 
-            {productInfo.sku && product?.skus && (
+            {productSkus && productSkus?.length && (
                 <Grid item xs={12}>
                     <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
                     <Grid container spacing={1}>
@@ -824,17 +835,18 @@ const ProductInfo = ({
                                                 name={intl.formatMessage({ id: 'sku' })}
                                                 id="sku"
                                                 sx={{ ml: 1 }}
-                                                defaultValue={product?.skus[0].skuID}
+                                                // defaultValue={productSkus?.length ? productSkus[0].skuID : ''}
                                             >
-                                                {product?.skus.map((sku: any, index: Key | null | undefined) => (
-                                                    <FormControlLabel
-                                                        key={index}
-                                                        value={sku?.skuID}
-                                                        control={<Radio />}
-                                                        label={sku?.skuID}
-                                                        disabled={active}
-                                                    />
-                                                ))}
+                                                {productSkus &&
+                                                    productSkus?.map((sku: Skus, index: Key | null | undefined) => (
+                                                        <FormControlLabel
+                                                            key={`product-sku-radio-${sku.skuID}`}
+                                                            value={sku?.skuID}
+                                                            control={<Radio />}
+                                                            label={sku?.skuID}
+                                                            disabled={active}
+                                                        />
+                                                    ))}
                                             </RadioGroup>
                                             {/* {errors.color && (
                                                     <FormHelperText error id="standard-label-color">

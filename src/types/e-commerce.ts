@@ -38,7 +38,7 @@ export type Products = {
 };
 
 export type Skus = {
-    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
+    // map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     ean: string | number | undefined;
     name: string;
     skuID: string | number | undefined;

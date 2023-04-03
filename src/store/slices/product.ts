@@ -465,12 +465,12 @@ export const getProductDetails = createAsyncThunk(
 
 export const getProductSkuList = createAsyncThunk(
     `${slice.name}/getMultiMerchantProductSKUs`,
-    async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
+    async ({ idProd, merchantId }: { idProd: number | string; merchantId: number | string }) => {
         const response = await axios.get('/styrk/api/product/detail/productSkus', {
             baseURL: STYRK_API,
             params: {
                 idProd,
-                idMerchant
+                merchantId
             }
         });
 

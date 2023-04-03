@@ -19,7 +19,7 @@ import { TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
 import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getCategories, getTradePolicies, saveProduct, getProductDetails } from 'store/slices/product';
+import { getCategories, getTradePolicies, saveProduct, getProductDetails, getProductSkuList } from 'store/slices/product';
 import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 // import { resetCart } from 'store/slices/cart';
@@ -139,8 +139,6 @@ const ProductDetails = () => {
 
     // params
     const idMerchant = searchParams.get('idMerchant');
-    // const idMerchant = useMemo(() => searchParams.get('idMerchant'), []);
-    // const isFather = searchParams.get('isFather');
 
     // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -148,6 +146,8 @@ const ProductDetails = () => {
     };
 
     const [allMerchantsProductData, setAllMerchantsProductData] = useState<{ [key: string]: any }[]>([]);
+    const [productSkus, setProductSkus] = useState<Skus[] | null>(null);
+
     const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
     useEffect(() => {
@@ -173,10 +173,10 @@ const ProductDetails = () => {
                     idMerchant
                 })
             ).then(({ payload }) => {
-                console.log('payload', payload);
                 const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
 
                 setAllMerchantsProductData(payload);
+                handleGetSkus();
 
                 if (merchantProduct) {
                     setOriginalData(merchantProduct.detailProduct);
@@ -188,7 +188,29 @@ const ProductDetails = () => {
             dispatch(getCategories());
             dispatch(getTradePolicies());
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, id, idMerchant, product]);
+
+    const handleGetSkus = () => {
+        if (id && idMerchant) {
+            dispatch(
+                getProductSkuList({
+                    idProd: id,
+                    merchantId: idMerchant
+                })
+            ).then(({ payload }) => {
+                // console.log('SKU: ---', payload.skus);
+
+                setProductSkus(payload.skus);
+
+                if (payload && payload.skus) {
+                    const newSkuIdSelected = payload?.skus?.length ? payload.skus[0].skuID : '';
+
+                    setValueSku(newSkuIdSelected ?? '');
+                }
+            });
+        }
+    };
 
     useEffect(() => {
         if (brands?.length) {
@@ -247,6 +269,7 @@ const ProductDetails = () => {
                 const prodsku = newBrandSku?.Id
                     ? { ...productInfo, sku: skuInfo, brandName: newBrandSku?.Name, brandId: newBrandSku?.Id }
                     : { ...productInfo, sku: skuInfo };
+
                 await dispatch(saveProduct(prodsku))
                     .then(({ payload }) => {
                         dispatch(
@@ -347,15 +370,15 @@ const ProductDetails = () => {
                                 {originalData && originalData?.productID?.toString() === id && (
                                     <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                                         <Grid item xs={12} md={6}>
-                                            {Boolean(skus && skus.length) && (
+                                            {/* {Boolean(allSkus && allSkus.length) && (
                                                 <ProductImages
-                                                    skus={skus}
+                                                    skus={allSkus}
                                                     valueSku={valueSku}
                                                     product={productInfo}
                                                     setActive={setActive}
                                                     active={active}
                                                 />
-                                            )}
+                                            )} */}
                                         </Grid>
                                         <Grid item xs={12} md={6}>
                                             {productInfo && (
@@ -380,6 +403,7 @@ const ProductDetails = () => {
                                                     skuInfo={skuInfo}
                                                     tradePolicies={tradePolicies}
                                                     valueSku={valueSku}
+                                                    productSkus={productSkus}
                                                 />
                                             )}
                                             <Grid item xs={12}>
