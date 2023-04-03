@@ -13,6 +13,7 @@ import AttributesForm from './AttributesForm';
 import SpecValuesForm from './SpecValuesForm';
 import { useDispatch } from 'store';
 import { updateFacetVariant } from 'store/slices/catalog';
+import { MerchantType } from 'types/security';
 
 type EditFormProps = {
     handleCancel: () => void;
@@ -20,6 +21,7 @@ type EditFormProps = {
     specificationGroupMode: SpecificationGroupMode;
     category: CategoryType;
     handleSuccesFetch: () => void;
+    selectedMerchant: MerchantType | undefined;
 };
 
 export default function EditFormComponent({
@@ -27,7 +29,8 @@ export default function EditFormComponent({
     specificationData,
     specificationGroupMode,
     category,
-    handleSuccesFetch
+    handleSuccesFetch,
+    selectedMerchant
 }: EditFormProps) {
     // hooks
     const intl = useIntl();
@@ -63,6 +66,7 @@ export default function EditFormComponent({
 
     const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+        if (!selectedMerchant) return;
         setUpdating(true);
 
         const specValuesList: { isActive: boolean; name: string; specificationValueId: number }[] = [
@@ -90,7 +94,7 @@ export default function EditFormComponent({
 
         console.log(toSaveData);
 
-        dispatch(updateFacetVariant({ idMerchant: 1, data: toSaveData })).finally(() => {
+        dispatch(updateFacetVariant({ idMerchant: selectedMerchant.merchantId, data: toSaveData })).finally(() => {
             setUpdating(false);
         });
     };

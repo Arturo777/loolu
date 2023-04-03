@@ -22,6 +22,7 @@ import AttributesForm from './AttributesForm';
 // types
 import { CategoryType, FacetType, SpecificationGroupMode, SpecificationGroupType, SpecificationValueDataType } from 'types/catalog';
 import { NewSpecificationValueType, newValueListToCurrentList, SpecificationAttributesType, defaultAttributes } from './CustomTypes';
+import { MerchantType } from 'types/security';
 
 type AssociateFormComponentProps = {
     handleCancel: () => void;
@@ -29,6 +30,7 @@ type AssociateFormComponentProps = {
     specificationGroups: SpecificationGroupType[];
     category: CategoryType;
     canCancel: boolean;
+    selectedMerchant: MerchantType | undefined;
 };
 
 type groupInfoType = {
@@ -42,7 +44,8 @@ export default function AddFormComponent({
     handleSuccesFetch,
     specificationGroups,
     category,
-    canCancel
+    canCancel,
+    selectedMerchant
 }: AssociateFormComponentProps) {
     // hooks
     const intl = useIntl();
@@ -69,6 +72,7 @@ export default function AddFormComponent({
 
     const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+        if (!selectedMerchant) return;
         if (!facetData) return;
 
         console.log({
@@ -89,7 +93,7 @@ export default function AddFormComponent({
 
         setUpdating(true);
 
-        dispatch(updateFacetVariant({ idMerchant: 1, data: toUpload }))
+        dispatch(updateFacetVariant({ idMerchant: selectedMerchant.merchantId, data: toUpload }))
             .then(({ payload }) => {
                 if (payload.status === 'Success') {
                     dispatch(
@@ -153,7 +157,7 @@ export default function AddFormComponent({
             {/* BODY */}
             <Box sx={{}}>
                 {/* SELECT FACET TO ASSOCIATE */}
-                <SearchFacetsComponent handleAddFacet={chooseFacet} facetData={facetData} />
+                <SearchFacetsComponent selectedMerchant={selectedMerchant} handleAddFacet={chooseFacet} facetData={facetData} />
 
                 <ToAddForm
                     specificationGroups={specificationGroups}
@@ -198,7 +202,7 @@ export default function AddFormComponent({
                     {intl.formatMessage({ id: 'cancel' })}
                 </Button>
 
-                <Button disabled={updating} startIcon={<SaveIcon />} variant="contained" type="submit">
+                <Button disabled={updating || !selectedMerchant} startIcon={<SaveIcon />} variant="contained" type="submit">
                     {intl.formatMessage({ id: 'save' })}{' '}
                 </Button>
             </Box>

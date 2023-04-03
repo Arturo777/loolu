@@ -4,12 +4,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // project imports
 import axios from 'utils/axios';
 import { STYRK_API, STYRK_API_ALTERNATIVE, STYRK_API_BULKLOAD } from 'config';
-import { categoriesFlat, getCategoriesFlat } from 'utils/helpers';
+import { categoriesFlat, filterCategories, getCategoriesFlat } from 'utils/helpers';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { BrandType, CategoryType, CreateMerchantCategoryProps, MerchantCategoryType, NewBrandType2 } from 'types/catalog';
+import { BrandType, CreateMerchantCategoryProps, MerchantCategoryType, NewBrandType2 } from 'types/catalog';
 import getCategoriesServiceMock from './mocks/getCategoriesServiceMock';
+import getFacetsServiceMock from './mocks/getFacetsServiceMock';
 
 const initialState: DefaultRootStateProps['catalogue'] = {
     loading: true,
@@ -27,7 +28,7 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     filterCategories: [],
     merchantCategories: [],
     flatMerchantCategories: [],
-    filterMerchantCategories: []
+    filterMerchantCategories: filterCategories
 };
 
 const slice = createSlice({
@@ -140,10 +141,7 @@ const slice = createSlice({
                         categoryList: getCategoriesFlat(merchantCategory.categoryList)
                     }));
 
-                    state.filterMerchantCategories = merchantCategories.map((merchantCategory: MerchantCategoryType) => ({
-                        ...merchantCategory,
-                        categoryList: categoriesFlat(merchantCategory.categoryList)
-                    }));
+                    state.filterMerchantCategories = filterCategories;
                 }
             })
             .addCase(createMerchantCategoryService.pending, (state) => {
@@ -293,13 +291,22 @@ type getFacetsServiceProps = {
 };
 
 export const getFacetsService = createAsyncThunk(`${slice.name}/getFacets`, async ({ idMerchant, term, page }: getFacetsServiceProps) => {
-    const response = await axios.get(`facets/raw/merchant/${idMerchant}/search/${term}`, {
-        baseURL: STYRK_API_ALTERNATIVE,
-        params: {
-            pageNum: page
-        }
-    });
-    return response.data;
+    let result;
+
+    try {
+        const response = await axios.get(`facets/raw/merchant/${idMerchant}/search/${term}`, {
+            baseURL: STYRK_API_ALTERNATIVE,
+            params: {
+                pageNum: page
+            }
+        });
+        result = response.data;
+    } catch (error) {
+        result = getFacetsServiceMock;
+    }
+    const selectedMerchantFacets = result.find((facet: any) => facet.merchantId === idMerchant);
+
+    return selectedMerchantFacets.facets;
 });
 
 // styrk/api/facets/raw/{id}?merchantId=1

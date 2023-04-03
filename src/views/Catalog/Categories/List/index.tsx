@@ -41,7 +41,7 @@ export default function CategoriesListComponent({
     // hooks
     const dispatch = useDispatch();
     // store
-    const { merchantCategories, loading } = useSelector((state) => state.catalogue);
+    const { merchantCategories, loading, filterMerchantCategories } = useSelector((state) => state.catalogue);
     // vars
     const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -55,24 +55,20 @@ export default function CategoriesListComponent({
         if (!merchantCategories?.length || !selectedMerchant) return;
 
         const merchant = merchantCategories.find((cat: any) => cat.idMerchant === selectedMerchant.merchantId);
-
-        setFilteredCategories(merchant?.categoryList || []);
         setCategories(merchant?.categoryList || []);
+        setFilteredCategories(merchant?.categoryList || []);
     }, [merchantCategories, selectedMerchant]);
 
     useEffect(() => {
-        const filtered =
-            filterText.length >= 2
-                ? categories.filter(
-                      (item) =>
-                          JSON.stringify(item)
-                              .toLowerCase()
-                              .indexOf(filterText?.toLowerCase() ?? '') > -1
-                  )
-                : categories;
+        if (!filterText) {
+            setFilteredCategories(categories);
+        }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        const filtered = filterMerchantCategories(categories, filterText);
         setFilteredCategories(filtered);
-    }, [filterText, categories]);
+    }, [filterText, categories, filterMerchantCategories]);
 
     return (
         <>

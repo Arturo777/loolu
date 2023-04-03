@@ -52,7 +52,6 @@ export default function SelectCategoryComponent({
 
     useEffect(() => {
         if (loading || !selectedMerchant) return;
-        console.log({ flatMerchantCategories });
         const fCategories = flatMerchantCategories.find(
             (categories: FlatMerchantCategoriesType) => categories.idMerchant === selectedMerchant.merchantId
         );

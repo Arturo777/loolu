@@ -26,13 +26,15 @@ import { getFacetsService } from 'store/slices/catalog';
 
 // types
 import { FacetType } from 'types/catalog';
+import { MerchantType } from 'types/security';
 
 type SearchFacetsComponentProps = {
     handleAddFacet: (facet: FacetType | null) => void;
     facetData: FacetType | null;
+    selectedMerchant: MerchantType | undefined;
 };
 
-export default function SearchFacetsComponent({ handleAddFacet, facetData }: SearchFacetsComponentProps) {
+export default function SearchFacetsComponent({ handleAddFacet, facetData, selectedMerchant }: SearchFacetsComponentProps) {
     // hooks
     const dispatch = useDispatch();
     const intl = useIntl();
@@ -48,8 +50,8 @@ export default function SearchFacetsComponent({ handleAddFacet, facetData }: Sea
     const [isFocus, setIsFocus] = useState<boolean>(false);
 
     useEffect(() => {
-        if (searchText.length > 2) {
-            dispatch(getFacetsService({ idMerchant: 1, page: 1, term: searchText }));
+        if (searchText.length > 2 && selectedMerchant) {
+            dispatch(getFacetsService({ idMerchant: selectedMerchant.merchantId, page: 1, term: searchText }));
         }
     }, [dispatch, searchText]);
 
