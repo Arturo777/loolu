@@ -72,8 +72,8 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { getCategoriesService, getSuppliers, getBrands } from 'store/slices/catalog';
-import { BrandType, CategoryType, SupplierType } from 'types/catalog';
+import { getCategoriesService, getSuppliers, getBrands2 } from 'store/slices/catalog';
+import { BrandType, BrandType2, CategoryType, SupplierType } from 'types/catalog';
 import { getTradePolicies } from 'store/slices/product';
 
 import ConfigProvider from 'config';
@@ -319,22 +319,22 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
 
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: any; productInfo: any }) => {
+const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProductInfo: any; productInfo: any; merchs: any }) => {
     const intl = useIntl();
-    const dispatch = useDispatch();
     const history = useNavigate();
+    const dispatch = useDispatch();
 
     console.log(productInfo);
     console.log(typeof productInfo.created);
 
-    const { categories, suppliers, brands } = useSelector((state) => state.catalogue);
+    const { categories, suppliers, brands2 } = useSelector((state) => state.catalogue);
     const { product } = useSelector((state) => state.product);
     const { tradePolicies } = useSelector((state) => state.product);
     const [search, setSearch] = useState('');
     const [display, setDisplay] = useState(false);
     const [button, setButton] = useState(false);
     const [modalBrands, setModalBrands] = useState(false);
-    const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
+    const [brandsInfo, setBrandsInfo] = useState<BrandType2[]>([]);
     const [stateDrawer, setStateDrawer] = useState({
         top: false,
         left: false,
@@ -366,19 +366,19 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
         setDisplay(false);
     };
 
+    console.log(merchs);
     useEffect(() => {
-        dispatch(getCategoriesService({ idMerchant: 1 }));
+        dispatch(getBrands2(merchs.merchantId));
+        // pasar este dispatch a las categorias dispatch(getCategoriesService({ idMerchant: 1 }));
         dispatch(getSuppliers());
         dispatch(getTradePolicies());
-        dispatch(getBrands());
-    }, [dispatch]);
-    console.log(tradePolicies);
+    }, []);
 
     useEffect(() => {
-        if (brands?.length) {
-            setBrandsInfo(brands);
+        if (brands2?.length) {
+            setBrandsInfo(brands2);
         }
-    }, [brands]);
+    }, [brands2]);
 
     /* const formik = useFormik({
         enableReinitialize: true,
@@ -545,7 +545,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                                 ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'
                                             }
                                         >
-                                            {brandsInfo
+                                            {/* {brandsInfo
                                                 ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
                                                 .map((v: BrandType, i: Key): any => (
                                                     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -558,7 +558,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                                     >
                                                         {v.name}
                                                     </Typography>
-                                                ))}
+                                                ))} */}
                                         </div>
                                     </PerfectScrollbar>
                                 </Box>
@@ -712,7 +712,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
             </Grid>
             <Grid item xs={12}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} lg={10}>
+                    {/* <Grid item xs={12} lg={10}>
                         <Table>
                             <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                 <TableRow>
@@ -759,11 +759,11 @@ const ProductInfoCreate = ({ setProductInfo, productInfo }: { setProductInfo: an
                                     <TableCell>
                                         <Typography variant="body2">Quantity</Typography>
                                     </TableCell>
-                                    <TableCell align="left">{/* <Increment name="quantity" /> */}</TableCell>
+                                    <TableCell align="left">{}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                         <Divider />
                     </Grid>

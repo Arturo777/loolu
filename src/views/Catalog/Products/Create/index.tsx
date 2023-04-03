@@ -134,7 +134,7 @@ const CreateProduct = () => {
                             {/* <ProductImagesCreate product={product} /> */}
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <ProductInfoCreate setProductInfo={setProductInfo} productInfo={productInfo} />
+                            <ProductInfoCreate setProductInfo={setProductInfo} productInfo={productInfo} merchs={merchs} />
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
