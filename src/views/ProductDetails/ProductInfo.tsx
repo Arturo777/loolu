@@ -4,49 +4,46 @@ import { Link } from 'react-router-dom';
 // material-ui
 import { styled } from '@mui/material/styles';
 import {
-    Button,
     Box,
+    Button,
+    Checkbox,
+    Collapse,
     Divider,
     FormControl,
     FormControlLabel,
     Grid,
+    IconButton,
+    InputLabel,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
     MenuItem,
+    Modal,
+    OutlinedInput,
     Radio,
     RadioGroup,
-    /* Rating, */
     Select,
     Stack,
+    Switch,
     Table,
     TableBody,
     TableCell,
     TableRow,
-    Typography,
     TextField,
-    InputLabel,
-    Checkbox,
-    ListItemText,
-    OutlinedInput,
-    IconButton,
-    Switch,
-    SwipeableDrawer,
-    ListItemButton,
-    ListItemIcon,
     Tooltip,
-    Collapse,
-    InputAdornment,
-    Modal
+    Typography
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { IconSearch } from '@tabler/icons';
-import formatUrl from 'utils/formatUrl';
+// import { IconSearch } from '@tabler/icons';
+// import formatUrl from 'utils/formatUrl';
 // third-party
 
 // project imports
 import Chip from 'ui-component/extended/Chip';
-import { Skus } from 'types/e-commerce';
+import { Products, Skus } from 'types/e-commerce';
 import { useDispatch, useSelector } from 'store';
 
 // assets
@@ -58,6 +55,12 @@ import { BrandType, CategoryType } from 'types/catalog';
 import { getCategoriesService } from 'store/slices/catalog';
 import ConfigProvider from 'config';
 import filterUnitM from 'utils/unitMeasurement';
+
+import { FieldEditingHolder, RowStack } from 'ui-component/MultiMerchant/drawer';
+
+// types
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
 
@@ -188,25 +191,37 @@ const ProductInfo = ({
     setNewBrandSku,
     setFlagCategory,
     flagCategory,
-    setNewCategorySku
+    setNewCategorySku,
+    allMerchantsProductData,
+    saveMultiChange,
+    handleDrawer
 }: {
-    product: any;
-    setValueSku: any;
-    valueSku: any;
-    setActive: any;
     active: boolean;
-    productInfo: any;
-    setProductInfo: any;
-    tradePolicies: any;
-    skuInfo: Skus | undefined;
-    setSkuInfo: any;
+    allMerchantsProductData: { [key: string]: any }[];
     brandsInfo: BrandType[] | undefined;
-    setFlagBrand: any;
     flagBrand: boolean;
-    setNewBrandSku: any;
-    setFlagCategory: any;
     flagCategory: boolean;
+    product: any;
+    productInfo: Products;
+    saveMultiChange: (newData: { [key: string]: any }[]) => void;
+    setActive: any;
+    setFlagBrand: any;
+    setFlagCategory: any;
+    setNewBrandSku: any;
     setNewCategorySku: any;
+    setProductInfo: any;
+    setSkuInfo: any;
+    setValueSku: any;
+    skuInfo: Skus | undefined;
+    tradePolicies: any;
+    valueSku: any;
+    handleDrawer: (options: {
+        accessor: string;
+        intlLabel: string;
+        data?: { [key: string]: any }[];
+        options?: null | SelectOptionType[];
+        type: InputType;
+    }) => void;
 }) => {
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -217,9 +232,9 @@ const ProductInfo = ({
         bottom: false,
         right: false
     });
-    /* const [selectedCatId, setSelectedCatId] = useState<number>(); */
-    /* const dispatch = useDispatch(); */
-    /* const history = useNavigate(); */
+
+    // const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
+
     // info Brands
     const [button, setButton] = useState(false);
     const [display, setDisplay] = useState(false);
@@ -242,6 +257,7 @@ const ProductInfo = ({
             setDisplay(false);
         }
     };
+
     useEffect(() => {
         dispatch(getCategoriesService({ idMerchant: 1 }));
     }, [dispatch]);
@@ -252,10 +268,12 @@ const ProductInfo = ({
             window.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
     useEffect(() => {
-        const skuprod: Skus[] = product?.skus
-            ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
-            .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }]);
+        const skuprod: Skus[] =
+            product?.skus
+                ?.filter((sku: { skuID: any }) => sku.skuID === valueSku)
+                .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }]) ?? [];
         if (skuprod.length > 0) {
             const skufFiltUnit: any = skuprod[0];
             console.log('unitmeas', skufFiltUnit[0]);
@@ -266,6 +284,7 @@ const ProductInfo = ({
     const handleRadioChange = (event: { target: { value: any } }) => {
         setValueSku(event.target.value);
     };
+
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
             setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
@@ -273,6 +292,7 @@ const ProductInfo = ({
             setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
         }
     };
+
     const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
             setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
@@ -280,36 +300,29 @@ const ProductInfo = ({
             setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
         }
     };
+
     const filterTradePolicy = (trade: number) => {
         const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
         return resultTrade[0]?.name;
     };
+
     const formatterDolar = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
     });
+
     const customBrand = (value: SetStateAction<string>, id: number) => {
         setSearch(value);
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
+
     const newBrand = (value: string) => {
-        /*  setModalBrands(true); */
         setSearch(value);
         setFlagBrand(true);
         setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
         setDisplay(false);
     };
-    /* const selectTradePolicy =(idPolicy)=> {
-        const res = product?.tradePolicies?.filter((tr: any) =>{
-            tr
-        })
-    } */
-    /* useEffect(() => {
-        if (flagBrand) {
-            setModalBrands(true);
-        }
-    }, [flagBrand]); */
 
     return (
         <Grid container spacing={2}>
@@ -322,32 +335,72 @@ const ProductInfo = ({
                         <Grid item xs={12}>
                             {active ? (
                                 <>
-                                    <FormControlLabel
-                                        sx={{ ml: 1 }}
-                                        control={<Android12Switch defaultChecked={product?.isActive} />}
-                                        label={<FormattedMessage id="active" />}
-                                    />
-                                    <FormControlLabel
-                                        sx={{ ml: 1 }}
-                                        control={<Android12Switch defaultChecked={product?.isVisible} />}
-                                        label="Visible"
-                                    />
-                                    <FormControlLabel
-                                        sx={{ ml: 1 }}
-                                        control={<Android12Switch defaultChecked={product?.isEcommerce} />}
-                                        label={<FormattedMessage id="e-commerce" />}
-                                    />
-                                    <FormControlLabel
-                                        sx={{ ml: 1 }}
-                                        control={
-                                            <Android12Switch
-                                                name="showWithoutStock"
-                                                onChange={handleChangeProd}
-                                                defaultChecked={product?.showWithoutStock}
-                                            />
+                                    <FieldEditingHolder
+                                        onEditClick={() =>
+                                            handleDrawer({ accessor: 'isActive', intlLabel: 'active', type: InputType.switch })
                                         }
-                                        label={<FormattedMessage id="out_of_stock" />}
-                                    />
+                                        displayValue="inline-flex"
+                                    >
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            checked={productInfo?.isActive}
+                                            control={
+                                                <Android12Switch
+                                                    checked={productInfo?.isActive}
+                                                    onChange={handleChangeProd}
+                                                    name="isActive"
+                                                />
+                                            }
+                                            label={<FormattedMessage id="active" />}
+                                        />
+                                    </FieldEditingHolder>
+                                    <FieldEditingHolder
+                                        onEditClick={() =>
+                                            handleDrawer({
+                                                accessor: 'isEcommerce',
+                                                intlLabel: 'e-commerce',
+                                                type: InputType.switch
+                                            })
+                                        }
+                                        displayValue="inline-flex"
+                                    >
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            checked={productInfo?.isEcommerce}
+                                            control={
+                                                <Android12Switch
+                                                    checked={productInfo?.isEcommerce}
+                                                    onChange={handleChangeProd}
+                                                    name="isEcommerce"
+                                                />
+                                            }
+                                            label={<FormattedMessage id="e-commerce" />}
+                                        />
+                                    </FieldEditingHolder>
+
+                                    <FieldEditingHolder
+                                        onEditClick={() =>
+                                            handleDrawer({
+                                                accessor: 'showWithoutStock',
+                                                intlLabel: 'out_of_stock',
+                                                type: InputType.switch
+                                            })
+                                        }
+                                        displayValue="inline-flex"
+                                    >
+                                        <FormControlLabel
+                                            sx={{ ml: 1 }}
+                                            checked={productInfo?.showWithoutStock}
+                                            control={
+                                                <Android12Switch
+                                                    checked={productInfo?.showWithoutStock}
+                                                    onChange={handleChangeProd}
+                                                    name="showWithoutStock"
+                                                />
+                                            }
+                                            label={<FormattedMessage id="out_of_stock" />}
+                                        />
+                                    </FieldEditingHolder>
                                 </>
                             ) : (
                                 <>
@@ -386,39 +439,68 @@ const ProductInfo = ({
                                 {active ? (
                                     <Box
                                         sx={{
+                                            width: 1,
                                             '& .MuiTextField-root': { mt: 2 }
                                         }}
                                     >
-                                        <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            label={intl.formatMessage({ id: 'product_name' })}
-                                            variant="outlined"
-                                            name="productName"
-                                            defaultValue={product?.productName}
-                                            value={productInfo?.productName}
-                                            onChange={handleChangeProd}
-                                        />
-                                        <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            label={intl.formatMessage({ id: 'title' })}
-                                            variant="outlined"
-                                            name="title"
-                                            defaultValue={product?.title}
-                                            value={productInfo?.title}
-                                            onChange={handleChangeProd}
-                                        />
-                                        <TextField
-                                            fullWidth
-                                            id="outlined-basic"
-                                            label={intl.formatMessage({ id: 'product_url' })}
-                                            variant="outlined"
-                                            name="linkId"
-                                            defaultValue={formatUrl(product?.linkId)}
-                                            value={productInfo?.linkId}
-                                            onChange={handleChangeProd}
-                                        />
+                                        <FieldEditingHolder
+                                            onEditClick={() =>
+                                                handleDrawer({
+                                                    accessor: 'productName',
+                                                    intlLabel: 'product_name',
+                                                    type: InputType.textField
+                                                })
+                                            }
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label={intl.formatMessage({ id: 'product_name' })}
+                                                variant="outlined"
+                                                name="productName"
+                                                // defaultValue={product?.productName}
+                                                value={productInfo?.productName}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </FieldEditingHolder>
+                                        <FieldEditingHolder
+                                            onEditClick={() =>
+                                                handleDrawer({
+                                                    accessor: 'title',
+                                                    intlLabel: 'title',
+                                                    type: InputType.textField
+                                                })
+                                            }
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label={intl.formatMessage({ id: 'title' })}
+                                                variant="outlined"
+                                                name="title"
+                                                value={productInfo?.title}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </FieldEditingHolder>
+                                        <FieldEditingHolder
+                                            onEditClick={() =>
+                                                handleDrawer({
+                                                    accessor: 'linkId',
+                                                    intlLabel: 'product_url',
+                                                    type: InputType.textField
+                                                })
+                                            }
+                                        >
+                                            <TextField
+                                                fullWidth
+                                                id="outlined-basic"
+                                                label={intl.formatMessage({ id: 'product_url' })}
+                                                variant="outlined"
+                                                name="linkId"
+                                                value={productInfo?.linkId}
+                                                onChange={handleChangeProd}
+                                            />
+                                        </FieldEditingHolder>
                                     </Box>
                                 ) : (
                                     <Typography variant="h3">{product?.productName}</Typography>
@@ -433,35 +515,54 @@ const ProductInfo = ({
             </Grid>
             <Grid item xs={12} sx={{ ml: 1 }}>
                 {active ? (
-                    <Box
-                        sx={{
-                            '& .MuiTextField-root': { mt: 2 }
-                        }}
+                    <FieldEditingHolder
+                        onEditClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
                     >
                         <TextField
                             fullWidth
                             multiline
+                            rows={4}
                             id="outlined-basic"
                             label={intl.formatMessage({ id: 'description' })}
                             variant="outlined"
                             name="description"
-                            defaultValue={product?.description}
+                            // defaultValue={product?.description}
                             value={productInfo?.description}
                             onChange={handleChangeProd}
                         />
-                    </Box>
+                    </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2">{product?.description}</Typography>
                 )}
             </Grid>
+
             <Grid item xs={12}>
-                <Typography variant="body1" sx={{ ml: 1 }}>
-                    ID: {product?.productID}{' '}
-                    {active ? (
-                        <Box
-                            sx={{
-                                '& .MuiTextField-root': { mt: 2 }
-                            }}
+                {!active && (
+                    <RowStack>
+                        <Typography variant="body1" sx={{ ml: 1 }}>
+                            ID: {product?.productID}{' '}
+                        </Typography>
+                        <Typography variant="body2">RefID: {product?.productRefID}</Typography>
+                    </RowStack>
+                )}
+                {active && (
+                    <RowStack sx={{ justifyContent: 'space-between', ml: 1 }}>
+                        <TextField
+                            multiline
+                            id="outlined-basic"
+                            label={intl.formatMessage({ id: 'product_id' })}
+                            variant="outlined"
+                            name="productID"
+                            // defaultValue={product?.productRefID}
+                            value={productInfo?.productID}
+                            // onChange={handleChangeProd}
+                            disabled
+                            sx={{ mt: 1 }}
+                        />
+                        <FieldEditingHolder
+                            onEditClick={() =>
+                                handleDrawer({ accessor: 'productRefID', intlLabel: 'reference_code', type: InputType.textField })
+                            }
                         >
                             <TextField
                                 multiline
@@ -469,16 +570,41 @@ const ProductInfo = ({
                                 label={intl.formatMessage({ id: 'reference_code' })}
                                 variant="outlined"
                                 name="productRefID"
-                                defaultValue={product?.productRefID}
+                                // defaultValue={product?.productRefID}
                                 value={productInfo?.productRefID}
                                 onChange={handleChangeProd}
                             />
-                        </Box>
+                        </FieldEditingHolder>
+                    </RowStack>
+                )}
+            </Grid>
+            {/* <Grid item xs={12}>
+                <RowStack>
+                    <Typography variant="body1" sx={{ ml: 1 }}>
+                        ID: {product?.productID}{' '}
+                    </Typography>
+                    {active ? (
+                        <FieldEditingHolder
+                            onEditClick={() =>
+                                handleDrawer({ accessor: 'productRefID', intlLabel: 'reference_code', type: InputType.textarea })
+                            }
+                        >
+                            <TextField
+                                multiline
+                                id="outlined-basic"
+                                label={intl.formatMessage({ id: 'reference_code' })}
+                                variant="outlined"
+                                name="productRefID"
+                                // defaultValue={product?.productRefID}
+                                value={productInfo?.productRefID}
+                                onChange={handleChangeProd}
+                            />
+                        </FieldEditingHolder>
                     ) : (
                         <Typography variant="body2">RefID: {product?.productRefID}</Typography>
                     )}
-                </Typography>
-            </Grid>
+                </RowStack>
+            </Grid> */}
             <Grid item xs={12} sx={{ ml: 1 }}>
                 {active ? (
                     <Box
@@ -488,17 +614,27 @@ const ProductInfo = ({
                     >
                         {/* TODO: copiar  */}
                         <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
-                            <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                label={intl.formatMessage({ id: 'brand' })}
-                                variant="outlined"
-                                name="brandName"
-                                /* defaultValue={product?.brandName} */
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                onClick={() => setDisplay(true)}
-                            />
+                            <FieldEditingHolder
+                                onEditClick={() =>
+                                    handleDrawer({
+                                        accessor: 'brandId',
+                                        intlLabel: 'brand',
+                                        type: InputType.brandSelect
+                                    })
+                                }
+                            >
+                                <TextField
+                                    fullWidth
+                                    id="outlined-basic"
+                                    label={intl.formatMessage({ id: 'brand' })}
+                                    variant="outlined"
+                                    name="brandName"
+                                    /* defaultValue={product?.brandName} */
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onClick={() => setDisplay(true)}
+                                />
+                            </FieldEditingHolder>
                             <BrandModal
                                 setModalBrands={setModalBrands}
                                 modalBrands={modalBrands}
@@ -567,7 +703,7 @@ const ProductInfo = ({
                         <Typography variant="body2">
                             {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
                         </Typography>
-                        <SwipeableDrawer
+                        {/* <SwipeableDrawer
                             sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
                             anchor="right"
                             open={stateDrawer.right}
@@ -591,20 +727,21 @@ const ProductInfo = ({
                                     setSearchCat(e.target.value);
                                 }}
                             />
-                            {categories
-                                ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
-                                .map((category) => (
-                                    <Grid item xs={12} key={`main-category-${category.id}`}>
-                                        <MainCategoryComponent
-                                            category={category}
-                                            setSearchCat={setSearchCat}
-                                            setProductInfo={setProductInfo}
-                                            setFlagCategory={setFlagCategory}
-                                            setNewCategorySku={setNewCategorySku}
-                                        />
-                                    </Grid>
-                                ))}
-                        </SwipeableDrawer>
+                            {Boolean(categories && categories.length) &&
+                                categories
+                                    ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat?.toLowerCase()) > -1)
+                                    .map((category) => (
+                                        <Grid item xs={12} key={`main-category-${category.id}`}>
+                                            <MainCategoryComponent
+                                                category={category}
+                                                setSearchCat={setSearchCat}
+                                                setProductInfo={setProductInfo}
+                                                setFlagCategory={setFlagCategory}
+                                                setNewCategorySku={setNewCategorySku}
+                                            />
+                                        </Grid>
+                                    ))}
+                        </SwipeableDrawer> */}
                     </Box>
                 ) : (
                     <Typography variant="h4">{product?.categoryName}</Typography>
@@ -663,247 +800,253 @@ const ProductInfo = ({
                 <Divider sx={{ mt: 2 }} />
             </Grid>
 
-            <Grid item xs={12}>
-                <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
-                <Grid container spacing={1}>
-                    <Grid item xs={12} lg={10}>
-                        <Table>
-                            <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="body2">
-                                            {intl.formatMessage({ id: 'variants' })}
-                                            <Typography color="error" component="span">
-                                                *
-                                            </Typography>
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <RadioGroup
-                                            row
-                                            value={valueSku}
-                                            onChange={handleRadioChange}
-                                            name={intl.formatMessage({ id: 'sku' })}
-                                            id="sku"
-                                            sx={{ ml: 1 }}
-                                            defaultValue={product?.skus[0].skuID}
-                                        >
-                                            {product?.skus.map((sku: any, index: Key | null | undefined) => (
-                                                <FormControlLabel
-                                                    key={index}
-                                                    value={sku?.skuID}
-                                                    control={<Radio />}
-                                                    label={sku?.skuID}
-                                                    disabled={active}
-                                                />
-                                            ))}
-                                        </RadioGroup>
-                                        {/* {errors.color && (
-                                                    <FormHelperText error id="standard-label-color">
-                                                        {errors.color}
-                                                    </FormHelperText>
-                                                )} */}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                        <Grid item xs={12}>
-                            {active ? (
-                                <Box
-                                    sx={{
-                                        '& .MuiTextField-root': { mt: 2 }
-                                    }}
-                                >
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        id="outlined-basic"
-                                        label={intl.formatMessage({ id: 'sku_name' })}
-                                        variant="outlined"
-                                        name="name"
-                                        defaultValue={skuInfo?.name}
-                                        value={skuInfo?.name}
-                                        onChange={handleChangeSku}
-                                    />
-                                </Box>
-                            ) : (
-                                skuInfo !== undefined && (
-                                    <Typography variant="h3" sx={{ ml: 2 }}>
-                                        {skuInfo?.name}
-                                    </Typography>
-                                )
-                            )}
-                        </Grid>
-                        <Grid item xs={12}>
-                            {active ? (
-                                <Box
-                                    sx={{
-                                        '& .MuiTextField-root': { mt: 2 }
-                                    }}
-                                >
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        id="outlined-basic"
-                                        label="EAN/UPC"
-                                        variant="outlined"
-                                        name="ean"
-                                        defaultValue={skuInfo?.ean}
-                                        value={skuInfo?.ean}
-                                        onChange={handleChangeSku}
-                                    />
-                                </Box>
-                            ) : (
-                                skuInfo !== undefined && (
-                                    <Typography variant="body2" sx={{ ml: 2 }}>
-                                        EAN/UPC: {skuInfo?.ean}
-                                    </Typography>
-                                )
-                            )}
-                        </Grid>
-                        <Grid item xs={12}>
+            {productInfo.sku && product?.skus && (
+                <Grid item xs={12}>
+                    <h2 style={{ marginBottom: '-10px', marginTop: '0px' }}>{intl.formatMessage({ id: 'sku_information' })}:</h2>
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} lg={10}>
                             <Table>
                                 <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
                                     <TableRow>
                                         <TableCell>
-                                            <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                {intl.formatMessage({ id: 'Pricing' })}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            {skuInfo?.prices?.map(
-                                                ({
-                                                    price,
-                                                    priceDiscount,
-                                                    tradePolicy
-                                                }: {
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    price: number;
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    priceDiscount: number;
-                                                    // eslint-disable-next-line react/no-unused-prop-types
-                                                    tradePolicy: number;
-                                                }) => (
-                                                    <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
-                                                        {active ? (
-                                                            <>
-                                                                <Box
-                                                                    sx={{
-                                                                        '& .MuiTextField-root': { mt: 2 }
-                                                                    }}
-                                                                >
-                                                                    <TextField
-                                                                        fullWidth
-                                                                        multiline
-                                                                        id="outlined-basic"
-                                                                        label={intl.formatMessage({ id: 'discount_price' })}
-                                                                        variant="outlined"
-                                                                        name="priceDiscount"
-                                                                        defaultValue={priceDiscount}
-                                                                    />
-                                                                </Box>
-                                                                <Box
-                                                                    sx={{
-                                                                        '& .MuiTextField-root': { mt: 2 }
-                                                                    }}
-                                                                >
-                                                                    <TextField
-                                                                        fullWidth
-                                                                        multiline
-                                                                        id="outlined-basic"
-                                                                        label={intl.formatMessage({ id: 'price' })}
-                                                                        variant="outlined"
-                                                                        name="price"
-                                                                        defaultValue={price}
-                                                                    />
-                                                                </Box>
-                                                                <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Typography variant="h2" color="primary">
-                                                                    {formatterDolar.format(priceDiscount)}
-                                                                </Typography>
-                                                                <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
-                                                                    {formatterDolar.format(price)}
-                                                                </Typography>
-                                                                <Typography variant="caption">{filterTradePolicy(tradePolicy)}</Typography>
-                                                            </>
-                                                        )}
-                                                    </Stack>
-                                                )
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </Grid>
-                        <Table>
-                            <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
-                                <TableRow>
-                                    <TableCell>
-                                        <Stack>
                                             <Typography variant="body2">
-                                                {intl.formatMessage({ id: 'size' })}
+                                                {intl.formatMessage({ id: 'variants' })}
                                                 <Typography color="error" component="span">
                                                     *
                                                 </Typography>
                                             </Typography>
-                                            <Typography variant="caption" color="primary" component={Link} to="#">
-                                                {intl.formatMessage({ id: 'size_chart' })}?
-                                            </Typography>
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <FormControl sx={{ minWidth: 120 }}>
-                                            <Select
-                                                id="size"
-                                                name="size"
-                                                /* value={values.size}
-                                                    onChange={handleChange} */
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <RadioGroup
+                                                row
+                                                value={valueSku}
+                                                onChange={handleRadioChange}
+                                                name={intl.formatMessage({ id: 'sku' })}
+                                                id="sku"
+                                                sx={{ ml: 1 }}
+                                                defaultValue={product?.skus[0].skuID}
                                             >
-                                                <MenuItem value="">
-                                                    <em>None</em>
-                                                </MenuItem>
-                                                {sizeOptions.map((option, index) => (
-                                                    <MenuItem sx={{ p: 1.25 }} key={index} value={option}>
-                                                        {option}
-                                                    </MenuItem>
+                                                {product?.skus.map((sku: any, index: Key | null | undefined) => (
+                                                    <FormControlLabel
+                                                        key={index}
+                                                        value={sku?.skuID}
+                                                        control={<Radio />}
+                                                        label={sku?.skuID}
+                                                        disabled={active}
+                                                    />
                                                 ))}
-                                            </Select>
-                                        </FormControl>
-                                        {/* {errors.size && (
+                                            </RadioGroup>
+                                            {/* {errors.color && (
+                                                    <FormHelperText error id="standard-label-color">
+                                                        {errors.color}
+                                                    </FormHelperText>
+                                                )} */}
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                            <Grid item xs={12}>
+                                {active ? (
+                                    <Box
+                                        sx={{
+                                            '& .MuiTextField-root': { mt: 2 }
+                                        }}
+                                    >
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            id="outlined-basic"
+                                            label={intl.formatMessage({ id: 'sku_name' })}
+                                            variant="outlined"
+                                            name="name"
+                                            // defaultValue={skuInfo?.name}
+                                            value={skuInfo?.name}
+                                            onChange={handleChangeSku}
+                                        />
+                                    </Box>
+                                ) : (
+                                    skuInfo !== undefined && (
+                                        <Typography variant="h3" sx={{ ml: 2 }}>
+                                            {skuInfo?.name}
+                                        </Typography>
+                                    )
+                                )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                {active ? (
+                                    <Box
+                                        sx={{
+                                            '& .MuiTextField-root': { mt: 2 }
+                                        }}
+                                    >
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            id="outlined-basic"
+                                            label="EAN/UPC"
+                                            variant="outlined"
+                                            name="ean"
+                                            // defaultValue={skuInfo?.ean}
+                                            value={skuInfo?.ean}
+                                            onChange={handleChangeSku}
+                                        />
+                                    </Box>
+                                ) : (
+                                    skuInfo !== undefined && (
+                                        <Typography variant="body2" sx={{ ml: 2 }}>
+                                            EAN/UPC: {skuInfo?.ean}
+                                        </Typography>
+                                    )
+                                )}
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Table>
+                                    <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
+                                                    {intl.formatMessage({ id: 'Pricing' })}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                {skuInfo?.prices?.map(
+                                                    ({
+                                                        price,
+                                                        priceDiscount,
+                                                        tradePolicy
+                                                    }: {
+                                                        // eslint-disable-next-line react/no-unused-prop-types
+                                                        price: number;
+                                                        // eslint-disable-next-line react/no-unused-prop-types
+                                                        priceDiscount: number;
+                                                        // eslint-disable-next-line react/no-unused-prop-types
+                                                        tradePolicy: number;
+                                                    }) => (
+                                                        <Stack direction="row" alignItems="center" spacing={1} sx={{ ml: 1 }}>
+                                                            {active ? (
+                                                                <>
+                                                                    <Box
+                                                                        sx={{
+                                                                            '& .MuiTextField-root': { mt: 2 }
+                                                                        }}
+                                                                    >
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            multiline
+                                                                            id="outlined-basic"
+                                                                            label={intl.formatMessage({ id: 'discount_price' })}
+                                                                            variant="outlined"
+                                                                            name="priceDiscount"
+                                                                            defaultValue={priceDiscount}
+                                                                        />
+                                                                    </Box>
+                                                                    <Box
+                                                                        sx={{
+                                                                            '& .MuiTextField-root': { mt: 2 }
+                                                                        }}
+                                                                    >
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            multiline
+                                                                            id="outlined-basic"
+                                                                            label={intl.formatMessage({ id: 'price' })}
+                                                                            variant="outlined"
+                                                                            name="price"
+                                                                            defaultValue={price}
+                                                                        />
+                                                                    </Box>
+                                                                    <Typography variant="caption">
+                                                                        {filterTradePolicy(tradePolicy)}
+                                                                    </Typography>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Typography variant="h2" color="primary">
+                                                                        {formatterDolar.format(priceDiscount)}
+                                                                    </Typography>
+                                                                    <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                                                                        {formatterDolar.format(price)}
+                                                                    </Typography>
+                                                                    <Typography variant="caption">
+                                                                        {filterTradePolicy(tradePolicy)}
+                                                                    </Typography>
+                                                                </>
+                                                            )}
+                                                        </Stack>
+                                                    )
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Grid>
+                            <Table>
+                                <TableBody sx={{ '& .MuiTableCell-root': { borderBottom: 'none' } }}>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Stack>
+                                                <Typography variant="body2">
+                                                    {intl.formatMessage({ id: 'size' })}
+                                                    <Typography color="error" component="span">
+                                                        *
+                                                    </Typography>
+                                                </Typography>
+                                                <Typography variant="caption" color="primary" component={Link} to="#">
+                                                    {intl.formatMessage({ id: 'size_chart' })}?
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <FormControl sx={{ minWidth: 120 }}>
+                                                <Select
+                                                    id="size"
+                                                    name="size"
+                                                    /* value={values.size}
+                                                    onChange={handleChange} */
+                                                    displayEmpty
+                                                    inputProps={{ 'aria-label': 'Without label' }}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>None</em>
+                                                    </MenuItem>
+                                                    {sizeOptions.map((option, index) => (
+                                                        <MenuItem sx={{ p: 1.25 }} key={index} value={option}>
+                                                            {option}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                            {/* {errors.size && (
                                                     <FormHelperText error id="standard-label-size">
                                                         {errors.size}
                                                     </FormHelperText>
                                                 )} */}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'dimensions' })}</Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
-                                    </TableCell>
-                                </TableRow>
-                                <br />
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="body2">{intl.formatMessage({ id: 'quantity' })}</Typography>
-                                    </TableCell>
-                                    <TableCell align="left" />
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider />
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography variant="body2">{intl.formatMessage({ id: 'dimensions' })}</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
+                                        </TableCell>
+                                    </TableRow>
+                                    <br />
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                        </TableCell>
+                                        <TableCell align="left" />
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
+            )}
         </Grid>
     );
 };

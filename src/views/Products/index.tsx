@@ -65,15 +65,18 @@ const ProductsList = () => {
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
 
+    const [multiForm, setMultiForm] = useState<boolean>(true);
+
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
     const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
     const location = useLocation();
 
     const [isLoading, setLoading] = useState(true);
-    useEffect(() => {
-        setLoading(false);
-    }, []);
+
+    // useEffect(() => {
+    //     setLoading(false);
+    // }, []);
 
     // drawer
     const [open, setOpen] = useState(isLoading);
@@ -350,6 +353,15 @@ const ProductsList = () => {
                                 : productResult}
                         </Grid>
                     </Main>
+
+                    {/* <MultiMerchantForm
+                        type={InputType.textarea}
+                        isOpen
+                        toggleDrawer={() => {}}
+                        accessor="description"
+                        data={mockData}
+                        inputLabel="Product description"
+                    /> */}
                     <Drawer
                         sx={{
                             ml: open ? 3 : 0,
@@ -386,3 +398,78 @@ const ProductsList = () => {
 };
 
 export default ProductsList;
+
+const mockData = [
+    {
+        merchant: {
+            name: 'Vinneren',
+            merchantId: 1,
+            isFather: true
+        },
+        data: {
+            name: 'Nombre del producto',
+            description: 'Descripción del producto en Vinneren',
+            isActive: false,
+            category: 10,
+            combo: {
+                visible: false,
+                name: 'Nombre A',
+                combo2: {
+                    level: 'Vin',
+                    combo3: {
+                        level2: 22
+                    }
+                }
+            },
+            productId: 10
+        }
+    },
+    {
+        merchant: {
+            name: 'Monstore',
+            merchantId: 2,
+            isFather: false
+        },
+        data: {
+            name: '',
+            description: '',
+            isActive: false,
+            category: 9,
+            combo: {
+                visible: false,
+                name: '',
+                combo2: {
+                    level: 1,
+                    combo3: {
+                        level2: 2
+                    }
+                }
+            },
+            productId: 11
+        }
+    },
+    {
+        merchant: {
+            name: 'Elektra',
+            merchantId: 3,
+            isFather: false
+        },
+        data: {
+            name: 'Producto - Elektra',
+            description: 'Sin descripción',
+            isActive: true,
+            category: 10,
+            combo: {
+                visible: false,
+                name: '',
+                combo2: {
+                    level: 1,
+                    combo3: {
+                        level2: 2
+                    }
+                }
+            },
+            productId: 12
+        }
+    }
+];

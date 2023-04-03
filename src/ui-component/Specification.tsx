@@ -60,10 +60,7 @@ const Specification = ({
     const handleTempSpect = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSpectObj((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
-    /* const handleChangeProd = () => {
-        setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
-    }; */
-    console.log(spectObj);
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12} lg={6}>

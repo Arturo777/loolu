@@ -1,3 +1,5 @@
+import { MerchantProductType } from './product';
+
 // product shop list
 export type Products = {
     tradePolicies: Trade[];
@@ -32,6 +34,7 @@ export type Products = {
     productID: string | number;
     sku: any;
     skus: Skus[];
+    showWithoutStock: boolean;
 };
 
 export type Skus = {
@@ -257,4 +260,6 @@ export interface ProductStateProps {
     createProductFacet: CreateFacetProduct[];
     error: object | string | null;
     loadingProducts?: boolean;
+    loadingProduct: boolean;
+    merchantProducts: MerchantProductType[];
 }

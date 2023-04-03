@@ -58,7 +58,7 @@ export const getMerchantsList = createAsyncThunk(`${slice.name}/getMerchants`, a
     // api/profile/user-multicatalog?user=ohuitron
     const response = await axios.get(`styrk/api/profile/user-multicatalog`, {
         // TODO: set base url from config.js
-        baseURL: `https://avyzymp6de.us-east-1.awsapprunner.com/`,
+        baseURL: STYRK_API,
         params: {
             user
         }

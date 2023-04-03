@@ -1,5 +1,5 @@
 import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -19,23 +19,26 @@ import { TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
 import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct, getCategories, getTradePolicies, saveProduct } from 'store/slices/product';
+import { getCategories, getTradePolicies, saveProduct, getProductDetails } from 'store/slices/product';
 import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
-import { resetCart } from 'store/slices/cart';
+// import { resetCart } from 'store/slices/cart';
 import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 import { useIntl } from 'react-intl';
 import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
-import MainCard from 'ui-component/cards/MainCard';
-import DragAndDrop from 'ui-component/DragAndDrop';
+// import DragAndDrop from 'ui-component/DragAndDrop';
 
-interface Image {
-    file: File;
-    src: string;
-}
+import { MerchantProductType } from 'types/product';
+import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+
+// interface Image {
+//     file: File;
+//     src: string;
+// }
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -78,24 +81,43 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ 
     })
 }));
 
+const defaultMerchantProps: MultiMerchantFormProps = {
+    isOpen: false,
+    data: [],
+    accessor: '',
+    // data: { [key: string]: any }[];
+    inputLabel: 'label',
+    toggleDrawer: (e) => {
+        console.log(e);
+    },
+    onSave: (data: any) => console.log(data),
+    type: InputType.textField
+    // options?: null | SelectOptionType[];
+};
+
 const ProductDetails = () => {
+    // hooks
     const intl = useIntl();
     const theme = useTheme();
+    const dispatch = useDispatch();
+    const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
     const { borderRadius } = useConfig();
     const { id } = useParams();
-    const dispatch = useDispatch();
-    const cart = useSelector((state) => state.cart);
-    const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
+    const [searchParams] = useSearchParams();
+
+    // const cart = useSelector((state) => state.cart);
     // information product and sku
-    const [productInfo, setProductInfo] = useState<Products>();
+    // product info according to selected merchant
     const [originalData, setOriginalData] = useState<Products>();
+    const [productInfo, setProductInfo] = useState<Products>();
+
     const [skuInfo, setSkuInfo] = useState<Skus>();
     const [valueSku, setValueSku] = useState('');
     const [open, setOpen] = useState(false);
     const [openTwo, setOpenTwo] = useState(false);
     /* const [loading, setLoading] = useState(true); */
     // actice mode edit product
-    const [active, setActive] = useState(false);
+    const [active, setActive] = useState(true);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // product description tabs
@@ -112,31 +134,60 @@ const ProductDetails = () => {
     const [flagCategory, setFlagCategory] = useState(false);
 
     const { product, skus, tradePolicies } = useSelector((state) => state.product);
+
     const { brands } = useSelector((state) => state.catalogue);
-    const [images, setImages] = useState<Image[]>([]);
+
+    // params
+    const idMerchant = searchParams.get('idMerchant');
+    // const idMerchant = useMemo(() => searchParams.get('idMerchant'), []);
+    // const isFather = searchParams.get('isFather');
+
+    // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
-    // idMerchant url get
+    const [allMerchantsProductData, setAllMerchantsProductData] = useState<{ [key: string]: any }[]>([]);
+    const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const idMerchant = searchParams.get('idMerchant');
-    const isFather = searchParams.get('isFather');
+    useEffect(() => {
+        // update product info on merchants array
+        setAllMerchantsProductData((prev) => [
+            ...prev.map((item) => {
+                if (item.merchantId === Number(idMerchant)) {
+                    return { ...item, detailProduct: productInfo };
+                }
+                return item;
+            })
+        ]);
+    }, [idMerchant, productInfo]);
 
     useEffect(() => {
         // getProduct();
         setIsLoading(true);
-        dispatch(getProduct({ id, idMerchant }));
-        dispatch(getCategories());
-        dispatch(getTradePolicies());
-        // clear cart if complete order
-        /*  if (valueSku === 0) setValueSku(product?.skus[0]?.sku?.skuID); */
-        if (cart.checkout.step > 2) {
-            dispatch(resetCart());
+
+        if (id && idMerchant) {
+            dispatch(
+                getProductDetails({
+                    idProd: id,
+                    idMerchant
+                })
+            ).then(({ payload }) => {
+                const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
+
+                setAllMerchantsProductData(payload);
+
+                if (merchantProduct) {
+                    setOriginalData(merchantProduct.detailProduct);
+                    setProductInfo(merchantProduct.detailProduct);
+                    setIsLoading(false);
+                }
+            });
+            dispatch(getBrands());
+            dispatch(getCategories());
+            dispatch(getTradePolicies());
         }
-    }, [cart.checkout.step, dispatch, id]);
+    }, [dispatch, id, idMerchant, product]);
 
     useEffect(() => {
         if (brands?.length) {
@@ -147,18 +198,18 @@ const ProductDetails = () => {
     useEffect(() => {
         setOpen(false);
     }, []);
-    console.log(idMerchant, isFather);
 
-    useEffect(() => {
-        if (product !== null) {
-            setOriginalData(product);
-            setProductInfo(product);
-            setIsLoading(false);
-        }
-        if (!active && product !== null) {
-            setOriginalData(product);
-        }
-    }, [product, active]);
+    // useEffect(() => {
+    //     if (product !== null) {
+    //         console.log('SET PRO');
+    //         setOriginalData(product);
+    //         setProductInfo(product);
+    //         setIsLoading(false);
+    //     }
+    //     if (!active && product !== null) {
+    //         setOriginalData(product);
+    //     }
+    // }, [product, active]);
 
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);
@@ -169,7 +220,6 @@ const ProductDetails = () => {
         setOpen(false);
     };
 
-    console.log(product);
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (flagBrand) {
@@ -208,10 +258,8 @@ const ProductDetails = () => {
                 const prodsku = newBrandSku?.Id
                     ? { ...productInfo, sku: skuInfo, brandName: newBrandSku?.Name, brandId: newBrandSku?.Id }
                     : { ...productInfo, sku: skuInfo };
-                // console.log('prod new', prodsku);
                 await dispatch(saveProduct(prodsku))
                     .then(({ payload }) => {
-                        // console.log(payload.response);
                         dispatch(
                             openSnackbar({
                                 open: true,
@@ -240,7 +288,52 @@ const ProductDetails = () => {
             }
         }
     };
-    /* console.log('primer prod', productInfo); */
+
+    const saveMultiChange = (data: { [key: string]: any }[]) => {
+        setAllMerchantsProductData(data);
+
+        const updateCurrentProductInfo = data.find((item: { [key: string]: any }) => item.merchantId === Number(idMerchant));
+
+        if (updateCurrentProductInfo) {
+            const newInfo = updateCurrentProductInfo.detailProduct;
+            setProductInfo(newInfo);
+        }
+    };
+
+    const handleDrawerMultiEdit = ({
+        accessor,
+        intlLabel,
+        data = undefined,
+        options = null,
+        type
+    }: {
+        accessor: string;
+        intlLabel: string;
+        data?: { [key: string]: any }[];
+        options?: null | SelectOptionType[];
+        type: InputType;
+    }) => {
+        const newMultiFormProps: MultiMerchantFormProps = {
+            accessor,
+            data: data || allMerchantsProductData,
+            isOpen: true,
+            inputLabel: intlLabel,
+            options,
+            toggleDrawer: (e) => {
+                // console.log('TOGLLE');
+                setMultiFormProps({ ...defaultMerchantProps, isOpen: e });
+                // resetDrawer();
+            },
+            onSave: (newData) => {
+                setMultiFormProps({ ...defaultMerchantProps, isOpen: false });
+                saveMultiChange(newData);
+            },
+            type
+        };
+
+        setMultiFormProps(newMultiFormProps);
+    };
+
     return (
         <Grid container component="form" onSubmit={handleSave} alignItems="center" justifyContent="center" spacing={gridSpacing}>
             {isLoading && (
@@ -252,6 +345,7 @@ const ProductDetails = () => {
             )}
             {!isLoading && (
                 <>
+                    <MultiMerchantForm {...multiFormProps} />
                     <Grid item xs={12}>
                         <Box sx={{ display: 'flex' }}>
                             <Main
@@ -261,128 +355,128 @@ const ProductDetails = () => {
                                         : { marginRight: '-420px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
                                 }
                             >
-                                <MainCard>
-                                    {originalData && originalData?.productID?.toString() === id && (
-                                        <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                            <Grid item xs={12} md={6}>
+                                {originalData && originalData?.productID?.toString() === id && (
+                                    <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                        <Grid item xs={12} md={6}>
+                                            {Boolean(skus && skus.length) && (
                                                 <ProductImages
                                                     skus={skus}
                                                     valueSku={valueSku}
-                                                    product={product}
+                                                    product={productInfo}
                                                     setActive={setActive}
                                                     active={active}
                                                 />
-                                            </Grid>
-                                            <Grid item xs={12} md={6}>
+                                            )}
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            {productInfo && (
                                                 <ProductInfo
-                                                    product={originalData}
-                                                    setValueSku={setValueSku}
-                                                    valueSku={valueSku}
-                                                    setActive={setActive}
+                                                    handleDrawer={handleDrawerMultiEdit}
                                                     active={active}
-                                                    setProductInfo={setProductInfo}
-                                                    productInfo={productInfo}
-                                                    setSkuInfo={setSkuInfo}
-                                                    skuInfo={skuInfo}
+                                                    allMerchantsProductData={allMerchantsProductData}
                                                     brandsInfo={brandsInfo}
-                                                    setFlagBrand={setFlagBrand}
                                                     flagBrand={flagBrand}
-                                                    setNewBrandSku={setNewBrandSku}
-                                                    setFlagCategory={setFlagCategory}
                                                     flagCategory={flagCategory}
+                                                    product={originalData}
+                                                    productInfo={productInfo}
+                                                    saveMultiChange={saveMultiChange}
+                                                    setActive={setActive}
+                                                    setFlagBrand={setFlagBrand}
+                                                    setFlagCategory={setFlagCategory}
+                                                    setNewBrandSku={setNewBrandSku}
                                                     setNewCategorySku={setNewCategorySku}
+                                                    setProductInfo={setProductInfo}
+                                                    setSkuInfo={setSkuInfo}
+                                                    setValueSku={setValueSku}
+                                                    skuInfo={skuInfo}
                                                     tradePolicies={tradePolicies}
+                                                    valueSku={valueSku}
                                                 />
-                                                <Grid item xs={12}>
-                                                    <Grid container spacing={1}>
-                                                        <Grid item xs={6}>
-                                                            {active ? (
-                                                                <Button
-                                                                    fullWidth
-                                                                    variant="outlined"
-                                                                    color="error"
-                                                                    size="large"
-                                                                    startIcon={<DeleteIcon />}
-                                                                    onClick={() => setActive(false)}
-                                                                    disabled={valueSku === ''}
-                                                                >
-                                                                    {intl.formatMessage({ id: 'cancel' })}
-                                                                </Button>
-                                                            ) : (
-                                                                <Button
-                                                                    fullWidth
-                                                                    color="primary"
-                                                                    variant="contained"
-                                                                    size="large"
-                                                                    startIcon={<EditIcon />}
-                                                                    onClick={() => setActive(true)}
-                                                                    disabled={valueSku === ''}
-                                                                >
-                                                                    {intl.formatMessage({ id: 'edit' })}
-                                                                </Button>
-                                                            )}
-                                                        </Grid>
-                                                        <Grid item xs={6}>
+                                            )}
+                                            <Grid item xs={12}>
+                                                <Grid container spacing={1}>
+                                                    <Grid item xs={6}>
+                                                        {active ? (
                                                             <Button
-                                                                type="submit"
                                                                 fullWidth
-                                                                color="secondary"
+                                                                variant="outlined"
+                                                                color="error"
+                                                                size="large"
+                                                                startIcon={<DeleteIcon />}
+                                                                onClick={() => setActive(false)}
+                                                                disabled={valueSku === ''}
+                                                            >
+                                                                {intl.formatMessage({ id: 'cancel' })}
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                fullWidth
+                                                                color="primary"
                                                                 variant="contained"
                                                                 size="large"
+                                                                startIcon={<EditIcon />}
+                                                                onClick={() => setActive(true)}
+                                                                disabled={valueSku === ''}
                                                             >
-                                                                {intl.formatMessage({ id: 'save' })}
+                                                                {intl.formatMessage({ id: 'edit' })}
                                                             </Button>
-                                                        </Grid>
+                                                        )}
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Button type="submit" fullWidth color="secondary" variant="contained" size="large">
+                                                            {intl.formatMessage({ id: 'save' })}
+                                                        </Button>
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
-                                            <Grid item xs={12}>
-                                                <Tabs
-                                                    value={value}
-                                                    indicatorColor="primary"
-                                                    onChange={handleChange}
-                                                    sx={{}}
-                                                    aria-label="product description tabs example"
-                                                    variant="scrollable"
-                                                >
-                                                    <Tab
-                                                        component={Link}
-                                                        to="#"
-                                                        label={intl.formatMessage({ id: 'description' })}
-                                                        {...a11yProps(0)}
-                                                    />
-                                                    <Tab
-                                                        component={Link}
-                                                        to="#"
-                                                        label={
-                                                            <Stack direction="row" alignItems="center">
-                                                                {intl.formatMessage({ id: 'reviews' })}
-                                                                <Chip
-                                                                    label={String(product?.salePrice)}
-                                                                    size="small"
-                                                                    chipcolor="secondary"
-                                                                    sx={{ ml: 1.5 }}
-                                                                />
-                                                            </Stack>
-                                                        }
-                                                        {...a11yProps(1)}
-                                                    />
-                                                </Tabs>
-                                                <TabPanel value={value} index={0}>
-                                                    <ProductDescription
-                                                        product={originalData}
-                                                        active={active}
-                                                        setProductInfo={setProductInfo}
-                                                        productInfo={productInfo}
-                                                    />
-                                                </TabPanel>
-                                                <TabPanel value={value} index={1}>
-                                                    <ProductReview product={product} />
-                                                </TabPanel>
-                                            </Grid>
                                         </Grid>
-                                    )}
-                                </MainCard>
+                                        <Grid item xs={12}>
+                                            <Tabs
+                                                value={value}
+                                                indicatorColor="primary"
+                                                onChange={handleChange}
+                                                sx={{}}
+                                                aria-label="product description tabs example"
+                                                variant="scrollable"
+                                            >
+                                                <Tab
+                                                    component={Link}
+                                                    to="#"
+                                                    label={intl.formatMessage({ id: 'description' })}
+                                                    {...a11yProps(0)}
+                                                />
+                                                <Tab
+                                                    component={Link}
+                                                    to="#"
+                                                    label={
+                                                        <Stack direction="row" alignItems="center">
+                                                            {intl.formatMessage({ id: 'reviews' })}
+                                                            <Chip
+                                                                label={String(product?.salePrice)}
+                                                                size="small"
+                                                                chipcolor="secondary"
+                                                                sx={{ ml: 1.5 }}
+                                                            />
+                                                        </Stack>
+                                                    }
+                                                    {...a11yProps(1)}
+                                                />
+                                            </Tabs>
+                                            <TabPanel value={value} index={0}>
+                                                <ProductDescription
+                                                    handleDrawer={handleDrawerMultiEdit}
+                                                    product={originalData}
+                                                    active={active}
+                                                    setProductInfo={setProductInfo}
+                                                    productInfo={productInfo}
+                                                />
+                                            </TabPanel>
+                                            <TabPanel value={value} index={1}>
+                                                <ProductReview product={product} />
+                                            </TabPanel>
+                                        </Grid>
+                                    </Grid>
+                                )}
                             </Main>
                             {open ? (
                                 <Drawer
@@ -447,10 +541,11 @@ const ProductDetails = () => {
                         </Box>
                     </Grid>
 
-                    <DragAndDrop images={images} setImages={setImages} />
-                    {images.map((image, index) => (
+                    {/* <DragAndDrop images={images} setImages={setImages} /> */}
+
+                    {/* {images.map((image, index) => (
                         <img key={index} src={image.src} alt={`id${index}`} />
-                    ))}
+                    ))} */}
 
                     <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
