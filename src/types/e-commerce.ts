@@ -1,3 +1,5 @@
+import { MerchantProductType } from './product';
+
 // product shop list
 export type Products = {
     tradePolicies: Trade[];
@@ -32,10 +34,11 @@ export type Products = {
     productID: string | number;
     sku: any;
     skus: Skus[];
+    showWithoutStock: boolean;
 };
 
 export type Skus = {
-    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
+    // map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     ean: string | number | undefined;
     name: string;
     skuID: string | number | undefined;
@@ -70,8 +73,8 @@ export type Categories = {
     name: string;
     children: Categories[];
 };
-export type TradePolicies = {
-    TradePolicies: Policy;
+export type Policies = {
+    TradePolicies: Policy[];
 };
 export type ApprovalStatus = {
     StepApproval: Status;
@@ -88,7 +91,6 @@ export type Trade = {
     tradePolicyName: string;
 };
 export type Policy = {
-    filter(arg0: (tra: any) => boolean): unknown;
     isActive: boolean;
     idMerchant: number;
     idPolicy: number;
@@ -129,6 +131,69 @@ export type Address = {
     isDefault: boolean;
 };
 
+export type ProductFacet = {
+    detail: Specification[];
+};
+export type Specification = {
+    groupId: number;
+    groupName: string;
+    categoryId: number;
+    categoryName: string;
+    specificationId: number;
+    specificationName: string;
+    isText: boolean;
+    fieldTypeName: string;
+    fieldTypeId: number;
+    facetList: FacetList[];
+};
+
+export type FacetList = {
+    facetId: number;
+    facetValue: string | number;
+    linkVtexId: number;
+};
+export type CreateFacetProduct = {
+    categoryId: number;
+    specificationGroups: SpecificationsGroups[];
+};
+export type SpecificationsGroups = {
+    prodSpecs: Specs[];
+    skuSpecs: Specs[];
+    groupId: number;
+    name: string;
+};
+
+export type Specs = {
+    specificationValues: SpecsValues[];
+    categoryId: number;
+    specificationId: number;
+    rawSpecId: number;
+    name: string;
+    fieldTypeId: number;
+    fieldTypeName: string;
+    groupId: number;
+    groupName: string;
+    description: string;
+    position: number;
+    isFilter: boolean;
+    isRequired: boolean;
+    isOnProductDetails: boolean;
+    isStockKeepingUnit: boolean;
+    isActive: boolean;
+    isTopMenuLinkActive: boolean;
+    isSideMenuLinkActive: boolean;
+    vtexFieldId: number;
+    isVtexSync: boolean;
+};
+
+export type SpecsValues = {
+    specificationValueId: number;
+    name: string;
+    isActive: boolean;
+    position: number;
+    vtexValueId: number;
+    isVtexSync: boolean;
+};
 // product reviews list
 export type Reviews = {
     id: string | number | undefined;
@@ -185,12 +250,16 @@ export interface ProductStateProps {
     relatedProducts: Products[];
     skus: Skus[];
     categories: Categories[];
-    tradePolicies: TradePolicies[];
+    tradePolicies: any;
     approvalStatus: ApprovalStatus[];
     getRejectedStatus: RejectedStatus[];
     approvalHistorial: ApprovalHistorial[];
     reviews: Reviews[];
     addresses: Address[];
+    productFacet: ProductFacet[];
+    createProductFacet: CreateFacetProduct[];
     error: object | string | null;
     loadingProducts?: boolean;
+    loadingProduct: boolean;
+    merchantProducts: MerchantProductType[];
 }

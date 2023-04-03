@@ -2,14 +2,16 @@
 // material-ui
 import { Grid, LinearProgress, Typography } from '@mui/material';
 
+
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
+import { FormattedMessage } from 'react-intl';
 
 // ===========================|| WIDGET STATISTICS - CUSTOMER SATISFACTION ||=========================== //
 
 const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
-    <MainCard title="Store Status">
+    <MainCard title={<FormattedMessage id='store-status'/>}>
         <Grid container spacing={3}>
             <Grid item xs={12}>
                 <Typography variant="h3" align="center">
@@ -35,7 +37,7 @@ const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
                     <Grid item xs={4}>
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
-                                <Typography variant="subtitle2">previous</Typography>
+                                <Typography variant="subtitle2"><FormattedMessage id='previous'/></Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography variant="h5">56.75</Typography>
@@ -45,7 +47,7 @@ const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
                     <Grid item xs={4}>
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
-                                <Typography variant="subtitle2">Change</Typography>
+                                <Typography variant="subtitle2"><FormattedMessage id='change-card'/></Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography variant="h5">+12.60</Typography>
@@ -55,7 +57,7 @@ const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
                     <Grid item xs={4}>
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
-                                <Typography variant="subtitle2">Trend</Typography>
+                                <Typography variant="subtitle2"><FormattedMessage id='trend'/></Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography variant="h5">23.78</Typography>

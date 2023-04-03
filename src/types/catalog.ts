@@ -4,7 +4,7 @@ type CreateCategoryMerchantPayload = {
     merchantId: number;
     fatherMerchant: boolean;
     categoryData: {
-        fatherCategoryId: number | string;
+        fatherCategoryId: number;
         masterCategoryId: number;
         isActive: boolean;
         name: string;
@@ -38,13 +38,13 @@ export type createCategoryProps = {
 
 export type CreateCategoryPageProps = {
     handleClose: (e?: any) => void;
-    selectedCatId?: number | string;
+    selectedCatId?: number;
     show: boolean;
     selectedMerchant: MerchantType | undefined;
 };
 
 export type EditCategoryProps = {
-    selectedCategory?: number | string;
+    selectedCategory?: number;
     show: boolean;
     onCancel: () => void;
     openAssociate: (cat: CategoryType | undefined) => void;
@@ -53,8 +53,8 @@ export type EditCategoryProps = {
 
 export type CategoriesListProps = {
     filterText: string;
-    openCreate: (catId: number | string) => void;
-    handleShowInfo: (cat?: number | string) => void;
+    openCreate: (catId: number) => void;
+    handleShowInfo: (cat?: number) => void;
     openAssociate: (cat: CategoryType | undefined) => void;
     selectedMerchant: MerchantType | undefined;
 };
@@ -148,7 +148,7 @@ export type FacetType = {
 };
 
 export type CategoryType = {
-    id: number | string;
+    id: number;
     numberChildren: number;
     name: string;
     title: string;
@@ -167,7 +167,7 @@ export type CategoryType = {
 
 export type FilterMerchantCategoryType = FilterCategoryType;
 export type FlatCategoryType = {
-    id: number | string;
+    id: number;
     name: string;
     title: string;
     description: string;
@@ -176,7 +176,7 @@ export type FlatCategoryType = {
 };
 
 export type FilterCategoryType = {
-    id: number | string;
+    id: number;
     name: string;
     fatherName?: string;
     grandFatherName?: string;

@@ -30,6 +30,7 @@ export const STYRK_API = process.env.REACT_APP_STYRK_API;
 export const STYRK_API_ALTERNATIVE = process.env.REACT_APP_STYRK_API_ALTERNATIVE;
 export const STYRK_API_HEALTH_CONTENT = process.env.REACT_APP_STYRK_HEALTH_CONTENT;
 export const STYRK_API_BULKLOAD = process.env.REACT_APP_STYRK_API_BULKLOAD;
+export const STYRK_API_CHATGPT = process.env.REACT_APP_STYRK_API_CHATGPT;
 
 // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
 // like '/berry-material-react/react/default'

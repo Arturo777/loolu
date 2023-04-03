@@ -21,9 +21,10 @@ type EditFacetComponentProps = {
     show: boolean;
     handleCancel: () => void;
     facetId: number | null;
+    merchs: any;
 };
 
-const EditFacetComponent = ({ show, handleCancel, facetId }: EditFacetComponentProps) => {
+const EditFacetComponent = ({ show, handleCancel, facetId, merchs }: EditFacetComponentProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();

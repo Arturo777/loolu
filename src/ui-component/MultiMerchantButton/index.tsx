@@ -1,15 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-
 // mui imports
 import { Menu, Stack, MenuItem, IconButton, Paper, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
 // third party imports
 import { useIntl } from 'react-intl';
-
 import { customScrollBar, MerchantChipType, MerchantAvatar, ShowMoreButton } from './components';
-
 // types
 import { MerchantType } from 'types/security';
 import { useDispatch, useSelector } from 'store';
@@ -26,7 +22,6 @@ type MultiMerchantProps = {
     justOne?: boolean;
     size?: 'small' | 'medium' | 'large';
 };
-
 export default function MultiMerchant({
     blockDefaults = true,
     defaultSelected,
@@ -40,26 +35,20 @@ export default function MultiMerchant({
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
-
     // store
     const { user } = useAuth();
     const { merchants } = useSelector((state) => state.auth);
-
     const [merchantsList, setMerchantsList] = useState<MerchantChipType[]>([]);
     const [firstRender, setFirstRender] = useState<boolean>(true);
-
     const isAllSelected = useMemo(() => merchantsList.every((item) => item.isSelected), [merchantsList]);
-
     // menu triggers
     const [anchorMenu, setAnchorMenu] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorMenu);
-
     useEffect(() => {
         if (user && user.user) {
             dispatch(getMerchantsList(user?.user));
         }
     }, [dispatch, merchants?.length, user]);
-
     // change event
     useEffect(() => {
         const selectedMerchants = merchantsList.filter((item) => item.isSelected);
@@ -68,38 +57,31 @@ export default function MultiMerchant({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [merchantsList]);
-
     // create initial array
     useEffect(() => {
         if (firstRender && merchants) {
             const initialList =
                 merchants?.map((item) => {
                     const isDefaultSelected = item.isFather ? true : defaultSelected.some((itemA) => itemA.merchantId === item.merchantId);
-
                     return { ...item, isSelected: isDefaultSelected };
                 }) ?? [];
-
             setMerchantsList(initialList);
             setFirstRender(false);
             // handleChangeList(initialList);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [merchants, defaultSelected]);
-
     // menu actions - open
     const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorMenu(event.currentTarget);
     };
-
     // menu actions - close
     const handleCloseMenu = () => {
         setAnchorMenu(null);
     };
-
     // toggle buttons (external)
     const toggleItem = (merchant: MerchantChipType) => {
         if (readOnly) return;
-
         // only select one
         if (justOne) {
             const newList = merchantsList.map((item) => {
@@ -108,16 +90,12 @@ export default function MultiMerchant({
                 }
                 return { ...item, isSelected: false };
             });
-
             setMerchantsList([...newList]);
             // handleChangeList(newList);
             return;
         }
-
         const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
-
         const isBlocked = (isDefaultSelected && blockDefaults) || merchant.isFather;
-
         if (!isBlocked) {
             const newList = merchantsList.map((item) => {
                 if (item.merchantId === merchant.merchantId) {
@@ -129,82 +107,64 @@ export default function MultiMerchant({
             // handleChangeList(newList);
         }
     };
-
     // toggle between select all and unselect
     const selectAll = () => {
         if (readOnly) return;
         if (!isAllSelected) {
             handleCloseMenu();
         }
-
         const newVal = !isAllSelected;
-
         if (newVal) {
             // set all as selected
             const newList = merchantsList.map((item) => ({ ...item, isSelected: true }));
-
             setMerchantsList([...newList]);
             // handleChangeList(newList);
         } else {
             const newList = merchantsList.map((merchant) => {
                 const isDefaultSelected = defaultSelected.some((itemA) => itemA.merchantId === merchant.merchantId);
                 const isBlocked = isDefaultSelected && blockDefaults;
-
                 if (merchant.isFather || isBlocked) {
                     return merchant;
                 }
-
                 return { ...merchant, isSelected: false };
             });
             setMerchantsList([...newList]);
             // handleChangeList(newList);
         }
     };
-
     const filteredElementsToRender = useMemo<MerchantChipType[]>(() => {
         if (justOne && merchantsList.length < maxShow!) {
             return [...merchantsList];
         }
-
         if (justOne) {
             return [...merchantsList.filter((item) => item.isSelected)];
         }
-
         let elements: MerchantChipType[] = [];
-
         // add father as first element
         const fatherElement = merchantsList.find((item) => item.isFather);
-
         if (fatherElement) {
             elements = [...elements, fatherElement];
         }
-
         merchantsList.forEach((item) => {
             if (!item.isFather && elements.length < maxShow!) {
                 elements = [...elements, item];
             }
         });
-
         return elements;
     }, [justOne, merchantsList, maxShow]);
-
     const moreText = useMemo(() => {
         if (justOne && merchantsList.length < maxShow!) {
             return 0;
         }
-
         if (justOne) {
             return merchantsList.length - 1;
         }
-
         return merchantsList.length - maxShow!;
     }, [justOne, maxShow, merchantsList.length]);
-
     const renderMore = useMemo<boolean>(
         () => (merchantsList.length > maxShow! || justOne!) && moreText > 0,
         [justOne, maxShow, merchantsList.length, moreText]
     );
-
     const renderMenu = useMemo<React.ReactNode>(() => {
         if (!renderMore) return null;
         return (
@@ -257,7 +217,6 @@ export default function MultiMerchant({
                         </Typography>
                     </MenuItem>
                 )}
-
                 {merchantsList.map((merchant) => (
                     <MenuItem
                         key={`merchant-menu-item-${merchant.merchantId}`}
@@ -277,7 +236,6 @@ export default function MultiMerchant({
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [anchorMenu, isAllSelected, merchantsList, open, renderMore]);
-
     return (
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
             <Paper
@@ -303,22 +261,19 @@ export default function MultiMerchant({
                             size={size}
                         />
                     ))}
-
                     {renderMore}
                 </>
             </Paper>
-
             {renderMore && <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${(merchants?.length ?? 0) - maxShow!}`} />}
-
             {/* {renderMore && (
                 <Avatar
                     onClick={handleOpenMenu}
                     sx={{
                         ...avatarCommonProps,
                         ...getSizeProps(size),
-                        bgcolor: '#d3d3d3',
-                        color: theme.palette.getContrastText('#d3d3d3'),
-                        borderColor: '#d3d3d3',
+                        bgcolor: '#D3D3D3',
+                        color: theme.palette.getContrastText('#D3D3D3'),
+                        borderColor: '#D3D3D3',
                         mr: 0,
                         cursor: 'pointer'
                     }}
@@ -326,18 +281,15 @@ export default function MultiMerchant({
                     {moreText}+
                 </Avatar>
             )} */}
-
             {renderMore && (
                 <IconButton onClick={handleOpenMenu}>
                     <MoreVertIcon />
                 </IconButton>
             )}
-
             {renderMenu}
         </Stack>
     );
 }
-
 const multiDefaultProps = {
     onChange: () => {},
     readOnly: false,
@@ -345,5 +297,4 @@ const multiDefaultProps = {
     justOne: false,
     size: 'large'
 };
-
 MultiMerchant.defaultProps = multiDefaultProps;

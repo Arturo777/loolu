@@ -1,6 +1,9 @@
 // material-ui
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Button, Box, TextField } from '@mui/material';
+
+import { useDispatch, useSelector } from 'store';
+import { facetsToProduct } from 'store/slices/product';
 
 function createData(key: string, value: string) {
     return { key, value };
@@ -24,9 +27,26 @@ interface Specifi {
 }
 // ==============================|| PRODUCT DETAILS - SPECIFICATION ||============================== //
 
-const Specification = ({ productInfo, setProductInfo, active }: { productInfo: any; setProductInfo: any; active: boolean }) => {
+const Specification = ({
+    productInfo,
+    setProductInfo,
+    active,
+    merchantMulti
+}: {
+    productInfo: any;
+    setProductInfo: any;
+    active: boolean;
+    merchantMulti: any;
+}) => {
+    const dispatch = useDispatch();
     const [tam, setTam] = useState<Specifi[]>([]);
     const [spectObj, setSpectObj] = useState<Specifi[]>([]);
+    useEffect(() => {
+        if (productInfo) {
+            const infoFacets = { categoryId: productInfo?.categoryId, merchantId: merchantMulti };
+            dispatch(facetsToProduct(infoFacets));
+        }
+    }, [dispatch, merchantMulti, productInfo]);
 
     const handleClick = () => {
         setTam((prev: any) => [
@@ -40,10 +60,7 @@ const Specification = ({ productInfo, setProductInfo, active }: { productInfo: a
     const handleTempSpect = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSpectObj((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
     };
-    /* const handleChangeProd = () => {
-        setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
-    }; */
-    console.log(spectObj);
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12} lg={6}>

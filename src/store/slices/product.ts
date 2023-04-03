@@ -8,7 +8,7 @@ import { STYRK_API } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { ProductsFilter, Address, Products } from 'types/e-commerce';
+import { ProductsFilter, Products } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 import { getSearchParamsFromObject } from 'utils/helpers';
 
@@ -27,6 +27,10 @@ const initialState: DefaultRootStateProps['product'] = {
     approvalHistorial: [],
     reviews: [],
     addresses: [],
+    loadingProduct: true,
+    merchantProducts: [],
+    productFacet: [],
+    createProductFacet: [],
     loadingProducts: true
 };
 
@@ -85,21 +89,6 @@ const slice = createSlice({
         // GET PRODUCT REVIEWS
         getProductReviewsSuccess(state, action) {
             state.reviews = action.payload;
-        },
-
-        // GET ADDRESSES
-        getAddressesSuccess(state, action) {
-            state.addresses = action.payload;
-        },
-
-        // ADD ADDRESS
-        addAddressSuccess(state, action) {
-            state.addresses = action.payload;
-        },
-
-        // EDIT ADDRESS
-        editAddressSuccess(state, action) {
-            state.addresses = action.payload;
         }
     },
     extraReducers(builder) {
@@ -109,6 +98,9 @@ const slice = createSlice({
             })
             .addCase(getProducts.fulfilled, (state, action) => {
                 state.loadingProducts = false;
+
+                console.log(action.payload.response);
+
                 const products = action.payload.response.map((item: ProductCardProps) => ({
                     ...item,
                     date: item.releaseDate,
@@ -117,6 +109,9 @@ const slice = createSlice({
                     offerPrice: 1000,
                     salePrice: 1300
                 }));
+
+                console.log(action.payload.response);
+
                 state.products = products;
             });
 
@@ -126,9 +121,10 @@ const slice = createSlice({
             })
             .addCase(getProduct.fulfilled, (state, action) => {
                 state.loadingProducts = false;
+
                 action.payload.response.departmentId = action.payload.response.categoryId;
 
-                state.product = action.payload.response;
+                state.product = action.payload.response[0] /* .detailProduct */;
             });
 
         builder
@@ -163,6 +159,42 @@ const slice = createSlice({
             .addCase(getApprovalHistorial.fulfilled, (state, action) => {
                 state.loadingProducts = false;
                 state.approvalHistorial = action.payload.response;
+            });
+        /* ------------------------------------------- */
+        /* --------- MULTI MERCHANT SERVICES --------- */
+        /* ------------------------------------------- */
+        builder
+            // PRODUCT
+            .addCase(getProductDetails.pending, (state) => {
+                state.loadingProduct = true;
+            })
+            .addCase(getProductDetails.fulfilled, (state, action) => {
+                state.loadingProduct = false;
+                console.log(action.payload);
+                state.merchantProducts = action.payload;
+            });
+        // SKUs
+        builder.addCase(getProductSkuList.pending, (state) => {
+            state.loadingProduct = true;
+        });
+        // builder.addCase(getProductSkuList.pending, (state) => {
+        //     state.loadingProduct = true;
+        // });
+        builder
+            .addCase(productFacetService.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(productFacetService.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.productFacet = action.payload.response.detail;
+            });
+        builder
+            .addCase(facetsToProduct.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(facetsToProduct.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.createProductFacet = action.payload.response;
             });
     }
     // extraReducers(builder) {}
@@ -224,7 +256,7 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             searchParams.idProd ||
             searchParams.idApprovalStatus
     );
-    const response = await axios.get(`styrk/api/product/search`, {
+    const response = await axios.get(`/styrk/api/product/search-multicatalog`, {
         baseURL: STYRK_API,
         params: {
             idMerchant: searchParams.idMerchant || 1,
@@ -234,6 +266,9 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             idProd: searchParams.idProd
         }
     });
+
+    console.log(response);
+
     return response.data;
 });
 
@@ -248,15 +283,21 @@ export function filterProducts(filter: ProductsFilter) {
     };
 }
 
-export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async (id: string | undefined) => {
-    const response = await axios.get('styrk/api/product/detail/productSkus', {
+interface ProductArgs {
+    id: string | undefined;
+    idMerchant: any;
+}
+
+export const getProduct = createAsyncThunk(`${slice.name}/getProduct`, async ({ id, idMerchant }: ProductArgs) => {
+    const response = await axios.get('styrk/api/product/detail/product-multicatalog', {
         baseURL: STYRK_API,
         params: {
-            idMerchant: 1,
+            idMerchant,
             idProd: id,
             page: 0
         }
     });
+    // return mockProductResponse;
     return response.data;
 });
 
@@ -316,6 +357,35 @@ export function getTradePolicies() {
     };
 }
 
+type FacetProduct = {
+    merchantId: number | string;
+    productID: number | string;
+};
+export const productFacetService = createAsyncThunk(`${slice.name}/facetProduct`, async ({ merchantId, productID }: FacetProduct) => {
+    const response = await axios.get(`styrk/api/linkvariant/getProductFacetAsociation`, {
+        baseURL: STYRK_API,
+        params: {
+            merchantId,
+            productID
+        }
+    });
+    return response.data;
+});
+type FacetToProduct = {
+    merchantId: number | string;
+    categoryId: number | string;
+};
+export const facetsToProduct = createAsyncThunk(`${slice.name}/facetsToProduct`, async ({ merchantId, categoryId }: FacetToProduct) => {
+    const response = await axios.get(`styrk/api/linkvariant/getProductFacetAsociation`, {
+        baseURL: STYRK_API,
+        params: {
+            merchantId,
+            categoryId
+        }
+    });
+    return response.data;
+});
+
 export const approvalStatus = createAsyncThunk(`${slice.name}/lifecycleapproval`, async () => {
     const response = await axios.get('/styrk/api/product/lifecycleapproval', {
         baseURL: STYRK_API,
@@ -373,35 +443,37 @@ export function getProductReviews() {
     };
 }
 
-export function getAddresses() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/address/list');
-            dispatch(slice.actions.getAddressesSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+/* ------------------------------------------- */
+/* --------- MULTI MERCHANT SERVICES --------- */
+/* ------------------------------------------- */
 
-export function addAddress(address: Address) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/address/new', address);
-            dispatch(slice.actions.addAddressSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+export const getProductDetails = createAsyncThunk(
+    `${slice.name}/getMultiMerchantProduct`,
+    async ({ idProd, idMerchant }: { idProd: number | string; idMerchant: number | string }) => {
+        // const response = await axios.get('/styrk/api/product/detail/sku-multicatalog', {
+        const response = await axios.get('/styrk/api/product/detail/product-multicatalog', {
+            baseURL: STYRK_API,
+            params: {
+                idProd,
+                idMerchant
+            }
+        });
 
-export function editAddress(address: Address) {
-    return async () => {
-        try {
-            const response = await axios.post('/api/address/edit', address);
-            dispatch(slice.actions.editAddressSuccess(response.data.address));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+        return response.data.response;
+    }
+);
+
+export const getProductSkuList = createAsyncThunk(
+    `${slice.name}/getMultiMerchantProductSKUs`,
+    async ({ idProd, merchantId }: { idProd: number | string; merchantId: number | string }) => {
+        const response = await axios.get('/styrk/api/product/detail/productSkus', {
+            baseURL: STYRK_API,
+            params: {
+                idProd,
+                merchantId
+            }
+        });
+
+        return response.data.response;
+    }
+);

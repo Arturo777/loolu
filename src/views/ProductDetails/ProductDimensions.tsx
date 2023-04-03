@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 import item from '../../assets/images/item.png';
 import packageitem from '../../assets/images/package.png';
-import { TextField, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { TextField, FormControl, InputLabel, MenuItem, Select, Grid } from '@mui/material';
 import { catalogUnits } from 'utils/unitMeasurement';
 import './style.css';
 import { Key } from 'react';
@@ -33,14 +33,16 @@ const ProductDimensions = ({ skuFilter, setSkuInfo, active }: { skuFilter: any; 
                                     defaultValue={skuFilter?.height}
                                     onChange={handleChangeSku}
                                 />
-                                <TextField
-                                    id="standard-number"
-                                    label="length"
-                                    type="number"
-                                    name="length"
-                                    defaultValue={skuFilter['length']}
-                                    onChange={handleChangeSku}
-                                />
+                                {skuFilter && (
+                                    <TextField
+                                        id="standard-number"
+                                        label="length"
+                                        type="number"
+                                        name="length"
+                                        defaultValue={skuFilter['length']}
+                                        onChange={handleChangeSku}
+                                    />
+                                )}
                                 <TextField
                                     id="standard-number"
                                     label="width"
