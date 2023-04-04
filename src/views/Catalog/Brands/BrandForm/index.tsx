@@ -103,11 +103,17 @@ export default function BrandForm({ initialData, handleSave }: any) {
     return (
         <form onSubmit={handleSubmit}>
             <Grid container spacing={gridSpacing}>
+                <Grid
+                    item
+                    xs={12}
+                    sx={{
+                        display: 'flex'
+                    }}
+                >
+                    <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
+                </Grid>
                 <Grid item xs={12} sm={4}>
                     <Grid container spacing={gridSpacing}>
-                        <Grid item xs={12}>
-                            <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
-                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 value={newBrandData.brandData.name}
