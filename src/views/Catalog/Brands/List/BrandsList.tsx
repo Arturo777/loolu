@@ -73,28 +73,36 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             headerName: intl.formatMessage({
                 id: 'name'
             }),
-            width: 150
+            width: 150,
+            align: 'center',
+            headerAlign: 'center'
         },
         {
             field: 'title',
             headerName: intl.formatMessage({
                 id: 'title'
             }),
-            width: 150
+            width: 150,
+            align: 'center',
+            headerAlign: 'center'
         },
         {
             field: 'metaTagDescription',
             headerName: intl.formatMessage({
                 id: 'description'
             }),
-            width: 150
+            width: 150,
+            align: 'center',
+            headerAlign: 'center'
         },
         {
             field: 'imageUrl',
             headerName: intl.formatMessage({
                 id: 'image'
             }),
-            width: 220
+            width: 220,
+            align: 'center',
+            headerAlign: 'center'
         },
         {
             field: 'idBrand',
@@ -112,10 +120,11 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
                     </Button>
                 </Box>
             ),
-            width: 120
+            width: 120,
+            align: 'center',
+            headerAlign: 'center'
         }
     ];
-
     return (
         <Box sx={{ width: '100%' }}>
             <Collapse in={!loading}>
