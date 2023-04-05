@@ -195,7 +195,8 @@ const ProductInfo = ({
     allMerchantsProductData,
     saveMultiChange,
     handleDrawer,
-    productSkus
+    productSkus,
+    showMulti = true
 }: {
     active: boolean;
     allMerchantsProductData: { [key: string]: any }[];
@@ -217,6 +218,7 @@ const ProductInfo = ({
     tradePolicies: any;
     valueSku: any;
     productSkus: Skus[] | null;
+    showMulti?: boolean;
     handleDrawer: (options: {
         accessor: string;
         intlLabel: string;
@@ -347,6 +349,7 @@ const ProductInfo = ({
                             {active ? (
                                 <>
                                     <FieldEditingHolder
+                                        showMulti={showMulti}
                                         onEditClick={() =>
                                             handleDrawer({ accessor: 'isActive', intlLabel: 'active', type: InputType.switch })
                                         }
@@ -366,6 +369,7 @@ const ProductInfo = ({
                                         />
                                     </FieldEditingHolder>
                                     <FieldEditingHolder
+                                        showMulti={showMulti}
                                         onEditClick={() =>
                                             handleDrawer({
                                                 accessor: 'isEcommerce',
@@ -390,6 +394,7 @@ const ProductInfo = ({
                                     </FieldEditingHolder>
 
                                     <FieldEditingHolder
+                                        showMulti={showMulti}
                                         onEditClick={() =>
                                             handleDrawer({
                                                 accessor: 'showWithoutStock',
@@ -455,6 +460,7 @@ const ProductInfo = ({
                                         }}
                                     >
                                         <FieldEditingHolder
+                                            showMulti={showMulti}
                                             onEditClick={() =>
                                                 handleDrawer({
                                                     accessor: 'productName',
@@ -475,6 +481,7 @@ const ProductInfo = ({
                                             />
                                         </FieldEditingHolder>
                                         <FieldEditingHolder
+                                            showMulti={showMulti}
                                             onEditClick={() =>
                                                 handleDrawer({
                                                     accessor: 'title',
@@ -494,6 +501,7 @@ const ProductInfo = ({
                                             />
                                         </FieldEditingHolder>
                                         <FieldEditingHolder
+                                            showMulti={showMulti}
                                             onEditClick={() =>
                                                 handleDrawer({
                                                     accessor: 'linkId',
@@ -527,6 +535,7 @@ const ProductInfo = ({
             <Grid item xs={12} sx={{ ml: 1 }}>
                 {active ? (
                     <FieldEditingHolder
+                        showMulti={showMulti}
                         onEditClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
                     >
                         <TextField
@@ -571,6 +580,7 @@ const ProductInfo = ({
                             sx={{ mt: 1 }}
                         />
                         <FieldEditingHolder
+                            showMulti={showMulti}
                             onEditClick={() =>
                                 handleDrawer({ accessor: 'productRefID', intlLabel: 'reference_code', type: InputType.textField })
                             }
@@ -595,7 +605,7 @@ const ProductInfo = ({
                         ID: {product?.productID}{' '}
                     </Typography>
                     {active ? (
-                        <FieldEditingHolder
+                        <FieldEditingHolder showMulti={showMulti}
                             onEditClick={() =>
                                 handleDrawer({ accessor: 'productRefID', intlLabel: 'reference_code', type: InputType.textarea })
                             }
@@ -626,6 +636,7 @@ const ProductInfo = ({
                         {/* TODO: copiar  */}
                         <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
                             <FieldEditingHolder
+                                showMulti={showMulti}
                                 onEditClick={() =>
                                     handleDrawer({
                                         accessor: 'brandId',

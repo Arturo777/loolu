@@ -1,4 +1,4 @@
-import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
+import { useEffect, useState, SyntheticEvent, FormEvent, useMemo } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // material-ui
@@ -6,39 +6,48 @@ import { styled, useTheme } from '@mui/material/styles';
 import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Button, Drawer, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// project imports
+
+// third-party imports
+import { useIntl } from 'react-intl';
+
+// ===    project imports   ===
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import ProductImages from './ProductImages';
-import ProductInfo from './ProductInfo';
-import ProductDescription from './ProductDescription';
-import ProductReview from './ProductReview';
-import RelatedProducts from './RelatedProducts';
-import Chip from 'ui-component/extended/Chip';
+
+// hooks
 import useConfig from 'hooks/useConfig';
-import { TabsProps } from 'types';
-import { Products, Skus } from 'types/e-commerce';
-import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
+
+// actions
 import { getCategories, getTradePolicies, saveProduct, getProductDetails, getProductSkuList } from 'store/slices/product';
 import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
-// import { resetCart } from 'store/slices/cart';
-import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
-import { useIntl } from 'react-intl';
-import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
-import ApprovalCard from 'widget/Data/ApprovalCard';
-import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
-import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
-// import DragAndDrop from 'ui-component/DragAndDrop';
 
-import { MerchantProductType } from 'types/product';
+// constants
+import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
+
+// components
+import ProductInfo from './ProductInfo';
+import ProductReview from './ProductReview';
+import Chip from 'ui-component/extended/Chip';
+import RelatedProducts from './RelatedProducts';
+import ApprovalCard from 'widget/Data/ApprovalCard';
+import ProductDescription from './ProductDescription';
+import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
+import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
+import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
 import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+
+// types
+import { TabsProps } from 'types';
+import { Products, Skus } from 'types/e-commerce';
+import { MerchantProductType } from 'types/product';
+import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 
-// interface Image {
-//     file: File;
-//     src: string;
-// }
+// VIEW CASES
+//      Has merchantId => Single merchant edition
+//      Has multiple merchants => Multimerchant edition
+//      Na
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -102,7 +111,7 @@ const ProductDetails = () => {
     const dispatch = useDispatch();
     const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
     const { borderRadius } = useConfig();
-    const { id } = useParams();
+
     const [searchParams] = useSearchParams();
 
     // const cart = useSelector((state) => state.cart);
@@ -139,6 +148,9 @@ const ProductDetails = () => {
 
     // params
     const idMerchant = searchParams.get('idMerchant');
+    const { id } = useParams();
+
+    const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (idMerchant ? 'SINGLE' : 'MULTI'), []);
 
     // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -153,12 +165,12 @@ const ProductDetails = () => {
     useEffect(() => {
         // update product info on merchants array
         setAllMerchantsProductData((prev) => [
-            ...prev.map((item) => {
+            ...(prev?.map((item) => {
                 if (item.merchantId === Number(idMerchant)) {
                     return { ...item, detailProduct: productInfo };
                 }
                 return item;
-            })
+            }) ?? [])
         ]);
     }, [idMerchant, productInfo]);
 
@@ -167,13 +179,36 @@ const ProductDetails = () => {
         setIsLoading(true);
 
         if (id && idMerchant) {
+            // single merchant
             dispatch(
                 getProductDetails({
                     idProd: id,
                     idMerchant
                 })
             ).then(({ payload }) => {
-                const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
+                // const merhcantList
+
+                const merchantProduct = payload?.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
+
+                // setAllMerchantsProductData(payload);
+                handleGetSkus();
+
+                if (merchantProduct) {
+                    setOriginalData(merchantProduct.detailProduct);
+                    setProductInfo(merchantProduct.detailProduct);
+                    setIsLoading(false);
+                }
+            });
+        }
+        if (id) {
+            // single merchant
+            dispatch(
+                getProductDetails({
+                    idProd: id,
+                    idMerchant: 1
+                })
+            ).then(({ payload }) => {
+                const merchantProduct = payload?.length ? payload[0] : null;
 
                 setAllMerchantsProductData(payload);
                 handleGetSkus();
@@ -184,10 +219,11 @@ const ProductDetails = () => {
                     setIsLoading(false);
                 }
             });
-            dispatch(getBrands());
-            dispatch(getCategories());
-            dispatch(getTradePolicies());
         }
+
+        dispatch(getBrands());
+        dispatch(getCategories());
+        dispatch(getTradePolicies());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, id, idMerchant, product]);
 
@@ -383,6 +419,7 @@ const ProductDetails = () => {
                                         <Grid item xs={12} md={6}>
                                             {productInfo && (
                                                 <ProductInfo
+                                                    showMulti={viewMode === 'MULTI'}
                                                     handleDrawer={handleDrawerMultiEdit}
                                                     active={active}
                                                     allMerchantsProductData={allMerchantsProductData}
@@ -477,6 +514,7 @@ const ProductDetails = () => {
                                             </Tabs>
                                             <TabPanel value={value} index={0}>
                                                 <ProductDescription
+                                                    showMulti={viewMode === 'MULTI'}
                                                     handleDrawer={handleDrawerMultiEdit}
                                                     product={originalData}
                                                     active={active}
@@ -560,12 +598,12 @@ const ProductDetails = () => {
                         <img key={index} src={image.src} alt={`id${index}`} />
                     ))} */}
 
-                    <Grid item xs={12} sx={{ mt: 3 }}>
+                    {/* <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
                     </Grid>
                     <Grid item xs={11}>
                         <RelatedProducts id={id} />
-                    </Grid>
+                    </Grid> */}
                 </>
             )}
             <FloatingApprovalButton handleDrawerOpen={handleDrawerOpen} />
@@ -575,3 +613,7 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
+// Stiky images
+// specifications before additional info
+// remove related products

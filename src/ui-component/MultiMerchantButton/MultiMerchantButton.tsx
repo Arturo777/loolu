@@ -9,9 +9,10 @@ import useAuth from 'hooks/useAuth';
 type MultiMerchantButtonProps = {
     size?: 'small' | 'medium' | 'large';
     onAvatarClick: (merchant: MerchantType) => void;
+    availableMerchantsId?: number[] | null;
 };
 
-export default function MultiMerchantButtons({ onAvatarClick, size }: MultiMerchantButtonProps) {
+export default function MultiMerchantButtons({ onAvatarClick, size, availableMerchantsId }: MultiMerchantButtonProps) {
     // hooks
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -33,6 +34,12 @@ export default function MultiMerchantButtons({ onAvatarClick, size }: MultiMerch
         setAnchorMenu(null);
     };
 
+    // useEffect(() => {
+    //     if (availableMerchantsId) {
+
+    //         }
+    // }, [availableMerchantsId]);
+
     useEffect(() => {
         if (user && user.user) {
             dispatch(getMerchantsList(user?.user));
@@ -48,24 +55,26 @@ export default function MultiMerchantButtons({ onAvatarClick, size }: MultiMerch
         return [];
     }, [merchants]);
 
-    const toRenderButtons = useMemo(() => {
+    const toRenderMerchants: MerchantChipType[] = useMemo(() => {
+        if (transformedMerchants.length === 0) {
+            return [];
+        }
         let newList: MerchantChipType[] = [];
+        const maxLength = 2;
+        let i = 0;
 
-        // search father
-        const fatherItem = transformedMerchants.find((item) => item.isFather);
-
-        if (fatherItem) {
-            newList = [fatherItem];
-        }
-
-        if (transformedMerchants.length > 1) {
-            newList = [...newList, transformedMerchants[1]];
-        }
+        do {
+            const item = transformedMerchants[i];
+            if (availableMerchantsId?.includes(item.merchantId)) {
+                newList = [...newList, item];
+            }
+            i += 1;
+        } while (newList.length < maxLength && i < transformedMerchants.length);
 
         return newList;
-    }, [transformedMerchants]);
+    }, [transformedMerchants, availableMerchantsId]);
 
-    const showMore = useMemo(() => (merchants?.length ?? 0) > 0, [merchants]);
+    const showMore: boolean = useMemo(() => (merchants?.length ?? 0) > 2, [merchants]);
 
     const renderMenu = useMemo<React.ReactNode>(() => {
         if (!showMore) return null;
@@ -126,21 +135,30 @@ export default function MultiMerchantButtons({ onAvatarClick, size }: MultiMerch
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [anchorMenu, merchants, open]);
 
+    const handleBoxClick = (merchant: MerchantChipType) => (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (!showMore) {
+            onAvatarClick(merchant);
+        } else {
+            handleOpenMenu(event);
+        }
+    };
+
     return (
         <Stack direction="row" alignItems="center">
-            {toRenderButtons.map((merchant, index) => (
-                <MerchantAvatar
-                    containerStyles={{ mr: -1.5 }}
-                    avatarStyles={{ border: `2px solid red`, borderColor: theme.palette.background.paper, boxSizing: 'content-box' }}
-                    key={`merchant-button-${merchant.merchantId}`}
-                    size={size!}
-                    merchant={merchant}
-                />
+            {toRenderMerchants.map((merchant) => (
+                <Box onClick={handleBoxClick(merchant)} key={`merchant-button-${merchant.merchantId}`}>
+                    <MerchantAvatar
+                        containerStyles={{ mr: -1.5 }}
+                        avatarStyles={{ border: `2px solid red`, borderColor: theme.palette.background.paper, boxSizing: 'content-box' }}
+                        size={size!}
+                        merchant={merchant}
+                    />
+                </Box>
             ))}
 
             {showMore && (
                 <Box sx={{ zIndex: 2 }}>
-                    <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${merchants?.length ?? 0}`} />
+                    <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${(merchants?.length ?? 0) - 2 ?? 0}`} />
                 </Box>
             )}
 
