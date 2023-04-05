@@ -204,28 +204,6 @@ const ChatSection = () => {
                                     <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                         <Grid container direction="column" spacing={2}>
                                             <Grid item xs={12}>
-                                                <Grid container alignItems="center" justifyContent="space-between" sx={{ pt: 2, px: 2 }}>
-                                                    <Grid item>
-                                                        <Stack direction="row" spacing={2}>
-                                                            <Typography variant="subtitle1">All Notification</Typography>
-                                                            <Chip
-                                                                size="small"
-                                                                label="01"
-                                                                sx={{
-                                                                    color: theme.palette.background.default,
-                                                                    bgcolor: theme.palette.warning.dark
-                                                                }}
-                                                            />
-                                                        </Stack>
-                                                    </Grid>
-                                                    <Grid item>
-                                                        <Typography component={Link} to="#" variant="subtitle2" color="primary">
-                                                            Mark as all read
-                                                        </Typography>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid>
-                                            <Grid item xs={12}>
                                                 <Grid container direction="column" className={classes.chatContainer}>
                                                     <Grid item className={classes.messageList}>
                                                         <PerfectScrollbar
@@ -243,8 +221,9 @@ const ChatSection = () => {
                                                             ))}
                                                         </PerfectScrollbar>
                                                     </Grid>
-                                                    <Grid item className={classes.formContainer}>
+                                                    <Grid item xs={12} className={classes.formContainer}>
                                                         <TextField
+                                                            fullWidth
                                                             label="Type your message"
                                                             variant="outlined"
                                                             size="small"

@@ -392,7 +392,6 @@ const ProductsList = () => {
                     </Drawer>
                 </Box>
             </Grid>
-            <FloatingCart />
         </Grid>
     );
 };
