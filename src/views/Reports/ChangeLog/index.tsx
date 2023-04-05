@@ -139,7 +139,7 @@ export default function ChangeLogPage() {
                         </Typography>
                         <MultiMerchant
                             onChange={(merchants: MerchantType[]) => handleSelectedMerchant(merchants)}
-                            maxShow={1}
+                            maxShow={3}
                             justOne
                             defaultSelected={[]}
                         />
