@@ -188,9 +188,7 @@ const ProductDetails = () => {
             ).then(({ payload }) => {
                 // const merhcantList
 
-                console.log(payload);
-
-                const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
+                const merchantProduct = payload?.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
 
                 // setAllMerchantsProductData(payload);
                 handleGetSkus();
@@ -600,12 +598,12 @@ const ProductDetails = () => {
                         <img key={index} src={image.src} alt={`id${index}`} />
                     ))} */}
 
-                    <Grid item xs={12} sx={{ mt: 3 }}>
+                    {/* <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
                     </Grid>
                     <Grid item xs={11}>
                         <RelatedProducts id={id} />
-                    </Grid>
+                    </Grid> */}
                 </>
             )}
             <FloatingApprovalButton handleDrawerOpen={handleDrawerOpen} />
