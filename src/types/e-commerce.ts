@@ -10,7 +10,7 @@ export type Products = {
     title: string;
     productRefID: string;
     isVisible: any;
-    map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
+    //map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     isActive: boolean;
     productName: any;
     id: string | number | undefined;
@@ -26,16 +26,40 @@ export type Products = {
     colors?: string[];
     popularity?: number;
     date?: number;
-    created: Date;
+    created?: Date;
     isStock?: boolean;
     new?: number;
     brandName?: string;
-    brandId: number;
+    brandId: number | string;
     productID: string | number;
-    sku: any;
-    skus: Skus[];
-    showWithoutStock: boolean;
+    sku?: any;
+    skus?: Skus[];
+    departmentId?: number;
+    categoryId?: number;
+    productGlobalCategoryID?: string | number | null;
+    nameComplete?: string;
+    merchantId?: number;
+    releaseDate?: string;
+    lastDateUpdate?: string | Date;
+    productStatus?: boolean;
+    syncStatusVTEX?: boolean;
+    skuName?: string;
+    cscIdentification?: string | null;
+    informationSource?: string | null;
+    kit?: boolean;
+    transported?: boolean;
+    giftCardRecharge?: boolean;
+    taxCode?: string;
+    provider?: string;
+    descriptionShort?: string;
+    metaTagDescription?: string;
+    keyWords?: string;
+    showWithoutStock?: boolean;
+    preventa?: { Isactive: boolean };
+    sobrePedido?: { Isactive: boolean };
+    groupName?: string;
 };
+
 
 export type Skus = {
     // map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
@@ -88,7 +112,9 @@ export type ApprovalHistorial = {
 export type Trade = {
     idPolicy: number;
     isSelected: boolean;
-    tradePolicyName: string;
+    tradePolicyName?: string;
+    name?: string;
+    __typename?: string;
 };
 export type Policy = {
     isActive: boolean;
