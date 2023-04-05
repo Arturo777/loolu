@@ -1,5 +1,4 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-
 // material-ui
 import {
     MenuItem,
@@ -15,7 +14,6 @@ import {
     Typography
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-
 import { useIntl } from 'react-intl';
 
 // project imports
@@ -60,7 +58,6 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
             });
         }
     }, [initialData]);
-
     const handleChange = (event: SelectChangeEvent) => {
         setNewData({ ...newData, countryId: event.target.value as string });
     };
@@ -86,7 +83,13 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
     return (
         <form onSubmit={handleSubmit}>
             <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} sm={6} md={3} lg={2}>
+                <Grid
+                    item
+                    xs={12}
+                    sx={{
+                        display: 'flex'
+                    }}
+                >
                     <MultiMerchant onChange={onChangeMerchant} maxShow={3} defaultSelected={[]} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={3} lg={3}>
