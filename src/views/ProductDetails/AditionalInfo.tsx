@@ -8,12 +8,14 @@ const Aditionalinfo = ({
     active,
     productInfo,
     setProductInfo,
-    handleDrawer
+    handleDrawer,
+    showMulti
 }: {
     product: any;
     active: boolean;
     productInfo: any;
     setProductInfo: any;
+    showMulti: boolean;
     handleDrawer: (options: {
         accessor: string;
         intlLabel: string;
@@ -33,6 +35,7 @@ const Aditionalinfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FieldEditingHolder
+                        showMulti={showMulti}
                         onEditClick={() =>
                             handleDrawer({ accessor: 'descriptionShort', intlLabel: 'short_description', type: InputType.textarea })
                         }
@@ -58,6 +61,7 @@ const Aditionalinfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FieldEditingHolder
+                        showMulti={showMulti}
                         sx={{ mt: 3 }}
                         onEditClick={() =>
                             handleDrawer({ accessor: 'metaTagDescription', intlLabel: 'metatag_description', type: InputType.textarea })
@@ -87,6 +91,7 @@ const Aditionalinfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FieldEditingHolder
+                        showMulti={showMulti}
                         sx={{ mt: 3 }}
                         onEditClick={() => handleDrawer({ accessor: 'keyWords', intlLabel: 'key_words', type: InputType.textarea })}
                     >
