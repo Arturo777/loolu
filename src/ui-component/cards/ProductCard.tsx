@@ -71,23 +71,13 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                         </Typography>
                                     </Grid>
 
-                                    {/* <Button
-                                            onClick={(event) => {
-                                                handleClick(event);
-                                            }}
-                                            variant="contained"
-                                            sx={{ px: '2px', py: '4px', minWidth: '30px' }}
-                                        >
-                                            <MoreHorizIcon fontSize="small" />
-                                        </Button> */}
-
                                     <Box sx={{ pl: '6px', pb: '2px' }}>
                                         <MultiMerchantButtons
                                             size="medium"
+                                            availableMerchantsId={[1]}
                                             onAvatarClick={(e) => {
-                                                console.log(e);
                                                 navigate(
-                                                    `/products/detail-product/${productID}?idMerchant=${e.merchantId}&&isFather=${e.isFather}`
+                                                    `/products/detail-product/${productID}?idMerchant=${e.merchantId}&isFather=${e.isFather}`
                                                 );
                                             }}
                                         />
