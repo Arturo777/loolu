@@ -310,5 +310,6 @@
     "select_vendor": "Proveedores",
     "label": "Etiqueta",
     "update_multi_data_title": "Actualizar varios catalogos",
-    "key_words": "Palabras clave"
+    "key_words": "Palabras clave",
+    "no_recent_updates": "Oops! No hay actualizaciones recientes"
 }
