@@ -311,5 +311,6 @@
     "select_vendor": "Select vendor",
     "label": "Label",
     "update_multi_data_title": "Update multiple merchants",
-    "key_words": "Key words"
+    "key_words": "Key words",
+    "no_recent_updates": "Oops! No recent updates"
 }
