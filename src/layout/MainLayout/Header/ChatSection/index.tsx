@@ -13,6 +13,7 @@ import {
     ClickAwayListener,
     Divider,
     Grid,
+    IconButton,
     ImageListItem,
     Paper,
     Popper,
@@ -21,6 +22,7 @@ import {
     Typography,
     useMediaQuery
 } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import './style.css';
 
 // service providers
@@ -221,7 +223,7 @@ const ChatSection = () => {
                                                             ))}
                                                         </PerfectScrollbar>
                                                     </Grid>
-                                                    <Grid item xs={12} className={classes.formContainer}>
+                                                    <Grid item xs={11} className={classes.formContainer}>
                                                         <TextField
                                                             fullWidth
                                                             label="Type your message"
@@ -231,9 +233,12 @@ const ChatSection = () => {
                                                             value={message}
                                                             onChange={(e) => setMessage(e.target.value)}
                                                         />
-                                                        <Button variant="contained" color="primary" onClick={handleSendMessage}>
+                                                        {/* <Button variant="contained" color="primary" onClick={handleSendMessage}>
                                                             Send
-                                                        </Button>
+                                                        </Button> */}
+                                                        <IconButton color="primary" aria-label="upload picture" component="label">
+                                                            <SendIcon />
+                                                        </IconButton>
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
