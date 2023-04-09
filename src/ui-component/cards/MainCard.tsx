@@ -1,19 +1,7 @@
 import React, { Ref } from 'react';
-import { useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    Divider,
-    Typography,
-    CardProps,
-    CardHeaderProps,
-    CardContentProps,
-    IconButton
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Card, CardContent, CardHeader, Divider, Typography, CardProps, CardHeaderProps, CardContentProps } from '@mui/material';
 // project imports
 import { KeyedObject } from 'types';
 
@@ -59,11 +47,6 @@ const MainCard = React.forwardRef(
         }: MainCardProps,
         ref: Ref<HTMLDivElement>
     ) => {
-        const navigate = useNavigate();
-
-        const handleRegresar = () => {
-            navigate(-1);
-        };
         const theme = useTheme();
 
         return (
@@ -87,9 +70,6 @@ const MainCard = React.forwardRef(
                 {darkTitle && title && (
                     <CardHeader sx={headerSX} title={<Typography variant="h3">{title}</Typography>} action={secondary} />
                 )}
-                <IconButton onClick={handleRegresar}>
-                    <ArrowBackIcon />
-                </IconButton>
                 {/* content & header divider */}
                 {title && <Divider />}
 

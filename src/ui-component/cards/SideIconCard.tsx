@@ -27,8 +27,8 @@ const SideIconCard = ({ iconPrimary, primary, secondary, secondarySub, color, bg
                         textAlign: 'center',
                         color: '#a483ff',
                         '& > svg': {
-                            width: 60,
-                            height: 60
+                            width: 100,
+                            height: 100
                         }
                     }}
                     align="center"

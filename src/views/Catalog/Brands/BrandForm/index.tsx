@@ -1,10 +1,11 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 // material-ui
 import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 // third-party imports
 import { useIntl } from 'react-intl';
 
@@ -34,6 +35,11 @@ type BrandFormProps = {
 };
 
 export default function BrandForm({ initialData, handleSave }: any) {
+    const navigate = useNavigate();
+
+    const handleRegresar = () => {
+        navigate(-1);
+    };
     // BrandFormProps
     // hooks
     const intl = useIntl();
@@ -102,6 +108,9 @@ export default function BrandForm({ initialData, handleSave }: any) {
 
     return (
         <form onSubmit={handleSubmit}>
+            <IconButton onClick={handleRegresar}>
+                <ArrowBackIcon />
+            </IconButton>
             <Grid container spacing={gridSpacing}>
                 <Grid
                     item

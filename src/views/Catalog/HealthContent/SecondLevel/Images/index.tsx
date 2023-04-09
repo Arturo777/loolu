@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, CircularProgress, Fade, Grid, Typography } from '@mui/material';
 
@@ -109,16 +111,18 @@ const Images = () => {
                                     </Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Avatar
-                                        sx={{
-                                            cursor: 'pointer',
-                                            ...theme.typography.smallAvatar,
-                                            backgroundColor: theme.palette.secondary[400],
-                                            color: theme.palette.secondary.dark
-                                        }}
-                                    >
-                                        <ArrowUpwardIcon fontSize="inherit" />
-                                    </Avatar>
+                                    <Link to="/health-content/overall-score">
+                                        <Avatar
+                                            sx={{
+                                                cursor: 'pointer',
+                                                ...theme.typography.smallAvatar,
+                                                backgroundColor: theme.palette.secondary[400],
+                                                color: theme.palette.secondary.dark
+                                            }}
+                                        >
+                                            <ArrowUpwardIcon fontSize="inherit" />
+                                        </Avatar>
+                                    </Link>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -155,7 +159,7 @@ const Images = () => {
                     </Grid>
                     <Grid item xs={8.5}>
                         {products?.length === 0 ? (
-                            <Typography variant="h3">No Have Products</Typography>
+                            <Typography variant="h3">No Images to show</Typography>
                         ) : (
                             <TableProducts products={products} typeReq="images" />
                         )}
