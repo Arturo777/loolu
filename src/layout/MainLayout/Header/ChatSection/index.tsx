@@ -56,6 +56,7 @@ const useStyles = makeStyles({
         border: '.5px solid'
     },
     formContainer: {
+        display: 'flex',
         padding: '16px'
     },
     inputField: {
