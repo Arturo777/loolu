@@ -109,6 +109,7 @@ const FirstLevel = () => {
 
     const blockSX = {
         p: 2.5,
+        pt: 0,
         borderLeft: '1px solid ',
         borderBottom: '1px solid ',
         borderLeftColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200],
@@ -132,10 +133,8 @@ const FirstLevel = () => {
                 }}
                 title={
                     <Grid container alignItems="center" justifyContent="start" spacing={gridSpacing}>
-                        <Grid item xs={2}>
-                            <Typography variant="h3"> <FormattedMessage id='health-content' /> </Typography>
-                        </Grid>
-                        <Grid item>
+                        <Grid item display="flex" alignItems="center">
+                            <Typography variant="h3" sx={{ mr: 1 }}> <FormattedMessage id='health-content' /> </Typography>
                             { value === 1 &&(
                                 <MultiMerchant
                                     // justOne
@@ -172,7 +171,6 @@ const FirstLevel = () => {
                                     defaultSelected={[]}
                                 />
                             ) }
-
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
