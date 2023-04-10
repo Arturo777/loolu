@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, CircularProgress, Fade, Grid, Typography } from '@mui/material';
 
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MainCard from 'ui-component/cards/MainCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSecondLevelProducts } from 'store/slices/healthContent';
@@ -101,6 +101,21 @@ const Products = () => {
     };
     return (
         <>
+            <Grid item>
+                <Avatar
+                    sx={{
+                        cursor: 'pointer',
+                        ...theme.typography.smallAvatar,
+                        backgroundColor: theme.palette.secondary[400],
+                        color: theme.palette.secondary.dark,
+                        mb: 1
+                    }}
+                >
+                    <Link to="/health-content/overall-score">
+                        <ArrowBackIcon fontSize="inherit" />
+                    </Link>
+                </Avatar>
+            </Grid>
             <CardWrapper border={false} content={false} sx={{ mb: 2 }}>
                 <Box sx={{ p: 2.25 }}>
                     <Grid container direction="column">
@@ -110,20 +125,6 @@ const Products = () => {
                                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
                                         Products
                                     </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Link to="/health-content/overall-score">
-                                        <Avatar
-                                            sx={{
-                                                cursor: 'pointer',
-                                                ...theme.typography.smallAvatar,
-                                                backgroundColor: theme.palette.secondary[400],
-                                                color: theme.palette.secondary.dark
-                                            }}
-                                        >
-                                            <ArrowUpwardIcon fontSize="inherit" />
-                                        </Avatar>
-                                    </Link>
                                 </Grid>
                             </Grid>
                         </Grid>
