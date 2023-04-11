@@ -1,31 +1,60 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
 // material-ui
-import { Box, Button, CircularProgress, Collapse, Stack } from '@mui/material';
+import { Box, Button, CircularProgress, Collapse, FormControlLabel, FormGroup, Grid, Stack, Switch } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 
 // third imports
 import { Link } from 'react-router-dom';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 // project imports
-import { BrandType, BrandType2 } from 'types/catalog';
+import { BrandType, BrandType2, NewBrandType2 } from 'types/catalog';
 import { useDispatch, useSelector } from 'store';
 
 // assets
-import { getBrands, getBrands2 } from 'store/slices/catalog';
+import { createBrandMultiCatalog, editBrand, getBrands, getBrands2 } from 'store/slices/catalog';
+import BrandForm from '../BrandForm';
+import MainCard from 'ui-component/cards/MainCard';
 
 type BransListProps = {
     filterText: string;
     selectedMerchants: any;
+    isEdit: boolean;
+    setIsEdit: any;
+    brandData: any;
+    setBrandData: any;
 };
 
-const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
+const BrandsList = ({ brandData, setBrandData, isEdit, setIsEdit, selectedMerchants, filterText }: BransListProps) => {
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
+    const handleSave = async (data: any) => {
+        if (isEdit === false) {
+            await dispatch(createBrandMultiCatalog(data));
+        } else {
+            const idMerchant = selectedMerchants[0].merchantId;
+            const newData: BrandType = {
+                idBrand: Number(idBrand ?? ''),
+                idMerchant: data.idMerchant || idMerchant,
+                ...data[0].brandData,
+                isActive: brandStatus
+            };
+            await dispatch(editBrand({ dataBrand: newData, idMerchant }));
+            console.log({ newData });
+        }
+        selectedMerchants && dispatch(getBrands2(selectedMerchants[0].merchantId));
+    };
+    const editbrand = () => {
+        setIsEdit(true);
+        const brandInfo = brands.find((item) => item.idBrand === Number(idBrand));
+        console.log('brandInfo', brandInfo);
 
+        setBrandData(brandInfo);
+        setBrandStatus(brandInfo?.isActive ?? false);
+    };
     // store
     const { brands2, brands, loading } = useSelector((state) => state.catalogue);
     // merchants
@@ -33,11 +62,25 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
     const [pageSize, setPageSize] = useState<number>(10);
     const [filteredBrands, setFilteredBrands] = useState<BrandType[] | undefined>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [brandStatus, setBrandStatus] = useState<boolean>(false);
+
+    const [idBrand, setIdBrand] = useState<boolean>();
+    useEffect(() => {
+        console.log('idBrand', idBrand);
+        editbrand();
+    }, [idBrand]);
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setBrandStatus(event.target.checked);
+    };
     useEffect(() => {
         if (!selectedMerchants?.length) {
             return;
         }
         setIsLoading(true);
+        const idMerchant = selectedMerchants[0].merchantId;
+        dispatch(getBrands(Number(idMerchant))).then((res: any) => {
+            console.log(res);
+        });
         selectedMerchants && dispatch(getBrands2(selectedMerchants[0].merchantId));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedMerchants]);
@@ -109,13 +152,16 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
             headerName: '',
             renderCell: (params) => (
                 <Box>
-                    <Button
+                    {/* <Button
                         component={Link}
                         to={`${params.row.idBrand}/edit/?idMerchant=${selectedMerchants[0].merchantId}`}
                         size="small"
                         startIcon={<EditIcon />}
                         variant="outlined"
                     >
+                        {intl.formatMessage({ id: 'edit' })}
+                    </Button> */}
+                    <Button onClick={editbrand} size="small" startIcon={<EditIcon />} variant="outlined">
                         {intl.formatMessage({ id: 'edit' })}
                     </Button>
                 </Box>
@@ -126,29 +172,65 @@ const BrandsList = ({ selectedMerchants, filterText }: BransListProps) => {
         }
     ];
     return (
-        <Box sx={{ width: '100%' }}>
-            <Collapse in={!loading}>
-                {!isLoading && (
-                    <DataGrid
-                        loading={loading}
-                        rows={filteredBrands ?? []}
-                        // eslint-disable-next-line @typescript-eslint/no-shadow
-                        getRowId={(row: any) => `${row.idBrand}`}
-                        columns={columns}
-                        pageSize={pageSize}
-                        rowsPerPageOptions={[10, 20, 50, 100]}
-                        onPageSizeChange={setPageSize}
-                        autoHeight
-                        disableSelectionOnClick
-                    />
-                )}
-            </Collapse>
-            <Collapse in={loading}>
-                <Stack justifyContent="center" alignItems="center" p={5}>
-                    <CircularProgress />
-                </Stack>
-            </Collapse>
-        </Box>
+        <div style={{ display: 'flex' }}>
+            <Box sx={{ width: '50%' }}>
+                <Collapse in={!loading}>
+                    {!isLoading && (
+                        <DataGrid
+                            loading={loading}
+                            rows={filteredBrands ?? []}
+                            // eslint-disable-next-line @typescript-eslint/no-shadow
+                            getRowId={(row: any) => `${row.idBrand}`}
+                            onRowClick={(params) => {
+                                setIdBrand(params.row.idBrand);
+                            }}
+                            columns={columns}
+                            pageSize={pageSize}
+                            rowsPerPageOptions={[10, 20, 50, 100]}
+                            onPageSizeChange={setPageSize}
+                            autoHeight
+                            disableSelectionOnClick
+                        />
+                    )}
+                </Collapse>
+                <Collapse in={loading}>
+                    <Stack justifyContent="center" alignItems="center" p={5}>
+                        <CircularProgress />
+                    </Stack>
+                </Collapse>
+            </Box>
+            <Box sx={{ width: '50%' }}>
+                <MainCard
+                    title={
+                        isEdit
+                            ? intl.formatMessage({
+                                  id: 'edit_brand'
+                              })
+                            : intl.formatMessage({
+                                  id: 'create_brand'
+                              })
+                    }
+                    secondary={
+                        isEdit && (
+                            <FormGroup>
+                                <FormControlLabel
+                                    checked={brandStatus}
+                                    control={<Switch onChange={handleChange} />}
+                                    labelPlacement="start"
+                                    label={
+                                        <b>
+                                            <FormattedMessage id={brandStatus ? 'active' : 'inactive'} />
+                                        </b>
+                                    }
+                                />
+                            </FormGroup>
+                        )
+                    }
+                >
+                    <BrandForm isEdit={isEdit} initialData={brandData} handleSave={handleSave} />
+                </MainCard>
+            </Box>
+        </div>
     );
 };
 
