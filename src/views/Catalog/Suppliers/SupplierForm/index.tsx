@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 // material-ui
 import {
     MenuItem,
@@ -12,10 +12,11 @@ import {
     Select,
     FormControl,
     SelectChangeEvent,
-    Typography
+    Typography,
+    IconButton
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useIntl } from 'react-intl';
 
 // project imports
@@ -47,6 +48,8 @@ type SupplierFormProps = {
 };
 
 export default function SupplierForm({ initialData, handleSave }: SupplierFormProps) {
+    const navigate = useNavigate();
+
     const intl = useIntl();
     const [newData, setNewData] = useState<newSupplierType>(initialDataState);
     const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
@@ -60,7 +63,9 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
             });
         }
     }, [initialData]);
-
+    const handleRegresar = () => {
+        navigate(-1);
+    };
     const handleChange = (event: SelectChangeEvent) => {
         setNewData({ ...newData, countryId: event.target.value as string });
     };
@@ -85,8 +90,17 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
 
     return (
         <form onSubmit={handleSubmit}>
+            <IconButton onClick={handleRegresar}>
+                <ArrowBackIcon />
+            </IconButton>
             <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} sm={6} md={3} lg={2}>
+                <Grid
+                    item
+                    xs={12}
+                    sx={{
+                        display: 'flex'
+                    }}
+                >
                     <MultiMerchant onChange={onChangeMerchant} maxShow={3} defaultSelected={[]} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={3} lg={3}>

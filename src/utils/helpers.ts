@@ -35,7 +35,8 @@ export const filterCategories = (categories: CategoryType[], searchText: string)
 
     categories.forEach((item) => {
         const { hasChildren, children, ...rest } = item;
-        if (JSON.stringify(rest).includes(searchText)) {
+        const stringifiedCategory = JSON.stringify(rest).toLowerCase();
+        if (stringifiedCategory.includes(searchText.toLowerCase())) {
             filteredCategories.push(item);
         }
 

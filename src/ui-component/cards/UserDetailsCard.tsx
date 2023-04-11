@@ -26,11 +26,12 @@ const UserDetailsCard = ({ id, email, firstName, lastName, user, name, profile, 
     return (
         <Card
             sx={{
-                p: 2,
+                p: 3,
                 background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
-                border: theme.palette.mode === 'dark' ? '1px solid transparent' : `1px solid${theme.palette.grey[100]}`,
+                border: '1px solid',
+                borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
                 '&:hover': {
-                    borderColor: theme.palette.primary.main
+                    border: `1px solid${theme.palette.primary.main}`
                 }
             }}
         >
