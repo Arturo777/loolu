@@ -20,6 +20,7 @@ import ProductImagesCreate from './ProductImagesCreate';
 import ProductInfoCreate from './ProductInfoCreate';
 import ProductDescriptionCreate from './ProductDescriptionCreate';
 import { Products } from 'types/e-commerce';
+import Image from './image/Image';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -46,6 +47,9 @@ const CreateProduct = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
+
+    // images
+    const [imagesToUpload, setImagesToUpload] = useState<any>([]);
 
     // product description tabs
     const [merchs, setMerchs] = useState<any>([{}]);
@@ -110,6 +114,18 @@ const CreateProduct = () => {
         setValue(newValue);
     };
 
+    // images
+
+    const handleAddImages = (event: any) => {
+        const newUploadImages = [...imagesToUpload, ...event.target.files];
+        setImagesToUpload(newUploadImages);
+    };
+
+    const handleRemoveImages = (ids: any) => {
+        const newUploadImages = imagesToUpload.filter((_: any, index: any) => index !== ids);
+        setImagesToUpload(newUploadImages);
+    };
+
     useEffect(() => {
         // getProduct();
         /* dispatch(getProduct(id)); */
@@ -131,7 +147,10 @@ const CreateProduct = () => {
                 <MainCard>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12} md={6}>
-                            {/* <ProductImagesCreate product={product} /> */}
+                            <div className="column is-full">
+                                {/* <p className="is-size-5 has-text-info has-text-weight-bold my-5">IMÁGENES</p> */}
+                                <Image uploadedImages={imagesToUpload} removeImages={handleRemoveImages} uploadImages={handleAddImages} />
+                            </div>
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <ProductInfoCreate setProductInfo={setProductInfo} productInfo={productInfo} merchs={merchs} />
