@@ -1,4 +1,4 @@
-import React, { FormEvent, useState, useEffect, SetStateAction } from 'react';
+import React, { FormEvent, useState, useEffect } from 'react';
 
 // mui imports
 import { Box, Button, Divider, Grid, SelectChangeEvent, TextField, Card, Typography, Stack, IconButton, Fade } from '@mui/material';
@@ -50,30 +50,18 @@ const CreateCategoryPage = ({ handleClose, selectedCatId, show }: CreateCategory
 
         if (!selectedMerchants.length) return;
 
-        const createMerchantCategoryPayload = newCategory;
-        // const createMerchantCategoryPayload = selectedMerchants.map((merchant: MerchantType) => ({
-        //     merchantId: merchant.merchantId,
-        //     fatherMerchant: !Number(newCategory.catId),
-        //     categoryData: {
-        //         fatherCategoryId: Number(newCategory.catId) ?? 0,
-        //         masterCategoryId: Number(newCategory.catId) ?? 0,
-        //         isActive: true,
-        //         name: newCategory.name,
-        //         title: newCategory.name
-        //     }
-        // }));
-
         dispatch(
             createMerchantCategoryService({
                 idMerchant: 1,
-                data: createMerchantCategoryPayload
+                data: newCategory
             })
         )
             .then(({ payload }) => {
+                const categoryName = payload.response[0].categoryData.name;
                 dispatch(
                     openSnackbar({
                         open: true,
-                        message: `Categoria: ${payload.response.name} creada correctamente`,
+                        message: `Categoria: ${categoryName} creada correctamente`,
                         variant: 'alert',
                         alert: {
                             color: 'success'
