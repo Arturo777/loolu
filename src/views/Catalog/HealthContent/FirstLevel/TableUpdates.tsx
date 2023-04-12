@@ -25,7 +25,7 @@ const TableUpdates = ({ updates }: { updates: SkuHC[] }) => {
         <>
             {updates && (
                 <>
-                    <TableContainer sx={{ maxHeight: 750, bgcolor: 'background.paper' }}>
+                    <TableContainer sx={{ maxHeight: 750 }}>
                         <Table>
                             <TableHead>
                                 <TableRow>

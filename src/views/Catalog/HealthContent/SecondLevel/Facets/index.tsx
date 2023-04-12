@@ -102,7 +102,7 @@ const Facets = () => {
     };
     console.log(secondLevel);
     return (
-        <>
+        <MainCard>
             <Grid item>
                 <Avatar
                     sx={{
@@ -110,7 +110,8 @@ const Facets = () => {
                         ...theme.typography.smallAvatar,
                         backgroundColor: theme.palette.secondary[400],
                         color: theme.palette.secondary.dark,
-                        mb: 1
+                        mb: 2,
+                        transform: 'scale(1.5)'
                     }}
                 >
                     <Link to="/health-content/overall-score">
@@ -118,7 +119,19 @@ const Facets = () => {
                     </Link>
                 </Avatar>
             </Grid>
-            <CardWrapper border={false} content={false} sx={{ mb: 2 }}>
+            <CardWrapper
+                border={false}
+                content={false}
+                sx={{
+                    mb: 2,
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
                 <Box sx={{ p: 2.25 }}>
                     <Grid container direction="column">
                         <Grid item>
@@ -170,7 +183,7 @@ const Facets = () => {
                     </Grid>
                 </Grid>
             )}
-        </>
+        </MainCard>
     );
 };
 

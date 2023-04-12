@@ -67,7 +67,7 @@ const ProductImages = ({ images, removeImages }: { images: any; removeImages: an
                                     sx={{ m: '0 auto', cursor: 'pointer' }}
                                 />
                                 <IconButton
-                                    sx={{ position: 'absolute', top: 0, right: 10, p: 0, backgroundColor: '#ce0202', borderRadius: '20%' }}
+                                    sx={{ position: 'absolute', top: 0, right: 10, p: 0, borderRadius: '20%' }}
                                     onClick={() => removeImages(index)}
                                 >
                                     <CloseIcon fontSize="small" />
