@@ -45,9 +45,6 @@ export default function BrandForm({ isEdit, initialData, handleSave }: any) {
     const [newBrandData, setNewBrandData] = useState<NewBrandType2>(initialBrandData);
     const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
     useEffect(() => {
-        console.log('initialData', initialData);
-    }, [initialData]);
-    useEffect(() => {
         if (initialData) {
             const newData: NewBrandType2 = {
                 idMerchant: initialData.idMerchant,
@@ -114,7 +111,7 @@ export default function BrandForm({ isEdit, initialData, handleSave }: any) {
                         <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
                     </Grid>
                 )}
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={12}>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <TextField
@@ -153,11 +150,6 @@ export default function BrandForm({ isEdit, initialData, handleSave }: any) {
                                 multiline
                             />
                         </Grid>
-                    </Grid>
-                </Grid>
-
-                <Grid item xs={12} sm={4}>
-                    <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <TextField
                                 value={newBrandData.brandData.imageUrl}
@@ -183,6 +175,12 @@ export default function BrandForm({ isEdit, initialData, handleSave }: any) {
                         <CustomCardMedia url={newBrandData.brandData.imageUrl ?? ''} handleDelete={handleDeleteImage} />
                     </Grid>
                 </Grid>
+
+                {/* <Grid item xs={12} sm={4}>
+                    <Grid container spacing={gridSpacing}>
+                        
+                    </Grid>
+                </Grid> */}
 
                 <Grid item xs={12} pt={4} pl={3}>
                     <Divider />

@@ -120,15 +120,15 @@ const BrandsList = ({ brandData, setBrandData, isEdit, setIsEdit, selectedMercha
             align: 'center',
             headerAlign: 'center'
         },
-        {
-            field: 'title',
-            headerName: intl.formatMessage({
-                id: 'title'
-            }),
-            width: 150,
-            align: 'center',
-            headerAlign: 'center'
-        },
+        // {
+        //     field: 'title',
+        //     headerName: intl.formatMessage({
+        //         id: 'title'
+        //     }),
+        //     width: 150,
+        //     align: 'center',
+        //     headerAlign: 'center'
+        // },
         {
             field: 'metaTagDescription',
             headerName: intl.formatMessage({
@@ -173,7 +173,7 @@ const BrandsList = ({ brandData, setBrandData, isEdit, setIsEdit, selectedMercha
     ];
     return (
         <div style={{ display: 'flex' }}>
-            <Box sx={{ width: '50%' }}>
+            <Box sx={{ width: '60%' }}>
                 <Collapse in={!loading}>
                     {!isLoading && (
                         <DataGrid
@@ -199,7 +199,7 @@ const BrandsList = ({ brandData, setBrandData, isEdit, setIsEdit, selectedMercha
                     </Stack>
                 </Collapse>
             </Box>
-            <Box sx={{ width: '50%' }}>
+            <Box sx={{ width: '40%' }}>
                 <MainCard
                     title={
                         isEdit
