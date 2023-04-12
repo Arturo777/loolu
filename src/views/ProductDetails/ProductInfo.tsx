@@ -60,6 +60,7 @@ import { FieldEditingHolder, RowStack } from 'ui-component/MultiMerchant/drawer'
 
 // types
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { gridSpacing } from 'store/constant';
 
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
@@ -338,13 +339,11 @@ const ProductInfo = ({
     };
 
     return (
-        <Grid container spacing={2}>
+        <Grid container rowSpacing={gridSpacing}>
             <Grid item xs={12}>
-                <h2>
-                    <FormattedMessage id="product-detail-title" />
-                </h2>
+                <Typography variant="h2">{intl.formatMessage({ id: 'product-detail-title' })}</Typography>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Grid container spacing={1}>
+                    <Grid container rowSpacing={gridSpacing}>
                         <Grid item xs={12}>
                             {active ? (
                                 <>
@@ -450,8 +449,8 @@ const ProductInfo = ({
                                 </>
                             )}
                         </Grid>
-                        <Grid item xs={12} sx={{ ml: 1 }}>
-                            <Stack direction="row" alignItems="center" spacing={1}>
+                        <Grid item xs={12}>
+                            <Stack direction="row" alignItems="center">
                                 {active ? (
                                     <Box
                                         sx={{
@@ -532,7 +531,7 @@ const ProductInfo = ({
                         </Avatar> */}
                 </Stack>
             </Grid>
-            <Grid item xs={12} sx={{ ml: 1 }}>
+            <Grid item xs={12}>
                 {active ? (
                     <FieldEditingHolder
                         showMulti={showMulti}
@@ -559,14 +558,12 @@ const ProductInfo = ({
             <Grid item xs={12}>
                 {!active && (
                     <RowStack>
-                        <Typography variant="body1" sx={{ ml: 1 }}>
-                            ID: {product?.productID}{' '}
-                        </Typography>
+                        <Typography variant="body1">ID: {product?.productID} </Typography>
                         <Typography variant="body2">RefID: {product?.productRefID}</Typography>
                     </RowStack>
                 )}
                 {active && (
-                    <RowStack sx={{ justifyContent: 'space-between', ml: 1 }}>
+                    <RowStack sx={{ justifyContent: 'space-between' }}>
                         <TextField
                             multiline
                             id="outlined-basic"
@@ -626,7 +623,7 @@ const ProductInfo = ({
                     )}
                 </RowStack>
             </Grid> */}
-            <Grid item xs={12} sx={{ ml: 1 }}>
+            <Grid item xs={12}>
                 {active ? (
                     <Box
                         sx={{

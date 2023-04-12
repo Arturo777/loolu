@@ -96,7 +96,6 @@ const ProductsList = () => {
     useEffect(() => {
         const queryObject: SearchProductType = queryToObject(location.search);
         dispatch(getProducts(queryObject));
-        // console.log(queryObject);
     }, [location.search, dispatch]);
 
     useEffect(() => {

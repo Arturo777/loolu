@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 // material-ui
 import { styled, useTheme, Theme } from '@mui/material/styles';
@@ -84,12 +84,7 @@ const MainLayout = () => {
         // handle login
         if (user && user?.user) {
             // TODO: SEND CognitoUser USER
-            dispatch(getUserProfile(user?.user)).then((resp) => {
-                // dispatch(getUserProfile('ohuitron')).then((resp) => {
-                if (!resp.payload) {
-                    logout();
-                }
-            });
+            dispatch(getUserProfile(user?.user));
         }
     }, [dispatch, logout, user]);
 
