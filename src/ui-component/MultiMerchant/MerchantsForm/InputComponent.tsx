@@ -19,8 +19,9 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'store';
 import { getBrands2 } from 'store/slices/catalog';
-import { BrandType } from 'types/catalog';
+import { BrandType, FlatCategoryType } from 'types/catalog';
 import { MultiBrandSelect } from 'ui-component/selects/BrandSelect';
+import { MultiCategorySelect } from 'ui-component/selects/CategorySelect';
 
 export type AddOptionsProps<T, U, K extends string> = U extends Record<K, any> ? T & U : T & { [P in K]?: never };
 
@@ -31,7 +32,8 @@ export enum InputType {
     checkbox = 'checkbox',
     switch = 'switch',
     select = 'select',
-    brandSelect = 'brandSelect'
+    brandSelect = 'brandSelect',
+    categorySelect = 'categorySelect'
 }
 
 export type SelectOptionType = {
@@ -163,6 +165,10 @@ const RenderInputComponent = ({ label, value, updateValue, type, options }: Rend
         return <RenderBrandSelect merchantId={1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
     }
 
+    if (type === InputType.categorySelect) {
+        return <RenderCategorySelect merchantId={1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
+    }
+
     return <Box />;
 };
 
@@ -200,6 +206,42 @@ const RenderBrandSelect = ({
 
     return <SearchAndCreateBrandSelect updateValue={updateValue} brandsList={brandsList} value={value} />;
 };
+const RenderCategorySelect = ({
+    merchantId,
+    value,
+    updateValue
+}: {
+    merchantId: number;
+    value?: number | null;
+    updateValue: (e: any) => void;
+}) => {
+    // store
+    const { flatMerchantCategories, loading } = useSelector((state) => state.catalogue);
+
+    const categoryList: FlatCategoryType[] = useMemo(() => {
+        const filteredByMerchant = flatMerchantCategories.find((item: any) => item.idMerchant === Number(merchantId));
+
+        return filteredByMerchant?.categoryList ?? [];
+    }, [merchantId, flatMerchantCategories]);
+
+    useEffect(() => {
+        console.log({ categoryList });
+    }, [categoryList]);
+
+    if (loading) {
+        return (
+            <Box>
+                <LinearProgress />
+            </Box>
+        );
+    }
+
+    if (categoryList.length === 0) {
+        return <Box />;
+    }
+
+    return <SearchAndCreateCategorySelect updateValue={updateValue} categoryList={categoryList} value={value} />;
+};
 
 // const options = ['Option 1', 'Option 2'];
 
@@ -212,3 +254,13 @@ const SearchAndCreateBrandSelect = ({
     brandsList: BrandType[];
     value?: number | null;
 }) => <MultiBrandSelect brandsList={brandsList} loading={false} onChange={updateValue} initialValue={value ?? undefined} />;
+
+const SearchAndCreateCategorySelect = ({
+    categoryList,
+    value,
+    updateValue
+}: {
+    updateValue: (e: any) => void;
+    categoryList: FlatCategoryType[];
+    value?: number | null;
+}) => <MultiCategorySelect categoryList={categoryList} loading={false} onChange={updateValue} initialValue={value ?? undefined} />;

@@ -35,6 +35,11 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
 
     const navigate = useNavigate();
 
+    const handleOnAvatarClick = (e: any) => {
+        // xxx Definir el merchant clickeado para que lo use el drawer de edit
+        navigate(`/products/detail-product/${productID}?idMerchant=${e.merchantId}&isFather=${e.isFather}`);
+    };
+
     useEffect(() => {
         setLoading(false);
     }, []);
@@ -75,11 +80,7 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                         <MultiMerchantButtons
                                             size="medium"
                                             availableMerchantsId={[1]}
-                                            onAvatarClick={(e) => {
-                                                navigate(
-                                                    `/products/detail-product/${productID}?idMerchant=${e.merchantId}&isFather=${e.isFather}`
-                                                );
-                                            }}
+                                            onAvatarClick={handleOnAvatarClick}
                                         />
                                     </Box>
                                 </Stack>

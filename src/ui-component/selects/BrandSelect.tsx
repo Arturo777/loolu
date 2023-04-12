@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 // project imports
 import { useDispatch, useSelector } from 'store';
 import { getBrands } from 'store/slices/catalog';
-import { BrandType } from 'types/catalog';
+import { BrandType, FlatCategoryType } from 'types/catalog';
 
 type OptionType = {
     id: number;

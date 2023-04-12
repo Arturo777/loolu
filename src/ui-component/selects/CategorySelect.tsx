@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 // project imports
 import { useDispatch, useSelector } from 'store';
 import { getCategoriesService } from 'store/slices/catalog';
+import { FlatCategoryType } from 'types/catalog';
 
 type OptionType = {
     id: number;
@@ -109,4 +110,88 @@ const getWhiteSpaces = (spaces: number | undefined) => {
     });
 
     return whiteList;
+};
+
+export const MultiCategorySelect = ({
+    categoryList,
+    initialValue,
+    onChange,
+    loading
+}: {
+    onChange: (categoryId: string) => void;
+    initialValue?: number | undefined;
+    categoryList: FlatCategoryType[];
+    loading: boolean;
+}) => {
+    // hooks
+    const theme = useTheme();
+    const intl = useIntl();
+
+    const [value, setValue] = useState<OptionType | null>(null);
+    const [inputValue, setInputValue] = useState<string>('');
+
+    useEffect(() => {
+        console.log('initialValue', initialValue);
+        if (initialValue) {
+            const searchObject = categoryList.find((item) => item.id === initialValue);
+
+            console.log(searchObject);
+
+            if (searchObject) {
+                setValue({
+                    id: initialValue,
+                    label: searchObject.name
+                });
+            }
+        }
+    }, [categoryList, initialValue]);
+
+    const getOptions = useMemo(() => categoryList.map((item) => ({ label: item.name, id: item.id })), [categoryList]);
+
+    return (
+        <Autocomplete
+            noOptionsText={intl.formatMessage({
+                id: loading ? 'loading' : 'no_options'
+            })}
+            loading={loading}
+            value={value}
+            onChange={(event: any, newValue: OptionType | null) => {
+                setValue(newValue);
+            }}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+            }}
+            id="autocomplete-mui-brands"
+            options={getOptions}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label={intl.formatMessage({
+                        id: 'category'
+                    })}
+                />
+            )}
+            isOptionEqualToValue={(option, val) => option.id === val.id}
+            getOptionLabel={(option) => option.label}
+            getOptionDisabled={(option) => option.id === 0}
+            renderOption={(props, option, { selected }) => (
+                <Typography
+                    {...props}
+                    key={`${option.label}-${option.id}`}
+                    sx={{
+                        p: 1,
+                        color: theme.palette.grey[100],
+                        transition: 'all 350ms ease',
+                        '&:hover': {
+                            background: theme.palette.divider,
+                            transition: 'all 350ms ease'
+                        }
+                    }}
+                >
+                    {option.label}
+                </Typography>
+            )}
+        />
+    );
 };
