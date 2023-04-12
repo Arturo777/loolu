@@ -25,7 +25,7 @@ const ProductDescriptionCreate = ({
         {
             id: 'basic1',
             defaultExpand: true,
-            title: 'Product Aditional Info',
+            title: 'Descriptions & Keywords',
             content: <AditionalInfoCreate setProductInfo={setProductInfo} />
         },
         {
