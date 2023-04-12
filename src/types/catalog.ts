@@ -147,6 +147,19 @@ export type FacetType = {
     nameSap: string;
 };
 
+export type WerehousesType = {
+    idMerchant: number;
+    warehouses: Werehouse[];
+    father: boolean;
+};
+
+export type Werehouse = {
+    isActive: boolean;
+    warehouse: string;
+    stockInVTEX: boolean | null;
+    itSent: boolean | null;
+};
+
 export type CategoryType = {
     id: number;
     numberChildren: number;

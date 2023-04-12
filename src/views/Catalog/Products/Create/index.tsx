@@ -21,6 +21,7 @@ import ProductInfoCreate from './ProductInfoCreate';
 import ProductDescriptionCreate from './ProductDescriptionCreate';
 import { Products } from 'types/e-commerce';
 import Image from './image/Image';
+import ProductWerehouses from './ProductWerehouses';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -164,14 +165,13 @@ const CreateProduct = () => {
                                 aria-label="product description tabs example"
                                 variant="scrollable"
                             >
-                                <Tab component={Link} to="#" label="Description" {...a11yProps(0)} />
+                                <Tab component={Link} to="#" label="Product Aditional Info" {...a11yProps(0)} />
                                 <Tab
                                     component={Link}
                                     to="#"
                                     label={
                                         <Stack direction="row" alignItems="center">
-                                            Reviews{' '}
-                                            {/* <Chip label={String(product.salePrice)} size="small" chipcolor="secondary" sx={{ ml: 1.5 }} /> */}
+                                            Werehouses
                                         </Stack>
                                     }
                                     {...a11yProps(1)}
@@ -185,7 +185,9 @@ const CreateProduct = () => {
                                 />
                             </TabPanel>
                             <TabPanel value={value} index={1}>
-                                {/* <ProductReview product={product} /> */}
+                                {merchs.map((item: any) => (
+                                    <ProductWerehouses merchs={item.idMerchant} />
+                                ))}
                             </TabPanel>
                         </Grid>
                     </Grid>

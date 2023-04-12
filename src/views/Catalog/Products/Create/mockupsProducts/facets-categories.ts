@@ -1261,17 +1261,6 @@ export const facetsProductsSkusM1 = [
                 name: 'características'
             }
         ]
-    },
-    {
-        categoryId: 4,
-        specificationGroups: [
-            {
-                prodSpecs: [[Object], [Object], [Object], [Object], [Object]],
-                skuSpecs: [[Object]],
-                groupId: 141,
-                name: 'características'
-            }
-        ]
     }
 ];
 
