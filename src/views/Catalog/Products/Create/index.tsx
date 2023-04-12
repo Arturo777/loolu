@@ -185,9 +185,13 @@ const CreateProduct = () => {
                                 />
                             </TabPanel>
                             <TabPanel value={value} index={1}>
-                                {merchs.map((item: any) => (
-                                    <ProductWerehouses merchs={item.idMerchant} />
-                                ))}
+                                <Grid container justifyContent="space-between">
+                                    {merchs.map((item: any) => (
+                                        <Grid item xs={12 / merchs.length - 0.1}>
+                                            <ProductWerehouses merchs={item.merchantId} namemerch={item.name} />
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </TabPanel>
                         </Grid>
                     </Grid>
