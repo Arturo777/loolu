@@ -10,7 +10,6 @@ export type Products = {
     title: string;
     productRefID: string;
     isVisible: any;
-    //map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     isActive: boolean;
     productName: any;
     id: string | number | undefined;
@@ -60,7 +59,6 @@ export type Products = {
     groupName?: string;
 };
 
-
 export type Skus = {
     // map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     ean: string | number | undefined;
@@ -86,6 +84,11 @@ export type Skus = {
     brandId: number;
     productID: string | number;
     approvalStatus: ApprovalStatus;
+    images: {
+        ImageURL: string;
+        IdImage: number;
+        IdMerchant: number;
+    }[];
 };
 export type Categories = {
     id: string | number;

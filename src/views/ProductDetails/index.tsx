@@ -29,7 +29,7 @@ import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/cons
 import ProductInfo from './ProductInfo';
 import ProductReview from './ProductReview';
 import Chip from 'ui-component/extended/Chip';
-import RelatedProducts from './RelatedProducts';
+// import RelatedProducts from './RelatedProducts';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import ProductDescription from './ProductDescription';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
@@ -43,6 +43,7 @@ import { Products, Skus } from 'types/e-commerce';
 import { MerchantProductType } from 'types/product';
 import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import ProductImages from './ProductImages';
 
 // VIEW CASES
 //      Has merchantId => Single merchant edition
@@ -70,7 +71,7 @@ function a11yProps(index: number) {
     };
 }
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
+const Main = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
     flexGrow: 1,
     transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
@@ -126,7 +127,7 @@ const ProductDetails = () => {
     const [openTwo, setOpenTwo] = useState(false);
     /* const [loading, setLoading] = useState(true); */
     // actice mode edit product
-    const [active, setActive] = useState(true);
+    const [active, setActive] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // product description tabs
@@ -142,7 +143,7 @@ const ProductDetails = () => {
     const [flagBrand, setFlagBrand] = useState(false);
     const [flagCategory, setFlagCategory] = useState(false);
 
-    const { product, skus, tradePolicies } = useSelector((state) => state.product);
+    const { product, tradePolicies } = useSelector((state) => state.product);
 
     const { brands } = useSelector((state) => state.catalogue);
 
@@ -150,7 +151,7 @@ const ProductDetails = () => {
     const idMerchant = searchParams.get('idMerchant');
     const { id } = useParams();
 
-    const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (idMerchant ? 'SINGLE' : 'MULTI'), []);
+    const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (idMerchant ? 'SINGLE' : 'MULTI'), [idMerchant]);
 
     // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -161,6 +162,10 @@ const ProductDetails = () => {
     const [productSkus, setProductSkus] = useState<Skus[] | null>(null);
 
     const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
+
+    useEffect(() => {
+        console.log('productSkus', productSkus);
+    }, [productSkus]);
 
     useEffect(() => {
         // update product info on merchants array
@@ -399,13 +404,21 @@ const ProductDetails = () => {
                             <Main
                                 sx={
                                     open || openTwo
-                                        ? { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
-                                        : { marginRight: '-420px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                        ? { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms', width: 1 }
+                                        : { marginRight: '-420px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms', width: 1 }
                                 }
                             >
                                 {originalData && originalData?.productID?.toString() === id && (
-                                    <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                    <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }} spacing={gridSpacing}>
                                         <Grid item xs={12} md={6}>
+                                            <ProductImages
+                                                skus={[...(productSkus ?? [])]}
+                                                valueSku={valueSku}
+                                                product={productInfo}
+                                                setActive={setActive}
+                                                active={active}
+                                            />
+
                                             {/* {Boolean(allSkus && allSkus.length) && (
                                                 <ProductImages
                                                     skus={allSkus}
@@ -466,7 +479,7 @@ const ProductDetails = () => {
                                                                 size="large"
                                                                 startIcon={<EditIcon />}
                                                                 onClick={() => setActive(true)}
-                                                                disabled={valueSku === ''}
+                                                                // disabled={valueSku === ''}
                                                             >
                                                                 {intl.formatMessage({ id: 'edit' })}
                                                             </Button>
@@ -480,6 +493,7 @@ const ProductDetails = () => {
                                                 </Grid>
                                             </Grid>
                                         </Grid>
+
                                         <Grid item xs={12}>
                                             <Tabs
                                                 value={value}
