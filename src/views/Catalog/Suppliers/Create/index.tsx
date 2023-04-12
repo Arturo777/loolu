@@ -24,12 +24,13 @@ const CreateSupplierPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleSave = async (data: SupplierType) => {
+    const handleSave = async (data: SupplierType, idMerchant: number) => {
         const supplierData = {
             country: data.countryId,
             name: data.name
         };
-        await dispatch(createSupplier({ data: supplierData }));
+        console.log('supplierData', supplierData);
+        await dispatch(createSupplier({ idMerchant, data: supplierData }));
 
         navigate('/suppliers');
     };

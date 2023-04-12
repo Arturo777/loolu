@@ -95,6 +95,7 @@ export type CatalogStateProps = {
     merchantCategories?: MerchantCategoryType[];
     flatMerchantCategories: FlatMerchantCategoriesType[];
     filterMerchantCategories: (categories: CategoryType[], searchText: string) => CategoryType[];
+    suppliersMulticatalogo: any;
 };
 
 export type BrandType = {
