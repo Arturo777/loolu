@@ -3,6 +3,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Card, Collapse, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography, Button } from '@mui/material';
 import { ResumenProducts } from 'types/health-content';
+import { useTheme } from '@mui/material/styles';
 
 const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenProducts; sumaValores: any; setTypeScore: any }) => {
     const [open, setOpen] = useState<boolean>(false);
@@ -13,11 +14,21 @@ const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenPro
         setTypeScore(type);
     };
 
+    const theme = useTheme();
+
     return (
         <>
             <Card>
                 <List
-                    sx={{ width: '100%', bgcolor: 'background.paper' }}
+                    sx={{
+                        width: '100%',
+                        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                        border: '1px solid',
+                        borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                        '&:hover': {
+                            border: `1px solid${theme.palette.primary.main}`
+                        }
+                    }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
                     subheader={
@@ -29,7 +40,8 @@ const CardRatings = ({ resume, sumaValores, setTypeScore }: { resume: ResumenPro
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                                 pt: 1,
-                                pb: 1
+                                pb: 1,
+                                bgcolor: 'transparent'
                             }}
                         >
                             <Typography variant="h3">{resume?.description}</Typography>

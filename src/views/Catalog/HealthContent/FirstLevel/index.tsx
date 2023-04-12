@@ -243,10 +243,16 @@ const FirstLevel = () => {
                                                         metrics={first}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={6} >
                                                     <MainCard
                                                         content={false}
                                                         sx={{
+                                                            background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                                            border: '1px solid',
+                                                            borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                                            '&:hover': {
+                                                                border: `1px solid${theme.palette.primary.main}`
+                                                            },
                                                             '& svg': {
                                                                 width: 50,
                                                                 height: 75,
@@ -258,7 +264,7 @@ const FirstLevel = () => {
                                                         }}
                                                     >
                                                         <Grid container alignItems="center" spacing={0}>
-                                                            <Grid item xs={12} sm={6} sx={blockSX}>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
                                                                 <Grid
                                                                     container
                                                                     alignItems="center"
@@ -278,7 +284,7 @@ const FirstLevel = () => {
                                                                     </Grid>
                                                                 </Grid>
                                                             </Grid>
-                                                            <Grid item xs={12} sm={6} sx={blockSX}>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
                                                                 <Grid
                                                                     container
                                                                     alignItems="center"
@@ -300,7 +306,7 @@ const FirstLevel = () => {
                                                             </Grid>
                                                         </Grid>
                                                         <Grid container alignItems="center" spacing={0}>
-                                                            <Grid item xs={12} sm={6} sx={blockSX}>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
                                                                 <Grid
                                                                     container
                                                                     alignItems="center"
@@ -320,7 +326,7 @@ const FirstLevel = () => {
                                                                     </Grid>
                                                                 </Grid>
                                                             </Grid>
-                                                            <Grid item xs={12} sm={6} sx={blockSX}>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
                                                                 <Grid container alignItems="center" spacing={1} justifyContent="space-between">
                                                                     <Grid item>
                                                                         <CalendarMonthIcon />
@@ -343,7 +349,15 @@ const FirstLevel = () => {
                                                         <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between">
                                                             {first?.metricRange?.map((metric: any, i: number) => (
 
-                                                                <Card key={i} sx={{ mb: 1 }}>
+                                                                <MainCard key={i} sx={{
+                                                                    mb: 1,
+                                                                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                                                    border: '1px solid',
+                                                                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                                                    '&:hover': {
+                                                                        border: `1px solid${theme.palette.primary.main}`
+                                                                    }
+                                                                }}>
                                                                     <CardContent
                                                                         sx={{
                                                                             padding: '0px !important',
@@ -395,18 +409,25 @@ const FirstLevel = () => {
                                                                             </Grid>
                                                                         </Grid>
                                                                     </CardContent>
-                                                                </Card>
+                                                                </MainCard>
                                                             ))}
                                                         </Grid>
                                                         <Grid item xs={7.9}>
-                                                            <Card>
+                                                            <MainCard sx={{
+                                                                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                                                border: '1px solid',
+                                                                borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                                                '&:hover': {
+                                                                    border: `1px solid${theme.palette.primary.main}`
+                                                                }
+                                                            }}>
                                                                 <CardContent >
                                                                     <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
                                                                         <FormattedMessage id='latest-updates' />
                                                                     </Typography>
                                                                     <TableUpdates updates={first?.skuCatalog} />
                                                                 </CardContent>
-                                                            </Card>
+                                                            </MainCard>
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>

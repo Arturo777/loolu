@@ -7,12 +7,26 @@ import { Grid, LinearProgress, Typography } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { FormattedMessage } from 'react-intl';
+import { useTheme } from '@mui/material/styles';
+
 
 // ===========================|| WIDGET STATISTICS - CUSTOMER SATISFACTION ||=========================== //
 
-const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
-    <MainCard title={<FormattedMessage id='store-status'/>}>
-        <Grid container spacing={3}>
+const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => {
+    
+    const theme = useTheme();
+
+    return(
+    <MainCard title={<FormattedMessage id='store-status'/>} sx={{
+        height: '100%',
+        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+        border: '1px solid',
+        borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+        '&:hover': {
+            border: `1px solid${theme.palette.primary.main}`
+        }
+    }}>
+        <Grid container spacing={3} >
             <Grid item xs={12}>
                 <Typography variant="h3" align="center">
                     {metrics?.overallScore?.toFixed(2).toString()}%
@@ -68,6 +82,6 @@ const CustomerSatisfactionCard = ({ metrics }: { metrics: any }) => (
             </Grid>
         </Grid>
     </MainCard>
-);
+)};
 
 export default CustomerSatisfactionCard;
