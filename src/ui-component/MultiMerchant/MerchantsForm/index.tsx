@@ -52,12 +52,6 @@ export default function MultiMerchantForm({
     const [originalData, setOriginalData] = useState<{ [key: string]: any }[]>([]);
     const [newData, setNewData] = useState<{ [key: string]: any }[]>([]);
 
-    // const [accesorError, setAccesorError] = useState<boolean>(false);
-
-    useEffect(() => {
-        console.log('-- data --', data);
-    }, [data]);
-
     useEffect(() => {
         const transformedData = getData({ data, accessor });
 
@@ -135,14 +129,14 @@ export default function MultiMerchantForm({
                 <Button
                     type="button"
                     onClick={() => toggleDrawer(false)}
-                    variant="contained"
+                    variant="outlined"
                     startIcon={<CloseIcon />}
                     color="error"
                     sx={{ mr: 2 }}
                 >
                     {intl.formatMessage({ id: 'cancel' })}
                 </Button>
-                <Button onClick={() => formRef.current?.requestSubmit()} variant="contained" startIcon={<SaveIcon />} type="submit">
+                <Button onClick={() => formRef.current?.requestSubmit()} variant="outlined" startIcon={<SaveIcon />} type="submit">
                     {intl.formatMessage({ id: 'save' })}
                 </Button>
             </Stack>

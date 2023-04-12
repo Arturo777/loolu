@@ -531,29 +531,6 @@ const ProductInfo = ({
                         </Avatar> */}
                 </Stack>
             </Grid>
-            <Grid item xs={12}>
-                {active ? (
-                    <FieldEditingHolder
-                        showMulti={showMulti}
-                        onEditClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
-                    >
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            id="outlined-basic"
-                            label={intl.formatMessage({ id: 'description' })}
-                            variant="outlined"
-                            name="description"
-                            // defaultValue={product?.description}
-                            value={productInfo?.description}
-                            onChange={handleChangeProd}
-                        />
-                    </FieldEditingHolder>
-                ) : (
-                    <Typography variant="body2">{product?.description}</Typography>
-                )}
-            </Grid>
 
             <Grid item xs={12}>
                 {!active && (

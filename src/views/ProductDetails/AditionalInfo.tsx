@@ -35,6 +35,29 @@ const Aditionalinfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FieldEditingHolder
+                        sx={{ mb: 2 }}
+                        showMulti={showMulti}
+                        onEditClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
+                    >
+                        <TextField
+                            fullWidth
+                            multiline
+                            id="outlined-basic"
+                            label={intl.formatMessage({ id: 'description' })}
+                            variant="outlined"
+                            name="description"
+                            // defaultValue={product?.description}
+                            value={productInfo?.description}
+                            onChange={handleChangeProd}
+                        />
+                    </FieldEditingHolder>
+                ) : (
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                        <Typography variant="h4">{intl.formatMessage({ id: 'description' })}:</Typography> {product?.description}
+                    </Typography>
+                )}
+                {active ? (
+                    <FieldEditingHolder
                         showMulti={showMulti}
                         onEditClick={() =>
                             handleDrawer({ accessor: 'descriptionShort', intlLabel: 'short_description', type: InputType.textarea })
