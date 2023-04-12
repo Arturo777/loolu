@@ -28,7 +28,8 @@ const initialState: DefaultRootStateProps['catalogue'] = {
     filterCategories: [],
     merchantCategories: [],
     flatMerchantCategories: [],
-    filterMerchantCategories: filterCategories
+    filterMerchantCategories: filterCategories,
+    suppliersMulticatalogo: []
 };
 
 const slice = createSlice({
@@ -64,6 +65,13 @@ const slice = createSlice({
             .addCase(getSuppliers.fulfilled, (state, action) => {
                 state.loading = false;
                 state.suppliers = action.payload.response;
+            })
+            .addCase(getSuppliersMulticatalogo.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getSuppliersMulticatalogo.fulfilled, (state, action) => {
+                state.loading = false;
+                state.suppliersMulticatalogo = action.payload.response;
             })
             .addCase(createSupplier.pending, (state) => {
                 state.updating = true;
@@ -244,6 +252,15 @@ export const getSuppliers = createAsyncThunk(`${slice.name}/getSuppliers`, async
     });
     return response.data;
 });
+export const getSuppliersMulticatalogo = createAsyncThunk(`${slice.name}/getSuppliersMulticatalogo`, async (idMerchant?: number) => {
+    const response = await axios.get(`styrk/api/multicatalog/supplier/search`, {
+        baseURL: STYRK_API,
+        params: {
+            idMerchant: idMerchant || 1
+        }
+    });
+    return response.data;
+});
 
 type createSupplierProps = {
     idMerchant?: number;
@@ -262,6 +279,18 @@ export const createSupplier = createAsyncThunk(`${slice.name}/createSupplier`, a
     });
     return response.data;
 });
+export const createSupplierMulticatalogo = createAsyncThunk(
+    `${slice.name}/createSupplier`,
+    async ({ idMerchant, data }: createSupplierProps) => {
+        const response = await axios.post(`styrk/api/supplier/create`, data, {
+            baseURL: STYRK_API,
+            params: {
+                idMerchant: idMerchant || 1
+            }
+        });
+        return response.data;
+    }
+);
 
 type editSupplierProps = {
     idMerchant?: number;

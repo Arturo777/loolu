@@ -19,6 +19,7 @@ import MultiMerchant from 'ui-component/MultiMerchantButton';
 // assets
 import BrandsList from './BrandsList';
 import { MerchantType } from 'types/security';
+import { BrandType, NewBrandType2 } from 'types/catalog';
 
 // ==============================|| USER LIST STYLE 1 ||============================== //
 
@@ -33,7 +34,8 @@ const BrandsListPage = () => {
     // state
     const [filterText, setFilterText] = useState<string>('');
     const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[] | null>(null);
-
+    const [isEdit, setIsEdit] = useState<boolean>(false);
+    const [brandData, setBrandData] = useState<BrandType>();
     useEffect(() => {
         const search = searchParams.get('search');
         setFilterText(search ?? '');
@@ -45,7 +47,21 @@ const BrandsListPage = () => {
         setFilterText(newString ?? '');
         setSearchParams(`?search=${newString}`);
     };
+    const initialBrandData: BrandType = {
+        idBrand: 0,
+        name: '',
+        isActive: true,
+        imageUrl: '',
+        title: '',
+        metaTagDescription: null,
+        idMerchant: 0
+    };
 
+    const clearBrand = () => {
+        console.log('clearBrand');
+        setIsEdit(false);
+        setBrandData(initialBrandData);
+    };
     return (
         <MainCard
             title={
@@ -60,7 +76,12 @@ const BrandsListPage = () => {
                         />
                     </Grid>
                     <Grid item>
-                        <Button component={Link} to="/brands/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
+                        {/* <Button component={Link} to="/brands/create" variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
+                            {intl.formatMessage({
+                                id: 'create_brand'
+                            })}
+                        </Button> */}
+                        <Button onClick={clearBrand} variant="contained" startIcon={<AddIcon />} sx={{ mr: 3 }}>
                             {intl.formatMessage({
                                 id: 'create_brand'
                             })}
@@ -86,7 +107,14 @@ const BrandsListPage = () => {
             content={false}
         >
             {loading && <Loader />}
-            <BrandsList selectedMerchants={selectedMerchants} filterText={filterText} />
+            <BrandsList
+                brandData={brandData}
+                setBrandData={setBrandData}
+                isEdit={isEdit}
+                setIsEdit={setIsEdit}
+                selectedMerchants={selectedMerchants}
+                filterText={filterText}
+            />
         </MainCard>
     );
 };

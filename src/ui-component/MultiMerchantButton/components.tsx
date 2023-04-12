@@ -128,6 +128,24 @@ export const customScrollBar = {
     }
 };
 
+export const customMiniScrollBar = {
+    '&::-webkit-scrollbar': {
+        height: '5px',
+        display: 'none',
+        opacity: 0
+    },
+    '&::-webkit-scrollbar-track': {
+        background: 'transparent'
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'transparent',
+        borderRadius: '3px'
+    },
+    '&:hover::-webkit-scrollbar-thumb': {
+        backgroundColor: '#c2c2c2'
+    }
+};
+
 export const avatarCommonProps = {
     border: '2px solid #fff',
     transitions: 'all 420ms linear'

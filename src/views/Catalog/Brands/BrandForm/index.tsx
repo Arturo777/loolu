@@ -1,11 +1,10 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // material-ui
-import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 // third-party imports
 import { useIntl } from 'react-intl';
 
@@ -34,12 +33,7 @@ type BrandFormProps = {
     handleSave: (data: NewBrandType2) => void;
 };
 
-export default function BrandForm({ initialData, handleSave }: any) {
-    const navigate = useNavigate();
-
-    const handleRegresar = () => {
-        navigate(-1);
-    };
+export default function BrandForm({ isEdit, initialData, handleSave }: any) {
     // BrandFormProps
     // hooks
     const intl = useIntl();
@@ -51,8 +45,8 @@ export default function BrandForm({ initialData, handleSave }: any) {
     const [newBrandData, setNewBrandData] = useState<NewBrandType2>(initialBrandData);
     const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
     useEffect(() => {
-        console.log({ loading });
-    }, [loading]);
+        console.log('initialData', initialData);
+    }, [initialData]);
     useEffect(() => {
         if (initialData) {
             const newData: NewBrandType2 = {
@@ -108,19 +102,18 @@ export default function BrandForm({ initialData, handleSave }: any) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <IconButton onClick={handleRegresar}>
-                <ArrowBackIcon />
-            </IconButton>
             <Grid container spacing={gridSpacing}>
-                <Grid
-                    item
-                    xs={12}
-                    sx={{
-                        display: 'flex'
-                    }}
-                >
-                    <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
-                </Grid>
+                {!isEdit && (
+                    <Grid
+                        item
+                        xs={12}
+                        sx={{
+                            display: 'flex'
+                        }}
+                    >
+                        <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
+                    </Grid>
+                )}
                 <Grid item xs={12} sm={4}>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>

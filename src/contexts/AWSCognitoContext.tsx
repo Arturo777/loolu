@@ -11,6 +11,9 @@ import accountReducer from 'store/accountReducer';
 import Loader from 'ui-component/Loader';
 import { AWS_API } from 'config';
 import { AWSCognitoContextType, InitialLoginContextProps } from 'types/auth';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import axiosServices from 'utils/axios';
 
 // constant
 const initialState: InitialLoginContextProps = {
@@ -43,6 +46,23 @@ const AWSCognitoContext = createContext<AWSCognitoContextType | null>(null);
 
 export const AWSCognitoProvider = ({ children }: { children: React.ReactElement }) => {
     const [state, dispatch] = useReducer(accountReducer, initialState);
+
+    const location = useLocation();
+
+    useEffect(() => {
+        const serviceToken = window.localStorage.getItem('serviceToken');
+
+        if (serviceToken) {
+            const expirationToken = expToken(serviceToken);
+            const dateNow = Date.now();
+
+            if (expirationToken <= dateNow) {
+                logout();
+            }
+        } else {
+            logout();
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         const init = async () => {
@@ -157,3 +177,19 @@ export const AWSCognitoProvider = ({ children }: { children: React.ReactElement 
 };
 
 export default AWSCognitoContext;
+
+function expToken(token: string) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+        window
+            .atob(base64)
+            .split('')
+            .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+            .join('')
+    );
+
+    const parsed = JSON.parse(jsonPayload);
+
+    return parsed.exp * 1000;
+}
