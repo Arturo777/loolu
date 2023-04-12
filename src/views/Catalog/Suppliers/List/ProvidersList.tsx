@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 // project imports
 import { useDispatch, useSelector } from 'store';
 import { gridSpacing } from 'store/constant';
-import { getSuppliers } from 'store/slices/catalog';
+import { getSuppliers, getSuppliersMulticatalogo } from 'store/slices/catalog';
 
 // types
 
@@ -35,48 +35,33 @@ const ProvidersList = ({ selectedMerchants, filterText }: ProvidersListProps) =>
     const intl = useIntl();
 
     // store
-    const { suppliers, loading } = useSelector((state) => state.catalogue);
+    const { suppliers, loading, suppliersMulticatalogo } = useSelector((state) => state.catalogue);
 
     // vars
     const [filteredSuppliers, setFilteredSuppliers] = useState<SupplierType[]>([]);
-    const [suppliers2, setSuppliers2] = useState<any[]>([
-        {
-            idProvider: 790,
-            name: 'vvv32',
-            countryId: 'MX',
-            merchantId: 1
-        },
-        {
-            idProvider: 791,
-            name: 'Pfizer',
-            countryId: 'MX',
-            merchantId: 2
-        },
-        {
-            idProvider: 792,
-            name: 'Pablo SA de CV',
-            countryId: 'MX',
-            merchantId: 1
-        }
-    ]);
     useEffect(() => {
-        dispatch(getSuppliers());
+        const merchantId = selectedMerchants[0]?.merchantId;
+        console.log({ merchantId });
+        dispatch(getSuppliersMulticatalogo(merchantId || 1));
+        console.log({ suppliersMulticatalogo });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [selectedMerchants]);
     const provider = useMemo(() => {
         if (selectedMerchants.length) {
-            const providers = suppliers2.filter((item: any) => item?.merchantId === selectedMerchants[0]?.merchantId);
-            console.log(providers);
+            const providers = suppliersMulticatalogo.filter((item: any) => item?.idMerchant === selectedMerchants[0]?.merchantId);
             return providers;
         }
         return [];
-    }, [suppliers2, selectedMerchants]);
+    }, [suppliersMulticatalogo, selectedMerchants]);
     useEffect(() => {
-        console.log('provider', provider);
         if (filterText?.length === 0) {
-            setFilteredSuppliers(provider);
+            if (provider.length > 0) {
+                setFilteredSuppliers(provider[0]?.suppliers);
+            } else {
+                setFilteredSuppliers([]);
+            }
         } else {
-            const filtered = provider.filter(
+            const filtered = provider[0].suppliers.filter(
                 (profile: SupplierType) =>
                     JSON.stringify(profile)
                         .toLowerCase()
@@ -85,7 +70,7 @@ const ProvidersList = ({ selectedMerchants, filterText }: ProvidersListProps) =>
 
             setFilteredSuppliers(filtered);
         }
-    }, [filterText, suppliers, selectedMerchants]);
+    }, [filterText, suppliers, selectedMerchants, provider]);
 
     return (
         <>

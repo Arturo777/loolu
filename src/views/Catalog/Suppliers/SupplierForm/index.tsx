@@ -44,7 +44,7 @@ const initialDataState: newSupplierType = {
 
 type SupplierFormProps = {
     initialData?: SupplierType;
-    handleSave: (data: any) => void;
+    handleSave: (data: any, idMerchant: number) => void;
 };
 
 export default function SupplierForm({ initialData, handleSave }: SupplierFormProps) {
@@ -80,12 +80,14 @@ export default function SupplierForm({ initialData, handleSave }: SupplierFormPr
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const merchandsData = changeMerchant?.map((merchant) => ({
-            merchantId: merchant.merchantId,
-            isFather: merchant.isFather
-        }));
-        console.log(merchandsData);
-        // handleSave(newData);
+        // const merchandsData = changeMerchant?.map((merchant) => ({
+        //     merchantId: merchant.merchantId,
+        //     isFather: merchant.isFather
+        // }));
+        const merchantIds = changeMerchant?.map((merchant) => {
+            handleSave(newData, merchant.merchantId);
+        });
+        // console.log(merchandsData);
     };
 
     return (
