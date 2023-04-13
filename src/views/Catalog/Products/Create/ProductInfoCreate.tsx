@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import {
+    Autocomplete,
     Box,
     Button,
     ButtonBase,
@@ -41,6 +42,8 @@ import {
     Tooltip,
     Typography
 } from '@mui/material';
+// import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+// import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -77,6 +80,8 @@ import { BrandType, BrandType2, CategoryType, SupplierType } from 'types/catalog
 import { getTradePolicies } from 'store/slices/product';
 
 import ConfigProvider from 'config';
+import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 
 // product color select
 function getColor(color: string) {
@@ -324,6 +329,12 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
     const history = useNavigate();
     const dispatch = useDispatch();
 
+    const policies = [
+        { isActive: true, idMerchant: 1, idPolicy: 1245, name: 'Exportaciones' },
+        { isActive: true, idMerchant: 2, idPolicy: 1248, name: 'Importaciones' },
+        { isActive: false, idMerchant: 2, idPolicy: 1250, name: 'Ventas' }
+    ];
+
     console.log(productInfo);
     console.log(typeof productInfo.created);
 
@@ -352,6 +363,9 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
             setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
         }
     };
+
+    // const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    // const checkedIcon = <CheckBoxIcon fontSize="small" />;
     /* const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
             setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
@@ -379,6 +393,48 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
             setBrandsInfo(brands2);
         }
     }, [brands2]);
+
+    const [allMerchantsProductData, setAllMerchantsProductData] = useState<{ [key: string]: any }[]>([]);
+
+    console.log(allMerchantsProductData);
+
+    useEffect(() => {
+        // update product info on merchants array
+        setAllMerchantsProductData([
+            {
+                merchantId: 1,
+                merchantName: 'Vinneren',
+                detailProduct: {
+                    tradePolicies: [policies]
+                }
+            },
+            {
+                merchantId: 2,
+                merchantName: 'Monstore',
+                detailProduct: {
+                    tradePolicies: [policies]
+                }
+            }
+        ]);
+    }, [merchs]);
+
+    const defaultMerchantProps: MultiMerchantFormProps = {
+        isOpen: false,
+        data: allMerchantsProductData,
+        accessor: 'tradePolicies',
+        // data: { [key: string]: any }[];
+        inputLabel: 'label',
+        toggleDrawer: (e) => {
+            // console.log('TOGLLE');
+            setMultiFormProps({ ...defaultMerchantProps, isOpen: e });
+            // resetDrawer();
+        },
+        onSave: (data: any) => console.log(data),
+        type: InputType.policies
+        // options?: null | SelectOptionType[];
+    };
+
+    const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
     /* const formik = useFormik({
         enableReinitialize: true,
@@ -428,9 +484,21 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
         );
     }; */
 
+    console.log(productInfo.isActive);
+
     const handleChange = (event: any) => {
         setProductInfo({ ...productInfo, [event.target.name]: event.target.value });
     };
+
+    const handleSwitches = (event: any) => {
+        setProductInfo({ ...productInfo, [event.target.name]: event.target.checked });
+    };
+
+    const handleChangeVendor = (event: any) => {
+        console.log(event);
+        setProductInfo({ ...productInfo, vendor: event.target.value });
+    };
+
     const generateLinkId = (str: string) => {
         setProductInfo({ ...productInfo, linkId: str.replace(/\s+/g, '-') });
     };
@@ -465,17 +533,25 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                                 sx={{ ml: 1 }}
                                 control={<Android12Switch name="isActive" />}
                                 label={<FormattedMessage id="active" />}
+                                onChange={handleSwitches}
                             />
-                            <FormControlLabel sx={{ ml: 1 }} control={<Android12Switch name="isVisible" />} label="Visible" />
+                            <FormControlLabel
+                                sx={{ ml: 1 }}
+                                control={<Android12Switch name="isVisible" />}
+                                label="Visible"
+                                onChange={handleSwitches}
+                            />
                             <FormControlLabel
                                 sx={{ ml: 1 }}
                                 control={<Android12Switch name="isEcommerce" />}
                                 label={<FormattedMessage id="e-commerce" />}
+                                onChange={handleSwitches}
                             />
                             <FormControlLabel
                                 sx={{ ml: 1 }}
                                 control={<Android12Switch name="showWithoutStock" />}
                                 label={<FormattedMessage id="out_of_stock" />}
+                                onChange={handleSwitches}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -645,9 +721,9 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                     <InputLabel id="demo-simple-select-label">
                         <FormattedMessage id="select_vendor" />
                     </InputLabel>
-                    <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Vendor" /* onChange={handleChangeVendor} */>
+                    <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Vendor" onChange={handleChangeVendor}>
                         {suppliers?.map((sup: SupplierType) => (
-                            <MenuItem value={sup?.idProvider}>{sup?.name}</MenuItem>
+                            <MenuItem value={(sup?.idProvider, sup?.name)}>{sup?.name}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -663,23 +739,37 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
             </Grid>
             <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-checkbox-label">{intl.formatMessage({ id: 'trade_policies' })}</InputLabel>
-                    <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        name="tradePolicy"
-                        input={<OutlinedInput label="Trade Policies" />}
-                        renderValue={(selected: any) => selected.join(', ')}
-                        MenuProps={MenuProps}
+                    <Button
+                        onClick={(e) => {
+                            console.log(e);
+                            setMultiFormProps({ ...defaultMerchantProps, isOpen: true });
+                        }}
+                        variant="contained"
                     >
-                        {/* {tradePolicies?.TradePolicies?.map((tr: Policy) => (
-                            <MenuItem key={tr.idPolicy} value={tr.idPolicy}>
-                                <Checkbox checked={productInfo.tradePolicies.idPolicy} />
-                                <ListItemText primary={tr.name} />
-                            </MenuItem>
-                        ))} */}
-                    </Select>
+                        {intl.formatMessage({ id: 'select_trade_policies' })}
+                    </Button>
+                    <MultiMerchantForm {...multiFormProps} />
+                    {/* <Autocomplete
+                        multiple
+                        id="checkboxes-tags-demo"
+                        options={policies}
+                        disableCloseOnSelect
+                        getOptionLabel={(option) => option.name}
+                        renderOption={(props, option, { selected }) => (
+                            <li {...props}>
+                                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                                {option.name}
+                            </li>
+                        )}
+                        style={{ width: 500 }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label={intl.formatMessage({ id: 'trade_policies' })}
+                                placeholder={intl.formatMessage({ id: 'trade_policies' })}
+                            />
+                        )}
+                    /> */}
                 </FormControl>
             </Grid>
             <Grid item xs={12}>
