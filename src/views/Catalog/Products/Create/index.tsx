@@ -14,7 +14,7 @@ import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct } from 'store/slices/product';
+import { getProduct, getWerehouses } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 import ProductImagesCreate from './ProductImagesCreate';
 import ProductInfoCreate from './ProductInfoCreate';
@@ -110,6 +110,7 @@ const CreateProduct = () => {
         },
         groupName: ''
     });
+    const { werehouses } = useSelector((state) => state.product);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -132,7 +133,12 @@ const CreateProduct = () => {
         /* dispatch(getProduct(id)); */
         // clear cart if complete order
     }, []);
-
+    useEffect(() => {
+        const objMulti = {
+            idMerchant: 1
+        };
+        dispatch(getWerehouses(objMulti));
+    }, [dispatch]);
     /* const { product } = useSelector((state) => state.product); */
 
     return (
@@ -188,7 +194,7 @@ const CreateProduct = () => {
                                 <Grid container justifyContent="space-between">
                                     {merchs.map((item: any) => (
                                         <Grid item xs={12 / merchs.length - 0.1}>
-                                            <ProductWerehouses merchs={item.merchantId} namemerch={item.name} />
+                                            <ProductWerehouses merchs={item.merchantId} namemerch={item.name} werehouses={werehouses} />
                                         </Grid>
                                     ))}
                                 </Grid>

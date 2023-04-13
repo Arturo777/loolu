@@ -77,6 +77,7 @@ import { BrandType, BrandType2, CategoryType, SupplierType } from 'types/catalog
 import { getTradePolicies } from 'store/slices/product';
 
 import ConfigProvider from 'config';
+import ProductPrices from './ProductPrices';
 
 // product color select
 function getColor(color: string) {
@@ -709,6 +710,9 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
             </Grid>
             <Grid item xs={12}>
                 <Divider />
+            </Grid>
+            <Grid item xs={12}>
+                <ProductPrices />
             </Grid>
             <Grid item xs={12}>
                 <Grid container spacing={2}>

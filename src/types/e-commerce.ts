@@ -223,6 +223,17 @@ export type SpecsValues = {
     vtexValueId: number;
     isVtexSync: boolean;
 };
+
+export type WerehousesMulticatalog = {
+    idMerchant: number;
+    warehouses: Werehouses[];
+};
+
+export type Werehouses = {
+    idMerchant: number;
+    isActive: boolean;
+    warehouse: string;
+};
 // product reviews list
 export type Reviews = {
     id: string | number | undefined;
@@ -287,6 +298,7 @@ export interface ProductStateProps {
     addresses: Address[];
     productFacet: ProductFacet[];
     createProductFacet: CreateFacetProduct[];
+    werehouses: WerehousesMulticatalog[];
     error: object | string | null;
     loadingProducts?: boolean;
     loadingProduct: boolean;

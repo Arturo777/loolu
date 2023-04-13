@@ -1,23 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import werehousesMulti from './mockupsProducts/werehouses';
-import { Werehouse } from 'types/catalog';
+import React from 'react';
 import { Card, Grid, TextField, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { gridSpacing } from 'store/constant';
 
-const ProductWerehouses = ({ merchs, namemerch }: any) => {
-    /* const dispatch = useDispatch(); */
+const ProductWerehouses = ({ merchs, namemerch, werehouses }: any) => {
     const theme = useTheme();
-    const wereMulti = werehousesMulti;
-    const [werehouse, setWerehouse] = useState<Werehouse | null>(null);
-    console.log('valor merch', merchs);
 
-    /* useEffect(() => { */
-    /* dispatch(getProduct(id)); */
-    /*     console.log('merchsr', whs);
-    }, [merchs, wereMulti.werehousesMulti]); */
-    const whs = wereMulti?.werehousesMulti?.find(({ idMerchant }: any) => idMerchant === merchs);
-    console.log('merchsr', whs);
+    const whs = werehouses.find(({ idMerchant }: any) => idMerchant === merchs);
     return (
         <Card
             sx={{
