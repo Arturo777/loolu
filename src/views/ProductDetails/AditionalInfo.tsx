@@ -1,4 +1,4 @@
-import { Grid, Typography, Box, TextField } from '@mui/material';
+import { Grid, Typography, TextField } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { FieldEditingHolder } from 'ui-component/MultiMerchant/drawer';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
@@ -35,6 +35,32 @@ const Aditionalinfo = ({
             <Grid item xs={12}>
                 {active ? (
                     <FieldEditingHolder
+                        sx={{ mb: 2 }}
+                        showMulti={showMulti}
+                        onEditClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
+                    >
+                        <TextField
+                            fullWidth
+                            multiline
+                            id="outlined-basic"
+                            label={intl.formatMessage({ id: 'description' })}
+                            variant="outlined"
+                            name="description"
+                            // defaultValue={product?.description}
+                            value={productInfo?.description}
+                            onChange={handleChangeProd}
+                        />
+                    </FieldEditingHolder>
+                ) : (
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                        <Typography variant="h4" component="span">
+                            {intl.formatMessage({ id: 'description' })}:
+                        </Typography>{' '}
+                        {product?.description}
+                    </Typography>
+                )}
+                {active ? (
+                    <FieldEditingHolder
                         showMulti={showMulti}
                         onEditClick={() =>
                             handleDrawer({ accessor: 'descriptionShort', intlLabel: 'short_description', type: InputType.textarea })
@@ -54,7 +80,10 @@ const Aditionalinfo = ({
                     </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">{intl.formatMessage({ id: 'short_description' })}:</Typography> {product?.descriptionShort}
+                        <Typography variant="h4" component="span">
+                            {intl.formatMessage({ id: 'short_description' })}:
+                        </Typography>{' '}
+                        {product?.descriptionShort}
                     </Typography>
                 )}
             </Grid>

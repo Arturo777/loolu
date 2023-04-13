@@ -8,7 +8,7 @@ import { STYRK_API } from 'config';
 
 // types
 import { DefaultRootStateProps } from 'types';
-import { ProductsFilter, Products } from 'types/e-commerce';
+import { ProductsFilter, Products, skuImageType } from 'types/e-commerce';
 import { ProductCardProps } from 'types/cart';
 import { getSearchParamsFromObject } from 'utils/helpers';
 
@@ -31,7 +31,8 @@ const initialState: DefaultRootStateProps['product'] = {
     merchantProducts: [],
     productFacet: [],
     createProductFacet: [],
-    loadingProducts: true
+    loadingProducts: true,
+    loadingMedia: false
 };
 
 const slice = createSlice({
@@ -85,7 +86,6 @@ const slice = createSlice({
         getRelatedProductsSuccess(state, action) {
             state.relatedProducts = action.payload;
         },
-
         // GET PRODUCT REVIEWS
         getProductReviewsSuccess(state, action) {
             state.reviews = action.payload;
@@ -99,8 +99,6 @@ const slice = createSlice({
             .addCase(getProducts.fulfilled, (state, action) => {
                 state.loadingProducts = false;
 
-                console.log(action.payload.response);
-
                 const products = action.payload.response.map((item: ProductCardProps) => ({
                     ...item,
                     date: item.releaseDate,
@@ -109,8 +107,6 @@ const slice = createSlice({
                     offerPrice: 1000,
                     salePrice: 1300
                 }));
-
-                console.log(action.payload.response);
 
                 state.products = products;
             });
@@ -170,7 +166,6 @@ const slice = createSlice({
             })
             .addCase(getProductDetails.fulfilled, (state, action) => {
                 state.loadingProduct = false;
-                console.log(action.payload);
                 state.merchantProducts = action.payload;
             });
         // SKUs
@@ -195,6 +190,22 @@ const slice = createSlice({
             .addCase(facetsToProduct.fulfilled, (state, action) => {
                 state.loadingProducts = false;
                 state.createProductFacet = action.payload.response;
+            });
+
+        // MEDIA
+        builder
+            .addCase(uploadImageToSku.pending, (state) => {
+                state.loadingMedia = true;
+            })
+            .addCase(uploadImageToSku.fulfilled, (state) => {
+                state.loadingMedia = false;
+            });
+        builder
+            .addCase(deleteImageToSku.pending, (state) => {
+                state.loadingMedia = true;
+            })
+            .addCase(deleteImageToSku.fulfilled, (state) => {
+                state.loadingMedia = false;
             });
     }
     // extraReducers(builder) {}
@@ -266,8 +277,6 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             idProd: searchParams.idProd
         }
     });
-
-    console.log(response);
 
     return response.data;
 });
@@ -477,3 +486,54 @@ export const getProductSkuList = createAsyncThunk(
         return response.data.response;
     }
 );
+
+export const uploadImageToSku = createAsyncThunk(
+    `${slice.name}/uploadImageToSku`,
+    async ({
+        skuId,
+        idMerchant,
+        files,
+        isMain = false
+    }: {
+        skuId: number | string;
+        idMerchant: number | string;
+        files: File[];
+        isMain?: boolean;
+    }) => {
+        const fileFormDataArray = files.map((file) => {
+            const fileFormData = new FormData();
+
+            fileFormData.append('isMain', `${isMain}`);
+            fileFormData.append('skuId', `${skuId}`);
+            fileFormData.append('file', file);
+            fileFormData.append('idMerchant', `${idMerchant}`);
+            fileFormData.append('imageName', file.name);
+            fileFormData.append('label', new Date().toISOString());
+
+            return axios.post('/styrk/api/images/save/file', fileFormData, {
+                baseURL: STYRK_API
+            });
+        });
+
+        const responseArray = await Promise.all(fileFormDataArray);
+
+        return responseArray.map((response) => response.data.response);
+    }
+);
+
+export const deleteImageToSku = createAsyncThunk(`${slice.name}/deleteImageToSku`, async ({ images }: { images: skuImageType[] }) => {
+    const deleteRequests = images.map((image) =>
+        axios.delete('/styrk/api/images/delete/file', {
+            baseURL: STYRK_API,
+            params: {
+                idImage: image.IdImage,
+                idMerchant: image.IdMerchant,
+                idSKU: image.SkuID
+            }
+        })
+    );
+
+    const responseArray = await Promise.all(deleteRequests);
+
+    return responseArray.map((response) => response.data.response);
+});

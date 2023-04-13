@@ -3,9 +3,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 // material-ui
 import { SxProps } from '@mui/material/styles';
-import { Box, CardMedia, Collapse, Grid, IconButton } from '@mui/material';
+import { Box, CardMedia, Grid, IconButton } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 // project import
 import MainCard from 'ui-component/cards/MainCard';
@@ -17,7 +18,17 @@ import useConfig from 'hooks/useConfig';
 import '../style.css';
 import { customMiniScrollBar } from 'ui-component/MultiMerchantButton/components';
 
-export default function RenderImages({ images, localImages }: { images: { source: string; id: number }[]; localImages: File[] }) {
+export default function RenderImages({
+    images,
+    localImages,
+    deleteImage,
+    deleteLocal
+}: {
+    images: { source: string; id: number }[];
+    localImages: File[];
+    deleteImage: (imageId: number) => void;
+    deleteLocal: (fileName: string) => void;
+}) {
     // hooks
     // const theme = useTheme();
     const { borderRadius } = useConfig();
@@ -26,11 +37,11 @@ export default function RenderImages({ images, localImages }: { images: { source
     const carouselContainer = useRef<HTMLDivElement | null>();
 
     // data
-    const [newImages, setNewImages] = useState<{ source: string }[]>([]);
+    const [newImages, setNewImages] = useState<{ source: string; name: string }[]>([]);
     const [activeThumbnailIndex, setActiveThumbnailIndex] = useState(0);
     const [modal, setModal] = useState(false);
 
-    const toRenderImages: { source: string }[] = useMemo(() => [...images, ...newImages], [newImages, images]);
+    const toRenderImages: { source: string; name?: string; id?: number }[] = useMemo(() => [...images, ...newImages], [newImages, images]);
 
     useEffect(() => {
         const convertImagesToImageInfo = async () => {
@@ -57,19 +68,44 @@ export default function RenderImages({ images, localImages }: { images: { source
         }
     };
 
-    const renderThumbnails = useMemo(() => {
-        console.log(toRenderImages);
-        return toRenderImages.map((image, index) => (
-            <ThumbnailImage image={image} isActive={activeThumbnailIndex === index} handleClick={() => setActiveThumbnailIndex(index)} />
-        ));
-    }, [activeThumbnailIndex, toRenderImages]);
+    const renderThumbnails = useMemo(
+        () =>
+            toRenderImages.map((image, index) => (
+                <ThumbnailImage
+                    key={`product-image-${index}`}
+                    image={image}
+                    isActive={activeThumbnailIndex === index}
+                    handleClick={() => setActiveThumbnailIndex(index)}
+                />
+            )),
+        [activeThumbnailIndex, toRenderImages]
+    );
+
+    const handleDelete = () => {
+        const itemToDelete = toRenderImages[activeThumbnailIndex];
+
+        if (itemToDelete.name) {
+            deleteLocal(itemToDelete.name);
+        }
+
+        if (itemToDelete.id) {
+            deleteImage(itemToDelete.id);
+        }
+
+        setActiveThumbnailIndex(0);
+    };
 
     return (
         <>
             <Grid container>
                 <Grid item xs={12} p={0}>
                     {toRenderImages && Boolean(toRenderImages.length) && (
-                        <MainCard component="section" content={false} sx={{ m: '0 auto' }}>
+                        <MainCard component="section" content={false} sx={{ m: '0 auto', position: 'relative' }}>
+                            <Box sx={{ position: 'absolute', bottom: 0, right: 0, p: 0.5, background: 'rgba(100,100,100,0.4)' }}>
+                                <IconButton color="error" size="small" onClick={handleDelete}>
+                                    <DeleteForeverIcon />
+                                </IconButton>
+                            </Box>
                             <CardMedia
                                 onClick={() => setModal(!modal)}
                                 component="img"
@@ -80,7 +116,7 @@ export default function RenderImages({ images, localImages }: { images: { source
                     )}
                 </Grid>
                 <Grid item xs={12}>
-                    {toRenderImages && Boolean(toRenderImages.length) && (
+                    {toRenderImages && Boolean(toRenderImages.length > 1) && (
                         <Box sx={{ position: 'relative', mt: 3 }}>
                             <Box
                                 ref={carouselContainer}
@@ -163,8 +199,10 @@ const thumbnailStyles = {
     // Add styles for the active thumbnail
 };
 
-const convertFilesToImageInfo = async (files: File[]): Promise<{ source: string }[]> => {
-    const imageInfoArray: { source: string }[] = [];
+const convertFilesToImageInfo = async (files: File[]): Promise<{ source: string; name: string }[]> => {
+    const imageInfoArray: { source: string; name: string }[] = [];
+
+    // console.log('files:', files);
 
     // Use Promise.all to handle multiple asynchronous file reader operations concurrently
     await Promise.all(
@@ -172,11 +210,12 @@ const convertFilesToImageInfo = async (files: File[]): Promise<{ source: string 
             (file, index) =>
                 new Promise<void>((resolve, reject) => {
                     const fileReader = new FileReader();
+                    const name = file.name;
 
                     fileReader.onload = (event) => {
                         if (event.target && event.target.result) {
                             // Push image info object to the array with source and id properties
-                            imageInfoArray.push({ source: event.target.result.toString() });
+                            imageInfoArray.push({ source: event.target.result.toString(), name });
 
                             resolve();
                         } else {
