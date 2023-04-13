@@ -77,6 +77,7 @@ import { BrandType, BrandType2, CategoryType, MerchantCategoryType, SupplierType
 import { getTradePolicies } from 'store/slices/product';
 
 import ConfigProvider from 'config';
+import ProductPrices from './ProductPrices';
 import { MerchantType } from 'types/security';
 
 // product color select
@@ -795,6 +796,9 @@ const ProductInfoCreate = ({
             </Grid>
             <Grid item xs={12}>
                 <Divider />
+            </Grid>
+            <Grid item xs={12}>
+                <ProductPrices />
             </Grid>
             <Grid item xs={12}>
                 <Grid container spacing={2}>

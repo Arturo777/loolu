@@ -237,7 +237,12 @@ const ChatSection = () => {
                                                         {/* <Button variant="contained" color="primary" onClick={handleSendMessage}>
                                                             Send
                                                         </Button> */}
-                                                        <IconButton color="primary" aria-label="upload picture" component="label">
+                                                        <IconButton
+                                                            color="primary"
+                                                            aria-label="upload picture"
+                                                            component="label"
+                                                            onClick={handleSendMessage}
+                                                        >
                                                             <SendIcon />
                                                         </IconButton>
                                                     </Grid>

@@ -31,6 +31,7 @@ const initialState: DefaultRootStateProps['product'] = {
     merchantProducts: [],
     productFacet: [],
     createProductFacet: [],
+    werehouses: [],
     loadingProducts: true,
     loadingMedia: false
 };
@@ -191,7 +192,14 @@ const slice = createSlice({
                 state.loadingProducts = false;
                 state.createProductFacet = action.payload.response;
             });
-
+        builder
+            .addCase(getWerehouses.pending, (state) => {
+                state.loadingProducts = true;
+            })
+            .addCase(getWerehouses.fulfilled, (state, action) => {
+                state.loadingProducts = false;
+                state.werehouses = action.payload.response;
+            });
         // MEDIA
         builder
             .addCase(uploadImageToSku.pending, (state) => {
@@ -487,6 +495,20 @@ export const getProductSkuList = createAsyncThunk(
     }
 );
 
+export const getWerehouses = createAsyncThunk(
+    `${slice.name}/getMultiMerchantWerehouses`,
+    async ({ warehouses, idMerchant }: { warehouses?: number | string; idMerchant: number | string }) => {
+        const response = await axios.get('/styrk/api/multicatalog/warehouses', {
+            baseURL: STYRK_API,
+            params: {
+                idMerchant,
+                warehouses
+            }
+        });
+
+        return response.data;
+    }
+);
 export const uploadImageToSku = createAsyncThunk(
     `${slice.name}/uploadImageToSku`,
     async ({
