@@ -19,14 +19,13 @@ import { useDispatch, useSelector } from 'store';
 
 // actions
 import { getCategories, getTradePolicies, saveProduct, getProductDetails, getProductSkuList } from 'store/slices/product';
-import { createBrand, getBrands } from 'store/slices/catalog';
+import { createBrand, getBrands, getMerchantCategoriesService } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 
 // constants
 import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 
 // components
-import ProductInfo from './ProductInfo';
 import ProductReview from './ProductReview';
 import Chip from 'ui-component/extended/Chip';
 // import RelatedProducts from './RelatedProducts';
@@ -41,9 +40,10 @@ import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMer
 import { TabsProps } from 'types';
 import { Products, Skus } from 'types/e-commerce';
 import { MerchantProductType } from 'types/product';
-import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
+import { BrandType, CategoryType, FlatCategoryType, FlatMerchantCategoriesType, NewBrandType } from 'types/catalog';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 import ProductImages from './ProductImages';
+import ProductInfo from './ProductInfo';
 
 // VIEW CASES
 //      Has merchantId => Single merchant edition
@@ -133,6 +133,7 @@ const ProductDetails = () => {
     // product description tabs
     const [value, setValue] = useState(0);
     const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
+    const [categoriesInfo, setCategoriesInfo] = useState<FlatCategoryType[]>([]);
 
     // info new Brands and Categories
     const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
@@ -145,7 +146,7 @@ const ProductDetails = () => {
 
     const { product, tradePolicies } = useSelector((state) => state.product);
 
-    const { brands } = useSelector((state) => state.catalogue);
+    const { brands, categories, flatMerchantCategories } = useSelector((state) => state.catalogue);
 
     // params
     const idMerchant = searchParams.get('idMerchant');
@@ -228,6 +229,7 @@ const ProductDetails = () => {
 
         dispatch(getBrands());
         dispatch(getCategories());
+        dispatch(getMerchantCategoriesService({ idMerchant: 1 }));
         dispatch(getTradePolicies());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, id, idMerchant, product]);
@@ -258,10 +260,22 @@ const ProductDetails = () => {
             setBrandsInfo(brands);
         }
     }, [brands]);
+    useEffect(() => {
+        if (!flatMerchantCategories?.length) return;
+
+        const cats = flatMerchantCategories.find((merchCats: FlatMerchantCategoriesType) =>
+            viewMode === 'SINGLE' ? merchCats.idMerchant === Number(idMerchant) : merchCats.isFatherMerchat
+        )?.categoryList;
+        setCategoriesInfo(cats ?? []);
+    }, [flatMerchantCategories]);
 
     useEffect(() => {
         setOpen(false);
     }, []);
+
+    useEffect(() => {
+        console.log(multiFormProps);
+    }, [multiFormProps]);
 
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);
@@ -432,6 +446,7 @@ const ProductDetails = () => {
                                         <Grid item xs={12} md={6}>
                                             {productInfo && (
                                                 <ProductInfo
+                                                    categoriesInfo={categoriesInfo}
                                                     showMulti={viewMode === 'MULTI'}
                                                     handleDrawer={handleDrawerMultiEdit}
                                                     active={active}
