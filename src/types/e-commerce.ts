@@ -84,12 +84,16 @@ export type Skus = {
     brandId: number;
     productID: string | number;
     approvalStatus: ApprovalStatus;
-    images: {
-        ImageURL: string;
-        IdImage: number;
-        IdMerchant: number;
-    }[];
+    images: skuImageType[];
 };
+
+export type skuImageType = {
+    ImageURL: string;
+    IdImage: number;
+    IdMerchant: number;
+    SkuID: string;
+};
+
 export type Categories = {
     id: string | number;
     isActive: boolean;
@@ -291,4 +295,5 @@ export interface ProductStateProps {
     loadingProducts?: boolean;
     loadingProduct: boolean;
     merchantProducts: MerchantProductType[];
+    loadingMedia: boolean;
 }

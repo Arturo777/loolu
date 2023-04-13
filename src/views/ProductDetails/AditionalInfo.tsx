@@ -1,4 +1,4 @@
-import { Grid, Typography, Box, TextField } from '@mui/material';
+import { Grid, Typography, TextField } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { FieldEditingHolder } from 'ui-component/MultiMerchant/drawer';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';

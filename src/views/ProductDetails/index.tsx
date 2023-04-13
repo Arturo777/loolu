@@ -18,7 +18,15 @@ import useConfig from 'hooks/useConfig';
 import { useDispatch, useSelector } from 'store';
 
 // actions
-import { getCategories, getTradePolicies, saveProduct, getProductDetails, getProductSkuList } from 'store/slices/product';
+import {
+    getCategories,
+    getTradePolicies,
+    saveProduct,
+    getProductDetails,
+    getProductSkuList,
+    uploadImageToSku,
+    deleteImageToSku
+} from 'store/slices/product';
 import { createBrand, getBrands } from 'store/slices/catalog';
 import { openSnackbar } from 'store/slices/snackbar';
 
@@ -39,7 +47,7 @@ import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMer
 
 // types
 import { TabsProps } from 'types';
-import { Products, Skus } from 'types/e-commerce';
+import { Products, Skus, skuImageType } from 'types/e-commerce';
 import { MerchantProductType } from 'types/product';
 import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
@@ -136,6 +144,7 @@ const ProductDetails = () => {
 
     // info new Brands and Categories
     const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
 
@@ -148,7 +157,7 @@ const ProductDetails = () => {
     const { brands } = useSelector((state) => state.catalogue);
 
     // params
-    const idMerchant = searchParams.get('idMerchant');
+    const idMerchant = Number(searchParams.get('idMerchant')) || null;
     const { id } = useParams();
 
     const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (idMerchant ? 'SINGLE' : 'MULTI'), [idMerchant]);
@@ -163,9 +172,10 @@ const ProductDetails = () => {
 
     const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
-    useEffect(() => {
-        console.log('productSkus', productSkus);
-    }, [productSkus]);
+    const [toUploadImages, setToUploadImages] = useState<File[]>([]);
+    const [toDeleteImages, setToDeleteImages] = useState<skuImageType[]>([]);
+
+    const [selectedMerchant, setSelectedMerchant] = useState<number | null>(idMerchant);
 
     useEffect(() => {
         // update product info on merchants array
@@ -183,40 +193,23 @@ const ProductDetails = () => {
         // getProduct();
         setIsLoading(true);
 
-        if (id && idMerchant) {
-            // single merchant
-            dispatch(
-                getProductDetails({
-                    idProd: id,
-                    idMerchant
-                })
-            ).then(({ payload }) => {
-                // const merhcantList
-
-                const merchantProduct = payload?.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
-
-                // setAllMerchantsProductData(payload);
-                handleGetSkus();
-
-                if (merchantProduct) {
-                    setOriginalData(merchantProduct.detailProduct);
-                    setProductInfo(merchantProduct.detailProduct);
-                    setIsLoading(false);
-                }
-            });
-        }
         if (id) {
-            // single merchant
             dispatch(
                 getProductDetails({
                     idProd: id,
                     idMerchant: 1
                 })
             ).then(({ payload }) => {
-                const merchantProduct = payload?.length ? payload[0] : null;
+                let merchantProduct = payload?.length ? payload[0] : null;
+                // const merchantProduct = null;
+
+                if (payload?.length && idMerchant) {
+                    merchantProduct = payload.find((item: { [key: string]: any }) => item.merchantId === selectedMerchant);
+                }
+
+                setSelectedMerchant(merchantProduct.merchantId);
 
                 setAllMerchantsProductData(payload);
-                handleGetSkus();
 
                 if (merchantProduct) {
                     setOriginalData(merchantProduct.detailProduct);
@@ -232,12 +225,18 @@ const ProductDetails = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, id, idMerchant, product]);
 
+    useEffect(() => {
+        handleGetSkus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedMerchant]);
+
     const handleGetSkus = () => {
-        if (id && idMerchant) {
+        console.log('selectedMerchant', id, selectedMerchant);
+        if (id && selectedMerchant) {
             dispatch(
                 getProductSkuList({
                     idProd: id,
-                    merchantId: idMerchant
+                    merchantId: selectedMerchant
                 })
             ).then(({ payload }) => {
                 // console.log('SKU: ---', payload.skus);
@@ -274,7 +273,24 @@ const ProductDetails = () => {
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (flagBrand) {
+
+        if (selectedMerchant) {
+            dispatch(
+                uploadImageToSku({
+                    files: toUploadImages,
+                    skuId: valueSku,
+                    idMerchant: selectedMerchant
+                })
+            );
+
+            dispatch(
+                deleteImageToSku({
+                    images: toDeleteImages
+                })
+            );
+        }
+
+        /* if (flagBrand) {
             const dataBrand: any = {
                 ...newBrandSku
             };
@@ -339,7 +355,7 @@ const ProductDetails = () => {
                         );
                     });
             }
-        }
+        } */
     };
 
     const saveMultiChange = (data: { [key: string]: any }[]) => {
@@ -417,6 +433,9 @@ const ProductDetails = () => {
                                                 product={productInfo}
                                                 setActive={setActive}
                                                 active={active}
+                                                handleChange={(newSkuImages: File[]) => setToUploadImages(newSkuImages)}
+                                                toDeleteImages={toDeleteImages}
+                                                handleDelete={(toDelete: skuImageType) => setToDeleteImages((prev) => [...prev, toDelete])}
                                             />
 
                                             {/* {Boolean(allSkus && allSkus.length) && (
