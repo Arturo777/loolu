@@ -82,6 +82,7 @@ import { getTradePolicies } from 'store/slices/product';
 import ConfigProvider from 'config';
 import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { MerchantType } from 'types/security';
 
 // product color select
 function getColor(color: string) {
@@ -398,24 +399,19 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
 
     console.log(allMerchantsProductData);
 
+    const merchsConvert = (merchs2: MerchantType[]): any =>
+        merchs2.map((item) => ({
+            merchantId: item.merchantId,
+            merchantName: item.name,
+            detailProduct: {
+                tradePolicies: [policies]
+            }
+        }));
+
     useEffect(() => {
         // update product info on merchants array
-        setAllMerchantsProductData([
-            {
-                merchantId: 1,
-                merchantName: 'Vinneren',
-                detailProduct: {
-                    tradePolicies: [policies]
-                }
-            },
-            {
-                merchantId: 2,
-                merchantName: 'Monstore',
-                detailProduct: {
-                    tradePolicies: [policies]
-                }
-            }
-        ]);
+        const merchsConverted = merchsConvert(merchs);
+        setAllMerchantsProductData(merchsConverted);
     }, [merchs]);
 
     const defaultMerchantProps: MultiMerchantFormProps = {
