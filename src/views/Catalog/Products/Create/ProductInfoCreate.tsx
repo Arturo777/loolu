@@ -404,7 +404,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
             merchantId: item.merchantId,
             merchantName: item.name,
             detailProduct: {
-                tradePolicies: [policies]
+                tradePolicies
             }
         }));
 
@@ -414,10 +414,13 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
         setAllMerchantsProductData(merchsConverted);
     }, [merchs]);
 
+    const [typeMerchants, setTypeMerchants] = useState(InputType.policies);
+    const [accessorMerchants, setAccessorMerchants] = useState('');
+
     const defaultMerchantProps: MultiMerchantFormProps = {
         isOpen: false,
         data: allMerchantsProductData,
-        accessor: 'tradePolicies',
+        accessor: accessorMerchants,
         // data: { [key: string]: any }[];
         inputLabel: 'label',
         toggleDrawer: (e) => {
@@ -426,7 +429,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
             // resetDrawer();
         },
         onSave: (data: any) => console.log(data),
-        type: InputType.policies
+        type: typeMerchants
         // options?: null | SelectOptionType[];
     };
 
@@ -739,6 +742,8 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                         onClick={(e) => {
                             console.log(e);
                             setMultiFormProps({ ...defaultMerchantProps, isOpen: true });
+                            setTypeMerchants(InputType.policies);
+                            setAccessorMerchants('tradePolicies');
                         }}
                         variant="contained"
                     >
