@@ -64,6 +64,10 @@ export default function MultiMerchantForm({
     }, [data, accessor]);
 
     useEffect(() => {
+        console.log({ options });
+    }, [options]);
+
+    useEffect(() => {
         if (user && user.user) {
             dispatch(getMerchantsList(user?.user));
         }
@@ -180,6 +184,7 @@ export default function MultiMerchantForm({
                 </Tooltip>
             </Stack>
 
+            {/* XXX */}
             <Box component="form" ref={formRef} onSubmit={handleSave}>
                 {newData &&
                     newData.map((item) => (

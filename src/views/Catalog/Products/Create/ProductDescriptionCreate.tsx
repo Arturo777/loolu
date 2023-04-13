@@ -5,17 +5,18 @@ import { useIntl } from 'react-intl';
 import Specification from 'ui-component/Specification';
 import AditionalInfoCreate from './AditionalinfoCreate';
 import Accordion from 'ui-component/extended/Accordion';
+import { MerchantType } from 'types/security';
 
 // ==============================|| PRODUCT DETAILS - DESCRIPTION ||============================== //
 
 const ProductDescriptionCreate = ({
     setProductInfo,
     productInfo,
-    merchantMulti
+    selectedMerchants
 }: {
     setProductInfo: any;
     productInfo: any;
-    merchantMulti: any;
+    selectedMerchants: MerchantType[];
 }) => {
     // hooks
     const intl = useIntl();
