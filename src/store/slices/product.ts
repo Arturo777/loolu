@@ -99,8 +99,6 @@ const slice = createSlice({
             .addCase(getProducts.fulfilled, (state, action) => {
                 state.loadingProducts = false;
 
-                console.log(action.payload.response);
-
                 const products = action.payload.response.map((item: ProductCardProps) => ({
                     ...item,
                     date: item.releaseDate,
@@ -109,8 +107,6 @@ const slice = createSlice({
                     offerPrice: 1000,
                     salePrice: 1300
                 }));
-
-                console.log(action.payload.response);
 
                 state.products = products;
             });
@@ -170,7 +166,6 @@ const slice = createSlice({
             })
             .addCase(getProductDetails.fulfilled, (state, action) => {
                 state.loadingProduct = false;
-                console.log(action.payload);
                 state.merchantProducts = action.payload;
             });
         // SKUs
@@ -282,8 +277,6 @@ export const getProducts = createAsyncThunk(`${slice.name}/getProducts`, async (
             idProd: searchParams.idProd
         }
     });
-
-    console.log(response);
 
     return response.data;
 });

@@ -54,11 +54,8 @@ const ProductImages = ({
 
             const notRenderToDelete = newImages.filter((item) => {
                 const willDelete = !toDeleteImages.find((itemB) => itemB.IdImage === item.id);
-                console.log('willDelete', item.id, willDelete);
                 return willDelete;
             });
-
-            console.log('notRenderToDelete', notRenderToDelete);
 
             setImages(notRenderToDelete);
         }

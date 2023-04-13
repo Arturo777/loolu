@@ -68,9 +68,18 @@ export default function RenderImages({
         }
     };
 
-    const renderThumbnails = useMemo(() => toRenderImages.map((image, index) => (
-            <ThumbnailImage image={image} isActive={activeThumbnailIndex === index} handleClick={() => setActiveThumbnailIndex(index)} />
-        )), [activeThumbnailIndex, toRenderImages]);
+    const renderThumbnails = useMemo(
+        () =>
+            toRenderImages.map((image, index) => (
+                <ThumbnailImage
+                    key={`product-image-${index}`}
+                    image={image}
+                    isActive={activeThumbnailIndex === index}
+                    handleClick={() => setActiveThumbnailIndex(index)}
+                />
+            )),
+        [activeThumbnailIndex, toRenderImages]
+    );
 
     const handleDelete = () => {
         const itemToDelete = toRenderImages[activeThumbnailIndex];

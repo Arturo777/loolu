@@ -21,14 +21,12 @@ import { useDispatch, useSelector } from 'store';
 import {
     getCategories,
     getTradePolicies,
-    saveProduct,
     getProductDetails,
     getProductSkuList,
     uploadImageToSku,
     deleteImageToSku
 } from 'store/slices/product';
-import { createBrand, getBrands, getMerchantCategoriesService } from 'store/slices/catalog';
-import { openSnackbar } from 'store/slices/snackbar';
+import { getBrands, getMerchantCategoriesService } from 'store/slices/catalog';
 
 // constants
 import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
@@ -47,7 +45,7 @@ import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMer
 // types
 import { TabsProps } from 'types';
 import { Products, Skus, skuImageType } from 'types/e-commerce';
-import { MerchantProductType } from 'types/product';
+
 import { BrandType, CategoryType, FlatCategoryType, FlatMerchantCategoriesType, NewBrandType } from 'types/catalog';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 import ProductImages from './ProductImages';
@@ -155,7 +153,7 @@ const ProductDetails = () => {
 
     const { product, tradePolicies } = useSelector((state) => state.product);
 
-    const { brands, categories, flatMerchantCategories } = useSelector((state) => state.catalogue);
+    const { brands, flatMerchantCategories } = useSelector((state) => state.catalogue);
 
     // params
     const idMerchant = Number(searchParams.get('idMerchant')) || null;
@@ -233,7 +231,6 @@ const ProductDetails = () => {
     }, [selectedMerchant]);
 
     const handleGetSkus = () => {
-        console.log('selectedMerchant', id, selectedMerchant);
         if (id && selectedMerchant) {
             dispatch(
                 getProductSkuList({
@@ -259,6 +256,7 @@ const ProductDetails = () => {
             setBrandsInfo(brands);
         }
     }, [brands]);
+
     useEffect(() => {
         if (!flatMerchantCategories?.length) return;
 
@@ -271,10 +269,6 @@ const ProductDetails = () => {
     useEffect(() => {
         setOpen(false);
     }, []);
-
-    useEffect(() => {
-        console.log(multiFormProps);
-    }, [multiFormProps]);
 
     const handleDrawerOpen = () => {
         setOpen((prevState) => !prevState);

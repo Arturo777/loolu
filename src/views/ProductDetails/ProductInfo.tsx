@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import {
     Box,
-    Button,
     Checkbox,
     Collapse,
     Divider,
@@ -32,7 +31,6 @@ import {
     Tooltip,
     Typography
 } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -43,24 +41,24 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // project imports
 import Chip from 'ui-component/extended/Chip';
 import { Products, Skus } from 'types/e-commerce';
-import { useDispatch, useSelector } from 'store';
+import { useDispatch } from 'store';
 
 // assets
 import { Key, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import ProductDimensions from './ProductDimensions';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { BrandType, CategoryType, FlatCategoryType, MerchantCategoryType } from 'types/catalog';
 import { getCategoriesService } from 'store/slices/catalog';
 import ConfigProvider from 'config';
 import filterUnitM from 'utils/unitMeasurement';
 
 import { FieldEditingHolder, RowStack } from 'ui-component/MultiMerchant/drawer';
+import ObjectModal from './Modals/ObjectModal';
 
 // types
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { BrandType, CategoryType, FlatCategoryType } from 'types/catalog';
 import { gridSpacing } from 'store/constant';
-import ObjectModal from './Modals/ObjectModal';
 
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
@@ -108,7 +106,6 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
     }
 }));
 
-type Anchor = 'top' | 'left' | 'bottom' | 'right';
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
 const ProductInfo = ({
@@ -169,17 +166,10 @@ const ProductInfo = ({
     const intl = useIntl();
     const dispatch = useDispatch();
     const wrapperRef = useRef(null);
-    const [stateDrawer, setStateDrawer] = useState({
-        top: false,
-        left: false,
-        bottom: false,
-        right: false
-    });
 
     // const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
     // info Brands
-    const [button, setButton] = useState(false);
     const [brandsDisplay, setBrandsDisplay] = useState(false);
     const [brandSearch, setBrandSearch] = useState(product?.brandName);
     const [modalBrands, setModalBrands] = useState(false);
@@ -189,12 +179,6 @@ const ProductInfo = ({
     const [categorySearch, setCategorySearch] = useState(product?.categoryName ?? String(product?.categoryId) ?? '');
     const [modalCategories, setModalCategories] = useState(false);
 
-    const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-            return;
-        }
-        setStateDrawer({ ...stateDrawer, [anchor]: open });
-    };
     const handleClickOutside = (event: { target: any }) => {
         const { current: wrap }: any = wrapperRef;
         if (wrap && !wrap.contains(event.target)) {
@@ -215,12 +199,6 @@ const ProductInfo = ({
     }, []);
 
     useEffect(() => {
-        // const skuprod: Skus[] = productSkus
-        //     ? productSkus
-        //           ?.filter((sku: Skus) => sku.skuID === valueSku)
-        //           .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }])
-        //     : [];
-
         let filterSku: Skus[] = productSkus ? productSkus.filter((itemSku) => Number(itemSku.skuID) === Number(valueSku)) : [];
 
         filterSku = filterSku.map((itemSku: Skus) => ({ ...itemSku, measurementUnit: filterUnitM(itemSku?.measurementUnit) }));
@@ -228,16 +206,10 @@ const ProductInfo = ({
         if (filterSku.length > 0) {
             const skufFiltUnit: Skus = filterSku[0];
 
-            console.log('skufFiltUnit', skufFiltUnit);
-            // console.log('unitmeas', skufFiltUnit[0]);
             setSkuInfo(skufFiltUnit);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [product?.skus, setSkuInfo, valueSku]);
-
-    useEffect(() => {
-        console.log({ product });
-    }, [product]);
 
     const handleRadioChange = (event: { target: { value: any } }) => {
         setValueSku(event.target.value);
@@ -294,10 +266,6 @@ const ProductInfo = ({
         setNewCategorySku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
         setCategoriesDisplay(false);
     };
-
-    useEffect(() => {
-        console.log({ categoriesInfo });
-    }, [categoriesInfo]);
 
     return (
         <Grid container rowSpacing={gridSpacing}>
@@ -674,11 +642,7 @@ const ProductInfo = ({
                                 <div className={ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'}>
                                     {categoriesInfo?.length &&
                                         categoriesInfo
-                                            ?.filter(({ name }) => {
-                                                console.log({ name });
-
-                                                return name.toLowerCase().indexOf(categorySearch.toLowerCase()) > -1;
-                                            })
+                                            ?.filter(({ name }) => name.toLowerCase().indexOf(categorySearch.toLowerCase()) > -1)
                                             .map((v: FlatCategoryType, i: Key): any => (
                                                 // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                                                 <Typography
@@ -917,7 +881,7 @@ const ProductInfo = ({
                                         <TableRow>
                                             <TableCell>
                                                 <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                    {intl.formatMessage({ id: 'Pricing' })}
+                                                    {intl.formatMessage({ id: 'pricing' })}
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
@@ -1043,10 +1007,9 @@ const ProductInfo = ({
                                             <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
                                         </TableCell>
                                     </TableRow>
-                                    <br />
                                     <TableRow>
                                         <TableCell>
-                                            <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                            <Typography variant="body2">{intl.formatMessage({ id: 'quantity' })}</Typography>
                                         </TableCell>
                                         <TableCell align="left" />
                                     </TableRow>

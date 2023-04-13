@@ -53,7 +53,10 @@ const Aditionalinfo = ({
                     </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">{intl.formatMessage({ id: 'description' })}:</Typography> {product?.description}
+                        <Typography variant="h4" component="span">
+                            {intl.formatMessage({ id: 'description' })}:
+                        </Typography>{' '}
+                        {product?.description}
                     </Typography>
                 )}
                 {active ? (
@@ -77,7 +80,10 @@ const Aditionalinfo = ({
                     </FieldEditingHolder>
                 ) : (
                     <Typography variant="body2" sx={{ mb: 2 }}>
-                        <Typography variant="h4">{intl.formatMessage({ id: 'short_description' })}:</Typography> {product?.descriptionShort}
+                        <Typography variant="h4" component="span">
+                            {intl.formatMessage({ id: 'short_description' })}:
+                        </Typography>{' '}
+                        {product?.descriptionShort}
                     </Typography>
                 )}
             </Grid>
