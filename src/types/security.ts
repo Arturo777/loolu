@@ -70,3 +70,8 @@ export type MerchantType = {
     status?: boolean;
     isSelected?: boolean;
 };
+
+export type ProductCreateCategory = {
+    merchantId: number;
+    categoryId: number;
+};

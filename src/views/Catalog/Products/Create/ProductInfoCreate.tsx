@@ -72,12 +72,13 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { getCategoriesService, getSuppliers, getBrands2 } from 'store/slices/catalog';
-import { BrandType, BrandType2, CategoryType, SupplierType } from 'types/catalog';
+import { getCategoriesService, getSuppliers, getBrands2, getMerchantCategoriesService } from 'store/slices/catalog';
+import { BrandType, BrandType2, CategoryType, MerchantCategoryType, SupplierType } from 'types/catalog';
 import { getTradePolicies } from 'store/slices/product';
 
 import ConfigProvider from 'config';
 import ProductPrices from './ProductPrices';
+import { MerchantType } from 'types/security';
 
 // product color select
 function getColor(color: string) {
@@ -320,7 +321,19 @@ const MainCategoryComponent = ({ category, setSearchCat, setProductInfo, setFlag
 
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
-const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProductInfo: any; productInfo: any; merchs: any }) => {
+const ProductInfoCreate = ({
+    setProductInfo,
+    productInfo,
+    selectedMerchants,
+    setProductCreateCategories,
+    productCreateCategories
+}: {
+    setProductInfo: any;
+    productInfo: any;
+    selectedMerchants: MerchantType[];
+    setProductCreateCategories: any;
+    productCreateCategories: any;
+}) => {
     const intl = useIntl();
     const history = useNavigate();
     const dispatch = useDispatch();
@@ -328,10 +341,11 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
     console.log(productInfo);
     console.log(typeof productInfo.created);
 
-    const { categories, suppliers, brands2 } = useSelector((state) => state.catalogue);
+    const { suppliers, brands2, merchantCategories } = useSelector((state) => state.catalogue);
     const { product } = useSelector((state) => state.product);
     const { tradePolicies } = useSelector((state) => state.product);
-    const [search, setSearch] = useState('');
+    const [brandSearch, setBrandSearch] = useState('');
+    const [categorySearch, setCategorySearch] = useState('');
     const [display, setDisplay] = useState(false);
     const [button, setButton] = useState(false);
     const [modalBrands, setModalBrands] = useState(false);
@@ -345,6 +359,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
     const [searchCat, setSearchCat] = useState(product?.categoryName ?? '');
     const [flagCategory, setFlagCategory] = useState(false);
     const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
+    const [categoriesOnDrawer, setCategoriesOnDrawer] = useState<CategoryType[]>([]);
 
     const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
@@ -363,23 +378,30 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
 
     const newBrand = (value: string) => {
         /*  setModalBrands(true); */
-        setSearch(value);
+        setBrandSearch(value);
         setDisplay(false);
     };
 
-    console.log(merchs);
     useEffect(() => {
-        dispatch(getBrands2(merchs.merchantId));
+        console.log({ selectedMerchants });
+
+        if (!selectedMerchants.length) return;
+        dispatch(getBrands2(selectedMerchants[0].merchantId));
         // pasar este dispatch a las categorias dispatch(getCategoriesService({ idMerchant: 1 }));
+        dispatch(getMerchantCategoriesService({ idMerchant: selectedMerchants[0].merchantId }));
         dispatch(getSuppliers());
         dispatch(getTradePolicies());
-    }, []);
+    }, [selectedMerchants]);
 
     useEffect(() => {
         if (brands2?.length) {
             setBrandsInfo(brands2);
         }
     }, [brands2]);
+
+    useEffect(() => {
+        console.log({ merchantCategories });
+    }, [merchantCategories]);
 
     /* const formik = useFormik({
         enableReinitialize: true,
@@ -442,7 +464,7 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
     };
 
     const customBrand = (value: SetStateAction<string>, id: number) => {
-        setSearch(value);
+        setBrandSearch(value);
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
         setDisplay(false);
     };
@@ -455,6 +477,19 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
         }
         setStateDrawer({ ...stateDrawer, [anchor]: open });
     };
+
+    const handleToggleDrawer = (merchant: MerchantType) => {
+        if (!merchantCategories) return;
+
+        const categories = merchantCategories.find(
+            (merchantB: MerchantCategoryType) => merchantB.idMerchant === merchant.merchantId
+        )?.categoryList;
+
+        toggleDrawer('right', true);
+        setCategoriesOnDrawer(categories || []);
+    };
+
+    if (!selectedMerchants.length || !merchantCategories) return null;
 
     return (
         <Grid container spacing={2}>
@@ -526,9 +561,9 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                                 variant="outlined"
                                 name="brandName"
                                 /* defaultValue={product?.brandName} */
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                onClick={() => setDisplay(true)}
+                                value={brandSearch}
+                                onChange={(e) => setBrandSearch(e.target.value)}
+                                onClick={() => setDisplay(false)}
                             />
                             {/* <BrandModal
                                 setModalBrands={setModalBrands}
@@ -565,6 +600,49 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                                 </Box>
                             )}
                         </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                id="outlined-basic"
+                                label={intl.formatMessage({ id: 'category' })}
+                                variant="outlined"
+                                name="categoryName"
+                                /* defaultValue={product?.brandName} */
+                                value={categorySearch}
+                                onChange={(e) => setBrandSearch(e.target.value)}
+                                // onClick={() =>
+                                // }
+                                InputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                            {display && (
+                                <Box boxShadow={2} sx={{ height: '200px' }}>
+                                    <PerfectScrollbar>
+                                        <div
+                                            className={
+                                                ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'
+                                            }
+                                        >
+                                            {/* {brandsInfo
+                                                ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+                                                .map((v: BrandType, i: Key): any => (
+                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                                                    <Typography
+                                                        variant="body2"
+                                                        className="brandsOption"
+                                                        sx={{ pl: 2, pt: 1, pb: 1 }}
+                                                        key={i}
+                                                        onClick={() => customBrand(v.name, v.idBrand)}
+                                                    >
+                                                        {v.name}
+                                                    </Typography>
+                                                ))} */}
+                                        </div>
+                                    </PerfectScrollbar>
+                                </Box>
+                            )}
+                        </Grid>
 
                         <Grid item xs={12}>
                             <Box
@@ -573,9 +651,17 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                                     position: 'relative'
                                 }}
                             >
-                                <Button onClick={toggleDrawer('right', true)} variant="contained">
-                                    {intl.formatMessage({ id: 'select_category' })}
-                                </Button>
+                                {selectedMerchants.map((merchant: MerchantType) => (
+                                    <Button
+                                        onClick={() => {
+                                            handleToggleDrawer(merchant);
+                                            toggleDrawer('right', true);
+                                        }}
+                                        variant="contained"
+                                    >
+                                        {`${intl.formatMessage({ id: 'select_category' })} - ${merchant.name}`}
+                                    </Button>
+                                ))}
                                 <Typography variant="body2">
                                     {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
                                 </Typography>
@@ -603,8 +689,8 @@ const ProductInfoCreate = ({ setProductInfo, productInfo, merchs }: { setProduct
                                             setSearchCat(e.target.value);
                                         }}
                                     />
-                                    {categories
-                                        ?.filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
+                                    {categoriesOnDrawer
+                                        .filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
                                         .map((category) => (
                                             <Grid item xs={12} key={`main-category-${category.id}`}>
                                                 <MainCategoryComponent
