@@ -14,8 +14,8 @@ const UsersList = Loadable(lazy(() => import('views/Security/Users')));
 const UserProfile = Loadable(lazy(() => import('views/Security/UserProfile')));
 
 // ========= products =========
-const ProductList = Loadable(lazy(() => import('views/Products')));
-const ProductDetails = Loadable(lazy(() => import('views/ProductDetails')));
+const ProductList = Loadable(lazy(() => import('views/Catalog/Products')));
+const ProductDetails = Loadable(lazy(() => import('views/Catalog/Products/ProductDetails')));
 const CreateProduct = Loadable(lazy(() => import('views/Catalog/Products/Create')));
 
 // ========= profiles =========

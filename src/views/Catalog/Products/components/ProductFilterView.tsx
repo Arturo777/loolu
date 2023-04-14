@@ -6,7 +6,7 @@ import { Button, ButtonBase, CardContent, Grid, Tooltip, Typography, useMediaQue
 import SubCard from 'ui-component/cards/SubCard';
 import Chip from 'ui-component/extended/Chip';
 import Avatar from 'ui-component/extended/Avatar';
-import ColorOptions from './ColorOptions';
+import ColorOptions from '../utils/ColorOptions';
 import { gridSpacing } from 'store/constant';
 
 // assets
