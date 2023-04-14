@@ -2,7 +2,7 @@ import React, { useEffect, useState, SyntheticEvent, FormEvent, useMemo } from '
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Button, Drawer, useMediaQuery } from '@mui/material';
+import { Box, Grid, Tab, Tabs, Typography, CircularProgress, Fade, Button, Drawer, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -24,7 +24,8 @@ import {
     getProductDetails,
     getProductSkuList,
     uploadImageToSku,
-    deleteImageToSku
+    deleteImageToSku,
+    getWerehouses
 } from 'store/slices/product';
 import { getBrands, getMerchantCategoriesService } from 'store/slices/catalog';
 
@@ -32,9 +33,6 @@ import { getBrands, getMerchantCategoriesService } from 'store/slices/catalog';
 import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
 
 // components
-import ProductReview from './ProductReview';
-import Chip from 'ui-component/extended/Chip';
-// import RelatedProducts from './RelatedProducts';
 import ApprovalCard from 'widget/Data/ApprovalCard';
 import ProductDescription from './ProductDescription';
 import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
@@ -50,6 +48,7 @@ import { BrandType, CategoryType, FlatCategoryType, FlatMerchantCategoriesType, 
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 import ProductImages from './ProductImages';
 import ProductInfo from './ProductInfo';
+import WarehousesEditForm from './WarehousesEditForm';
 
 // VIEW CASES
 //      Has merchantId => Single merchant edition
@@ -151,7 +150,7 @@ const ProductDetails = () => {
     const [flagBrand, setFlagBrand] = useState(false);
     const [flagCategory, setFlagCategory] = useState(false);
 
-    const { product, tradePolicies } = useSelector((state) => state.product);
+    const { product, tradePolicies, werehouses } = useSelector((state) => state.product);
 
     const { brands, flatMerchantCategories } = useSelector((state) => state.catalogue);
 
@@ -159,7 +158,7 @@ const ProductDetails = () => {
     const idMerchant = Number(searchParams.get('idMerchant')) || Number(localStorage.getItem('merchantId')) || null;
     const { id } = useParams();
 
-    const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (idMerchant ? 'SINGLE' : 'MULTI'), [idMerchant]);
+    const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (searchParams.get('idMerchant') ? 'SINGLE' : 'MULTI'), [searchParams]);
 
     // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -177,8 +176,18 @@ const ProductDetails = () => {
     const [selectedMerchant, setSelectedMerchant] = useState<number | null>(idMerchant);
 
     useEffect(() => {
-        console.log('CHANGE allMerchantsProductData', allMerchantsProductData);
-    }, [allMerchantsProductData]);
+        console.log('werehouses', werehouses);
+    }, [werehouses]);
+
+    useEffect(() => {
+        if (selectedMerchant) {
+            const objMulti = {
+                idMerchant: selectedMerchant
+            };
+            dispatch(getWerehouses(objMulti));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedMerchant]);
 
     useEffect(() => {
         // update product info on merchants array
@@ -204,7 +213,6 @@ const ProductDetails = () => {
                 })
             ).then(({ payload }) => {
                 let merchantProduct = payload?.length ? payload[0] : null;
-                // const merchantProduct = null;
 
                 if (payload?.length && selectedMerchant) {
                     merchantProduct = payload.find((item: { [key: string]: any }) => item.merchantId === selectedMerchant);
@@ -268,7 +276,7 @@ const ProductDetails = () => {
             viewMode === 'SINGLE' ? merchCats.idMerchant === Number(selectedMerchant) : merchCats.isFatherMerchat
         )?.categoryList;
         setCategoriesInfo(cats ?? []);
-    }, [flatMerchantCategories]);
+    }, [flatMerchantCategories, selectedMerchant, viewMode]);
 
     useEffect(() => {
         setOpen(false);
@@ -545,17 +553,7 @@ const ProductDetails = () => {
                                                 <Tab
                                                     component={Link}
                                                     to="#"
-                                                    label={
-                                                        <Stack direction="row" alignItems="center">
-                                                            {intl.formatMessage({ id: 'reviews' })}
-                                                            <Chip
-                                                                label={String(product?.salePrice)}
-                                                                size="small"
-                                                                chipcolor="secondary"
-                                                                sx={{ ml: 1.5 }}
-                                                            />
-                                                        </Stack>
-                                                    }
+                                                    label={intl.formatMessage({ id: 'werehouses' })}
                                                     {...a11yProps(1)}
                                                 />
                                             </Tabs>
@@ -570,7 +568,7 @@ const ProductDetails = () => {
                                                 />
                                             </TabPanel>
                                             <TabPanel value={value} index={1}>
-                                                <ProductReview product={product} />
+                                                <WarehousesEditForm merchantId={selectedMerchant ?? 1} warehouses={werehouses} />
                                             </TabPanel>
                                         </Grid>
                                     </Grid>

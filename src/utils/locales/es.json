@@ -313,5 +313,8 @@
     "key_words": "Palabras clave",
     "no_recent_updates": "Oops! No hay actualizaciones recientes",
     "upload-images": "Subir imagenes",
-    "click_here": "Da click aquí para subir tu imagen"
+    "click_here": "Da click aquí para subir tu imagen",
+    "warehouses": "Warehouses",
+    "merchant_inventories": "Inventarios {merchant}",
+    "warehouse_stock": "Stock en {warehouse}"
 }

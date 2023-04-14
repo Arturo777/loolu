@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // material-ui
 import { Button, CardContent, Grid, IconButton, Popover, Stack, Typography } from '@mui/material';
@@ -26,7 +26,7 @@ import MultiMerchant from 'ui-component/MultiMerchantButton';
 
 // ==============================|| PRODUCT CARD ||============================== //
 
-const ProductCard = ({ productID, brandName, name, image, description, offerPrice, salePrice, brandId }: ProductCardProps) => {
+const ProductCard = ({ productID, brandName, name, image, description, offerPrice, salePrice, brandId, skus }: ProductCardProps) => {
     // eslint-disable-next-line global-require
     const prodProfile = image || placeholderImage;
     // const [productRating] = useState<number | undefined>(rating);
@@ -43,6 +43,16 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
     useEffect(() => {
         setLoading(false);
     }, []);
+
+    const availableOn = useMemo(() => {
+        if (!skus) return [];
+
+        return skus?.map((item) => item.merchandID);
+    }, [skus]);
+
+    useEffect(() => {
+        console.log(availableOn);
+    }, [availableOn]);
 
     return (
         <>
@@ -79,7 +89,7 @@ const ProductCard = ({ productID, brandName, name, image, description, offerPric
                                     <Box sx={{ pl: '6px', pb: '2px' }}>
                                         <MultiMerchantButtons
                                             size="medium"
-                                            availableMerchantsId={[1]}
+                                            availableMerchantsId={[...availableOn]}
                                             onAvatarClick={handleOnAvatarClick}
                                         />
                                     </Box>
