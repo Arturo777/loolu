@@ -14,7 +14,7 @@ import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct } from 'store/slices/product';
+import { getProduct, getWerehouses } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 import ProductImagesCreate from './ProductImagesCreate';
 import ProductInfoCreate from './ProductInfoCreate';
@@ -22,6 +22,7 @@ import ProductDescriptionCreate from './ProductDescriptionCreate';
 import { Products } from 'types/e-commerce';
 import Image from './image/Image';
 import ProductWerehouses from './ProductWerehouses';
+import { MerchantType, ProductCreateCategory } from 'types/security';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -53,7 +54,9 @@ const CreateProduct = () => {
     const [imagesToUpload, setImagesToUpload] = useState<any>([]);
 
     // product description tabs
-    const [merchs, setMerchs] = useState<any>([{}]);
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[]>([]);
+    const [productCreateCategories, setProductCreateCategories] = useState<ProductCreateCategory[]>([]);
+
     const [value, setValue] = useState(0);
     const [productInfo, setProductInfo] = useState<Products>({
         image: '',
@@ -110,6 +113,7 @@ const CreateProduct = () => {
         },
         groupName: ''
     });
+    const { werehouses } = useSelector((state) => state.product);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -132,6 +136,16 @@ const CreateProduct = () => {
         /* dispatch(getProduct(id)); */
         // clear cart if complete order
     }, []);
+    useEffect(() => {
+        const objMulti = {
+            idMerchant: 1
+        };
+        dispatch(getWerehouses(objMulti));
+    }, [dispatch]);
+
+    useEffect(() => {
+        console.log({ productCreateCategories });
+    }, [productCreateCategories]);
 
     /* const { product } = useSelector((state) => state.product); */
 
@@ -141,7 +155,7 @@ const CreateProduct = () => {
                 <MultiMerchant
                     // justOne
                     // readOnly
-                    onChange={(merchants) => setMerchs(merchants)}
+                    onChange={(merchants) => setSelectedMerchants(merchants)}
                     maxShow={4}
                     defaultSelected={[]}
                 />
@@ -154,7 +168,13 @@ const CreateProduct = () => {
                             </div>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <ProductInfoCreate setProductInfo={setProductInfo} productInfo={productInfo} merchs={merchs} />
+                            <ProductInfoCreate
+                                setProductInfo={setProductInfo}
+                                productInfo={productInfo}
+                                selectedMerchants={selectedMerchants}
+                                setProductCreateCategories={setProductCreateCategories}
+                                productCreateCategories={productCreateCategories}
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
@@ -180,15 +200,15 @@ const CreateProduct = () => {
                             <TabPanel value={value} index={0}>
                                 <ProductDescriptionCreate
                                     setProductInfo={setProductInfo}
-                                    merchantMulti={merchs}
+                                    selectedMerchants={selectedMerchants}
                                     productInfo={productInfo}
                                 />
                             </TabPanel>
                             <TabPanel value={value} index={1}>
                                 <Grid container justifyContent="space-between">
-                                    {merchs.map((item: any) => (
-                                        <Grid item xs={12 / merchs.length - 0.1}>
-                                            <ProductWerehouses merchs={item.merchantId} namemerch={item.name} />
+                                    {selectedMerchants.map((item: any) => (
+                                        <Grid item xs={12 / selectedMerchants.length - 0.1}>
+                                            <ProductWerehouses merchs={item.merchantId} namemerch={item.name} werehouses={werehouses} />
                                         </Grid>
                                     ))}
                                 </Grid>

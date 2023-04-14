@@ -314,6 +314,8 @@
     "no_recent_updates": "Oops! No hay actualizaciones recientes",
     "upload-images": "Subir imagenes",
     "click_here": "Da click aquí para subir tu imagen",
-    "select_trade_policies": "Seleccionar Políticas Comerciales"
-
+    "select_trade_policies": "Seleccionar Políticas Comerciales",
+    "warehouses": "Warehouses",
+    "merchant_inventories": "Inventarios {merchant}",
+    "warehouse_stock": "Stock en {warehouse}"
 }

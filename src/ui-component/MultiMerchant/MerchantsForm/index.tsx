@@ -52,12 +52,6 @@ export default function MultiMerchantForm({
     const [originalData, setOriginalData] = useState<{ [key: string]: any }[]>([]);
     const [newData, setNewData] = useState<{ [key: string]: any }[]>([]);
 
-    // const [accesorError, setAccesorError] = useState<boolean>(false);
-
-    useEffect(() => {
-        console.log('-- data --', data);
-    }, [data]);
-
     useEffect(() => {
         const transformedData = getData({ data, accessor });
 
@@ -68,6 +62,10 @@ export default function MultiMerchantForm({
             setOriginalData(transformedData);
         }
     }, [data, accessor]);
+
+    useEffect(() => {
+        console.log({ options });
+    }, [options]);
 
     useEffect(() => {
         if (user && user.user) {
@@ -135,14 +133,14 @@ export default function MultiMerchantForm({
                 <Button
                     type="button"
                     onClick={() => toggleDrawer(false)}
-                    variant="contained"
+                    variant="outlined"
                     startIcon={<CloseIcon />}
                     color="error"
                     sx={{ mr: 2 }}
                 >
                     {intl.formatMessage({ id: 'cancel' })}
                 </Button>
-                <Button onClick={() => formRef.current?.requestSubmit()} variant="contained" startIcon={<SaveIcon />} type="submit">
+                <Button onClick={() => formRef.current?.requestSubmit()} variant="outlined" startIcon={<SaveIcon />} type="submit">
                     {intl.formatMessage({ id: 'save' })}
                 </Button>
             </Stack>
@@ -186,6 +184,7 @@ export default function MultiMerchantForm({
                 </Tooltip>
             </Stack>
 
+            {/* XXX */}
             <Box component="form" ref={formRef} onSubmit={handleSave}>
                 {newData &&
                     newData.map((item) => (
@@ -220,6 +219,7 @@ export default function MultiMerchantForm({
                             </Stack>
                             <Box>
                                 <RenderInputComponent
+                                    merchantId={item.merchantId}
                                     type={type}
                                     value={item.value}
                                     label={intl.formatMessage({ id: inputLabel })}

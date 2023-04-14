@@ -105,7 +105,17 @@ const FirstLevel = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
+    const formatDate = (date:string): string => {
+        const newDate = new Date(date);
+        newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset());
+        const optionsDate: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        };
 
+        return newDate.toLocaleDateString('en-US', optionsDate);
+    };
 
     const blockSX = {
         p: 2.5,
@@ -333,7 +343,7 @@ const FirstLevel = () => {
                                                                     </Grid>
                                                                     <Grid item sm zeroMinWidth>
                                                                         <Typography variant="h3" align="center">
-                                                                            {first?.executionDate}
+                                                                            {first?.executionDate && formatDate(first?.executionDate)}
                                                                         </Typography>
                                                                         <Typography variant="subtitle1" align="center">
                                                                             <FormattedMessage id='last-update'/>
