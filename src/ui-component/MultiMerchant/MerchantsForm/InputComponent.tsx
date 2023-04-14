@@ -33,7 +33,8 @@ export enum InputType {
     switch = 'switch',
     select = 'select',
     brandSelect = 'brandSelect',
-    categorySelect = 'categorySelect'
+    categorySelect = 'categorySelect',
+    policies = 'policies'
 }
 
 export type SelectOptionType = {
@@ -44,12 +45,13 @@ export type SelectOptionType = {
 type RenderInputComponentProps = {
     type: InputType;
     label: string;
+    merchantId?: number;
     value: any;
     updateValue: (e: any) => void;
     options?: null | SelectOptionType[];
 };
 
-const RenderInputComponent = ({ label, value, updateValue, type, options }: RenderInputComponentProps) => {
+const RenderInputComponent = ({ label, value, updateValue, type, options, merchantId }: RenderInputComponentProps) => {
     // hooks
     const dispatch = useDispatch();
 
@@ -166,7 +168,7 @@ const RenderInputComponent = ({ label, value, updateValue, type, options }: Rend
     }
 
     if (type === InputType.categorySelect) {
-        return <RenderCategorySelect merchantId={1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
+        return <RenderCategorySelect merchantId={merchantId || 1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
     }
 
     return <Box />;

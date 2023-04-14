@@ -219,6 +219,7 @@ export default function MultiMerchantForm({
                             </Stack>
                             <Box>
                                 <RenderInputComponent
+                                    merchantId={item.merchantId}
                                     type={type}
                                     value={item.value}
                                     label={intl.formatMessage({ id: inputLabel })}
@@ -257,10 +258,10 @@ const getData = ({ data, accessor }: { data: { [key: string]: any }[]; accessor:
         ];
     });
 
-    if (nData && nData[0] && nData[0].value && typeof nData[0].value === 'object') {
-        throw Error('Cannot render objects');
-        // return null;
-    }
+    // if (nData && nData[0] && nData[0].value && typeof nData[0].value === 'object') {
+    //     throw Error('Cannot render objects');
+    //     // return null;
+    // }
 
     return nData;
 };
