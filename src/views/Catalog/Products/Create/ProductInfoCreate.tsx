@@ -79,6 +79,8 @@ import { getTradePolicies } from 'store/slices/product';
 import ConfigProvider from 'config';
 import ProductPrices from './ProductPrices';
 import { MerchantType } from 'types/security';
+import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+import { InputType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 
 // product color select
 function getColor(color: string) {
@@ -403,53 +405,42 @@ const ProductInfoCreate = ({
         console.log({ merchantCategories });
     }, [merchantCategories]);
 
-    /* const formik = useFormik({
-        enableReinitialize: true,
-        initialValues: {
-            id: product.id,
-            name: product.name,
-            image: product.image,
-            salePrice: product.salePrice,
-            offerPrice: product.offerPrice,
-            color: '',
-            size: '',
-            quantity: 1
+    const defaultMerchantProps: MultiMerchantFormProps = {
+        isOpen: false,
+        data: [],
+        accessor: '',
+        // data: { [key: string]: any }[];
+        inputLabel: 'label',
+        toggleDrawer: (e) => {
+            // console.log('TOGLLE');
+            setMultiFormProps((prev) => ({ ...prev, isOpen: e }));
+            // resetDrawer();
         },
-        validationSchema,
-        onSubmit: (values) => {
-            dispatch(
-                openSnackbar({
-                    open: true,
-                    message: 'Submit Success',
-                    variant: 'alert',
-                    alert: {
-                        color: 'success'
-                    },
-                    close: false
-                })
-            );
+        onSave: (data: any) => console.log(data),
+        type: InputType.textField
+        // options?: null | SelectOptionType[];
+    };
 
-            history('/e-commerce/checkout');
-        }
-    }); */
+    const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
-    /* const { values, errors, handleSubmit, handleChange } = formik; */
-
-    /* const addCart = () => {
-        values.color = values.color ? values.color : 'primaryDark';
-        values.size = values.size ? values.size : '8';
-        dispatch(
-            openSnackbar({
-                open: true,
-                message: 'Add To Cart Success',
-                variant: 'alert',
-                alert: {
-                    color: 'success'
-                },
-                close: false
-            })
-        );
-    }; */
+    const handleSetCategoriesMultiFormProps = () => {
+        if (!merchantCategories) return;
+        const data = selectedMerchants.map((merchant: MerchantType) => ({
+            merchantId: merchant.merchantId,
+            merchantName: merchant.name,
+            detailProduct: {
+                categories: []
+            }
+        }));
+        setMultiFormProps((prev) => ({
+            ...prev,
+            isOpen: true,
+            type: InputType.categorySelect,
+            data,
+            inputLabel: 'categories',
+            accessor: 'categories'
+        }));
+    };
 
     const handleChange = (event: any) => {
         setProductInfo({ ...productInfo, [event.target.name]: event.target.value });
@@ -651,58 +642,11 @@ const ProductInfoCreate = ({
                                     position: 'relative'
                                 }}
                             >
-                                {selectedMerchants.map((merchant: MerchantType) => (
-                                    <Button
-                                        onClick={() => {
-                                            handleToggleDrawer(merchant);
-                                            toggleDrawer('right', true);
-                                        }}
-                                        variant="contained"
-                                    >
-                                        {`${intl.formatMessage({ id: 'select_category' })} - ${merchant.name}`}
-                                    </Button>
-                                ))}
-                                <Typography variant="body2">
-                                    {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
-                                </Typography>
-                                <SwipeableDrawer
-                                    sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
-                                    anchor="right"
-                                    open={stateDrawer.right}
-                                    onClose={toggleDrawer('right', false)}
-                                    onOpen={toggleDrawer('right', true)}
-                                >
-                                    <OutlinedInput
-                                        sx={{ ml: 3, mt: 3, width: '90%' }}
-                                        id="input-search-list-style1"
-                                        placeholder={intl.formatMessage({
-                                            id: 'search'
-                                        })}
-                                        startAdornment={
-                                            <InputAdornment position="start">
-                                                <IconSearch stroke={1.5} size="16px" />
-                                            </InputAdornment>
-                                        }
-                                        size="small"
-                                        value={searchCat}
-                                        onChange={(e) => {
-                                            setSearchCat(e.target.value);
-                                        }}
-                                    />
-                                    {categoriesOnDrawer
-                                        .filter((item) => item?.name?.toLowerCase().indexOf(searchCat.toLowerCase()) > -1)
-                                        .map((category) => (
-                                            <Grid item xs={12} key={`main-category-${category.id}`}>
-                                                <MainCategoryComponent
-                                                    category={category}
-                                                    setSearchCat={setSearchCat}
-                                                    setProductInfo={setProductInfo}
-                                                    setFlagCategory={setFlagCategory}
-                                                    setNewCategorySku={setNewCategorySku}
-                                                />
-                                            </Grid>
-                                        ))}
-                                </SwipeableDrawer>
+                                <Button onClick={handleSetCategoriesMultiFormProps} variant="contained">
+                                    {intl.formatMessage({ id: 'select_category' })}
+                                </Button>
+
+                                <MultiMerchantForm {...multiFormProps} />
                             </Box>
                         </Grid>
 
