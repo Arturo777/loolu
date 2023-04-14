@@ -232,7 +232,7 @@ const ProductInfo = ({
     };
 
     const filterTradePolicy = (trade: number) => {
-        const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
+        const resultTrade: any = tradePolicies.filter((tra: any) => tra.tradePolicy.TradePolicies.idPolicy === trade);
         return resultTrade[0]?.name;
     };
 

@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import {
+    Autocomplete,
     Box,
     Checkbox,
     FormControl,
@@ -17,10 +19,13 @@ import {
     Switch,
     TextField
 } from '@mui/material';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useDispatch, useSelector } from 'store';
 import { getBrands2 } from 'store/slices/catalog';
 import { BrandType, FlatCategoryType } from 'types/catalog';
 import { MultiBrandSelect } from 'ui-component/selects/BrandSelect';
+import TradePoliciesSelect from 'ui-component/selects/TradePolicies';
 import { MultiCategorySelect } from 'ui-component/selects/CategorySelect';
 
 export type AddOptionsProps<T, U, K extends string> = U extends Record<K, any> ? T & U : T & { [P in K]?: never };
@@ -33,8 +38,9 @@ export enum InputType {
     switch = 'switch',
     select = 'select',
     brandSelect = 'brandSelect',
+    policies = 'policies',
     categorySelect = 'categorySelect',
-    policies = 'policies'
+    brandSelectCreate = 'brandSelectCreate'
 }
 
 export type SelectOptionType = {
@@ -54,6 +60,7 @@ type RenderInputComponentProps = {
 const RenderInputComponent = ({ label, value, updateValue, type, options, merchantId }: RenderInputComponentProps) => {
     // hooks
     const dispatch = useDispatch();
+    const intl = useIntl();
 
     useEffect(() => {
         if (type === InputType.brandSelect) {
@@ -79,6 +86,36 @@ const RenderInputComponent = ({ label, value, updateValue, type, options, mercha
             />
         );
     }
+
+    // if (type === InputType.multiSelect) {
+    //     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    //     const checkedIcon = <CheckBoxIcon fontSize="small" />;
+    //     const autocompleteOptions = optionP ?? [];
+
+    //     return (
+    //         <Autocomplete
+    //             multiple
+    //             id="checkboxes-tags-demo"
+    //             options={autocompleteOptions}
+    //             disableCloseOnSelect
+    //             getOptionLabel={(option: any) => option.options.name}
+    //             renderOption={(props, option, { selected }) => (
+    //                 <li {...props}>
+    //                     <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+    //                     {option?.name}
+    //                 </li>
+    //             )}
+    //             style={{ width: 500 }}
+    //             renderInput={(params) => (
+    //                 <TextField
+    //                     {...params}
+    //                     label={intl.formatMessage({ id: 'trade_policies' })}
+    //                     placeholder={intl.formatMessage({ id: 'trade_policies' })}
+    //                 />
+    //             )}
+    //         />
+    //     );
+    // }
 
     if (type === InputType.textarea) {
         return (
@@ -165,6 +202,14 @@ const RenderInputComponent = ({ label, value, updateValue, type, options, mercha
 
     if (type === InputType.brandSelect) {
         return <RenderBrandSelect merchantId={1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
+    }
+
+    if (type === InputType.brandSelectCreate) {
+        return <RenderBrandSelect merchantId={merchantId || 1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
+    }
+
+    if (type === InputType.policies) {
+        return <TradePoliciesSelect merchantId={merchantId} onChange={() => {}} />;
     }
 
     if (type === InputType.categorySelect) {

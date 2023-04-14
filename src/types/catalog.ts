@@ -98,6 +98,12 @@ export type CatalogStateProps = {
     suppliersMulticatalogo: any;
 };
 
+export type TradePolicies = {
+    isActive: boolean;
+    idMerchant: number;
+    idPolicy: number;
+};
+
 export type BrandType = {
     fatherMerchant?: boolean | undefined;
     idBrand: number;

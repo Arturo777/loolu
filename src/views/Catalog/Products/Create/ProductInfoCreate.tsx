@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import {
+    Autocomplete,
     Box,
     Button,
     ButtonBase,
@@ -41,6 +42,8 @@ import {
     Tooltip,
     Typography
 } from '@mui/material';
+// import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+// import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -77,10 +80,10 @@ import { BrandType, BrandType2, CategoryType, MerchantCategoryType, SupplierType
 import { getTradePolicies } from 'store/slices/product';
 
 import ConfigProvider from 'config';
-import ProductPrices from './ProductPrices';
-import { MerchantType } from 'types/security';
 import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
-import { InputType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { MerchantType } from 'types/security';
+import ProductPrices from './ProductPrices';
 
 // product color select
 function getColor(color: string) {
@@ -340,6 +343,12 @@ const ProductInfoCreate = ({
     const history = useNavigate();
     const dispatch = useDispatch();
 
+    const policies = [
+        { isActive: true, idMerchant: 1, idPolicy: 1245, name: 'Exportaciones' },
+        { isActive: true, idMerchant: 2, idPolicy: 1248, name: 'Importaciones' },
+        { isActive: false, idMerchant: 2, idPolicy: 1250, name: 'Ventas' }
+    ];
+
     console.log(productInfo);
     console.log(typeof productInfo.created);
 
@@ -370,6 +379,9 @@ const ProductInfoCreate = ({
             setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
         }
     };
+
+    // const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    // const checkedIcon = <CheckBoxIcon fontSize="small" />;
     /* const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.type === 'checkbox') {
             setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
@@ -442,9 +454,41 @@ const ProductInfoCreate = ({
         }));
     };
 
+    const handleSetMultiFormProps = (type: any, accessor: any) => {
+        const data = selectedMerchants.map((merchant: MerchantType) => ({
+            merchantId: merchant.merchantId,
+            merchantName: merchant.name,
+            detailProduct: {
+                categories: [],
+                brands: [],
+                tradePolicies: []
+            }
+        }));
+        setMultiFormProps((prev) => ({
+            ...prev,
+            isOpen: true,
+            type,
+            data,
+            label: '',
+            accessor
+        }));
+    };
+
+    console.log(productInfo.isActive);
+
     const handleChange = (event: any) => {
         setProductInfo({ ...productInfo, [event.target.name]: event.target.value });
     };
+
+    const handleSwitches = (event: any) => {
+        setProductInfo({ ...productInfo, [event.target.name]: event.target.checked });
+    };
+
+    const handleChangeVendor = (event: any) => {
+        console.log(event);
+        setProductInfo({ ...productInfo, vendor: event.target.value });
+    };
+
     const generateLinkId = (str: string) => {
         setProductInfo({ ...productInfo, linkId: str.replace(/\s+/g, '-') });
     };
@@ -492,17 +536,25 @@ const ProductInfoCreate = ({
                                 sx={{ ml: 1 }}
                                 control={<Android12Switch name="isActive" />}
                                 label={<FormattedMessage id="active" />}
+                                onChange={handleSwitches}
                             />
-                            <FormControlLabel sx={{ ml: 1 }} control={<Android12Switch name="isVisible" />} label="Visible" />
+                            <FormControlLabel
+                                sx={{ ml: 1 }}
+                                control={<Android12Switch name="isVisible" />}
+                                label="Visible"
+                                onChange={handleSwitches}
+                            />
                             <FormControlLabel
                                 sx={{ ml: 1 }}
                                 control={<Android12Switch name="isEcommerce" />}
                                 label={<FormattedMessage id="e-commerce" />}
+                                onChange={handleSwitches}
                             />
                             <FormControlLabel
                                 sx={{ ml: 1 }}
                                 control={<Android12Switch name="showWithoutStock" />}
                                 label={<FormattedMessage id="out_of_stock" />}
+                                onChange={handleSwitches}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -544,53 +596,20 @@ const ProductInfoCreate = ({
                                 value={productInfo.productRefID}
                             />
                         </Grid>
+
                         <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                label={intl.formatMessage({ id: 'brand' })}
-                                variant="outlined"
-                                name="brandName"
-                                /* defaultValue={product?.brandName} */
-                                value={brandSearch}
-                                onChange={(e) => setBrandSearch(e.target.value)}
-                                onClick={() => setDisplay(false)}
-                            />
-                            {/* <BrandModal
-                                setModalBrands={setModalBrands}
-                                modalBrands={modalBrands}
-                                search={search}
-                                setSearch={setSearch}
-                                newBrand={newBrand}
-                                setFlagBrand={setFlagBrand}
-                            /> */}
-                            {display && (
-                                <Box boxShadow={2} sx={{ height: '200px' }}>
-                                    <PerfectScrollbar>
-                                        <div
-                                            className={
-                                                ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'
-                                            }
-                                        >
-                                            {/* {brandsInfo
-                                                ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-                                                .map((v: BrandType, i: Key): any => (
-                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-                                                    <Typography
-                                                        variant="body2"
-                                                        className="brandsOption"
-                                                        sx={{ pl: 2, pt: 1, pb: 1 }}
-                                                        key={i}
-                                                        onClick={() => customBrand(v.name, v.idBrand)}
-                                                    >
-                                                        {v.name}
-                                                    </Typography>
-                                                ))} */}
-                                        </div>
-                                    </PerfectScrollbar>
-                                </Box>
-                            )}
+                            <Button
+                                onClick={(e) => {
+                                    console.log(e);
+                                    handleSetMultiFormProps(InputType.brandSelectCreate, 'brands');
+                                }}
+                                variant="contained"
+                            >
+                                {intl.formatMessage({ id: 'select_brand' })}
+                            </Button>
+                            <MultiMerchantForm {...multiFormProps} />
                         </Grid>
+
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
@@ -676,9 +695,9 @@ const ProductInfoCreate = ({
                     <InputLabel id="demo-simple-select-label">
                         <FormattedMessage id="select_vendor" />
                     </InputLabel>
-                    <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Vendor" /* onChange={handleChangeVendor} */>
+                    <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Vendor" onChange={handleChangeVendor}>
                         {suppliers?.map((sup: SupplierType) => (
-                            <MenuItem value={sup?.idProvider}>{sup?.name}</MenuItem>
+                            <MenuItem value={(sup?.idProvider, sup?.name)}>{sup?.name}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -694,23 +713,36 @@ const ProductInfoCreate = ({
             </Grid>
             <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-checkbox-label">{intl.formatMessage({ id: 'trade_policies' })}</InputLabel>
-                    <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        name="tradePolicy"
-                        input={<OutlinedInput label="Trade Policies" />}
-                        renderValue={(selected: any) => selected.join(', ')}
-                        MenuProps={MenuProps}
+                    <Button
+                        onClick={(e) => {
+                            handleSetMultiFormProps(InputType.policies, 'tradePolicies');
+                        }}
+                        variant="contained"
                     >
-                        {/* {tradePolicies?.TradePolicies?.map((tr: Policy) => (
-                            <MenuItem key={tr.idPolicy} value={tr.idPolicy}>
-                                <Checkbox checked={productInfo.tradePolicies.idPolicy} />
-                                <ListItemText primary={tr.name} />
-                            </MenuItem>
-                        ))} */}
-                    </Select>
+                        {intl.formatMessage({ id: 'select_trade_policies' })}
+                    </Button>
+                    <MultiMerchantForm {...multiFormProps} />
+                    {/* <Autocomplete
+                        multiple
+                        id="checkboxes-tags-demo"
+                        options={policies}
+                        disableCloseOnSelect
+                        getOptionLabel={(option) => option.name}
+                        renderOption={(props, option, { selected }) => (
+                            <li {...props}>
+                                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                                {option.name}
+                            </li>
+                        )}
+                        style={{ width: 500 }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label={intl.formatMessage({ id: 'trade_policies' })}
+                                placeholder={intl.formatMessage({ id: 'trade_policies' })}
+                            />
+                        )}
+                    /> */}
                 </FormControl>
             </Grid>
             <Grid item xs={12}>
