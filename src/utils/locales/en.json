@@ -314,5 +314,8 @@
     "key_words": "Key words",
     "no_recent_updates": "Oops! No recent updates",
     "upload-images": "Upload Images",
-    "click_here": "Click here to upload your image"
+    "click_here": "Click here to upload your image",
+    "warehouses": "Warehouses",
+    "merchant_inventories": "{merchant} inventories",
+    "warehouse_stock": "{warehouse} stock"
 }

@@ -90,6 +90,8 @@ const ProductsList = () => {
     const productState = useSelector((state) => state.product);
 
     useEffect(() => {
+        console.log('RESP', productState.products);
+
         setProducts(productState.products);
     }, [productState]);
 
@@ -235,6 +237,7 @@ const ProductsList = () => {
                     brandName={product.brandName ?? ''}
                     brandId={product.brandId}
                     productID={product.productID}
+                    skus={product.skus}
                 />
             </Grid>
         ));
