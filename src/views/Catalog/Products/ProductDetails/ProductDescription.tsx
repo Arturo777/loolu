@@ -2,11 +2,11 @@
 import { useIntl } from 'react-intl';
 
 // project imports
-import Specification from '../../ui-component/Specification';
 import Aditionalinfo from './AditionalInfo';
 import Accordion from 'ui-component/extended/Accordion';
 import AdditionalFields from './AdditionalFields';
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import Specification from 'ui-component/Specification';
 
 // ==============================|| PRODUCT DETAILS - DESCRIPTION ||============================== //
 

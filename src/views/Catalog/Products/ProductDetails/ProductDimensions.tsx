@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable @typescript-eslint/dot-notation */
-import item from '../../assets/images/item.png';
-import packageitem from '../../assets/images/package.png';
+import item from '../../../../assets/images/item.png';
+import packageitem from '../../../../assets/images/package.png';
 import { TextField, FormControl, InputLabel, MenuItem, Select, Grid } from '@mui/material';
 import { catalogUnits } from 'utils/unitMeasurement';
 import './style.css';
