@@ -331,15 +331,13 @@ const ProductInfoCreate = ({
     productInfo,
     selectedMerchants,
     setProductCreateCategories,
-    productCreateCategories,
-    merchs
+    productCreateCategories
 }: {
     setProductInfo: any;
     productInfo: any;
     selectedMerchants: MerchantType[];
     setProductCreateCategories: any;
     productCreateCategories: any;
-    merchs: any;
 }) => {
     const intl = useIntl();
     const history = useNavigate();
@@ -453,6 +451,26 @@ const ProductInfoCreate = ({
             data,
             inputLabel: 'categories',
             accessor: 'categories'
+        }));
+    };
+
+    const handleSetMultiFormProps = (type: any, accessor: any) => {
+        const data = selectedMerchants.map((merchant: MerchantType) => ({
+            merchantId: merchant.merchantId,
+            merchantName: merchant.name,
+            detailProduct: {
+                categories: [],
+                brands: [],
+                tradePolicies: []
+            }
+        }));
+        setMultiFormProps((prev) => ({
+            ...prev,
+            isOpen: true,
+            type,
+            data,
+            label: '',
+            accessor
         }));
     };
 
@@ -578,53 +596,20 @@ const ProductInfoCreate = ({
                                 value={productInfo.productRefID}
                             />
                         </Grid>
+
                         <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                label={intl.formatMessage({ id: 'brand' })}
-                                variant="outlined"
-                                name="brandName"
-                                /* defaultValue={product?.brandName} */
-                                value={brandSearch}
-                                onChange={(e) => setBrandSearch(e.target.value)}
-                                onClick={() => setDisplay(false)}
-                            />
-                            {/* <BrandModal
-                                setModalBrands={setModalBrands}
-                                modalBrands={modalBrands}
-                                search={search}
-                                setSearch={setSearch}
-                                newBrand={newBrand}
-                                setFlagBrand={setFlagBrand}
-                            /> */}
-                            {display && (
-                                <Box boxShadow={2} sx={{ height: '200px' }}>
-                                    <PerfectScrollbar>
-                                        <div
-                                            className={
-                                                ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'
-                                            }
-                                        >
-                                            {/* {brandsInfo
-                                                ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-                                                .map((v: BrandType, i: Key): any => (
-                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-                                                    <Typography
-                                                        variant="body2"
-                                                        className="brandsOption"
-                                                        sx={{ pl: 2, pt: 1, pb: 1 }}
-                                                        key={i}
-                                                        onClick={() => customBrand(v.name, v.idBrand)}
-                                                    >
-                                                        {v.name}
-                                                    </Typography>
-                                                ))} */}
-                                        </div>
-                                    </PerfectScrollbar>
-                                </Box>
-                            )}
+                            <Button
+                                onClick={(e) => {
+                                    console.log(e);
+                                    handleSetMultiFormProps(InputType.brandSelectCreate, 'brands');
+                                }}
+                                variant="contained"
+                            >
+                                {intl.formatMessage({ id: 'select_brand' })}
+                            </Button>
+                            <MultiMerchantForm {...multiFormProps} />
                         </Grid>
+
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
@@ -730,8 +715,7 @@ const ProductInfoCreate = ({
                 <FormControl sx={{ m: 1, width: 300 }}>
                     <Button
                         onClick={(e) => {
-                            console.log(e);
-                            setMultiFormProps({ ...defaultMerchantProps, isOpen: true });
+                            handleSetMultiFormProps(InputType.policies, 'tradePolicies');
                         }}
                         variant="contained"
                     >

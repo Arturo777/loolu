@@ -361,7 +361,7 @@ export function getCategories() {
 export function getTradePolicies() {
     return async () => {
         try {
-            const response = await axios.get('styrk/api/tradepolicies', {
+            const response = await axios.get('styrk/api/multicatalog/tradepolicies?idMerchant=1', {
                 baseURL: STYRK_API,
                 params: {
                     idMerchant: 1

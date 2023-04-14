@@ -53,7 +53,7 @@ const CreateProduct = () => {
     // images
     const [imagesToUpload, setImagesToUpload] = useState<any>([]);
 
-    // product description tabs
+    // product description tabs}
     const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[]>([]);
     const [productCreateCategories, setProductCreateCategories] = useState<ProductCreateCategory[]>([]);
 
