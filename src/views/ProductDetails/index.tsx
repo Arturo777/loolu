@@ -156,7 +156,7 @@ const ProductDetails = () => {
     const { brands, flatMerchantCategories } = useSelector((state) => state.catalogue);
 
     // params
-    const idMerchant = Number(searchParams.get('idMerchant')) || null;
+    const idMerchant = Number(searchParams.get('idMerchant')) || Number(localStorage.getItem('merchantId')) || null;
     const { id } = useParams();
 
     const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (idMerchant ? 'SINGLE' : 'MULTI'), [idMerchant]);
@@ -177,16 +177,20 @@ const ProductDetails = () => {
     const [selectedMerchant, setSelectedMerchant] = useState<number | null>(idMerchant);
 
     useEffect(() => {
+        console.log('CHANGE allMerchantsProductData', allMerchantsProductData);
+    }, [allMerchantsProductData]);
+
+    useEffect(() => {
         // update product info on merchants array
         setAllMerchantsProductData((prev) => [
             ...(prev?.map((item) => {
-                if (item.merchantId === Number(idMerchant)) {
+                if (Number(item.merchantId) === Number(selectedMerchant)) {
                     return { ...item, detailProduct: productInfo };
                 }
                 return item;
             }) ?? [])
         ]);
-    }, [idMerchant, productInfo]);
+    }, [selectedMerchant, productInfo]);
 
     useEffect(() => {
         // getProduct();
@@ -202,7 +206,7 @@ const ProductDetails = () => {
                 let merchantProduct = payload?.length ? payload[0] : null;
                 // const merchantProduct = null;
 
-                if (payload?.length && idMerchant) {
+                if (payload?.length && selectedMerchant) {
                     merchantProduct = payload.find((item: { [key: string]: any }) => item.merchantId === selectedMerchant);
                 }
 
@@ -223,7 +227,7 @@ const ProductDetails = () => {
         dispatch(getMerchantCategoriesService({ idMerchant: 1 }));
         dispatch(getTradePolicies());
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, id, idMerchant, product]);
+    }, [dispatch, id, selectedMerchant]);
 
     useEffect(() => {
         handleGetSkus();
@@ -261,7 +265,7 @@ const ProductDetails = () => {
         if (!flatMerchantCategories?.length) return;
 
         const cats = flatMerchantCategories.find((merchCats: FlatMerchantCategoriesType) =>
-            viewMode === 'SINGLE' ? merchCats.idMerchant === Number(idMerchant) : merchCats.isFatherMerchat
+            viewMode === 'SINGLE' ? merchCats.idMerchant === Number(selectedMerchant) : merchCats.isFatherMerchat
         )?.categoryList;
         setCategoriesInfo(cats ?? []);
     }, [flatMerchantCategories]);
@@ -369,7 +373,7 @@ const ProductDetails = () => {
     const saveMultiChange = (data: { [key: string]: any }[]) => {
         setAllMerchantsProductData(data);
 
-        const updateCurrentProductInfo = data.find((item: { [key: string]: any }) => item.merchantId === Number(idMerchant));
+        const updateCurrentProductInfo = data.find((item: { [key: string]: any }) => item.merchantId === Number(selectedMerchant));
 
         if (updateCurrentProductInfo) {
             const newInfo = updateCurrentProductInfo.detailProduct;
@@ -402,6 +406,7 @@ const ProductDetails = () => {
                 // resetDrawer();
             },
             onSave: (newData) => {
+                console.log('newData', newData);
                 setMultiFormProps({ ...defaultMerchantProps, isOpen: false });
                 saveMultiChange(newData);
             },

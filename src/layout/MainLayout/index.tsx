@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 // material-ui
 import { styled, useTheme, Theme } from '@mui/material/styles';
@@ -84,7 +84,13 @@ const MainLayout = () => {
         // handle login
         if (user && user?.user) {
             // TODO: SEND CognitoUser USER
-            dispatch(getUserProfile(user?.user));
+            dispatch(getUserProfile(user?.user)).then(({ payload }) => {
+                if (!payload) {
+                    logout();
+                } else if (payload.response.merchant.merchantId) {
+                    localStorage.setItem('merchantId', payload.response.merchant.merchantId);
+                }
+            });
         }
     }, [dispatch, logout, user]);
 
