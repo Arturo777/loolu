@@ -317,5 +317,6 @@
     "select_trade_policies": "Seleccionar Políticas Comerciales",
     "warehouses": "Warehouses",
     "merchant_inventories": "Inventarios {merchant}",
-    "warehouse_stock": "Stock en {warehouse}"
+    "warehouse_stock": "Stock en {warehouse}",
+    "select_brand": "Select Brand"
 }

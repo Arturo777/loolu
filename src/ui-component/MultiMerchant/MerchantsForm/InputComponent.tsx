@@ -39,7 +39,8 @@ export enum InputType {
     select = 'select',
     brandSelect = 'brandSelect',
     policies = 'policies',
-    categorySelect = 'categorySelect'
+    categorySelect = 'categorySelect',
+    brandSelectCreate = 'brandSelectCreate'
 }
 
 export type SelectOptionType = {
@@ -203,6 +204,10 @@ const RenderInputComponent = ({ label, value, updateValue, type, options, mercha
         return <RenderBrandSelect merchantId={1} value={value} updateValue={(newValue) => updateValue(newValue)} />;
     }
 
+    if (type === InputType.brandSelectCreate) {
+        return <RenderBrandSelect merchantId={2} value={value} updateValue={(newValue) => updateValue(newValue)} />;
+    }
+
     if (type === InputType.policies) {
         return <TradePoliciesSelect onChange={() => {}} />;
     }
@@ -229,6 +234,8 @@ const RenderBrandSelect = ({
     const { brands2, loading } = useSelector((state) => state.catalogue);
 
     const brandsList: BrandType[] = useMemo(() => {
+        console.log(merchantId, 'merchantid');
+        console.log(brands2, 'brands2');
         const filteredByMerchant = brands2.find((item: any) => item.merchantId === Number(merchantId));
 
         return filteredByMerchant?.brands ?? [];
