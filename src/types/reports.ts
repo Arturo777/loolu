@@ -1,7 +1,12 @@
 export type ReportsStateProps = {
     error: object | string | null;
     loading: boolean;
-    changeLog: ChangeLog[];
+    changeLog: any[];
+};
+export type ChangeLogMulticatalogo = {
+    changeLogs: ChangeLog;
+    fatherMerchant: boolean;
+    idMerchant: number;
 };
 
 export type ChangeLog = {

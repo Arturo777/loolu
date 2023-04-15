@@ -4,16 +4,16 @@ import React, { useEffect, useState } from 'react';
 import { Card, Divider, Grid, ListItemButton, Pagination, Typography } from '@mui/material';
 
 // types
-import { ChangeLog } from 'types/reports';
+import { ChangeLog, ChangeLogMulticatalogo } from 'types/reports';
 
 type ChangeLogListProps = {
-    changeLog: ChangeLog[];
-    handleSelect: (item: ChangeLog) => void;
+    changeLog: ChangeLogMulticatalogo[];
+    handleSelect: (item: ChangeLogMulticatalogo) => void;
 };
 
 export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogListProps) {
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [renderData, setRenderData] = useState<ChangeLog[]>();
+    const [renderData, setRenderData] = useState<any>();
 
     useEffect(() => {
         getPageItem();
@@ -26,10 +26,14 @@ export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogList
 
     const getPageItem = () => {
         const numInit = (currentPage - 1) * 10;
-        const initial = numInit > 0 ? numInit + 1 : 1;
+        // const initial = numInit > 0 ? numInit + 1 : 1;
+        const initial = numInit > 0 ? numInit + 1 : 0;
         const end = currentPage * 10;
 
-        const copyChange = [...changeLog];
+        const data = changeLog.flatMap((item) => item);
+
+        const copyChange = [...data];
+
         const toRender = copyChange.slice(initial, end);
 
         setRenderData(toRender);
@@ -38,7 +42,7 @@ export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogList
     return (
         <Card elevation={2}>
             {renderData &&
-                renderData.map((item, i) => (
+                renderData?.map((item: any, i: number) => (
                     <ListItemButton onClick={() => handleSelect(item)} key={`change-log-item-${i}`}>
                         <Grid container sx={{ p: 2 }}>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>

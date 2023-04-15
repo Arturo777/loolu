@@ -34,9 +34,9 @@ const reports = createSlice({
 
 export default reports.reducer;
 
-export const getChangeLogList = createAsyncThunk(`${reports.name}/getChangeLogList`, async ({ idMerchant }: { idMerchant?: number }) => {
+export const getChangeLogList = createAsyncThunk(`${reports.name}/getChangeLogList`, async (idMerchant: number | null) => {
     const response = await axios.post(
-        `styrk/api/product/changelog`,
+        `styrk/api/multicatalog/product/changelog`,
         {},
         {
             baseURL: STYRK_API,
