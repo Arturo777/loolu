@@ -34,7 +34,7 @@ import { gridSpacing } from 'store/constant';
 
 import ChangeLogList from './ChangeLogList';
 import { getChangeLogList } from 'store/slices/reports';
-import { ChangeLog } from 'types/reports';
+import { ChangeLog, ChangeLogMulticatalogo } from 'types/reports';
 import { compareAsc } from 'date-fns';
 import Loader from 'ui-component/Loader';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
@@ -62,7 +62,7 @@ export default function ChangeLogPage() {
 
     // vars
     const [filterText, setFilterText] = useState<string>('');
-    const [formattedList, setFormattedList] = useState<ChangeLog[]>([]);
+    const [formattedList, setFormattedList] = useState<any[]>([]);
 
     const [selectedItem, setSelectedItem] = useState<ChangeLog | null>(null);
 
@@ -70,11 +70,19 @@ export default function ChangeLogPage() {
 
     const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
     useEffect(() => {
-        setFormattedList(changeLog);
-    }, [changeLog]);
+        if (selectedMerchant) {
+            const filterCahgeloft = changeLog.filter((item) => item.idMerchant === selectedMerchant);
+            console.log({ filterCahgeloft });
+            const filterChangeLogs = filterCahgeloft.filter((item) => item.changeLogs);
+            console.log('filterChangeLogs', filterChangeLogs);
+            const data = filterCahgeloft[0]?.changeLogs;
+            console.log([data]);
+            setFormattedList([data]);
+        }
+    }, [changeLog, selectedMerchant]);
 
     useEffect(() => {
-        dispatch(getChangeLogList({ idMerchant: 1 }));
+        dispatch(getChangeLogList(1));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -83,7 +91,7 @@ export default function ChangeLogPage() {
         setFilterText(newString ?? '');
     };
 
-    const handleSelect = (item: ChangeLog) => {
+    const handleSelect = (item: any) => {
         setSelectedItem(null);
         setTimeout(() => {
             setSelectedItem(item);
@@ -97,11 +105,24 @@ export default function ChangeLogPage() {
     };
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+        const selectedMerchanLogs = changeLog.find((item) => item.idMerchant === selectedMerchant);
+        console.log({ selectedMerchanLogs });
 
+        // const filterChangeLogs = selectedMerchanLogs.filter((item) => item.changeLogs);
+        // const data = filterChangeLogs.flatMap((item) => item);
         const filteredList =
-            filterText !== '' ? changeLog.filter((item) => JSON.stringify(item).toLowerCase().indexOf(filterText) > -1) : [...changeLog];
-        const filteredListMerchants = filteredList.filter((item) => item.idMerchant === selectedMerchant);
-        const sortList = filteredListMerchants.sort((a, b) => {
+            filterText !== ''
+                ? selectedMerchanLogs.changeLogs.filter(
+                      (item: any) =>
+                          JSON.stringify(item || {})
+                              .toLowerCase()
+                              .indexOf(filterText) > -1
+                  )
+                : [...selectedMerchanLogs.changeLogs];
+        // const filteredListMerchants = filteredList.filter((item) => item.idMerchant === selectedMerchant);
+
+        // const filteredListMerchantsFlat = filteredListMerchants.flatMap((item) => item.changeLogs);
+        const sortList = filteredList.sort((a: any, b: any) => {
             if (sortBy === sortOptions.userLog) {
                 return a.userLog < b.userLog ? -1 : 1;
             }
