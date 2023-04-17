@@ -212,7 +212,7 @@ export default function ChangeLogPage() {
         >
             {loading && <Loader />}
             <Grid container spacing={gridSpacing} p={2}>
-                <Grid item xs={12} sm={6} md={5} lg={5} xl={4}>
+                <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
                     <Collapse in={loading}>
                         <Stack sx={{ width: 1, p: 5 }} alignItems="center" justifyContent="center">
                             <CircularProgress />
@@ -224,7 +224,7 @@ export default function ChangeLogPage() {
                         </Box>
                     </Fade>
                 </Grid>
-                <Grid item xs={12} sm={6} md={5} lg={5} xl={4}>
+                <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                     <Box sx={{ position: 'sticky', top: 100, bottom: 20 }}>
                         <Fade in={selectedItem != null}>
                             <Box>
