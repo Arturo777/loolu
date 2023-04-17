@@ -2,7 +2,6 @@ import { Grid, Box, Drawer } from '@mui/material';
 import { ProductListContainer } from '../components/ProductListContainer';
 import ProductFilterView from '../components/ProductFilterView';
 import { ProductList } from '../List/ProductList';
-import { ProductsFilter } from 'types/e-commerce';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import ProductFilter from '../components/ProductFilter';
 import { initialState } from '../utils/initialStateProductsFilter';

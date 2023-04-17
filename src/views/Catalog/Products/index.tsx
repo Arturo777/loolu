@@ -1,17 +1,14 @@
 import { useEffect, useState, ReactElement } from 'react';
 // material-ui
-import { styled, useTheme } from '@mui/material/styles';
-import { Box, Button, Divider, Drawer, Grid, IconButton, Menu, MenuItem, Stack, Typography, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { Divider, Grid, useMediaQuery } from '@mui/material';
 
 // third party
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 // project imports
 import ProductEmpty from './components/ProductEmpty';
-import ProductFilter from './components/ProductFilter';
-import ProductFilterView from './components/ProductFilterView';
 import ProductCard from 'ui-component/cards/ProductCard';
-import FloatingCart from 'ui-component/cards/FloatingCart';
 import useConfig from 'hooks/useConfig';
 import { resetCart } from 'store/slices/cart';
 import { useDispatch, useSelector } from 'store';
@@ -25,8 +22,6 @@ import { getProducts, filterProducts, SearchProductType } from 'store/slices/pro
 import { Products as ProductsTypo, ProductsFilter } from 'types/e-commerce';
 import Loader from 'ui-component/Loader';
 import { queryToObject } from 'utils/helpers';
-import { useIntl } from 'react-intl';
-import { ProductList } from './List/ProductList';
 import ProductMain from './Main';
 import { initialState } from './utils/initialStateProductsFilter';
 import { ProductHeader } from './components/ProductHeader';
@@ -39,8 +34,6 @@ const ProductsList = () => {
     const { borderRadius } = useConfig();
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
-
-    const [multiForm, setMultiForm] = useState<boolean>(true);
 
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
@@ -237,78 +230,3 @@ const ProductsList = () => {
 };
 
 export default ProductsList;
-
-const mockData = [
-    {
-        merchant: {
-            name: 'Vinneren',
-            merchantId: 1,
-            isFather: true
-        },
-        data: {
-            name: 'Nombre del producto',
-            description: 'Descripción del producto en Vinneren',
-            isActive: false,
-            category: 10,
-            combo: {
-                visible: false,
-                name: 'Nombre A',
-                combo2: {
-                    level: 'Vin',
-                    combo3: {
-                        level2: 22
-                    }
-                }
-            },
-            productId: 10
-        }
-    },
-    {
-        merchant: {
-            name: 'Monstore',
-            merchantId: 2,
-            isFather: false
-        },
-        data: {
-            name: '',
-            description: '',
-            isActive: false,
-            category: 9,
-            combo: {
-                visible: false,
-                name: '',
-                combo2: {
-                    level: 1,
-                    combo3: {
-                        level2: 2
-                    }
-                }
-            },
-            productId: 11
-        }
-    },
-    {
-        merchant: {
-            name: 'Elektra',
-            merchantId: 3,
-            isFather: false
-        },
-        data: {
-            name: 'Producto - Elektra',
-            description: 'Sin descripción',
-            isActive: true,
-            category: 10,
-            combo: {
-                visible: false,
-                name: '',
-                combo2: {
-                    level: 1,
-                    combo3: {
-                        level2: 2
-                    }
-                }
-            },
-            productId: 12
-        }
-    }
-];

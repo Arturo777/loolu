@@ -1,10 +1,10 @@
-import { Box, Button, Divider, Drawer, Grid, IconButton, Menu, MenuItem, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Button, Grid, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import SortOptions from '../utils/SortOptions';
 

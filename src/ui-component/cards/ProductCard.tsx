@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // material-ui
-import { Button, CardContent, Grid, IconButton, Popover, Stack, Typography } from '@mui/material';
+import { Button, CardContent, Grid, Stack, Typography } from '@mui/material';
 
 // third-party
 import CurrencyFormat from 'react-currency-format';
@@ -14,13 +14,11 @@ import SkeletonProductPlaceholder from 'ui-component/cards/Skeleton/ProductPlace
 import { ProductCardProps } from 'types/cart';
 
 // assets
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
 import LinkIcon from '@mui/icons-material/Link';
 import placeholderImage from 'assets/images/placeholder.png';
 import { Box } from '@mui/system';
 import MultiMerchantButtons from 'ui-component/MultiMerchantButton/MultiMerchantButton';
-import MultiMerchant from 'ui-component/MultiMerchantButton';
 
 // const prodImage = require.context('assets/images/e-commerce', true);
 
