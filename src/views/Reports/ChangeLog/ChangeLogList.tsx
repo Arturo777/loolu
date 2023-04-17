@@ -58,19 +58,19 @@ export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogList
                     >
                         <Grid container sx={{ p: 2 }}>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.prodId}</Typography>
+                                <Typography variant="subtitle1">{item?.prodId}</Typography>
                                 <Typography variant="caption">Product ID</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.skuId}</Typography>
+                                <Typography variant="subtitle1">{item?.skuId}</Typography>
                                 <Typography variant="caption">SKU ID</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.userLog}</Typography>
+                                <Typography variant="subtitle1">{item?.userLog}</Typography>
                                 <Typography variant="caption">User</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.dateChange}</Typography>
+                                <Typography variant="subtitle1">{item?.dateChange}</Typography>
                                 <Typography variant="caption">Fecha</Typography>
                             </Grid>
                         </Grid>
