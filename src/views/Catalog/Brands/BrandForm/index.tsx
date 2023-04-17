@@ -1,7 +1,19 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // material-ui
-import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    CardMedia,
+    Collapse,
+    Divider,
+    Grid,
+    IconButton,
+    InputAdornment,
+    TextField,
+    Typography,
+    useTheme
+} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
@@ -34,6 +46,7 @@ type BrandFormProps = {
 };
 
 export default function BrandForm({ isEdit, initialData, handleSave }: any) {
+    const theme = useTheme();
     // BrandFormProps
     // hooks
     const intl = useIntl();
@@ -99,7 +112,19 @@ export default function BrandForm({ isEdit, initialData, handleSave }: any) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Grid container spacing={gridSpacing}>
+            <Grid
+                container
+                // spacing={gridSpacing}
+                sx={{
+                    p: 3,
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
                 {!isEdit && (
                     <Grid
                         item
