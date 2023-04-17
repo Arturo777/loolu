@@ -140,7 +140,22 @@ const EditFacetComponent = ({ show, handleCancel, facetId, merchs }: EditFacetCo
 
     return (
         <Fade in={show}>
-            <Card elevation={2} sx={{ p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>
+            <Card
+                elevation={2}
+                sx={{
+                    p: 2,
+                    position: 'sticky',
+                    top: 100,
+                    bottom: 20,
+                    zIndex: 5,
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
                 {renderContent()}
             </Card>
         </Fade>

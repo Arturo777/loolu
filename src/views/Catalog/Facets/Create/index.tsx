@@ -120,7 +120,24 @@ const CreateFacetComponent = ({ show, handleCancel }: CreateFacetComponentProps)
 
     return (
         <Fade in={show}>
-            <Card sx={{ boxShadow: 2, p: 2, position: 'sticky', top: 100, bottom: 20, zIndex: 5 }}>{content()}</Card>
+            <Card
+                sx={{
+                    boxShadow: 2,
+                    p: 2,
+                    position: 'sticky',
+                    top: 100,
+                    bottom: 20,
+                    zIndex: 5,
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
+                {content()}
+            </Card>
         </Fade>
     );
 };

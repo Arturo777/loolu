@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 // mui imports
-import { Menu, Stack, MenuItem, IconButton, Paper, Typography } from '@mui/material';
+import { Menu, Stack, MenuItem, IconButton, Paper, Typography, useTheme } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // third party imports
@@ -11,6 +11,7 @@ import { MerchantType } from 'types/security';
 import { useDispatch, useSelector } from 'store';
 import { getMerchantsList } from 'store/slices/auth';
 import useAuth from 'hooks/useAuth';
+import { Box } from '@mui/system';
 
 type MultiMerchantProps = {
     blockDefaults?: boolean;
@@ -35,6 +36,8 @@ export default function MultiMerchant({
     // hooks
     const intl = useIntl();
     const dispatch = useDispatch();
+    const theme = useTheme();
+
     // store
     const { user } = useAuth();
     const { merchants } = useSelector((state) => state.auth);
@@ -238,7 +241,7 @@ export default function MultiMerchant({
     }, [anchorMenu, isAllSelected, merchantsList, open, renderMore]);
     return (
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
-            <Paper
+            <Box
                 sx={{
                     display: 'flex',
                     flexWrap: 'wrap',
@@ -246,7 +249,8 @@ export default function MultiMerchant({
                     alignItems: 'center',
                     listStyle: 'none',
                     p: 0.5,
-                    m: 0
+                    m: 0,
+                    background: 'transparent'
                 }}
                 component="ul"
             >
@@ -263,7 +267,7 @@ export default function MultiMerchant({
                     ))}
                     {renderMore}
                 </>
-            </Paper>
+            </Box>
             {renderMore && <ShowMoreButton size={size} handleClick={handleOpenMenu} moreText={`${(merchants?.length ?? 0) - maxShow!}`} />}
             {/* {renderMore && (
                 <Avatar
