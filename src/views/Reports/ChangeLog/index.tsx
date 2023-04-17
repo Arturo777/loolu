@@ -18,7 +18,8 @@ import {
     FormControl,
     InputLabel,
     CircularProgress,
-    Collapse
+    Collapse,
+    useTheme
 } from '@mui/material';
 
 // assets
@@ -239,7 +240,7 @@ export default function ChangeLogPage() {
 
 const RenderItem = ({ selected }: { selected: ChangeLog | null }) => {
     const [formatted, setFormatted] = useState<{ [key: string]: string }>();
-
+    const theme = useTheme();
     useEffect(() => {
         if (selected) {
             const newData = getDataFormatted(selected.productLog);
@@ -249,7 +250,18 @@ const RenderItem = ({ selected }: { selected: ChangeLog | null }) => {
     }, [selected]);
 
     return (
-        <Card elevation={2} sx={{ p: 2 }}>
+        <Card
+            elevation={2}
+            sx={{
+                p: 2,
+                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                border: '1px solid',
+                borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                '&:hover': {
+                    border: `1px solid${theme.palette.primary.main}`
+                }
+            }}
+        >
             <Typography variant="h3">Log</Typography>
             <Box component={Divider} sx={{ mb: 2, mt: 2 }} />
 

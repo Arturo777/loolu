@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { Card, Divider, Grid, ListItemButton, Pagination, Typography } from '@mui/material';
+import { Card, Divider, Grid, ListItemButton, Pagination, Typography, useTheme } from '@mui/material';
 
 // types
 import { ChangeLog, ChangeLogMulticatalogo } from 'types/reports';
@@ -14,7 +14,7 @@ type ChangeLogListProps = {
 export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogListProps) {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [renderData, setRenderData] = useState<any>();
-
+    const theme = useTheme();
     useEffect(() => {
         getPageItem();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -43,7 +43,19 @@ export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogList
         <Card elevation={2}>
             {renderData &&
                 renderData?.map((item: any, i: number) => (
-                    <ListItemButton onClick={() => handleSelect(item)} key={`change-log-item-${i}`}>
+                    <ListItemButton
+                        onClick={() => handleSelect(item)}
+                        key={`change-log-item-${i}`}
+                        sx={{
+                            p: 3,
+                            background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                            border: '1px solid',
+                            borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                            '&:hover': {
+                                border: `1px solid${theme.palette.primary.main}`
+                            }
+                        }}
+                    >
                         <Grid container sx={{ p: 2 }}>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
                                 <Typography variant="subtitle1">{item.prodId}</Typography>
