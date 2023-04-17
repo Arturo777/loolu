@@ -6,11 +6,11 @@ import { ButtonBase, Grid, Skeleton, Tooltip } from '@mui/material';
 
 // project imports
 import Avatar from 'ui-component/extended/Avatar';
-import ColorOptions from '../utils/ColorOptions';
 
 // assets
 import CheckIcon from '@mui/icons-material/Check';
 import { ColorsOptionsProps } from 'types/e-commerce';
+import ColorOptions from 'views/ColorOptions';
 
 // ==============================|| PRODUCT - COLOR OPTIONS ||============================== //
 

@@ -6,13 +6,13 @@ import { Button, ButtonBase, CardContent, Grid, Tooltip, Typography, useMediaQue
 import SubCard from 'ui-component/cards/SubCard';
 import Chip from 'ui-component/extended/Chip';
 import Avatar from 'ui-component/extended/Avatar';
-import ColorOptions from '../utils/ColorOptions';
 import { gridSpacing } from 'store/constant';
 
 // assets
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { ProductsFilter } from 'types/e-commerce';
+import ColorOptions from 'views/ColorOptions';
 
 function getColor(color: string) {
     return ColorOptions.filter((item) => item.value === color);

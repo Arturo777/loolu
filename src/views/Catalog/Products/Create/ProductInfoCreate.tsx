@@ -1,46 +1,26 @@
-import { JSXElementConstructor, Key, ReactElement, SetStateAction, useEffect, useState } from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import {
-    Autocomplete,
     Box,
     Button,
-    ButtonBase,
-    ButtonGroup,
-    Checkbox,
     Collapse,
     Divider,
     FormControl,
     FormControlLabel,
-    FormHelperText,
     Grid,
     IconButton,
-    InputAdornment,
     InputLabel,
     ListItemButton,
     ListItemIcon,
     ListItemText,
     MenuItem,
-    Modal,
-    OutlinedInput,
-    Radio,
-    RadioGroup,
-    Rating,
     Select,
     Stack,
-    SwipeableDrawer,
     Switch,
-    Table,
-    TableBody,
-    TableCell,
-    TableRow,
     TextField,
-    TextFieldProps,
-    Tooltip,
-    Typography
+    Tooltip
 } from '@mui/material';
 // import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 // import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -49,46 +29,23 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-// third-party
-import { useFormik, Form, FormikProvider, useField, FieldHookConfig } from 'formik';
-import * as yup from 'yup';
-
 // project imports
-import Chip from 'ui-component/extended/Chip';
-import Avatar from 'ui-component/extended/Avatar';
-import ColorOptions from '../ColorOptions';
-import { ColorsOptionsProps, Policy, Products } from 'types/e-commerce';
-import { openSnackbar } from 'store/slices/snackbar';
 import { useDispatch, useSelector } from 'store';
-import { addProduct } from 'store/slices/cart';
 
 // assets
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
-import { IconSearch } from '@tabler/icons';
-import CircleIcon from '@mui/icons-material/Circle';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import StarTwoToneIcon from '@mui/icons-material/StarTwoTone';
-import StarBorderTwoToneIcon from '@mui/icons-material/StarBorderTwoTone';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { getCategoriesService, getSuppliers, getBrands2, getMerchantCategoriesService } from 'store/slices/catalog';
-import { BrandType, BrandType2, CategoryType, MerchantCategoryType, SupplierType } from 'types/catalog';
+import { getSuppliers, getBrands2, getMerchantCategoriesService } from 'store/slices/catalog';
+import { CategoryType, SupplierType } from 'types/catalog';
 import { getTradePolicies } from 'store/slices/product';
 
-import ConfigProvider from 'config';
 import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
-import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { InputType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 import { MerchantType } from 'types/security';
 import ProductPrices from './ProductPrices';
 
-// product color select
-function getColor(color: string) {
-    return ColorOptions.filter((item) => item.value === color);
-}
 const Android12Switch = styled(Switch)(({ theme }) => ({
     padding: 8,
     '& .MuiSwitch-track': {
@@ -121,145 +78,6 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
         margin: 2
     }
 }));
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250
-        }
-    }
-};
-// product size
-const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
-
-const validationSchema = yup.object({
-    color: yup.string().required('Color selection is required'),
-    size: yup.number().required('Size selection is required.')
-});
-
-// ==============================|| COLORS OPTION ||============================== //
-
-const Colors = ({ checked, colorsData }: { checked?: boolean; colorsData: ColorsOptionsProps[] }) => {
-    const theme = useTheme();
-    return (
-        <Grid item>
-            <Tooltip title={colorsData[0].label}>
-                <ButtonBase sx={{ borderRadius: '50%' }}>
-                    <Avatar
-                        color="inherit"
-                        size="badge"
-                        sx={{
-                            bgcolor: colorsData[0].bg,
-                            color: theme.palette.mode === 'light' ? 'grey.50' : 'grey.800'
-                        }}
-                    >
-                        {checked && (
-                            <CircleIcon sx={{ color: theme.palette.mode === 'light' ? 'grey.50' : 'grey.800', fontSize: '0.75rem' }} />
-                        )}
-                        {!checked && <CircleIcon sx={{ color: colorsData[0].bg, fontSize: '0.75rem' }} />}
-                    </Avatar>
-                </ButtonBase>
-            </Tooltip>
-        </Grid>
-    );
-};
-
-/* const Increment = (props: string | FieldHookConfig<any>) => {
-    const [field, , helpers] = useField(props);
-
-    const { value } = field;
-    const { setValue } = helpers;
-    return (
-        <ButtonGroup size="large" variant="text" color="inherit" sx={{ border: '1px solid', borderColor: 'grey.400' }}>
-            <Button
-                key="three"
-                disabled={value <= 1}
-                onClick={() => setValue(value - 1)}
-                sx={{ pr: 0.75, pl: 0.75, minWidth: '0px !important' }}
-            >
-                <RemoveIcon fontSize="inherit" />
-            </Button>
-            <Button key="two" sx={{ pl: 0.5, pr: 0.5 }}>
-                {value}
-            </Button>
-            <Button key="one" onClick={() => setValue(value + 1)} sx={{ pl: 0.75, pr: 0.75, minWidth: '0px !important' }}>
-                <AddIcon fontSize="inherit" />
-            </Button>
-        </ButtonGroup>
-    );
-}; */
-interface Props {
-    label: string;
-}
-
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3
-};
-
-function BrandModal({
-    setModalBrands,
-    modalBrands,
-    search,
-    setSearch,
-    newBrand,
-    setFlagBrand
-}: {
-    setModalBrands: any;
-    modalBrands: boolean;
-    search: string;
-    setSearch: any;
-    newBrand: any;
-    setFlagBrand: any;
-}) {
-    const handleClose = (value: string) => {
-        newBrand(value);
-        setModalBrands(false);
-    };
-    const handleReject = () => {
-        setFlagBrand(false);
-        setModalBrands(false);
-        setSearch('');
-    };
-
-    return (
-        <>
-            <Modal
-                hideBackdrop
-                open={modalBrands}
-                onClose={handleClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box sx={{ ...style, width: 500 }}>
-                    <h2 id="child-modal-title">Confirmar Creación de Marca</h2>
-                    <p id="child-modal-description">
-                        Por favor, confirma que el nombre <span style={{ fontWeight: 'bold' }}>{search}</span> asignado a tu Marca es
-                        correcto.
-                    </p>
-                    <Button onClick={handleReject} variant="outlined" sx={{ mr: 2 }}>
-                        Revisar
-                    </Button>
-                    <Button onClick={() => handleClose(search)} variant="contained">
-                        Confirmar
-                    </Button>
-                </Box>
-            </Modal>
-        </>
-    );
-}
 
 type MainCategoryProps = {
     category: CategoryType;
@@ -340,61 +158,13 @@ const ProductInfoCreate = ({
     productCreateCategories: any;
 }) => {
     const intl = useIntl();
-    const history = useNavigate();
     const dispatch = useDispatch();
-
-    const policies = [
-        { isActive: true, idMerchant: 1, idPolicy: 1245, name: 'Exportaciones' },
-        { isActive: true, idMerchant: 2, idPolicy: 1248, name: 'Importaciones' },
-        { isActive: false, idMerchant: 2, idPolicy: 1250, name: 'Ventas' }
-    ];
 
     console.log(productInfo);
     console.log(typeof productInfo.created);
 
-    const { suppliers, brands2, merchantCategories } = useSelector((state) => state.catalogue);
-    const { product } = useSelector((state) => state.product);
-    const { tradePolicies } = useSelector((state) => state.product);
-    const [brandSearch, setBrandSearch] = useState('');
+    const { suppliers, merchantCategories } = useSelector((state) => state.catalogue);
     const [categorySearch, setCategorySearch] = useState('');
-    const [display, setDisplay] = useState(false);
-    const [button, setButton] = useState(false);
-    const [modalBrands, setModalBrands] = useState(false);
-    const [brandsInfo, setBrandsInfo] = useState<BrandType2[]>([]);
-    const [stateDrawer, setStateDrawer] = useState({
-        top: false,
-        left: false,
-        bottom: false,
-        right: false
-    });
-    const [searchCat, setSearchCat] = useState(product?.categoryName ?? '');
-    const [flagCategory, setFlagCategory] = useState(false);
-    const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
-    const [categoriesOnDrawer, setCategoriesOnDrawer] = useState<CategoryType[]>([]);
-
-    const handleChangeProd = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.type === 'checkbox') {
-            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
-        } else {
-            setProductInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
-        }
-    };
-
-    // const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-    // const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    /* const handleChangeSku = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.type === 'checkbox') {
-            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.checked }));
-        } else {
-            setSkuInfo((prev: any) => ({ ...prev, [event.target.name]: event.target.value }));
-        }
-    }; */
-
-    const newBrand = (value: string) => {
-        /*  setModalBrands(true); */
-        setBrandSearch(value);
-        setDisplay(false);
-    };
 
     useEffect(() => {
         console.log({ selectedMerchants });
@@ -405,13 +175,7 @@ const ProductInfoCreate = ({
         dispatch(getMerchantCategoriesService({ idMerchant: selectedMerchants[0].merchantId }));
         dispatch(getSuppliers());
         dispatch(getTradePolicies());
-    }, [selectedMerchants]);
-
-    useEffect(() => {
-        if (brands2?.length) {
-            setBrandsInfo(brands2);
-        }
-    }, [brands2]);
+    }, [selectedMerchants, dispatch]);
 
     useEffect(() => {
         console.log({ merchantCategories });
@@ -496,32 +260,6 @@ const ProductInfoCreate = ({
     const changeDate = (date: any) => {
         const newDate = new Date(date);
         setProductInfo({ ...productInfo, created: newDate });
-    };
-
-    const customBrand = (value: SetStateAction<string>, id: number) => {
-        setBrandSearch(value);
-        setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
-        setDisplay(false);
-    };
-
-    type Anchor = 'top' | 'left' | 'bottom' | 'right';
-
-    const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-            return;
-        }
-        setStateDrawer({ ...stateDrawer, [anchor]: open });
-    };
-
-    const handleToggleDrawer = (merchant: MerchantType) => {
-        if (!merchantCategories) return;
-
-        const categories = merchantCategories.find(
-            (merchantB: MerchantCategoryType) => merchantB.idMerchant === merchant.merchantId
-        )?.categoryList;
-
-        toggleDrawer('right', true);
-        setCategoriesOnDrawer(categories || []);
     };
 
     if (!selectedMerchants.length || !merchantCategories) return null;
@@ -619,39 +357,13 @@ const ProductInfoCreate = ({
                                 name="categoryName"
                                 /* defaultValue={product?.brandName} */
                                 value={categorySearch}
-                                onChange={(e) => setBrandSearch(e.target.value)}
+                                onChange={(e) => setCategorySearch(e.target.value)}
                                 // onClick={() =>
                                 // }
                                 InputProps={{
                                     readOnly: true
                                 }}
                             />
-                            {display && (
-                                <Box boxShadow={2} sx={{ height: '200px' }}>
-                                    <PerfectScrollbar>
-                                        <div
-                                            className={
-                                                ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'
-                                            }
-                                        >
-                                            {/* {brandsInfo
-                                                ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-                                                .map((v: BrandType, i: Key): any => (
-                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-                                                    <Typography
-                                                        variant="body2"
-                                                        className="brandsOption"
-                                                        sx={{ pl: 2, pt: 1, pb: 1 }}
-                                                        key={i}
-                                                        onClick={() => customBrand(v.name, v.idBrand)}
-                                                    >
-                                                        {v.name}
-                                                    </Typography>
-                                                ))} */}
-                                        </div>
-                                    </PerfectScrollbar>
-                                </Box>
-                            )}
                         </Grid>
 
                         <Grid item xs={12}>
