@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, CircularProgress, Fade, Grid, Typography } from '@mui/material';
 
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MainCard from 'ui-component/cards/MainCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSecondLevelImages } from 'store/slices/healthContent';
@@ -97,8 +99,36 @@ const Images = () => {
     };
     console.log(typeScore);
     return (
-        <>
-            <CardWrapper border={false} content={false} sx={{ mb: 2 }}>
+        <MainCard>
+            <Grid item>
+                <Avatar
+                    sx={{
+                        cursor: 'pointer',
+                        ...theme.typography.smallAvatar,
+                        backgroundColor: theme.palette.secondary[400],
+                        color: theme.palette.secondary.dark,
+                        mb: 2,
+                        transform: 'scale(1.5)'
+                    }}
+                >
+                    <Link to="/health-content/overall-score">
+                        <ArrowBackIcon fontSize="inherit" />
+                    </Link>
+                </Avatar>
+            </Grid>
+            <CardWrapper
+                border={false}
+                content={false}
+                sx={{
+                    mb: 2,
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
                 <Box sx={{ p: 2.25 }}>
                     <Grid container direction="column">
                         <Grid item>
@@ -107,18 +137,6 @@ const Images = () => {
                                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
                                         Images
                                     </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Avatar
-                                        sx={{
-                                            cursor: 'pointer',
-                                            ...theme.typography.smallAvatar,
-                                            backgroundColor: theme.palette.secondary[400],
-                                            color: theme.palette.secondary.dark
-                                        }}
-                                    >
-                                        <ArrowUpwardIcon fontSize="inherit" />
-                                    </Avatar>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -155,14 +173,14 @@ const Images = () => {
                     </Grid>
                     <Grid item xs={8.5}>
                         {products?.length === 0 ? (
-                            <Typography variant="h3">No Have Products</Typography>
+                            <Typography variant="h3">No Images to show</Typography>
                         ) : (
                             <TableProducts products={products} typeReq="images" />
                         )}
                     </Grid>
                 </Grid>
             )}
-        </>
+        </MainCard>
     );
 };
 

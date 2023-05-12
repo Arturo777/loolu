@@ -95,6 +95,13 @@ export type CatalogStateProps = {
     merchantCategories?: MerchantCategoryType[];
     flatMerchantCategories: FlatMerchantCategoriesType[];
     filterMerchantCategories: (categories: CategoryType[], searchText: string) => CategoryType[];
+    suppliersMulticatalogo: any;
+};
+
+export type TradePolicies = {
+    isActive: boolean;
+    idMerchant: number;
+    idPolicy: number;
 };
 
 export type BrandType = {
@@ -145,6 +152,19 @@ export type FacetType = {
     id: number;
     name: string;
     nameSap: string;
+};
+
+export type WerehousesType = {
+    idMerchant: number;
+    warehouses: Werehouse[];
+    father: boolean;
+};
+
+export type Werehouse = {
+    isActive: boolean;
+    warehouse: string;
+    stockInVTEX: boolean | null;
+    itSent: boolean | null;
 };
 
 export type CategoryType = {

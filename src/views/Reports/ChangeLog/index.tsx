@@ -18,7 +18,8 @@ import {
     FormControl,
     InputLabel,
     CircularProgress,
-    Collapse
+    Collapse,
+    useTheme
 } from '@mui/material';
 
 // assets
@@ -34,7 +35,7 @@ import { gridSpacing } from 'store/constant';
 
 import ChangeLogList from './ChangeLogList';
 import { getChangeLogList } from 'store/slices/reports';
-import { ChangeLog } from 'types/reports';
+import { ChangeLog, ChangeLogMulticatalogo } from 'types/reports';
 import { compareAsc } from 'date-fns';
 import Loader from 'ui-component/Loader';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
@@ -62,7 +63,7 @@ export default function ChangeLogPage() {
 
     // vars
     const [filterText, setFilterText] = useState<string>('');
-    const [formattedList, setFormattedList] = useState<ChangeLog[]>([]);
+    const [formattedList, setFormattedList] = useState<any[]>([]);
 
     const [selectedItem, setSelectedItem] = useState<ChangeLog | null>(null);
 
@@ -70,11 +71,19 @@ export default function ChangeLogPage() {
 
     const [sortBy, setSortBy] = useState<sortOptions>(sortOptions.prodId);
     useEffect(() => {
-        setFormattedList(changeLog);
-    }, [changeLog]);
+        if (selectedMerchant) {
+            const filterCahgeloft = changeLog.filter((item) => item.idMerchant === selectedMerchant);
+            console.log({ filterCahgeloft });
+            const filterChangeLogs = filterCahgeloft.filter((item) => item.changeLogs);
+            console.log('filterChangeLogs', filterChangeLogs);
+            const data = filterCahgeloft[0]?.changeLogs;
+            console.log([data]);
+            setFormattedList([data]);
+        }
+    }, [changeLog, selectedMerchant]);
 
     useEffect(() => {
-        dispatch(getChangeLogList({ idMerchant: 1 }));
+        dispatch(getChangeLogList(1));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -83,7 +92,7 @@ export default function ChangeLogPage() {
         setFilterText(newString ?? '');
     };
 
-    const handleSelect = (item: ChangeLog) => {
+    const handleSelect = (item: any) => {
         setSelectedItem(null);
         setTimeout(() => {
             setSelectedItem(item);
@@ -97,11 +106,24 @@ export default function ChangeLogPage() {
     };
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+        const selectedMerchanLogs = changeLog.find((item) => item.idMerchant === selectedMerchant);
+        console.log({ selectedMerchanLogs });
 
+        // const filterChangeLogs = selectedMerchanLogs.filter((item) => item.changeLogs);
+        // const data = filterChangeLogs.flatMap((item) => item);
         const filteredList =
-            filterText !== '' ? changeLog.filter((item) => JSON.stringify(item).toLowerCase().indexOf(filterText) > -1) : [...changeLog];
-        const filteredListMerchants = filteredList.filter((item) => item.idMerchant === selectedMerchant);
-        const sortList = filteredListMerchants.sort((a, b) => {
+            filterText !== ''
+                ? selectedMerchanLogs.changeLogs.filter(
+                      (item: any) =>
+                          JSON.stringify(item || {})
+                              .toLowerCase()
+                              .indexOf(filterText) > -1
+                  )
+                : [...selectedMerchanLogs.changeLogs];
+        // const filteredListMerchants = filteredList.filter((item) => item.idMerchant === selectedMerchant);
+
+        // const filteredListMerchantsFlat = filteredListMerchants.flatMap((item) => item.changeLogs);
+        const sortList = filteredList.sort((a: any, b: any) => {
             if (sortBy === sortOptions.userLog) {
                 return a.userLog < b.userLog ? -1 : 1;
             }
@@ -139,7 +161,7 @@ export default function ChangeLogPage() {
                         </Typography>
                         <MultiMerchant
                             onChange={(merchants: MerchantType[]) => handleSelectedMerchant(merchants)}
-                            maxShow={1}
+                            maxShow={3}
                             justOne
                             defaultSelected={[]}
                         />
@@ -190,7 +212,7 @@ export default function ChangeLogPage() {
         >
             {loading && <Loader />}
             <Grid container spacing={gridSpacing} p={2}>
-                <Grid item xs={12} sm={6} md={5} lg={5} xl={4}>
+                <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
                     <Collapse in={loading}>
                         <Stack sx={{ width: 1, p: 5 }} alignItems="center" justifyContent="center">
                             <CircularProgress />
@@ -202,7 +224,7 @@ export default function ChangeLogPage() {
                         </Box>
                     </Fade>
                 </Grid>
-                <Grid item xs={12} sm={6} md={5} lg={5} xl={4}>
+                <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                     <Box sx={{ position: 'sticky', top: 100, bottom: 20 }}>
                         <Fade in={selectedItem != null}>
                             <Box>
@@ -218,7 +240,7 @@ export default function ChangeLogPage() {
 
 const RenderItem = ({ selected }: { selected: ChangeLog | null }) => {
     const [formatted, setFormatted] = useState<{ [key: string]: string }>();
-
+    const theme = useTheme();
     useEffect(() => {
         if (selected) {
             const newData = getDataFormatted(selected.productLog);
@@ -228,7 +250,18 @@ const RenderItem = ({ selected }: { selected: ChangeLog | null }) => {
     }, [selected]);
 
     return (
-        <Card elevation={2} sx={{ p: 2 }}>
+        <Card
+            elevation={2}
+            sx={{
+                p: 2,
+                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                border: '1px solid',
+                borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                '&:hover': {
+                    border: `1px solid${theme.palette.primary.main}`
+                }
+            }}
+        >
             <Typography variant="h3">Log</Typography>
             <Box component={Divider} sx={{ mb: 2, mt: 2 }} />
 

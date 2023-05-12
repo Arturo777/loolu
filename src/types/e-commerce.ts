@@ -10,7 +10,6 @@ export type Products = {
     title: string;
     productRefID: string;
     isVisible: any;
-    //map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     isActive: boolean;
     productName: any;
     id: string | number | undefined;
@@ -60,7 +59,6 @@ export type Products = {
     groupName?: string;
 };
 
-
 export type Skus = {
     // map(arg0: (item: any, index: any) => JSX.Element): import('react').ReactNode;
     ean: string | number | undefined;
@@ -86,7 +84,16 @@ export type Skus = {
     brandId: number;
     productID: string | number;
     approvalStatus: ApprovalStatus;
+    images: skuImageType[];
 };
+
+export type skuImageType = {
+    ImageURL: string;
+    IdImage: number;
+    IdMerchant: number;
+    SkuID: string;
+};
+
 export type Categories = {
     id: string | number;
     isActive: boolean;
@@ -220,6 +227,17 @@ export type SpecsValues = {
     vtexValueId: number;
     isVtexSync: boolean;
 };
+
+export type WerehousesMulticatalog = {
+    idMerchant: number;
+    warehouses: Werehouses[];
+};
+
+export type Werehouses = {
+    idMerchant: number;
+    isActive: boolean;
+    warehouse: string;
+};
 // product reviews list
 export type Reviews = {
     id: string | number | undefined;
@@ -284,8 +302,10 @@ export interface ProductStateProps {
     addresses: Address[];
     productFacet: ProductFacet[];
     createProductFacet: CreateFacetProduct[];
+    werehouses: WerehousesMulticatalog[];
     error: object | string | null;
     loadingProducts?: boolean;
     loadingProduct: boolean;
     merchantProducts: MerchantProductType[];
+    loadingMedia: boolean;
 }

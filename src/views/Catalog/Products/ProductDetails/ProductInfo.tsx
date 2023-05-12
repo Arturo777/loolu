@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import {
     Box,
-    Button,
     Checkbox,
     Collapse,
     Divider,
@@ -18,7 +17,6 @@ import {
     ListItemIcon,
     ListItemText,
     MenuItem,
-    Modal,
     OutlinedInput,
     Radio,
     RadioGroup,
@@ -33,7 +31,6 @@ import {
     Tooltip,
     Typography
 } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -44,22 +41,24 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // project imports
 import Chip from 'ui-component/extended/Chip';
 import { Products, Skus } from 'types/e-commerce';
-import { useDispatch, useSelector } from 'store';
+import { useDispatch } from 'store';
 
 // assets
 import { Key, SetStateAction, useEffect, useRef, useState } from 'react';
 
 import ProductDimensions from './ProductDimensions';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { BrandType, CategoryType } from 'types/catalog';
 import { getCategoriesService } from 'store/slices/catalog';
 import ConfigProvider from 'config';
 import filterUnitM from 'utils/unitMeasurement';
 
 import { FieldEditingHolder, RowStack } from 'ui-component/MultiMerchant/drawer';
+import ObjectModal from './Modals/ObjectModal';
 
 // types
 import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
+import { BrandType, CategoryType, FlatCategoryType } from 'types/catalog';
+import { gridSpacing } from 'store/constant';
 
 // product size
 const sizeOptions = [8, 10, 12, 14, 16, 18, 20];
@@ -106,72 +105,7 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
         margin: 2
     }
 }));
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3
-};
 
-function BrandModal({
-    setModalBrands,
-    modalBrands,
-    search,
-    setSearch,
-    newBrand,
-    setFlagBrand
-}: {
-    setModalBrands: any;
-    modalBrands: boolean;
-    search: string;
-    setSearch: any;
-    newBrand: any;
-    setFlagBrand: any;
-}) {
-    const handleClose = (value: string) => {
-        newBrand(value);
-        setModalBrands(false);
-    };
-    const handleReject = () => {
-        setFlagBrand(false);
-        setModalBrands(false);
-        setSearch('');
-    };
-
-    return (
-        <>
-            <Modal
-                hideBackdrop
-                open={modalBrands}
-                onClose={handleClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box sx={{ ...style, width: 500 }}>
-                    <h2 id="child-modal-title">Confirmar Creación de Marca</h2>
-                    <p id="child-modal-description">
-                        Por favor, confirma que el nombre <span style={{ fontWeight: 'bold' }}>{search}</span> asignado a tu Marca es
-                        correcto.
-                    </p>
-                    <Button onClick={handleReject} variant="outlined" sx={{ mr: 2 }}>
-                        Revisar
-                    </Button>
-                    <Button onClick={() => handleClose(search)} variant="contained">
-                        Confirmar
-                    </Button>
-                </Box>
-            </Modal>
-        </>
-    );
-}
-type Anchor = 'top' | 'left' | 'bottom' | 'right';
 // ==============================|| PRODUCT DETAILS - INFORMATION ||============================== //
 
 const ProductInfo = ({
@@ -186,6 +120,7 @@ const ProductInfo = ({
     skuInfo,
     setSkuInfo,
     brandsInfo,
+    categoriesInfo,
     setFlagBrand,
     flagBrand,
     setNewBrandSku,
@@ -195,11 +130,13 @@ const ProductInfo = ({
     allMerchantsProductData,
     saveMultiChange,
     handleDrawer,
-    productSkus
+    productSkus,
+    showMulti = true
 }: {
     active: boolean;
     allMerchantsProductData: { [key: string]: any }[];
     brandsInfo: BrandType[] | undefined;
+    categoriesInfo: FlatCategoryType[] | undefined;
     flagBrand: boolean;
     flagCategory: boolean;
     product: any;
@@ -217,6 +154,7 @@ const ProductInfo = ({
     tradePolicies: any;
     valueSku: any;
     productSkus: Skus[] | null;
+    showMulti?: boolean;
     handleDrawer: (options: {
         accessor: string;
         intlLabel: string;
@@ -228,35 +166,24 @@ const ProductInfo = ({
     const intl = useIntl();
     const dispatch = useDispatch();
     const wrapperRef = useRef(null);
-    const [stateDrawer, setStateDrawer] = useState({
-        top: false,
-        left: false,
-        bottom: false,
-        right: false
-    });
 
     // const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
     // info Brands
-    const [button, setButton] = useState(false);
-    const [display, setDisplay] = useState(false);
-    const [search, setSearch] = useState(product?.brandName);
+    const [brandsDisplay, setBrandsDisplay] = useState(false);
+    const [brandSearch, setBrandSearch] = useState(product?.brandName);
     const [modalBrands, setModalBrands] = useState(false);
 
     // info Categories
-    const [searchCat, setSearchCat] = useState(product?.categoryName);
-    const { categories } = useSelector((state) => state.catalogue);
+    const [categoriesDisplay, setCategoriesDisplay] = useState(false);
+    const [categorySearch, setCategorySearch] = useState(product?.categoryName ?? String(product?.categoryId) ?? '');
+    const [modalCategories, setModalCategories] = useState(false);
 
-    const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-            return;
-        }
-        setStateDrawer({ ...stateDrawer, [anchor]: open });
-    };
     const handleClickOutside = (event: { target: any }) => {
         const { current: wrap }: any = wrapperRef;
         if (wrap && !wrap.contains(event.target)) {
-            setDisplay(false);
+            setBrandsDisplay(false);
+            setCategoriesDisplay(false);
         }
     };
 
@@ -272,12 +199,6 @@ const ProductInfo = ({
     }, []);
 
     useEffect(() => {
-        // const skuprod: Skus[] = productSkus
-        //     ? productSkus
-        //           ?.filter((sku: Skus) => sku.skuID === valueSku)
-        //           .map((sku: any) => [{ ...sku, measurementUnit: filterUnitM(sku?.measurementUnit) }])
-        //     : [];
-
         let filterSku: Skus[] = productSkus ? productSkus.filter((itemSku) => Number(itemSku.skuID) === Number(valueSku)) : [];
 
         filterSku = filterSku.map((itemSku: Skus) => ({ ...itemSku, measurementUnit: filterUnitM(itemSku?.measurementUnit) }));
@@ -285,8 +206,6 @@ const ProductInfo = ({
         if (filterSku.length > 0) {
             const skufFiltUnit: Skus = filterSku[0];
 
-            console.log('skufFiltUnit', skufFiltUnit);
-            // console.log('unitmeas', skufFiltUnit[0]);
             setSkuInfo(skufFiltUnit);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -313,7 +232,7 @@ const ProductInfo = ({
     };
 
     const filterTradePolicy = (trade: number) => {
-        const resultTrade: any = tradePolicies.TradePolicies.filter((tra: any) => tra.idPolicy === trade);
+        const resultTrade: any = tradePolicies.filter((tra: any) => tra.tradePolicy.TradePolicies.idPolicy === trade);
         return resultTrade[0]?.name;
     };
 
@@ -322,31 +241,43 @@ const ProductInfo = ({
         currency: 'USD'
     });
 
-    const customBrand = (value: SetStateAction<string>, id: number) => {
-        setSearch(value);
+    const customizeBrand = (value: SetStateAction<string>, id: number) => {
+        setBrandSearch(value);
         setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
-        setDisplay(false);
+        setBrandsDisplay(false);
+    };
+
+    const customizeCategory = (value: SetStateAction<string>, id: number) => {
+        setCategorySearch(value);
+        setProductInfo((prev: any) => ({ ...prev, idBrand: id, brandName: value }));
+        setCategoriesDisplay(false);
     };
 
     const newBrand = (value: string) => {
-        setSearch(value);
+        setBrandSearch(value);
         setFlagBrand(true);
         setNewBrandSku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
-        setDisplay(false);
+        setBrandsDisplay(false);
+    };
+
+    const newCategory = (value: string) => {
+        setCategorySearch(value);
+        setFlagCategory(true);
+        setNewCategorySku((prev: any) => ({ ...prev, name: value, title: value, isActive: true, metaTagDescription: '', imageUrl: '' }));
+        setCategoriesDisplay(false);
     };
 
     return (
-        <Grid container spacing={2}>
+        <Grid container rowSpacing={gridSpacing}>
             <Grid item xs={12}>
-                <h2>
-                    <FormattedMessage id="product-detail-title" />
-                </h2>
+                <Typography variant="h2">{intl.formatMessage({ id: 'product-detail-title' })}</Typography>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Grid container spacing={1}>
+                    <Grid container rowSpacing={gridSpacing}>
                         <Grid item xs={12}>
                             {active ? (
                                 <>
                                     <FieldEditingHolder
+                                        showMulti={showMulti}
                                         onEditClick={() =>
                                             handleDrawer({ accessor: 'isActive', intlLabel: 'active', type: InputType.switch })
                                         }
@@ -366,6 +297,7 @@ const ProductInfo = ({
                                         />
                                     </FieldEditingHolder>
                                     <FieldEditingHolder
+                                        showMulti={showMulti}
                                         onEditClick={() =>
                                             handleDrawer({
                                                 accessor: 'isEcommerce',
@@ -390,6 +322,7 @@ const ProductInfo = ({
                                     </FieldEditingHolder>
 
                                     <FieldEditingHolder
+                                        showMulti={showMulti}
                                         onEditClick={() =>
                                             handleDrawer({
                                                 accessor: 'showWithoutStock',
@@ -445,8 +378,8 @@ const ProductInfo = ({
                                 </>
                             )}
                         </Grid>
-                        <Grid item xs={12} sx={{ ml: 1 }}>
-                            <Stack direction="row" alignItems="center" spacing={1}>
+                        <Grid item xs={12}>
+                            <Stack direction="row" alignItems="center">
                                 {active ? (
                                     <Box
                                         sx={{
@@ -455,6 +388,7 @@ const ProductInfo = ({
                                         }}
                                     >
                                         <FieldEditingHolder
+                                            showMulti={showMulti}
                                             onEditClick={() =>
                                                 handleDrawer({
                                                     accessor: 'productName',
@@ -475,6 +409,7 @@ const ProductInfo = ({
                                             />
                                         </FieldEditingHolder>
                                         <FieldEditingHolder
+                                            showMulti={showMulti}
                                             onEditClick={() =>
                                                 handleDrawer({
                                                     accessor: 'title',
@@ -494,6 +429,7 @@ const ProductInfo = ({
                                             />
                                         </FieldEditingHolder>
                                         <FieldEditingHolder
+                                            showMulti={showMulti}
                                             onEditClick={() =>
                                                 handleDrawer({
                                                     accessor: 'linkId',
@@ -524,40 +460,16 @@ const ProductInfo = ({
                         </Avatar> */}
                 </Stack>
             </Grid>
-            <Grid item xs={12} sx={{ ml: 1 }}>
-                {active ? (
-                    <FieldEditingHolder
-                        onEditClick={() => handleDrawer({ accessor: 'description', intlLabel: 'description', type: InputType.textarea })}
-                    >
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            id="outlined-basic"
-                            label={intl.formatMessage({ id: 'description' })}
-                            variant="outlined"
-                            name="description"
-                            // defaultValue={product?.description}
-                            value={productInfo?.description}
-                            onChange={handleChangeProd}
-                        />
-                    </FieldEditingHolder>
-                ) : (
-                    <Typography variant="body2">{product?.description}</Typography>
-                )}
-            </Grid>
 
             <Grid item xs={12}>
                 {!active && (
                     <RowStack>
-                        <Typography variant="body1" sx={{ ml: 1 }}>
-                            ID: {product?.productID}{' '}
-                        </Typography>
+                        <Typography variant="body1">ID: {product?.productID} </Typography>
                         <Typography variant="body2">RefID: {product?.productRefID}</Typography>
                     </RowStack>
                 )}
                 {active && (
-                    <RowStack sx={{ justifyContent: 'space-between', ml: 1 }}>
+                    <RowStack sx={{ justifyContent: 'space-between' }}>
                         <TextField
                             multiline
                             id="outlined-basic"
@@ -571,6 +483,7 @@ const ProductInfo = ({
                             sx={{ mt: 1 }}
                         />
                         <FieldEditingHolder
+                            showMulti={showMulti}
                             onEditClick={() =>
                                 handleDrawer({ accessor: 'productRefID', intlLabel: 'reference_code', type: InputType.textField })
                             }
@@ -595,7 +508,7 @@ const ProductInfo = ({
                         ID: {product?.productID}{' '}
                     </Typography>
                     {active ? (
-                        <FieldEditingHolder
+                        <FieldEditingHolder showMulti={showMulti}
                             onEditClick={() =>
                                 handleDrawer({ accessor: 'productRefID', intlLabel: 'reference_code', type: InputType.textarea })
                             }
@@ -616,7 +529,7 @@ const ProductInfo = ({
                     )}
                 </RowStack>
             </Grid> */}
-            <Grid item xs={12} sx={{ ml: 1 }}>
+            <Grid item xs={12}>
                 {active ? (
                     <Box
                         sx={{
@@ -626,6 +539,7 @@ const ProductInfo = ({
                         {/* TODO: copiar  */}
                         <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
                             <FieldEditingHolder
+                                showMulti={showMulti}
                                 onEditClick={() =>
                                     handleDrawer({
                                         accessor: 'brandId',
@@ -641,44 +555,26 @@ const ProductInfo = ({
                                     variant="outlined"
                                     name="brandName"
                                     /* defaultValue={product?.brandName} */
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    onClick={() => setDisplay(true)}
+                                    value={brandSearch}
+                                    onChange={(e) => setBrandSearch(e.target.value)}
+                                    onClick={() => setBrandsDisplay(!showMulti)}
+                                    InputProps={{
+                                        readOnly: showMulti
+                                    }}
                                 />
                             </FieldEditingHolder>
-                            <BrandModal
-                                setModalBrands={setModalBrands}
-                                modalBrands={modalBrands}
-                                search={search}
-                                setSearch={setSearch}
-                                newBrand={newBrand}
-                                setFlagBrand={setFlagBrand}
+                            <ObjectModal
+                                setModal={setModalBrands}
+                                modal={modalBrands}
+                                search={brandSearch}
+                                setSearch={setBrandSearch}
+                                newObject={newBrand}
+                                setFlag={setFlagBrand}
                             />
-                            {display && (
+                            {brandsDisplay && (
                                 <div className={ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'}>
-                                    <div className="btn-add">
-                                        <TextField
-                                            fullWidth
-                                            sx={{ width: '80%' }}
-                                            id="outlined-basic"
-                                            label={intl.formatMessage({ id: 'new_brand' })}
-                                            variant="outlined"
-                                            /* defaultValue={product?.brandName} */
-                                            onClick={() => setButton(true)}
-                                            onBlur={(event) => {
-                                                setModalBrands(true);
-                                                setSearch(event.target.value);
-                                            }}
-                                        />
-
-                                        {button && (
-                                            <IconButton color="success" size="large">
-                                                <AddCircleOutlineIcon />
-                                            </IconButton>
-                                        )}
-                                    </div>
                                     {brandsInfo
-                                        ?.filter(({ name }) => name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+                                        ?.filter(({ name }) => name.toLowerCase().indexOf(brandSearch.toLowerCase()) > -1)
                                         .map((v: BrandType, i: Key): any => (
                                             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                                             <Typography
@@ -686,7 +582,7 @@ const ProductInfo = ({
                                                 className="brandsOption"
                                                 sx={{ pl: 2, pt: 1, pb: 1 }}
                                                 key={i}
-                                                onClick={() => customBrand(v.name, v.idBrand)}
+                                                onClick={() => customizeBrand(v.name, v.idBrand)}
                                             >
                                                 {v.name}
                                             </Typography>
@@ -699,6 +595,74 @@ const ProductInfo = ({
                     <Typography variant="h4">{product?.brandName}</Typography>
                 )}
             </Grid>
+            {/* xxx componente que recibirá el merchant seleccionado */}
+            <Grid item xs={12} sx={{ ml: 1 }}>
+                {active ? (
+                    <Box
+                        sx={{
+                            '& .MuiTextField-root': { mt: 2 }
+                        }}
+                    >
+                        {/* TODO: copiar  */}
+                        <FormControl fullWidth ref={wrapperRef} style={{ position: 'relative' }}>
+                            <FieldEditingHolder
+                                showMulti={showMulti}
+                                onEditClick={() =>
+                                    handleDrawer({
+                                        accessor: 'categoryId',
+                                        intlLabel: 'category',
+                                        type: InputType.categorySelect
+                                    })
+                                }
+                            >
+                                <TextField
+                                    fullWidth
+                                    id="outlined-basic"
+                                    label={intl.formatMessage({ id: 'category' })}
+                                    variant="outlined"
+                                    name="categoryName"
+                                    /* defaultValue={product?.brandName} */
+                                    value={categorySearch}
+                                    onChange={(e) => setCategorySearch(e.target.value)}
+                                    onClick={() => setCategoriesDisplay(!showMulti)}
+                                    InputProps={{
+                                        readOnly: showMulti
+                                    }}
+                                />
+                            </FieldEditingHolder>
+                            <ObjectModal
+                                setModal={setModalCategories}
+                                modal={modalCategories}
+                                search={categorySearch}
+                                setSearch={setCategorySearch}
+                                newObject={newCategory}
+                                setFlag={setFlagCategory}
+                            />
+                            {categoriesDisplay && (
+                                <div className={ConfigProvider.navType === 'dark' ? 'BrandsAutoContainerDark' : 'BrandsAutoContainerWhite'}>
+                                    {categoriesInfo?.length &&
+                                        categoriesInfo
+                                            ?.filter(({ name }) => name.toLowerCase().indexOf(categorySearch.toLowerCase()) > -1)
+                                            .map((v: FlatCategoryType, i: Key): any => (
+                                                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                                                <Typography
+                                                    variant="body2"
+                                                    className="brandsOption"
+                                                    sx={{ pl: 2, pt: 1, pb: 1 }}
+                                                    key={i}
+                                                    onClick={() => customizeCategory(v.name, v.id)}
+                                                >
+                                                    {v.name}
+                                                </Typography>
+                                            ))}
+                                </div>
+                            )}
+                        </FormControl>
+                    </Box>
+                ) : (
+                    <Typography variant="h4">{String(product?.categoryId)}</Typography>
+                )}
+            </Grid>
             <Grid item xs={12} sx={{ ml: 1 }}>
                 {active ? (
                     <Box
@@ -708,12 +672,12 @@ const ProductInfo = ({
                         }}
                     >
                         {/* TODO cOPIAR */}
-                        <Button onClick={toggleDrawer('right', true)} variant="contained">
+                        {/* <Button onClick={toggleDrawer('right', true)} variant="contained">
                             {intl.formatMessage({ id: 'edit_category' })}
                         </Button>
                         <Typography variant="body2">
                             {intl.formatMessage({ id: 'selected_category' })}: {searchCat}
-                        </Typography>
+                        </Typography> */}
                         {/* <SwipeableDrawer
                             sx={{ width: '600px', display: 'flex', alignItems: 'flex-start' }}
                             anchor="right"
@@ -917,7 +881,7 @@ const ProductInfo = ({
                                         <TableRow>
                                             <TableCell>
                                                 <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-                                                    {intl.formatMessage({ id: 'Pricing' })}
+                                                    {intl.formatMessage({ id: 'pricing' })}
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
@@ -1043,10 +1007,9 @@ const ProductInfo = ({
                                             <ProductDimensions skuFilter={skuInfo} setSkuInfo={setSkuInfo} active={active} />
                                         </TableCell>
                                     </TableRow>
-                                    <br />
                                     <TableRow>
                                         <TableCell>
-                                            <Typography variant="body2">{intl.formatMessage({ id: 'quantity ' })}</Typography>
+                                            <Typography variant="body2">{intl.formatMessage({ id: 'quantity' })}</Typography>
                                         </TableCell>
                                         <TableCell align="left" />
                                     </TableRow>

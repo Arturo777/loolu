@@ -310,5 +310,13 @@
     "select_vendor": "Proveedores",
     "label": "Etiqueta",
     "update_multi_data_title": "Actualizar varios catalogos",
-    "key_words": "Palabras clave"
+    "key_words": "Palabras clave",
+    "no_recent_updates": "Oops! No hay actualizaciones recientes",
+    "upload-images": "Subir imagenes",
+    "click_here": "Da click aquí para subir tu imagen",
+    "select_trade_policies": "Seleccionar Políticas Comerciales",
+    "warehouses": "Warehouses",
+    "merchant_inventories": "Inventarios {merchant}",
+    "warehouse_stock": "Stock en {warehouse}",
+    "select_brand": "Select Brand"
 }

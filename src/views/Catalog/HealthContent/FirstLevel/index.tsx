@@ -46,7 +46,7 @@ function a11yProps(index: number) {
 
 const FirstLevel = () => {
     const [firstLev, setFirstLevel] = useState<any>();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [value, setValue] = React.useState<number>(0);
     const [page, setPage] = React.useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(2);
@@ -58,191 +58,7 @@ const FirstLevel = () => {
     const theme = useTheme();
     const matchDownXs = useMediaQuery(theme.breakpoints.down('sm'));
     const dispatch = useDispatch();
-    const { firstLevel } = useSelector((state) => state.healthContent);
-
-    /* const firstLevel = {
-        "skuCatalog": [
-            {
-                "skuId": 6,
-                "skuName": "Test unit 2",
-                "skuReferenceCode": "123123123",
-                "eanUpc": "123456789012",
-                "dateInsert": "2023-02-28 05:53:31.0",
-                "__typename": "dashboardskuCatalog"
-            }
-        ],
-        "totalImages": 1,
-        "totalProducts": 4,
-        "totalSkus": 5,
-        "overallScore": 20.125,
-        "executionDate": "2023-02-24T08:19:04",
-        "metricRange": [
-            {
-                "metricConfigRangeId": 1,
-                "metricTypeId": 1,
-                "typeDescription": "Products",
-                "percentage": 84,
-                "description": "Good",
-                "__typename": "dashboardmetrics"
-            },
-            {
-                "metricConfigRangeId": 3,
-                "metricTypeId": 3,
-                "typeDescription": "Facets",
-                "percentage": 0,
-                "description": "Poor",
-                "__typename": "dashboardmetrics"
-            },
-            {
-                "metricConfigRangeId": 3,
-                "metricTypeId": 2,
-                "typeDescription": "Images",
-                "percentage": 9.375,
-                "description": "Poor",
-                "__typename": "dashboardmetrics"
-            }
-        ],
-        "__typename": "dashboardMessage"
-    } */
-
-    // const merchantss = 
-    // [
-    //     {
-    //         "merchantId": 1,
-    //         "skuCatalog": [
-    //             {
-    //                 "skuId": 6,
-    //                 "skuName": "Test unit 2",
-    //                 "skuReferenceCode": "123123123",
-    //                 "eanUpc": "123456789012",
-    //                 "dateInsert": "2023-02-28 05:53:31.0",
-    //                 "__typename": "dashboardskuCatalog"
-    //             }
-    //         ],
-    //         "totalImages": 1,
-    //         "totalProducts": 4,
-    //         "totalSkus": 5,
-    //         "overallScore": 20.125,
-    //         "executionDate": "2023-02-24T08:19:04",
-    //         "metricRange": [
-    //             {
-    //                 "metricConfigRangeId": 1,
-    //                 "metricTypeId": 1,
-    //                 "typeDescription": "Products",
-    //                 "percentage": 84,
-    //                 "description": "Good",
-    //                 "__typename": "dashboardmetrics"
-    //             },
-    //             {
-    //                 "metricConfigRangeId": 3,
-    //                 "metricTypeId": 3,
-    //                 "typeDescription": "Facets",
-    //                 "percentage": 0,
-    //                 "description": "Poor",
-    //                 "__typename": "dashboardmetrics"
-    //             },
-    //             {
-    //                 "metricConfigRangeId": 3,
-    //                 "metricTypeId": 2,
-    //                 "typeDescription": "Images",
-    //                 "percentage": 9.375,
-    //                 "description": "Poor",
-    //                 "__typename": "dashboardmetrics"
-    //             }
-    //         ],
-    //         "__typename": "dashboardMessage"
-    //     },
-    //     {
-    //         "merchantId": 3,
-    //         "skuCatalog": [
-    //             {
-    //                 "skuId": 6,
-    //                 "skuName": "Test unit 2",
-    //                 "skuReferenceCode": "123123123",
-    //                 "eanUpc": "123456789012",
-    //                 "dateInsert": "2023-02-28 05:53:31.0",
-    //                 "__typename": "dashboardskuCatalog"
-    //             }
-    //         ],
-    //         "totalImages": 1,
-    //         "totalProducts": 4,
-    //         "totalSkus": 5,
-    //         "overallScore": 20.125,
-    //         "executionDate": "2023-02-24T08:19:04",
-    //         "metricRange": [
-    //             {
-    //                 "metricConfigRangeId": 1,
-    //                 "metricTypeId": 1,
-    //                 "typeDescription": "Products",
-    //                 "percentage": 84,
-    //                 "description": "Good",
-    //                 "__typename": "dashboardmetrics"
-    //             },
-    //             {
-    //                 "metricConfigRangeId": 3,
-    //                 "metricTypeId": 3,
-    //                 "typeDescription": "Facets",
-    //                 "percentage": 0,
-    //                 "description": "Poor",
-    //                 "__typename": "dashboardmetrics"
-    //             },
-    //             {
-    //                 "metricConfigRangeId": 3,
-    //                 "metricTypeId": 2,
-    //                 "typeDescription": "Images",
-    //                 "percentage": 9.375,
-    //                 "description": "Poor",
-    //                 "__typename": "dashboardmetrics"
-    //             }
-    //         ],
-    //         "__typename": "dashboardMessage"
-    //     },
-    //     {
-    //         "merchantId": 2,
-    //         "skuCatalog": [
-    //             {
-    //                 "skuId": 6,
-    //                 "skuName": "Test unit 2",
-    //                 "skuReferenceCode": "123123123",
-    //                 "eanUpc": "123456789012",
-    //                 "dateInsert": "2023-02-28 05:53:31.0",
-    //                 "__typename": "dashboardskuCatalog"
-    //             }
-    //         ],
-    //         "totalImages": 4,
-    //         "totalProducts": 5,
-    //         "totalSkus": 7,
-    //         "overallScore": 20.125,
-    //         "executionDate": "2023-02-24T08:19:04",
-    //         "metricRange": [
-    //             {
-    //                 "metricConfigRangeId": 1,
-    //                 "metricTypeId": 1,
-    //                 "typeDescription": "Products",
-    //                 "percentage": 90,
-    //                 "description": "Good",
-    //                 "__typename": "dashboardmetrics"
-    //             },
-    //             {
-    //                 "metricConfigRangeId": 3,
-    //                 "metricTypeId": 3,
-    //                 "typeDescription": "Facets",
-    //                 "percentage": 2,
-    //                 "description": "Poor",
-    //                 "__typename": "dashboardmetrics"
-    //             },
-    //             {
-    //                 "metricConfigRangeId": 3,
-    //                 "metricTypeId": 2,
-    //                 "typeDescription": "Images",
-    //                 "percentage": 9.375,
-    //                 "description": "Poor",
-    //                 "__typename": "dashboardmetrics"
-    //             }
-    //         ],
-    //         "__typename": "dashboardMessage"
-    //     }
-    // ]
+    const { firstLevel, loading } = useSelector((state) => state.healthContent);
 
     useEffect(() => {
         if(firstLev){
@@ -277,19 +93,33 @@ const FirstLevel = () => {
          fechaTotal = `${fecha[0].split('-').reverse().join('/')} ${hora}`
          return fechaTotal
      } */
+
+     useEffect(() => {
+        setFirstLevel(firstLevel);
+        setIsLoading(false)
+    }, [firstLevel]);
+    
     useEffect(() => {
         setIsLoading(true)
         dispatch(getFirstLevel());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    
+    const formatDate = (date:string): string => {
+        const newDate = new Date(date);
+        newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset());
+        const optionsDate: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        };
 
-    useEffect(() => {
-        setFirstLevel(firstLevel);
-        setIsLoading(false)
-    }, [firstLevel]);
+        return newDate.toLocaleDateString('en-US', optionsDate);
+    };
 
     const blockSX = {
         p: 2.5,
+        pt: 0,
         borderLeft: '1px solid ',
         borderBottom: '1px solid ',
         borderLeftColor: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[200],
@@ -313,10 +143,8 @@ const FirstLevel = () => {
                 }}
                 title={
                     <Grid container alignItems="center" justifyContent="start" spacing={gridSpacing}>
-                        <Grid item xs={2}>
-                            <Typography variant="h3"> <FormattedMessage id='health-content' /> </Typography>
-                        </Grid>
-                        <Grid item>
+                        <Grid item display="flex" alignItems="center">
+                            <Typography variant="h3" sx={{ mr: 1 }}> <FormattedMessage id='health-content' /> </Typography>
                             { value === 1 &&(
                                 <MultiMerchant
                                     // justOne
@@ -353,7 +181,6 @@ const FirstLevel = () => {
                                     defaultSelected={[]}
                                 />
                             ) }
-
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
@@ -406,214 +233,237 @@ const FirstLevel = () => {
                         multiHealth.map((first:any) => 
                         ( 
                             <>
-                            <TabPanel value={value} index={0}>
-                            <Grid container spacing={2}>
-                                    <Grid item xs={6}>
-                                        <SideIconCard
-                                            iconPrimary={AccountCircleTwoTone}
-                                            primary="2,672"
-                                            secondary="Last week"
-                                            secondarySub="users"
-                                            color={
-                                                // eslint-disable-next-line no-nested-ternary
-                                                first?.overallScore <= 34
-                                                    ? theme.palette.secondary.main
-                                                    : first.overallScore >= 35 && first.overallScore <= 80
-                                                        ? theme.palette.warning.main
-                                                        : theme.palette.success.main
-                                            }
-                                            metrics={first}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <MainCard
-                                            content={false}
-                                            sx={{
-                                                '& svg': {
-                                                    width: 50,
-                                                    height: 75,
-                                                    color: theme.palette.secondary.main,
-                                                    borderRadius: '14px',
-                                                    p: 1.25,
-                                                    bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : 'primary.light'
-                                                }
-                                            }}
-                                        >
-                                            <Grid container alignItems="center" spacing={0}>
-                                                <Grid item xs={12} sm={6} sx={blockSX}>
-                                                    <Grid
-                                                        container
-                                                        alignItems="center"
-                                                        spacing={1}
-                                                        justifyContent={matchDownXs ? 'space-between' : 'center'}
+                                <Box sx={{m: 2}}>
+                                    <TabPanel value={value} index={0}>
+                                        <Grid container spacing={2}>
+                                                <Grid item xs={6}>
+                                                    <SideIconCard
+                                                        iconPrimary={AccountCircleTwoTone}
+                                                        primary="2,672"
+                                                        secondary="Last week"
+                                                        secondarySub="users"
+                                                        color={
+                                                            // eslint-disable-next-line no-nested-ternary
+                                                            first?.overallScore <= 34
+                                                                ? theme.palette.secondary.main
+                                                                : first.overallScore >= 35 && first.overallScore <= 80
+                                                                    ? theme.palette.warning.main
+                                                                    : theme.palette.success.main
+                                                        }
+                                                        metrics={first}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6} >
+                                                    <MainCard
+                                                        content={false}
+                                                        sx={{
+                                                            background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                                            border: '1px solid',
+                                                            borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                                            '&:hover': {
+                                                                border: `1px solid${theme.palette.primary.main}`
+                                                            },
+                                                            '& svg': {
+                                                                width: 50,
+                                                                height: 75,
+                                                                color: theme.palette.secondary.main,
+                                                                borderRadius: '14px',
+                                                                p: 1.25,
+                                                                bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : 'primary.light'
+                                                            }
+                                                        }}
                                                     >
-                                                        <Grid item>
-                                                            <FilterIcon />
-                                                        </Grid>
-                                                        <Grid item sm zeroMinWidth>
-                                                            <Typography variant="h3" align="center">
-                                                                {first.totalImages}
-                                                            </Typography>
-                                                            <Typography variant="subtitle1" align="center">
-                                                                <FormattedMessage id='total-images'/>
-                                                            </Typography>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                                <Grid item xs={12} sm={6} sx={blockSX}>
-                                                    <Grid
-                                                        container
-                                                        alignItems="center"
-                                                        spacing={1}
-                                                        justifyContent={matchDownXs ? 'space-between' : 'center'}
-                                                    >
-                                                        <Grid item>
-                                                            <LocalShippingIcon />
-                                                        </Grid>
-                                                        <Grid item sm zeroMinWidth>
-                                                            <Typography variant="h3" align="center">
-                                                                {first.totalProducts}
-                                                            </Typography>
-                                                            <Typography variant="subtitle1" align="center">
-                                                                <FormattedMessage id='total-products'/>
-                                                            </Typography>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid>
-                                            <Grid container alignItems="center" spacing={0}>
-                                                <Grid item xs={12} sm={6} sx={blockSX}>
-                                                    <Grid
-                                                        container
-                                                        alignItems="center"
-                                                        spacing={1}
-                                                        justifyContent={matchDownXs ? 'space-between' : 'center'}
-                                                    >
-                                                        <Grid item>
-                                                            <InventoryIcon />
-                                                        </Grid>
-                                                        <Grid item sm zeroMinWidth>
-                                                            <Typography variant="h3" align="center">
-                                                                {first.totalSkus}
-                                                            </Typography>
-                                                            <Typography variant="subtitle1" align="center">
-                                                                <FormattedMessage id='total-skus'/>
-                                                            </Typography>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                                <Grid item xs={12} sm={6} sx={blockSX}>
-                                                    <Grid container alignItems="center" spacing={1} justifyContent="space-between">
-                                                        <Grid item>
-                                                            <CalendarMonthIcon />
-                                                        </Grid>
-                                                        <Grid item sm zeroMinWidth>
-                                                            <Typography variant="h3" align="center">
-                                                                {first?.executionDate}
-                                                            </Typography>
-                                                            <Typography variant="subtitle1" align="center">
-                                                                <FormattedMessage id='last-update'/>
-                                                            </Typography>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid>
-                                        </MainCard>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Grid container alignItems="flex-start" justifyContent="space-between">
-                                            <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between">
-                                                {first?.metricRange?.map((metric: any, i: number) => (
-
-                                                    <Card key={i} sx={{ mb: 1 }}>
-                                                        <CardContent
-                                                            sx={{
-                                                                padding: '0px !important',
-                                                                '& svg': {
-                                                                    width: 180,
-                                                                    height: 150
-                                                                }
-                                                            }}
-                                                        >
-                                                            <Grid container alignItems="center" spacing={0}>
-                                                                <Grid item xs={6} sx={{ p: 3 }}>
-                                                                    <Grid container justifyContent="space-between" direction="column" alignItems="center">
-                                                                        <Grid item sm={12}>
-                                                                            <Typography variant="h3" color="inherit">
-                                                                                {metric.typeDescription}
-                                                                            </Typography>
-                                                                        </Grid>
-                                                                        <Grid item sm={11}>
-                                                                            <Stack direction="row" alignItems="center" spacing={0.5} sx={{ my: 1.75, mx: 'auto' }}>
-                                                                                <Typography sx={{
-                                                                                    textAlign: 'center',
-                                                                                    // eslint-disable-next-line no-nested-ternary
-                                                                                    color: metric?.percentage <= 34 ? '#F44336' : metric.percentage >= 35 && metric.percentage <= 80 ? '#ffe923' : '#02f13a',
-                                                                                    '& > svg': {
-                                                                                        width: 30,
-                                                                                        height: 30
-                                                                                    }
-                                                                                }}>
-                                                                                    {
-                                                                                        // eslint-disable-next-line no-nested-ternary
-                                                                                        metric?.percentage <= 34 ? <ArrowDownwardIcon /> : metric.percentage >= 35 && metric.percentage <= 80 ? <Brightness1Icon /> : <ArrowUpwardIcon />
-                                                                                    }
-                                                                                </Typography>
-                                                                                <Typography variant="h3">{`${metric.percentage.toFixed(2)} %`}</Typography>
-                                                                            </Stack>
-                                                                        </Grid>
-                                                                        <Grid item sm={12}>
-                                                                            <Link to={metric?.typeDescription?.toLowerCase()}><Button variant="outlined"> <FormattedMessage id='details'/> </Button></Link>
-                                                                        </Grid>
+                                                        <Grid container alignItems="center" spacing={0}>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
+                                                                <Grid
+                                                                    container
+                                                                    alignItems="center"
+                                                                    spacing={1}
+                                                                    justifyContent={matchDownXs ? 'space-between' : 'center'}
+                                                                >
+                                                                    <Grid item>
+                                                                        <FilterIcon />
+                                                                    </Grid>
+                                                                    <Grid item sm zeroMinWidth>
+                                                                        <Typography variant="h3" align="center">
+                                                                            {first.totalImages}
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1" align="center">
+                                                                            <FormattedMessage id='total-images'/>
+                                                                        </Typography>
                                                                     </Grid>
                                                                 </Grid>
-                                                                <Grid item xs={4} sx={{ bgcolor: 'light', p: 1 }}>
-                                                                    <ReactApexChart
-                                                                        options={optionsBars(metric)}
-                                                                        series={[metric?.percentage.toFixed(1)]}
-                                                                        type="radialBar"
-                                                                        height={170}
-                                                                    />
+                                                            </Grid>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
+                                                                <Grid
+                                                                    container
+                                                                    alignItems="center"
+                                                                    spacing={1}
+                                                                    justifyContent={matchDownXs ? 'space-between' : 'center'}
+                                                                >
+                                                                    <Grid item>
+                                                                        <LocalShippingIcon />
+                                                                    </Grid>
+                                                                    <Grid item sm zeroMinWidth>
+                                                                        <Typography variant="h3" align="center">
+                                                                            {first.totalProducts}
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1" align="center">
+                                                                            <FormattedMessage id='total-products'/>
+                                                                        </Typography>
+                                                                    </Grid>
                                                                 </Grid>
                                                             </Grid>
-                                                        </CardContent>
-                                                    </Card>
-                                                ))}
+                                                        </Grid>
+                                                        <Grid container alignItems="center" spacing={0}>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
+                                                                <Grid
+                                                                    container
+                                                                    alignItems="center"
+                                                                    spacing={1}
+                                                                    justifyContent={matchDownXs ? 'space-between' : 'center'}
+                                                                >
+                                                                    <Grid item>
+                                                                        <InventoryIcon />
+                                                                    </Grid>
+                                                                    <Grid item sm zeroMinWidth>
+                                                                        <Typography variant="h3" align="center">
+                                                                            {first.totalSkus}
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1" align="center">
+                                                                            <FormattedMessage id='total-skus'/>
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid item xs={12} sm={6} sx={{...blockSX, pt: 2.5}}>
+                                                                <Grid container alignItems="center" spacing={1} justifyContent="space-between">
+                                                                    <Grid item>
+                                                                        <CalendarMonthIcon />
+                                                                    </Grid>
+                                                                    <Grid item sm zeroMinWidth>
+                                                                        <Typography variant="h3" align="center">
+                                                                            {first?.executionDate && formatDate(first?.executionDate)}
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1" align="center">
+                                                                            <FormattedMessage id='last-update'/>
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </MainCard>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Grid container alignItems="flex-start" justifyContent="space-between">
+                                                        <Grid item xs={4} display="flex" flexDirection="column" justifyContent="space-between">
+                                                            {first?.metricRange?.map((metric: any, i: number) => (
+
+                                                                <MainCard key={i} sx={{
+                                                                    mb: 1,
+                                                                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                                                    border: '1px solid',
+                                                                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                                                    '&:hover': {
+                                                                        border: `1px solid${theme.palette.primary.main}`
+                                                                    }
+                                                                }}>
+                                                                    <CardContent
+                                                                        sx={{
+                                                                            padding: '0px !important',
+                                                                            '& svg': {
+                                                                                width: 180,
+                                                                                height: 150
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <Grid container alignItems="center" spacing={0}>
+                                                                            <Grid item xs={6} sx={{ p: 3 }}>
+                                                                                <Grid container justifyContent="space-between" direction="column" alignItems="center">
+                                                                                    <Grid item sm={12}>
+                                                                                        <Typography variant="h3" color="inherit">
+                                                                                            {metric.typeDescription}
+                                                                                        </Typography>
+                                                                                    </Grid>
+                                                                                    <Grid item sm={11}>
+                                                                                        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ my: 1.75, mx: 'auto' }}>
+                                                                                            <Typography sx={{
+                                                                                                textAlign: 'center',
+                                                                                                // eslint-disable-next-line no-nested-ternary
+                                                                                                color: metric?.percentage <= 34 ? '#F44336' : metric.percentage >= 35 && metric.percentage <= 80 ? '#ffe923' : '#02f13a',
+                                                                                                '& > svg': {
+                                                                                                    width: 30,
+                                                                                                    height: 30
+                                                                                                }
+                                                                                            }}>
+                                                                                                {
+                                                                                                    // eslint-disable-next-line no-nested-ternary
+                                                                                                    metric?.percentage <= 34 ? <ArrowDownwardIcon /> : metric.percentage >= 35 && metric.percentage <= 80 ? <Brightness1Icon /> : <ArrowUpwardIcon />
+                                                                                                }
+                                                                                            </Typography>
+                                                                                            <Typography variant="h3">{`${metric.percentage.toFixed(2)} %`}</Typography>
+                                                                                        </Stack>
+                                                                                    </Grid>
+                                                                                    <Grid item sm={12}>
+                                                                                        <Link to={metric?.typeDescription?.toLowerCase()}><Button variant="outlined"> <FormattedMessage id='details'/> </Button></Link>
+                                                                                    </Grid>
+                                                                                </Grid>
+                                                                            </Grid>
+                                                                            <Grid item xs={4} sx={{ bgcolor: 'light', p: 1 }}>
+                                                                                <ReactApexChart
+                                                                                    options={optionsBars(metric)}
+                                                                                    series={[metric?.percentage.toFixed(1)]}
+                                                                                    type="radialBar"
+                                                                                    height={170}
+                                                                                />
+                                                                            </Grid>
+                                                                        </Grid>
+                                                                    </CardContent>
+                                                                </MainCard>
+                                                            ))}
+                                                        </Grid>
+                                                        <Grid item xs={7.9}>
+                                                            <MainCard sx={{
+                                                                background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                                                border: '1px solid',
+                                                                borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                                                '&:hover': {
+                                                                    border: `1px solid${theme.palette.primary.main}`
+                                                                }
+                                                            }}>
+                                                                <CardContent >
+                                                                    <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
+                                                                        <FormattedMessage id='latest-updates' />
+                                                                    </Typography>
+                                                                    <TableUpdates updates={first?.skuCatalog} />
+                                                                </CardContent>
+                                                            </MainCard>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={7.9}>
-                                                <Card>
-                                                    <CardContent >
-                                                        <Typography gutterBottom variant="h3" component="div" sx={{ pb: 2, pl: 2 }}>
-                                                            <FormattedMessage id='latest-updates' />
-                                                        </Typography>
-                                                        <TableUpdates updates={first?.skuCatalog} />
-                                                    </CardContent>
-                                                </Card>
-                                            </Grid>
-                                        </Grid>
+                                    </TabPanel>
+                                </Box>
+                                <TabPanel value={value} index={1}>
+                                    <Grid container sx={{mb: 2, pt: 0}}>
+                                        {multiHealth
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((merchant : any) => (
+                                                <Grid item xs={12} sm={6} sx={blockSX} key={merchant.merchantId}>
+                                                    <MultiCatalog merchant={merchant}/> 
+                                                </Grid>
+                                            ))}
                                     </Grid>
-                                </Grid>
-                            </TabPanel>
-                            <TabPanel value={value} index={1}>
-                                <Grid container sx={{mb: 2, pt: 0}}>
-                                    {multiHealth
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((merchant : any) => (
-                                            <Grid item xs={12} sm={6} sx={blockSX} key={merchant.merchantId}>
-                                                <MultiCatalog merchant={merchant}/> 
-                                            </Grid>
-                                        ))}
-                                </Grid>
-                                <TablePagination
-                                    rowsPerPageOptions={[2, 4]}
-                                    component="div"
-                                    count={firstLev?.length ?? 1}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onPageChange={handleChangePage}
-                                    onRowsPerPageChange={handleChangeRowsPerPage}
-                                />
-                            </TabPanel>
+                                    <TablePagination
+                                        rowsPerPageOptions={[2, 4]}
+                                        component="div"
+                                        count={firstLev?.length ?? 1}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                                </TabPanel>
                             
                         </>
                         )

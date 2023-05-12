@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { Box, IconButton, ListItemButton, ListItemText, Pagination, Card, Collapse, List, Stack, CircularProgress } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    ListItemButton,
+    ListItemText,
+    Pagination,
+    Card,
+    Collapse,
+    List,
+    Stack,
+    CircularProgress,
+    useTheme
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 // third-party imports
@@ -105,6 +117,8 @@ export default function FacetsListComponent({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, filterText]);
 
+    const theme = useTheme();
+
     const handleShowInfo = (id: number) => {
         handleEdit(id);
     };
@@ -117,7 +131,17 @@ export default function FacetsListComponent({
                 </Stack>
             </Collapse>
             <Collapse in={!loading}>
-                <List component={Card} sx={{ boxShadow: 2 }}>
+                <List
+                    component={Card}
+                    sx={{
+                        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                        border: '1px solid',
+                        borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                        '&:hover': {
+                            border: `1px solid${theme.palette.primary.main}`
+                        }
+                    }}
+                >
                     {facetListActive &&
                         facetListActive.map((item: FacetType) => (
                             <FacetItem key={`facet-item-${item.id}`} facet={item} handleShowInfo={handleShowInfo} />
@@ -135,9 +159,6 @@ type FacetItemProps = { facet: FacetType; handleShowInfo: (id: number) => void }
 const FacetItem = ({ facet, handleShowInfo }: FacetItemProps) => (
     <>
         <ListItemButton>
-            {/* <ListItemIcon sx={{ p: 1 }} onClick={handleOpen}>
-                {category.children?.length ? <ExpandCircleDownIcon /> : null}
-            </ListItemIcon> */}
             <ListItemText sx={{ p: 1 }} primary={facet.name} secondary={facet.nameSap} />
             {/* EDIT */}
             <IconButton

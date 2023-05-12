@@ -1,44 +1,59 @@
-import { useEffect, useState, SyntheticEvent, FormEvent } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState, SyntheticEvent, FormEvent, useMemo } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Grid, Stack, Tab, Tabs, Typography, CircularProgress, Fade, Button, Drawer, useMediaQuery } from '@mui/material';
+import { Box, Grid, Tab, Tabs, Typography, CircularProgress, Fade, Button, Drawer, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// project imports
+
+// third-party imports
+import { useIntl } from 'react-intl';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+
+// ===    project imports   ===
 import PerfectScrollbar from 'react-perfect-scrollbar';
+
+// hooks
+import useConfig from 'hooks/useConfig';
+import { useDispatch, useSelector } from 'store';
+
+// actions
+import {
+    getCategories,
+    getTradePolicies,
+    getProductDetails,
+    getProductSkuList,
+    uploadImageToSku,
+    deleteImageToSku,
+    getWerehouses
+} from 'store/slices/product';
+import { getBrands, getMerchantCategoriesService } from 'store/slices/catalog';
+
+// constants
+import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
+
+// components
+import ApprovalCard from 'widget/Data/ApprovalCard';
+import ProductDescription from './ProductDescription';
+import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
+import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
+import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
+import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
+
+// types
+import { TabsProps } from 'types';
+import { Products, Skus, skuImageType } from 'types/e-commerce';
+
+import { BrandType, CategoryType, FlatCategoryType, FlatMerchantCategoriesType, NewBrandType } from 'types/catalog';
+import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
 import ProductImages from './ProductImages';
 import ProductInfo from './ProductInfo';
-import ProductDescription from './ProductDescription';
-import ProductReview from './ProductReview';
-import RelatedProducts from './RelatedProducts';
-import Chip from 'ui-component/extended/Chip';
-import useConfig from 'hooks/useConfig';
-import { TabsProps } from 'types';
-import { Products, Skus } from 'types/e-commerce';
-import { appDrawerWidth, appDrawerWidthHistorial, gridSpacing } from 'store/constant';
-import { useDispatch, useSelector } from 'store';
-import { getCategories, getTradePolicies, saveProduct, getProductDetails, getProductSkuList } from 'store/slices/product';
-import { createBrand, getBrands } from 'store/slices/catalog';
-import { openSnackbar } from 'store/slices/snackbar';
-// import { resetCart } from 'store/slices/cart';
-import { BrandType, CategoryType, NewBrandType } from 'types/catalog';
-import { useIntl } from 'react-intl';
-import FloatingApprovalButton from 'ui-component/cards/FloatingApprovalButton';
-import ApprovalCard from 'widget/Data/ApprovalCard';
-import FloatingHistorialApproval from 'ui-component/cards/FloatingHistorialApproval';
-import ApprovalHistorialCard from 'widget/Data/ApprovalHistorialCard';
-// import DragAndDrop from 'ui-component/DragAndDrop';
+import WarehousesEditForm from './WarehousesEditForm';
 
-import { MerchantProductType } from 'types/product';
-import MultiMerchantForm, { MultiMerchantFormProps } from 'ui-component/MultiMerchant/MerchantsForm';
-import { InputType, SelectOptionType } from 'ui-component/MultiMerchant/MerchantsForm/InputComponent';
-
-// interface Image {
-//     file: File;
-//     src: string;
-// }
+// VIEW CASES
+//      Has merchantId => Single merchant edition
+//      Has multiple merchants => Multimerchant edition
+//      Na
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -61,7 +76,7 @@ function a11yProps(index: number) {
     };
 }
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
+const Main = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })<{ open?: boolean }>(({ theme, open }) => ({
     flexGrow: 1,
     transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
@@ -102,7 +117,7 @@ const ProductDetails = () => {
     const dispatch = useDispatch();
     const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
     const { borderRadius } = useConfig();
-    const { id } = useParams();
+
     const [searchParams] = useSearchParams();
 
     // const cart = useSelector((state) => state.cart);
@@ -117,15 +132,17 @@ const ProductDetails = () => {
     const [openTwo, setOpenTwo] = useState(false);
     /* const [loading, setLoading] = useState(true); */
     // actice mode edit product
-    const [active, setActive] = useState(true);
+    const [active, setActive] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // product description tabs
     const [value, setValue] = useState(0);
     const [brandsInfo, setBrandsInfo] = useState<BrandType[]>([]);
+    const [categoriesInfo, setCategoriesInfo] = useState<FlatCategoryType[]>([]);
 
     // info new Brands and Categories
     const [newBrandSku, setNewBrandSku] = useState<NewBrandType>();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [newCategorySku, setNewCategorySku] = useState<CategoryType>();
 
@@ -133,12 +150,15 @@ const ProductDetails = () => {
     const [flagBrand, setFlagBrand] = useState(false);
     const [flagCategory, setFlagCategory] = useState(false);
 
-    const { product, skus, tradePolicies } = useSelector((state) => state.product);
+    const { product, tradePolicies, werehouses } = useSelector((state) => state.product);
 
-    const { brands } = useSelector((state) => state.catalogue);
+    const { brands, flatMerchantCategories } = useSelector((state) => state.catalogue);
 
     // params
-    const idMerchant = searchParams.get('idMerchant');
+    const idMerchant = Number(searchParams.get('idMerchant')) || Number(localStorage.getItem('merchantId')) || null;
+    const { id } = useParams();
+
+    const viewMode: 'SINGLE' | 'MULTI' = useMemo(() => (searchParams.get('idMerchant') ? 'SINGLE' : 'MULTI'), [searchParams]);
 
     // const [images, setImages] = useState<Image[]>([]);
     const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -150,33 +170,57 @@ const ProductDetails = () => {
 
     const [multiFormProps, setMultiFormProps] = useState<MultiMerchantFormProps>(defaultMerchantProps);
 
+    const [toUploadImages, setToUploadImages] = useState<File[]>([]);
+    const [toDeleteImages, setToDeleteImages] = useState<skuImageType[]>([]);
+
+    const [selectedMerchant, setSelectedMerchant] = useState<number | null>(idMerchant);
+
+    useEffect(() => {
+        console.log('werehouses', werehouses);
+    }, [werehouses]);
+
+    useEffect(() => {
+        if (selectedMerchant) {
+            const objMulti = {
+                idMerchant: selectedMerchant
+            };
+            dispatch(getWerehouses(objMulti));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedMerchant]);
+
     useEffect(() => {
         // update product info on merchants array
         setAllMerchantsProductData((prev) => [
-            ...prev.map((item) => {
-                if (item.merchantId === Number(idMerchant)) {
+            ...(prev?.map((item) => {
+                if (Number(item.merchantId) === Number(selectedMerchant)) {
                     return { ...item, detailProduct: productInfo };
                 }
                 return item;
-            })
+            }) ?? [])
         ]);
-    }, [idMerchant, productInfo]);
+    }, [selectedMerchant, productInfo]);
 
     useEffect(() => {
         // getProduct();
         setIsLoading(true);
 
-        if (id && idMerchant) {
+        if (id) {
             dispatch(
                 getProductDetails({
                     idProd: id,
-                    idMerchant
+                    idMerchant: 1
                 })
             ).then(({ payload }) => {
-                const merchantProduct = payload.find((item: MerchantProductType) => Number(item.merchantId) === Number(idMerchant));
+                let merchantProduct = payload?.length ? payload[0] : null;
+
+                if (payload?.length && selectedMerchant) {
+                    merchantProduct = payload.find((item: { [key: string]: any }) => item.merchantId === selectedMerchant);
+                }
+
+                setSelectedMerchant(merchantProduct.merchantId);
 
                 setAllMerchantsProductData(payload);
-                handleGetSkus();
 
                 if (merchantProduct) {
                     setOriginalData(merchantProduct.detailProduct);
@@ -184,19 +228,26 @@ const ProductDetails = () => {
                     setIsLoading(false);
                 }
             });
-            dispatch(getBrands());
-            dispatch(getCategories());
-            dispatch(getTradePolicies());
         }
+
+        dispatch(getBrands());
+        dispatch(getCategories());
+        dispatch(getMerchantCategoriesService({ idMerchant: 1 }));
+        dispatch(getTradePolicies());
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, id, idMerchant, product]);
+    }, [dispatch, id, selectedMerchant]);
+
+    useEffect(() => {
+        handleGetSkus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedMerchant]);
 
     const handleGetSkus = () => {
-        if (id && idMerchant) {
+        if (id && selectedMerchant) {
             dispatch(
                 getProductSkuList({
                     idProd: id,
-                    merchantId: idMerchant
+                    merchantId: selectedMerchant
                 })
             ).then(({ payload }) => {
                 // console.log('SKU: ---', payload.skus);
@@ -219,6 +270,15 @@ const ProductDetails = () => {
     }, [brands]);
 
     useEffect(() => {
+        if (!flatMerchantCategories?.length) return;
+
+        const cats = flatMerchantCategories.find((merchCats: FlatMerchantCategoriesType) =>
+            viewMode === 'SINGLE' ? merchCats.idMerchant === Number(selectedMerchant) : merchCats.isFatherMerchat
+        )?.categoryList;
+        setCategoriesInfo(cats ?? []);
+    }, [flatMerchantCategories, selectedMerchant, viewMode]);
+
+    useEffect(() => {
         setOpen(false);
     }, []);
 
@@ -233,78 +293,28 @@ const ProductDetails = () => {
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (flagBrand) {
-            const dataBrand: any = {
-                ...newBrandSku
-            };
-            await dispatch(createBrand({ dataBrand }))
-                .then(async ({ payload }) => {
-                    setNewBrandSku(payload.response);
-                    dispatch(
-                        openSnackbar({
-                            open: true,
-                            message: `Successfully created brand`,
-                            variant: 'alert',
-                            alert: {
-                                color: 'success'
-                            },
-                            close: false
-                        })
-                    );
-                })
-                .catch(() => {
-                    dispatch(
-                        openSnackbar({
-                            open: true,
-                            message: 'Failed to create brand',
-                            variant: 'alert',
-                            alert: {
-                                color: 'error'
-                            },
-                            close: false
-                        })
-                    );
-                });
-            if (productInfo) {
-                const prodsku = newBrandSku?.Id
-                    ? { ...productInfo, sku: skuInfo, brandName: newBrandSku?.Name, brandId: newBrandSku?.Id }
-                    : { ...productInfo, sku: skuInfo };
 
-                await dispatch(saveProduct(prodsku))
-                    .then(({ payload }) => {
-                        dispatch(
-                            openSnackbar({
-                                open: true,
-                                message: `Successfully updated product`,
-                                variant: 'alert',
-                                alert: {
-                                    color: 'success'
-                                },
-                                close: false
-                            })
-                        );
-                    })
-                    .catch(() => {
-                        dispatch(
-                            openSnackbar({
-                                open: true,
-                                message: 'Failed to save product',
-                                variant: 'alert',
-                                alert: {
-                                    color: 'error'
-                                },
-                                close: false
-                            })
-                        );
-                    });
-            }
+        if (selectedMerchant) {
+            dispatch(
+                uploadImageToSku({
+                    files: toUploadImages,
+                    skuId: valueSku,
+                    idMerchant: selectedMerchant
+                })
+            );
+
+            dispatch(
+                deleteImageToSku({
+                    images: toDeleteImages
+                })
+            );
         }
     };
 
     const saveMultiChange = (data: { [key: string]: any }[]) => {
         setAllMerchantsProductData(data);
 
-        const updateCurrentProductInfo = data.find((item: { [key: string]: any }) => item.merchantId === Number(idMerchant));
+        const updateCurrentProductInfo = data.find((item: { [key: string]: any }) => item.merchantId === Number(selectedMerchant));
 
         if (updateCurrentProductInfo) {
             const newInfo = updateCurrentProductInfo.detailProduct;
@@ -337,6 +347,7 @@ const ProductDetails = () => {
                 // resetDrawer();
             },
             onSave: (newData) => {
+                console.log('newData', newData);
                 setMultiFormProps({ ...defaultMerchantProps, isOpen: false });
                 saveMultiChange(newData);
             },
@@ -363,13 +374,24 @@ const ProductDetails = () => {
                             <Main
                                 sx={
                                     open || openTwo
-                                        ? { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
-                                        : { marginRight: '-420px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms' }
+                                        ? { marginRight: '0', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms', width: 1 }
+                                        : { marginRight: '-420px', transition: 'margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms', width: 1 }
                                 }
                             >
                                 {originalData && originalData?.productID?.toString() === id && (
-                                    <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                    <Grid container sx={{ display: 'flex', justifyContent: 'flex-start' }} spacing={gridSpacing}>
                                         <Grid item xs={12} md={6}>
+                                            <ProductImages
+                                                skus={[...(productSkus ?? [])]}
+                                                valueSku={valueSku}
+                                                product={productInfo}
+                                                setActive={setActive}
+                                                active={active}
+                                                handleChange={(newSkuImages: File[]) => setToUploadImages(newSkuImages)}
+                                                toDeleteImages={toDeleteImages}
+                                                handleDelete={(toDelete: skuImageType) => setToDeleteImages((prev) => [...prev, toDelete])}
+                                            />
+
                                             {/* {Boolean(allSkus && allSkus.length) && (
                                                 <ProductImages
                                                     skus={allSkus}
@@ -383,6 +405,8 @@ const ProductDetails = () => {
                                         <Grid item xs={12} md={6}>
                                             {productInfo && (
                                                 <ProductInfo
+                                                    categoriesInfo={categoriesInfo}
+                                                    showMulti={viewMode === 'MULTI'}
                                                     handleDrawer={handleDrawerMultiEdit}
                                                     active={active}
                                                     allMerchantsProductData={allMerchantsProductData}
@@ -429,7 +453,7 @@ const ProductDetails = () => {
                                                                 size="large"
                                                                 startIcon={<EditIcon />}
                                                                 onClick={() => setActive(true)}
-                                                                disabled={valueSku === ''}
+                                                                // disabled={valueSku === ''}
                                                             >
                                                                 {intl.formatMessage({ id: 'edit' })}
                                                             </Button>
@@ -443,6 +467,7 @@ const ProductDetails = () => {
                                                 </Grid>
                                             </Grid>
                                         </Grid>
+
                                         <Grid item xs={12}>
                                             <Tabs
                                                 value={value}
@@ -461,22 +486,13 @@ const ProductDetails = () => {
                                                 <Tab
                                                     component={Link}
                                                     to="#"
-                                                    label={
-                                                        <Stack direction="row" alignItems="center">
-                                                            {intl.formatMessage({ id: 'reviews' })}
-                                                            <Chip
-                                                                label={String(product?.salePrice)}
-                                                                size="small"
-                                                                chipcolor="secondary"
-                                                                sx={{ ml: 1.5 }}
-                                                            />
-                                                        </Stack>
-                                                    }
+                                                    label={intl.formatMessage({ id: 'werehouses' })}
                                                     {...a11yProps(1)}
                                                 />
                                             </Tabs>
                                             <TabPanel value={value} index={0}>
                                                 <ProductDescription
+                                                    showMulti={viewMode === 'MULTI'}
                                                     handleDrawer={handleDrawerMultiEdit}
                                                     product={originalData}
                                                     active={active}
@@ -485,7 +501,7 @@ const ProductDetails = () => {
                                                 />
                                             </TabPanel>
                                             <TabPanel value={value} index={1}>
-                                                <ProductReview product={product} />
+                                                <WarehousesEditForm merchantId={selectedMerchant ?? 1} warehouses={werehouses} />
                                             </TabPanel>
                                         </Grid>
                                     </Grid>
@@ -560,12 +576,12 @@ const ProductDetails = () => {
                         <img key={index} src={image.src} alt={`id${index}`} />
                     ))} */}
 
-                    <Grid item xs={12} sx={{ mt: 3 }}>
+                    {/* <Grid item xs={12} sx={{ mt: 3 }}>
                         <Typography variant="h2">{intl.formatMessage({ id: 'related_products' })}</Typography>
                     </Grid>
                     <Grid item xs={11}>
                         <RelatedProducts id={id} />
-                    </Grid>
+                    </Grid> */}
                 </>
             )}
             <FloatingApprovalButton handleDrawerOpen={handleDrawerOpen} />
@@ -575,3 +591,7 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
+// Stiky images
+// specifications before additional info
+// remove related products

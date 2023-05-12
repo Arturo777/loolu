@@ -14,6 +14,7 @@ import {
     Stack,
     CircularProgress
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 
 // third-party imports
@@ -33,6 +34,7 @@ export default function ProfilesList({
     filterText: string;
     onEditClick: (user: ProfileType) => void;
 }) {
+    const theme = useTheme();
     // store
     const { profiles } = useSelector((state) => state.user);
 
@@ -62,7 +64,19 @@ export default function ProfilesList({
                 </Stack>
             </Collapse>
             <Collapse in={!isLoading}>
-                <List component={Card} elevation={2} sx={{ bgcolor: 'background.paper', p: 2 }}>
+                <List
+                    component={Card}
+                    elevation={2}
+                    sx={{
+                        p: 3,
+                        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                        border: '1px solid',
+                        borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                        '&:hover': {
+                            border: `1px solid${theme.palette.primary.main}`
+                        }
+                    }}
+                >
                     {filteredProfiles &&
                         filteredProfiles.map((profile) => (
                             <ProfileListItem key={`profile-item-${profile.id}`} profile={profile} onEditClick={onEditClick} />

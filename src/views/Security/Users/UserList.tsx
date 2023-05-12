@@ -16,6 +16,7 @@ import {
     CircularProgress,
     Collapse
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EmailIcon from '@mui/icons-material/Email';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
@@ -35,6 +36,7 @@ export default function UserListComponent({
     loading: boolean;
     onEditClick: (user: UserType) => void;
 }) {
+    const theme = useTheme();
     return (
         <>
             <Collapse in={loading}>
@@ -43,7 +45,19 @@ export default function UserListComponent({
                 </Stack>
             </Collapse>
             <Collapse in={!loading}>
-                <List component={Card} elevation={2} sx={{ bgcolor: 'background.paper', p: 2 }}>
+                <List
+                    component={Card}
+                    elevation={2}
+                    sx={{
+                        p: 3,
+                        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                        border: '1px solid',
+                        borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                        '&:hover': {
+                            border: `1px solid${theme.palette.primary.main}`
+                        }
+                    }}
+                >
                     {users && users.map((user) => <UserListItem key={`user-item-${user.id}`} user={user} onEditClick={onEditClick} />)}
                 </List>
             </Collapse>

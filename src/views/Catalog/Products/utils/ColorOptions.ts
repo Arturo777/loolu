@@ -2,7 +2,8 @@
 // project imports
 import { ColorsOptionsProps } from 'types/e-commerce';
 
-const ColorsOptions: ColorsOptionsProps[] = [
+// eslint-disable-next-line import/prefer-default-export
+export const ColorsOptions: ColorsOptionsProps[] = [
     {
         label: 'Light Primary',
         value: 'primary200',
@@ -84,5 +85,3 @@ const ColorsOptions: ColorsOptionsProps[] = [
         bg: 'dark.main'
     }
 ];
-
-export default ColorsOptions;

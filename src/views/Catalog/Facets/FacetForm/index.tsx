@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 
 // mui imports
-import { Grid, TextField, Divider, Button, Box } from '@mui/material';
+import { Grid, TextField, Divider, Button, Box, useTheme } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -34,6 +34,7 @@ type FacetFormProps = {
 export default function FacetFormComponent({ handleSave, handleCancel, editingData }: FacetFormProps) {
     // hooks
     const intl = useIntl();
+    const theme = useTheme();
 
     // store
     const { updating } = useSelector((state) => state.catalogue);

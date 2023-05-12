@@ -14,12 +14,15 @@ import MultiMerchant from 'ui-component/MultiMerchantButton';
 import { DefaultRootStateProps, TabsProps } from 'types';
 import { gridSpacing } from 'store/constant';
 import { useDispatch, useSelector } from 'store';
-import { getProduct } from 'store/slices/product';
+import { getProduct, getWerehouses } from 'store/slices/product';
 import { resetCart } from 'store/slices/cart';
 import ProductImagesCreate from './ProductImagesCreate';
 import ProductInfoCreate from './ProductInfoCreate';
 import ProductDescriptionCreate from './ProductDescriptionCreate';
 import { Products } from 'types/e-commerce';
+import Image from './image/Image';
+import ProductWerehouses from './ProductWerehouses';
+import { MerchantType, ProductCreateCategory } from 'types/security';
 
 function TabPanel({ children, value, index, ...other }: TabsProps) {
     return (
@@ -47,8 +50,13 @@ const CreateProduct = () => {
 
     const dispatch = useDispatch();
 
-    // product description tabs
-    const [merchs, setMerchs] = useState<any>([{}]);
+    // images
+    const [imagesToUpload, setImagesToUpload] = useState<any>([]);
+
+    // product description tabs}
+    const [selectedMerchants, setSelectedMerchants] = useState<MerchantType[]>([]);
+    const [productCreateCategories, setProductCreateCategories] = useState<ProductCreateCategory[]>([]);
+
     const [value, setValue] = useState(0);
     const [productInfo, setProductInfo] = useState<Products>({
         image: '',
@@ -105,9 +113,22 @@ const CreateProduct = () => {
         },
         groupName: ''
     });
+    const { werehouses } = useSelector((state) => state.product);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
+    };
+
+    // images
+
+    const handleAddImages = (event: any) => {
+        const newUploadImages = [...imagesToUpload, ...event.target.files];
+        setImagesToUpload(newUploadImages);
+    };
+
+    const handleRemoveImages = (ids: any) => {
+        const newUploadImages = imagesToUpload.filter((_: any, index: any) => index !== ids);
+        setImagesToUpload(newUploadImages);
     };
 
     useEffect(() => {
@@ -115,6 +136,16 @@ const CreateProduct = () => {
         /* dispatch(getProduct(id)); */
         // clear cart if complete order
     }, []);
+    useEffect(() => {
+        const objMulti = {
+            idMerchant: 1
+        };
+        dispatch(getWerehouses(objMulti));
+    }, [dispatch]);
+
+    useEffect(() => {
+        console.log({ productCreateCategories });
+    }, [productCreateCategories]);
 
     /* const { product } = useSelector((state) => state.product); */
 
@@ -124,17 +155,26 @@ const CreateProduct = () => {
                 <MultiMerchant
                     // justOne
                     // readOnly
-                    onChange={(merchants) => setMerchs(merchants)}
+                    onChange={(merchants) => setSelectedMerchants(merchants)}
                     maxShow={4}
                     defaultSelected={[]}
                 />
                 <MainCard>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12} md={6}>
-                            {/* <ProductImagesCreate product={product} /> */}
+                            <div className="column is-full">
+                                {/* <p className="is-size-5 has-text-info has-text-weight-bold my-5">IMÁGENES</p> */}
+                                <Image uploadedImages={imagesToUpload} removeImages={handleRemoveImages} uploadImages={handleAddImages} />
+                            </div>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <ProductInfoCreate setProductInfo={setProductInfo} productInfo={productInfo} merchs={merchs} />
+                            <ProductInfoCreate
+                                setProductInfo={setProductInfo}
+                                productInfo={productInfo}
+                                selectedMerchants={selectedMerchants}
+                                setProductCreateCategories={setProductCreateCategories}
+                                productCreateCategories={productCreateCategories}
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
@@ -145,14 +185,13 @@ const CreateProduct = () => {
                                 aria-label="product description tabs example"
                                 variant="scrollable"
                             >
-                                <Tab component={Link} to="#" label="Description" {...a11yProps(0)} />
+                                <Tab component={Link} to="#" label="Product Aditional Info" {...a11yProps(0)} />
                                 <Tab
                                     component={Link}
                                     to="#"
                                     label={
                                         <Stack direction="row" alignItems="center">
-                                            Reviews{' '}
-                                            {/* <Chip label={String(product.salePrice)} size="small" chipcolor="secondary" sx={{ ml: 1.5 }} /> */}
+                                            Werehouses
                                         </Stack>
                                     }
                                     {...a11yProps(1)}
@@ -161,12 +200,18 @@ const CreateProduct = () => {
                             <TabPanel value={value} index={0}>
                                 <ProductDescriptionCreate
                                     setProductInfo={setProductInfo}
-                                    merchantMulti={merchs}
+                                    selectedMerchants={selectedMerchants}
                                     productInfo={productInfo}
                                 />
                             </TabPanel>
                             <TabPanel value={value} index={1}>
-                                {/* <ProductReview product={product} /> */}
+                                <Grid container justifyContent="space-between">
+                                    {selectedMerchants.map((item: any) => (
+                                        <Grid item xs={12 / selectedMerchants.length - 0.1}>
+                                            <ProductWerehouses merchs={item.merchantId} namemerch={item.name} werehouses={werehouses} />
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </TabPanel>
                         </Grid>
                     </Grid>

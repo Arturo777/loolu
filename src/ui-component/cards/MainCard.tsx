@@ -1,9 +1,7 @@
 import React, { Ref } from 'react';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Card, CardContent, CardHeader, Divider, Typography, CardProps, CardHeaderProps, CardContentProps } from '@mui/material';
-
 // project imports
 import { KeyedObject } from 'types';
 
@@ -72,7 +70,6 @@ const MainCard = React.forwardRef(
                 {darkTitle && title && (
                     <CardHeader sx={headerSX} title={<Typography variant="h3">{title}</Typography>} action={secondary} />
                 )}
-
                 {/* content & header divider */}
                 {title && <Divider />}
 

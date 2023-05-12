@@ -17,6 +17,8 @@ export const catalogUnits = [
     }
 ];
 export default function filterUnitM(unit: string | undefined): string {
+    if (!unit) return '';
+
     const resultUnit = catalogUnits.filter((cat: Catalog) => cat.unit === unit);
     return resultUnit[0].name;
 }

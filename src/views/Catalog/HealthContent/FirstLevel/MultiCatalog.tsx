@@ -19,6 +19,7 @@ import { options } from 'widget/Chart/revenue-chart';
 import { getFirstLevel } from 'store/slices/healthContent';
 import { useDispatch, useSelector } from 'store';
 import TableUpdates from './TableUpdates';
+import { FormattedMessage } from 'react-intl';
 
 const MultiCatalog = ( { merchant }: any ) => {
     const [firstLev, setFirstLevel] = useState<any>();
@@ -100,6 +101,12 @@ const MultiCatalog = ( { merchant }: any ) => {
                                 <MainCard
                                     content={false}
                                     sx={{
+                                        background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                                        border: '1px solid',
+                                        borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                                        '&:hover': {
+                                            border: `1px solid${theme.palette.primary.main}`
+                                        },
                                         '& svg': {
                                             width: 50,
                                             height: 75,
@@ -126,7 +133,7 @@ const MultiCatalog = ( { merchant }: any ) => {
                                                         {firstLev.totalImages}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Total Images
+                                                        <FormattedMessage id='total-images'/>
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -146,7 +153,7 @@ const MultiCatalog = ( { merchant }: any ) => {
                                                         {firstLev.totalProducts}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Total Products
+                                                        <FormattedMessage id='total-products'/>
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -168,7 +175,7 @@ const MultiCatalog = ( { merchant }: any ) => {
                                                         {firstLev.totalSkus}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Total Skus
+                                                        <FormattedMessage id='total-skus'/>
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
@@ -183,7 +190,7 @@ const MultiCatalog = ( { merchant }: any ) => {
                                                         {firstLev?.executionDate}
                                                     </Typography>
                                                     <Typography variant="subtitle1" align="center">
-                                                        Last Update
+                                                        <FormattedMessage id='last-update'/>
                                                     </Typography>
                                                 </Grid>
                                             </Grid>

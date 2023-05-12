@@ -84,10 +84,11 @@ const MainLayout = () => {
         // handle login
         if (user && user?.user) {
             // TODO: SEND CognitoUser USER
-            dispatch(getUserProfile(user?.user)).then((resp) => {
-                // dispatch(getUserProfile('ohuitron')).then((resp) => {
-                if (!resp.payload) {
+            dispatch(getUserProfile(user?.user)).then(({ payload }) => {
+                if (!payload) {
                     logout();
+                } else if (payload.response.merchant.merchantId) {
+                    localStorage.setItem('merchantId', payload.response.merchant.merchantId);
                 }
             });
         }

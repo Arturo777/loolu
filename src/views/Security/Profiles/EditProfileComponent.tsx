@@ -98,7 +98,20 @@ export default function EditProfileComponent({
 
     return (
         <Fade in={show}>
-            <Card elevation={2} sx={{ p: 3, position: 'sticky', top: 100, bottom: 100 }}>
+            <Card
+                elevation={2}
+                sx={{
+                    p: 3,
+                    position: 'sticky',
+                    bottom: '100%',
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
                 {content()}
             </Card>
         </Fade>

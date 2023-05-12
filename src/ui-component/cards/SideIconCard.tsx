@@ -19,16 +19,20 @@ interface SideIconCardProps extends GenericCardProps {
 
 const SideIconCard = ({ iconPrimary, primary, secondary, secondarySub, color, bgcolor, metrics }: SideIconCardProps) => (
     <Card sx={{ bgcolor: bgcolor || '', position: 'relative' }}>
-        <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item xs={4} sx={{ background: color, py: '90px', px: 0 }}>
+        <Grid container justifyContent="space-between" alignItems="center" height="250px">
+            <Grid item xs={4} sx={{ background: color, px: 0, height: '100%', position: 'relative', overflow: 'hidden' }}>
                 <Typography
                     variant="h5"
                     sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
                         textAlign: 'center',
                         color: '#a483ff',
                         '& > svg': {
-                            width: 60,
-                            height: 60
+                            width: 100,
+                            height: 100
                         }
                     }}
                     align="center"
@@ -42,7 +46,7 @@ const SideIconCard = ({ iconPrimary, primary, secondary, secondarySub, color, bg
                     )}
                 </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={8} sx={{ height: '100%' }}>
                 <CustomerSatisfactionCard metrics={metrics} />
             </Grid>
         </Grid>

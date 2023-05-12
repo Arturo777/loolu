@@ -1,7 +1,19 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 // material-ui
-import { Box, Button, CardMedia, Collapse, Divider, Grid, IconButton, InputAdornment, TextField } from '@mui/material';
+import {
+    Box,
+    Button,
+    CardMedia,
+    Collapse,
+    Divider,
+    Grid,
+    IconButton,
+    InputAdornment,
+    TextField,
+    Typography,
+    useTheme
+} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import MultiMerchant from 'ui-component/MultiMerchantButton';
@@ -33,7 +45,8 @@ type BrandFormProps = {
     handleSave: (data: NewBrandType2) => void;
 };
 
-export default function BrandForm({ initialData, handleSave }: any) {
+export default function BrandForm({ isEdit, initialData, handleSave }: any) {
+    const theme = useTheme();
     // BrandFormProps
     // hooks
     const intl = useIntl();
@@ -44,9 +57,6 @@ export default function BrandForm({ initialData, handleSave }: any) {
     // vars
     const [newBrandData, setNewBrandData] = useState<NewBrandType2>(initialBrandData);
     const [changeMerchant, setChangeMerchant] = useState<MerchantType[]>();
-    useEffect(() => {
-        console.log({ loading });
-    }, [loading]);
     useEffect(() => {
         if (initialData) {
             const newData: NewBrandType2 = {
@@ -102,12 +112,32 @@ export default function BrandForm({ initialData, handleSave }: any) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Grid container spacing={gridSpacing}>
-                <Grid item xs={12} sm={4}>
+            <Grid
+                container
+                // spacing={gridSpacing}
+                sx={{
+                    p: 3,
+                    background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                    border: '1px solid',
+                    borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                    '&:hover': {
+                        border: `1px solid${theme.palette.primary.main}`
+                    }
+                }}
+            >
+                {!isEdit && (
+                    <Grid
+                        item
+                        xs={12}
+                        sx={{
+                            display: 'flex'
+                        }}
+                    >
+                        <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
+                    </Grid>
+                )}
+                <Grid item xs={12} sm={12}>
                     <Grid container spacing={gridSpacing}>
-                        <Grid item xs={12}>
-                            <MultiMerchant onChange={handleMerchants} maxShow={3} defaultSelected={[]} />
-                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 value={newBrandData.brandData.name}
@@ -145,11 +175,6 @@ export default function BrandForm({ initialData, handleSave }: any) {
                                 multiline
                             />
                         </Grid>
-                    </Grid>
-                </Grid>
-
-                <Grid item xs={12} sm={4}>
-                    <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
                             <TextField
                                 value={newBrandData.brandData.imageUrl}
@@ -175,6 +200,12 @@ export default function BrandForm({ initialData, handleSave }: any) {
                         <CustomCardMedia url={newBrandData.brandData.imageUrl ?? ''} handleDelete={handleDeleteImage} />
                     </Grid>
                 </Grid>
+
+                {/* <Grid item xs={12} sm={4}>
+                    <Grid container spacing={gridSpacing}>
+                        
+                    </Grid>
+                </Grid> */}
 
                 <Grid item xs={12} pt={4} pl={3}>
                     <Divider />

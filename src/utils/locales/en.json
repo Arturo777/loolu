@@ -311,5 +311,13 @@
     "select_vendor": "Select vendor",
     "label": "Label",
     "update_multi_data_title": "Update multiple merchants",
-    "key_words": "Key words"
+    "key_words": "Key words",
+    "no_recent_updates": "Oops! No recent updates",
+    "upload-images": "Upload Images",
+    "click_here": "Click here to upload your image",
+    "select_trade_policies": "Select Trade Policies",
+    "warehouses": "Warehouses",
+    "merchant_inventories": "{merchant} inventories",
+    "warehouse_stock": "{warehouse} stock",
+    "select_brand": "Select Brand"
 }

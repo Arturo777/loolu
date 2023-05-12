@@ -104,17 +104,21 @@ export const FieldEditingHolder = ({
     children,
     displayValue = 'flex',
     onEditClick,
-    sx
+    sx,
+    showMulti
 }: {
     children: ReactNode;
     displayValue?: 'flex' | 'inline-flex';
     onEditClick: (e: any) => void;
     sx?: SxProps<Theme>;
+    showMulti: boolean;
 }) => (
     <Stack sx={{ flexDirection: 'row', display: displayValue || 'inline-flex', ...sx }}>
         {children}
-        <IconButton sx={{ ml: 1 }} color="inherit" aria-label="Open drawer" edge="start" size="small" onClick={onEditClick}>
-            <EditIcon fontSize="small" />
-        </IconButton>
+        {showMulti && (
+            <IconButton sx={{ ml: 1 }} color="inherit" aria-label="Open drawer" edge="start" size="small" onClick={onEditClick}>
+                <EditIcon fontSize="small" />
+            </IconButton>
+        )}
     </Stack>
 );

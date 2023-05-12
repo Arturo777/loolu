@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 // mui imports
-import { Card, Divider, Grid, ListItemButton, Pagination, Typography } from '@mui/material';
+import { Card, Divider, Grid, ListItemButton, Pagination, Typography, useTheme } from '@mui/material';
 
 // types
-import { ChangeLog } from 'types/reports';
+import { ChangeLog, ChangeLogMulticatalogo } from 'types/reports';
 
 type ChangeLogListProps = {
-    changeLog: ChangeLog[];
-    handleSelect: (item: ChangeLog) => void;
+    changeLog: ChangeLogMulticatalogo[];
+    handleSelect: (item: ChangeLogMulticatalogo) => void;
 };
 
 export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogListProps) {
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [renderData, setRenderData] = useState<ChangeLog[]>();
-
+    const [renderData, setRenderData] = useState<any>();
+    const theme = useTheme();
     useEffect(() => {
         getPageItem();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -26,10 +26,14 @@ export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogList
 
     const getPageItem = () => {
         const numInit = (currentPage - 1) * 10;
-        const initial = numInit > 0 ? numInit + 1 : 1;
+        // const initial = numInit > 0 ? numInit + 1 : 1;
+        const initial = numInit > 0 ? numInit + 1 : 0;
         const end = currentPage * 10;
 
-        const copyChange = [...changeLog];
+        const data = changeLog.flatMap((item) => item);
+
+        const copyChange = [...data];
+
         const toRender = copyChange.slice(initial, end);
 
         setRenderData(toRender);
@@ -38,23 +42,35 @@ export default function ChangeLogList({ changeLog, handleSelect }: ChangeLogList
     return (
         <Card elevation={2}>
             {renderData &&
-                renderData.map((item, i) => (
-                    <ListItemButton onClick={() => handleSelect(item)} key={`change-log-item-${i}`}>
+                renderData?.map((item: any, i: number) => (
+                    <ListItemButton
+                        onClick={() => handleSelect(item)}
+                        key={`change-log-item-${i}`}
+                        sx={{
+                            p: 3,
+                            background: theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.grey[50],
+                            border: '1px solid',
+                            borderColor: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.grey[100],
+                            '&:hover': {
+                                border: `1px solid${theme.palette.primary.main}`
+                            }
+                        }}
+                    >
                         <Grid container sx={{ p: 2 }}>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.prodId}</Typography>
+                                <Typography variant="subtitle1">{item?.prodId}</Typography>
                                 <Typography variant="caption">Product ID</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.skuId}</Typography>
+                                <Typography variant="subtitle1">{item?.skuId}</Typography>
                                 <Typography variant="caption">SKU ID</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.userLog}</Typography>
+                                <Typography variant="subtitle1">{item?.userLog}</Typography>
                                 <Typography variant="caption">User</Typography>
                             </Grid>
                             <Grid item xs={12} sm={6} sx={{ mb: { xs: 0, sm: 2 } }}>
-                                <Typography variant="subtitle1">{item.dateChange}</Typography>
+                                <Typography variant="subtitle1">{item?.dateChange}</Typography>
                                 <Typography variant="caption">Fecha</Typography>
                             </Grid>
                         </Grid>
